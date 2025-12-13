@@ -1,3 +1,5 @@
+
+
 # RiskPolicy v1.1 (Final)
 
 ## Instruments
@@ -10,7 +12,8 @@
 - Trigger: DD(t) <= -3% and kill_switch_fired_today == false
 - Action: CancelAll -> ForceFlattenAll -> COOLDOWN(90min)
 - After cooldown: RECOVERY
-  - ecovery_risk_multiplier = 0.30
+  - 
+ecovery_risk_multiplier = 0.30
   - max_margin_recovery = 0.40
 - Second time DD(t) <= -3% in same trading day: LOCKED (no opening until next day)
 
