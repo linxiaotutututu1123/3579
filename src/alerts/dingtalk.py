@@ -18,7 +18,9 @@ class DingTalkConfig:
 
 def _sign(secret: str, timestamp_ms: int) -> str:
     string_to_sign = f"{timestamp_ms}\n{secret}"
-    h = hmac.new(secret.encode("utf-8"), string_to_sign.encode("utf-8"), digestmod="sha256").digest()
+    h = hmac.new(
+        secret.encode("utf-8"), string_to_sign.encode("utf-8"), digestmod="sha256"
+    ).digest()
     return urllib.parse.quote_plus(b64encode(h).decode("utf-8"))
 
 
