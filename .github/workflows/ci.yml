@@ -26,10 +26,10 @@ jobs:
           python -m venv .venv
           .\.venv\Scripts\python.exe -m pip install -U pip
 
-      - - name: Install deps
+      - name: Install deps
         run: |
-         .\.venv\Scripts\python.exe -m pip install -U pip setuptools wheel
-         .\.venv\Scripts\pip.exe install -v --retries 10 --timeout 60 --progress-bar off -r requirements.txt -r requirements-dev.txt
+          .\.venv\Scripts\python.exe -m pip install -U pip setuptools wheel
+          .\.venv\Scripts\pip.exe install -v --retries 10 --timeout 60 --progress-bar off -r requirements.txt -r requirements-dev.txt
       - name: Run quality gate
         shell: pwsh
         run: |
