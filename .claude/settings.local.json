@@ -11,7 +11,8 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "Bash(git push)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
