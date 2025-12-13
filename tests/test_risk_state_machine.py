@@ -24,7 +24,8 @@ def test_kill_switch_then_cooldown_then_recovery() -> None:
     assert rm.state.mode == RiskMode.NORMAL
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0))
-    assert rm.state.mode == RiskMode.COOLDOWN
+    mode: RiskMode = rm.state.mode
+assert mode == RiskMode.COOLDOWN
     assert rm.state.kill_switch_fired_today is True
     assert calls["cancel"] == 1
     assert calls["flatten"] == 1
@@ -65,7 +66,8 @@ def test_second_breach_locks_for_day() -> None:
 
     now["t"] = 2
     rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0))
-    assert rm.state.mode == RiskMode.RECOVERY
+    mode2: RiskMode = rm.state.mode
+assert mode2 == RiskMode.RECOVERY
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0))
     assert rm.state.mode == RiskMode.LOCKED
