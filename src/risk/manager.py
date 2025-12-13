@@ -58,7 +58,9 @@ class RiskManager:
         if self.state.mode == RiskMode.COOLDOWN and self.state.cooldown_end_ts is not None:
             if now_ts >= self.state.cooldown_end_ts:
                 self.state.mode = RiskMode.RECOVERY
-                self._emit(RiskEventType.ENTER_RECOVERY, {"cooldown_end_ts": self.state.cooldown_end_ts})
+                self._emit(
+                    RiskEventType.ENTER_RECOVERY, {"cooldown_end_ts": self.state.cooldown_end_ts}
+                )
 
         dd = self.state.dd(snap.equity)
 
