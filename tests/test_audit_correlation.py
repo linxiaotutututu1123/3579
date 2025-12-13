@@ -34,11 +34,13 @@ def test_all_risk_events_share_same_correlation_id_and_snapshot_hash_present() -
         positions=[PositionToClose(symbol="AO", net_qty=1, today_qty=1, yesterday_qty=0)],
         books={"AO": BookTop(best_bid=100.0, best_ask=101.0, tick=1.0)},
         flatten_spec=FlattenSpec(stage2_requotes=0, stage3_max_cross_levels=0),
+        now_cb=lambda: 999.0,
     )
 
     assert res.correlation_id != ""
-    assert len(res.snapshot_hash) == 64  # sha256 hex
+    assert len(res.snapshot_hash) == 64
     assert res.risk_events[0].type == RiskEventType.AUDIT_SNAPSHOT
+    assert res.risk_events[0].ts == 999.0
     assert res.risk_events[0].data["snapshot_hash"] == res.snapshot_hash
 
     cids = {e.correlation_id for e in res.risk_events}

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import time
 import uuid
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -22,6 +23,9 @@ class OrchestratorResult:
     snapshot_hash: str
 
 
+NowCb = Callable[[], float]
+
+
 def _stable_json(obj: Any) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
@@ -31,7 +35,6 @@ def _hash_snapshot(
     snap: AccountSnapshot,
     positions: Sequence[PositionToClose],
     books: Mapping[str, BookTop],
-    # if you want: include risk cfg knobs too
 ) -> str:
     pos_data = [
         {
@@ -63,15 +66,25 @@ def handle_risk_update(
     positions: Sequence[PositionToClose],
     books: Mapping[str, BookTop],
     flatten_spec: FlattenSpec | None = None,
+    now_cb: NowCb = time.time,
 ) -> OrchestratorResult:
+    """
+    Highest-grade glue:
+    - generate correlation_id for this tick
+    - compute snapshot hash for audit/replay
+    - update risk state
+    - drain risk events
+    - if kill switch fired, generate flatten intents and execute (passing correlation_id)
+    """
     correlation_id = uuid.uuid4().hex
     snapshot_hash = _hash_snapshot(snap=snap, positions=positions, books=books)
 
     risk.update(snap)
     raw_risk_events = risk.pop_events()
 
-    # Attach correlation_id and prepend snapshot audit event.
-    ts = raw_risk_events[0].ts if raw_risk_events else executor._now()  # type: ignore[attr-defined]
+    ts = now_cb()
+
+    # Prepend audit snapshot event, and attach correlation_id to all events.
     risk_events: list[RiskEvent] = [
         RiskEvent(
             type=RiskEventType.AUDIT_SNAPSHOT,
@@ -81,8 +94,7 @@ def handle_risk_update(
         )
     ]
     risk_events.extend(
-        RiskEvent(type=e.type, ts=e.ts, correlation_id=correlation_id, data=e.data)
-        for e in raw_risk_events
+        RiskEvent(type=e.type, ts=e.ts, correlation_id=correlation_id, data=e.data) for e in raw_risk_events
     )
 
     exec_records: list[ExecutionRecord] = []
