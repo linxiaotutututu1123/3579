@@ -1,4 +1,5 @@
-﻿from __future__ import annotations
+﻿@'
+from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
@@ -49,3 +50,4 @@ class RiskState:
         if self.e0 is None or self.e0 == 0:
             return 0.0
         return (equity_now - self.e0) / self.e0
+'@ | Set-Content -Encoding utf8 .\src\risk\state.py
