@@ -54,8 +54,7 @@ class RiskManager:
 
         # 冷却期：只负责到点切换 RECOVERY，不做 dd 触发/锁仓判定
         if self.state.mode == RiskMode.COOLDOWN:
-            if (self.state.cooldown_end_ts is not None
-                    and now_ts >= self.state.cooldown_end_ts):
+            if self.state.cooldown_end_ts is not None and now_ts >= self.state.cooldown_end_ts:
                 self.state.mode = RiskMode.RECOVERY
             return
 

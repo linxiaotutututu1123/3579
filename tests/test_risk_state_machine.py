@@ -25,15 +25,13 @@ def test_kill_switch_then_cooldown_then_recovery() -> None:
         now_cb=now_cb,
     )
 
-    rm.on_day_start_0900(
-        snap=AccountSnapshot(equity=1_000_000.0, margin_used=0.0)
-    )
+    rm.on_day_start_0900(snap=AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
     assert rm.state.mode == RiskMode.NORMAL
 
     rm.update(snap=AccountSnapshot(equity=969_000.0, margin_used=0.0))
     mode: RiskMode = rm.state.mode
     assert mode == RiskMode.COOLDOWN
-    raise RuntimeError("REACHED HERE")
+
     assert rm.state.kill_switch_fired_today is True
     assert calls["cancel"] == 1
     assert calls["flatten"] == 1
@@ -99,9 +97,7 @@ def test_margin_gate_blocks_open_in_recovery() -> None:
         cancel_all_cb=cancel_all,
         force_flatten_all_cb=flatten_all,
     )
-    rm.on_day_start_0900(
-        snap=AccountSnapshot(equity=1_000_000.0, margin_used=0.0)
-    )
+    rm.on_day_start_0900(snap=AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
 
     rm.state.mode = RiskMode.RECOVERY
     snap: AccountSnapshot = AccountSnapshot(equity=1_000_000.0, margin_used=450_000.0)
