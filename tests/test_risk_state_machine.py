@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from src.risk.manager import RiskManager
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode
-
+from src.risk.state import RiskMode
 
 def test_kill_switch_then_cooldown_then_recovery() -> None:
     calls = {"cancel": 0, "flatten": 0}
