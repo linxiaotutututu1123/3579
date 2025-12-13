@@ -56,7 +56,7 @@ class RiskManager:
         if dd <= self.cfg.dd_limit:
             if not self.state.kill_switch_fired_today:
                 self._fire_kill_switch()
-            else:
+            elif self.state.mode == RiskMode.RECOVERY:
                 self.state.mode = RiskMode.LOCKED
 
     def _fire_kill_switch(self) -> None:
