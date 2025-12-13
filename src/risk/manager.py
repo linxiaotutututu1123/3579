@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Callable
 
+from src.risk.events import RiskEvent, RiskEventType
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode, RiskState
 
 
@@ -24,19 +25,28 @@ class RiskManager:
         *,
         cancel_all_cb: CancelAllCb,
         force_flatten_all_cb: ForceFlattenAllCb,
-        now_cb: Callable[[], float] = time.time,
+        now_cb=time.time,
     ) -> None:
         self.cfg = cfg
         self.state = RiskState()
         self._cancel_all = cancel_all_cb
         self._force_flatten_all = force_flatten_all_cb
         self._now = now_cb
+        self._events: list[RiskEvent] = []
+
+    def pop_events(self) -> list[RiskEvent]:
+        ev, self._events = self._events, []
+        return ev
+
+    def _emit(self, type_: RiskEventType, data: dict) -> None:
+        self._events.append(RiskEvent(type=type_, ts=self._now(), data=data))
 
     def on_day_start_0900(self, snap: AccountSnapshot) -> None:
         self.state.e0 = snap.equity
         self.state.mode = RiskMode.NORMAL
         self.state.kill_switch_fired_today = False
         self.state.cooldown_end_ts = None
+        self._emit(RiskEventType.BASELINE_SET, {"e0": snap.equity})
 
     def update(self, snap: AccountSnapshot) -> None:
         if self.state.e0 is None:
@@ -44,25 +54,33 @@ class RiskManager:
 
         now_ts = self._now()
 
-        if (
-            self.state.mode == RiskMode.COOLDOWN
-            and self.state.cooldown_end_ts is not None
-            and now_ts >= self.state.cooldown_end_ts
-        ):
-            self.state.mode = RiskMode.RECOVERY
+        # cooldown -> recovery transition happens on time
+        if self.state.mode == RiskMode.COOLDOWN and self.state.cooldown_end_ts is not None:
+            if now_ts >= self.state.cooldown_end_ts:
+                self.state.mode = RiskMode.RECOVERY
+                self._emit(RiskEventType.ENTER_RECOVERY, {"cooldown_end_ts": self.state.cooldown_end_ts})
 
         dd = self.state.dd(snap.equity)
 
+        # dd breach handling
         if dd <= self.cfg.dd_limit:
             if not self.state.kill_switch_fired_today:
-                self._fire_kill_switch()
-            elif self.state.mode == RiskMode.RECOVERY:
-                self.state.mode = RiskMode.LOCKED
+                self._fire_kill_switch(dd=dd, equity=snap.equity)
+            else:
+                if self.state.mode != RiskMode.LOCKED:
+                    self.state.mode = RiskMode.LOCKED
+                    self._emit(RiskEventType.LOCKED_FOR_DAY, {"dd": dd, "equity": snap.equity})
 
-    def _fire_kill_switch(self) -> None:
+    def _fire_kill_switch(self, *, dd: float, equity: float) -> None:
         self.state.kill_switch_fired_today = True
         self.state.mode = RiskMode.COOLDOWN
         self.state.cooldown_end_ts = self._now() + self.cfg.cooldown_seconds
+
+        self._emit(
+            RiskEventType.KILL_SWITCH_FIRED,
+            {"dd": dd, "equity": equity, "cooldown_end_ts": self.state.cooldown_end_ts},
+        )
+
         self._cancel_all()
         self._force_flatten_all()
 
