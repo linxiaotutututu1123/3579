@@ -39,7 +39,9 @@ class RiskManager:
         return ev
 
     def _emit(self, type_: RiskEventType, data: dict, correlation_id: str = "") -> None:
-        self._events.append(RiskEvent(type=type_, ts=self._now(), correlation_id=correlation_id, data=data))
+        self._events.append(
+            RiskEvent(type=type_, ts=self._now(), correlation_id=correlation_id, data=data)
+        )
 
     def on_day_start_0900(self, snap: AccountSnapshot) -> None:
         self.state.e0 = snap.equity
