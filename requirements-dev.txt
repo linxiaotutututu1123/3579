@@ -1,4 +1,4 @@
-﻿ruff>=0.7
+ruff>=0.7
 mypy>=1.11
 pytest>=8.2
 types-requests>=2.32

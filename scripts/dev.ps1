@@ -1,7 +1,7 @@
 ﻿Param(
   [Parameter(Position=0)]
   [ValidateSet("init","check","fix","test","type","lint","fmt","context","clean")]
-  [string] = "check"
+  [string]$Command = "check"
 )
 
 Stop = "Stop"
@@ -25,7 +25,7 @@ function Ensure-Artifacts {
   New-Item -ItemType Directory -Force -Path "artifacts\context" | Out-Null
 }
 
-switch () {
+switch ($Command) {
   "init" {
     Ensure-Venv
     Install-Deps

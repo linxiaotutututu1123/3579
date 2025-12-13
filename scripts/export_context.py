@@ -16,18 +16,19 @@ INCLUDE_FILES = [
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", required=True, help="output markdown path")
+    _ = ap.add_argument("--out", required=True, help="output markdown path")
     args = ap.parse_args()
 
-    out = Path(args.out)
+    out: Path = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
 
     lines: list[str] = []
     lines.append("# Project Context (for Claude)\n")
     lines.append("## Quality gate\n")
     lines.append(
-        "- GitHub Actions runs: ruff format --check, ruff check, mypy, pytest\n"
-        "- Keep CI green after each feature\n"
+        "- GitHub Actions runs: ruff format --check, "
+        + "ruff check, mypy, pytest\n"
+        + "- Keep CI green after each feature\n"
     )
     lines.append("\n## Locked risk spec\n")
     lines.append("- See SPEC_RISK.md\n")
@@ -37,8 +38,9 @@ def main() -> None:
         if Path(f).exists():
             lines.append(f"- {f}")
 
-    out.write_text("\n".join(lines), encoding="utf-8")
+    _ = out.write_text(data="\n".join(lines), encoding="utf-8")
 
 
 if __name__ == "__main__":
     main()
+    
