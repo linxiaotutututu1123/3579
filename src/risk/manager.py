@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
 from collections.abc import Callable
+from dataclasses import dataclass
 
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode, RiskState
 
