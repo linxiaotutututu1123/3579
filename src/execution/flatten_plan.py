@@ -105,7 +105,7 @@ def build_flatten_intents(
                     offset=offset,
                     price=price_for_cross(cross),
                     qty=qty,
-                    reason=f"flatten:stage2:{i+1}",
+                    reason=f"flatten:stage2:{i + 1}",
                 )
             )
 
