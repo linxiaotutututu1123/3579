@@ -25,7 +25,9 @@ def test_send_markdown_without_secret() -> None:
 
         mock_post.assert_called_once()
         call_args = mock_post.call_args
-        assert call_args.kwargs["url"] == "https://example.com/webhook"
+        # First positional arg is URL
+        url = call_args[0][0]
+        assert url == "https://example.com/webhook"
         assert call_args.kwargs["json"]["msgtype"] == "markdown"
         assert call_args.kwargs["json"]["markdown"]["title"] == "Test Title"
 
@@ -42,15 +44,13 @@ def test_send_markdown_with_secret_appends_signature() -> None:
             send_markdown(cfg, "Title", "Content")
 
             call_args = mock_post.call_args
-            url = call_args.kwargs["url"]
+            url = call_args[0][0]
             assert "timestamp=" in url
             assert "sign=" in url
 
 
 def test_send_markdown_with_secret_and_query_string() -> None:
-    cfg = DingTalkConfig(
-        webhook_url="https://example.com/webhook?token=abc", secret="mysecret"
-    )
+    cfg = DingTalkConfig(webhook_url="https://example.com/webhook?token=abc", secret="mysecret")
 
     with patch("src.alerts.dingtalk.requests.post") as mock_post:
         with patch("src.alerts.dingtalk.time.time", return_value=1234567890.123):
@@ -61,6 +61,6 @@ def test_send_markdown_with_secret_and_query_string() -> None:
             send_markdown(cfg, "Title", "Content")
 
             call_args = mock_post.call_args
-            url = call_args.kwargs["url"]
+            url = call_args[0][0]
             # Should use & instead of ? since URL already has query string
             assert "&timestamp=" in url

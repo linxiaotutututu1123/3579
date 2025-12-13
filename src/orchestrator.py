@@ -81,7 +81,8 @@ def handle_risk_update(
         )
     ]
     risk_events.extend(
-        RiskEvent(type=e.type, ts=e.ts, correlation_id=correlation_id, data=e.data) for e in raw_risk_events
+        RiskEvent(type=e.type, ts=e.ts, correlation_id=correlation_id, data=e.data)
+        for e in raw_risk_events
     )
 
     exec_records: list[ExecutionRecord] = []

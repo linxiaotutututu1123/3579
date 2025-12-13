@@ -59,7 +59,9 @@ class FlattenExecutor:
         self._events.clear()
         return ev
 
-    def execute(self, intents: Iterable[OrderIntent], *, correlation_id: str = "") -> list[ExecutionRecord]:
+    def execute(
+        self, intents: Iterable[OrderIntent], *, correlation_id: str = ""
+    ) -> list[ExecutionRecord]:
         intents_list = list(intents)
         records: list[ExecutionRecord] = []
 
@@ -112,7 +114,9 @@ class FlattenExecutor:
                 )
 
                 if intent.offset == Offset.CLOSETODAY:
-                    j = _find_next_more_aggressive_close(intents_list, start_index=i, reference=intent)
+                    j = _find_next_more_aggressive_close(
+                        intents_list, start_index=i, reference=intent
+                    )
                     if j is not None:
                         i = j
                         continue
