@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+import time
 from dataclasses import dataclass
+from typing import Iterable
 
 from src.execution.broker import Broker, CloseTodayRejected, OrderAck, OrderRejected
+from src.execution.events import ExecutionEvent, ExecutionEventType
 from src.execution.order_types import Offset, OrderIntent, Side
 
 
@@ -32,12 +34,6 @@ def _find_next_more_aggressive_close(
     start_index: int,
     reference: OrderIntent,
 ) -> int | None:
-    """
-    Find the next intent after start_index that:
-    - matches symbol, side, qty
-    - has Offset.CLOSE
-    - is more aggressive than reference (price moved in aggressive direction)
-    """
     for j in range(start_index + 1, len(intents)):
         cand = intents[j]
         if cand.symbol != reference.symbol:
@@ -54,62 +50,98 @@ def _find_next_more_aggressive_close(
 
 
 class FlattenExecutor:
-    def __init__(self, broker: Broker) -> None:
+    def __init__(self, broker: Broker, *, now_cb=time.time) -> None:
         self._broker = broker
+        self._now = now_cb
+        self._events: list[ExecutionEvent] = []
+
+    def drain_events(self) -> list[ExecutionEvent]:
+        ev = self._events[:]
+        self._events.clear()
+        return ev
 
     def execute(self, intents: Iterable[OrderIntent]) -> list[ExecutionRecord]:
-        """
-        Execute flatten intents sequentially. This executor is dumb on purpose:
-        - tries intents in order
-        - on CloseTodayRejected: jump to the next MORE aggressive CLOSE intent
-        - records every attempt
-        """
         intents_list = list(intents)
         records: list[ExecutionRecord] = []
 
         i = 0
         while i < len(intents_list):
             intent = intents_list[i]
+            ts = self._now()
             try:
                 ack: OrderAck = self._broker.place_order(intent)
-                records.append(
-                    ExecutionRecord(
-                        intent=intent,
-                        ok=True,
+                rec = ExecutionRecord(
+                    intent=intent,
+                    ok=True,
+                    order_id=ack.order_id,
+                    note="placed",
+                )
+                records.append(rec)
+                self._events.append(
+                    ExecutionEvent(
+                        type=ExecutionEventType.ORDER_PLACED,
+                        ts=ts,
+                        symbol=intent.symbol,
+                        side=intent.side.value,
+                        offset=intent.offset.value,
+                        price=float(intent.price),
+                        qty=int(intent.qty),
                         order_id=ack.order_id,
-                        note="placed",
+                        note=rec.note,
                     )
                 )
-                # In real trading you'd stop once filled; here we only model attempt log.
                 i += 1
             except CloseTodayRejected as e:
-                records.append(
-                    ExecutionRecord(
-                        intent=intent,
-                        ok=False,
-                        error_type=type(e).__name__,
-                        error_message=str(e),
-                        note="closetoday_rejected",
+                rec = ExecutionRecord(
+                    intent=intent,
+                    ok=False,
+                    error_type=type(e).__name__,
+                    error_message=str(e),
+                    note="closetoday_rejected",
+                )
+                records.append(rec)
+                self._events.append(
+                    ExecutionEvent(
+                        type=ExecutionEventType.ORDER_REJECTED,
+                        ts=ts,
+                        symbol=intent.symbol,
+                        side=intent.side.value,
+                        offset=intent.offset.value,
+                        price=float(intent.price),
+                        qty=int(intent.qty),
+                        error_type=rec.error_type,
+                        error_message=rec.error_message,
+                        note=rec.note,
                     )
                 )
 
                 if intent.offset == Offset.CLOSETODAY:
-                    j = _find_next_more_aggressive_close(
-                        intents_list, start_index=i, reference=intent
-                    )
+                    j = _find_next_more_aggressive_close(intents_list, start_index=i, reference=intent)
                     if j is not None:
                         i = j
                         continue
-
                 i += 1
             except OrderRejected as e:
-                records.append(
-                    ExecutionRecord(
-                        intent=intent,
-                        ok=False,
-                        error_type=type(e).__name__,
-                        error_message=str(e),
-                        note="rejected",
+                rec = ExecutionRecord(
+                    intent=intent,
+                    ok=False,
+                    error_type=type(e).__name__,
+                    error_message=str(e),
+                    note="rejected",
+                )
+                records.append(rec)
+                self._events.append(
+                    ExecutionEvent(
+                        type=ExecutionEventType.ORDER_REJECTED,
+                        ts=ts,
+                        symbol=intent.symbol,
+                        side=intent.side.value,
+                        offset=intent.offset.value,
+                        price=float(intent.price),
+                        qty=int(intent.qty),
+                        error_type=rec.error_type,
+                        error_message=rec.error_message,
+                        note=rec.note,
                     )
                 )
                 i += 1
