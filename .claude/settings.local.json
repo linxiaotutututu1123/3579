@@ -10,7 +10,8 @@
       "Bash(xxd:*)",
       "Bash(find:*)",
       "Bash(cat:*)",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(git add:*)"
     ]
   }
 }
