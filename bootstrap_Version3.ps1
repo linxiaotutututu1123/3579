@@ -1,34 +1,36 @@
 Param(
   [Parameter(Position=0)]
-  [string]$Root = "."
+  [ValidateSet("apply","clean")]
+  [string]$Mode = "apply"
 )
 
 $ErrorActionPreference = "Stop"
 
-function Ensure-Dir([string]$path) {
-  if (-not (Test-Path $path)) { New-Item -ItemType Directory -Force -Path $path | Out-Null }
+function Ensure-Dir([string]$Path) {
+  if ($Path -and -not (Test-Path $Path)) {
+    New-Item -ItemType Directory -Force -Path $Path | Out-Null
+  }
 }
 
-function Write-FileUtf8([string]$path, [string]$content) {
-  $dir = Split-Path $path -Parent
-  if ($dir -and $dir -ne "." -and -not (Test-Path $dir)) { Ensure-Dir $dir }
-
-  # Force UTF8 (no BOM) for consistency
-  $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-  [System.IO.File]::WriteAllText($path, $content, $utf8NoBom)
+function Write-TextFile([string]$Path, [string]$Content) {
+  $dir = Split-Path -Parent $Path
+  Ensure-Dir $dir
+  # Use LF to reduce diffs across systems
+  $normalized = $Content.Replace("`r`n", "`n").Replace("`r", "`n")
+  Set-Content -Path $Path -Value $normalized -Encoding UTF8 -NoNewline
 }
 
-Set-Location $Root
+if ($Mode -eq "clean") {
+  Remove-Item -Recurse -Force ".github","src","tests","scripts" -ErrorAction SilentlyContinue
+  Remove-Item -Force "README.md","SPEC_RISK.md","requirements.txt","requirements-dev.txt","pyproject.toml",".env.example" -ErrorAction SilentlyContinue
+  Write-Host "Cleaned skeleton files."
+  exit 0
+}
 
-# Directories
-Ensure-Dir ".github/workflows"
-Ensure-Dir "scripts"
-Ensure-Dir "src/risk"
-Ensure-Dir "src/alerts"
-Ensure-Dir "tests"
-
-# Files
-Write-FileUtf8 ".github/workflows/ci.yml" @"
+# -----------------------
+# .github/workflows/ci.yml
+# -----------------------
+Write-TextFile ".github/workflows/ci.yml" @"
 name: ci
 
 on:
@@ -87,7 +89,10 @@ jobs:
           if-no-files-found: ignore
 "@
 
-Write-FileUtf8 "README.md" @"
+# -----
+# README
+# -----
+Write-TextFile "README.md" @"
 # cn-futures-auto-trader (Windows + GitHub CI gate)
 
 This repo is a **skeleton** for a CN futures fully-automated trading system.
@@ -121,7 +126,10 @@ You *can* run locally, but per your requirement CI is the gate.
 (These mimic the CI steps.)
 "@
 
-Write-FileUtf8 "SPEC_RISK.md" @"
+# ---------
+# SPEC_RISK
+# ---------
+Write-TextFile "SPEC_RISK.md" @"
 # RiskPolicy v1.1 (Final)
 
 ## Instruments
@@ -147,21 +155,24 @@ Write-FileUtf8 "SPEC_RISK.md" @"
 - Alerts: DingTalk webhook
 "@
 
-Write-FileUtf8 "requirements.txt" @"
+# ------------
+# Dependencies
+# ------------
+Write-TextFile "requirements.txt" @"
 pydantic>=2.7
 python-dotenv>=1.0
 requests>=2.32
 PyYAML>=6.0
 "@
 
-Write-FileUtf8 "requirements-dev.txt" @"
+Write-TextFile "requirements-dev.txt" @"
 ruff>=0.7
 mypy>=1.11
 pytest>=8.2
 types-requests>=2.32
 "@
 
-Write-FileUtf8 "pyproject.toml" @"
+Write-TextFile "pyproject.toml" @"
 [project]
 name = "cn-futures-auto-trader"
 version = "0.1.0"
@@ -188,65 +199,68 @@ pretty = true
 testpaths = ["tests"]
 "@
 
-Write-FileUtf8 ".env.example" @"
+Write-TextFile ".env.example" @"
 DINGTALK_WEBHOOK_URL=
 DINGTALK_SECRET=
 BASELINE_TIME=09:00:00
 "@
 
-Write-FileUtf8 "scripts/dev.ps1" @"
+# ------------
+# scripts/dev.ps1
+# ------------
+Write-TextFile "scripts/dev.ps1" @"
 Param(
   [Parameter(Position=0)]
   [ValidateSet("init","check","fix","test","type","lint","fmt","context","clean")]
-  [string]`$Task = "check"
+  [string]$Task = "check"
 )
 
-`$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
-`$VenvPath = ".venv"
-`$Py = Join-Path `$VenvPath "Scripts\python.exe"
-`$Pip = Join-Path `$VenvPath "Scripts\pip.exe"
+$VenvPath = ".venv"
+$Py = Join-Path $VenvPath "Scripts\python.exe"
+$Pip = Join-Path $VenvPath "Scripts\pip.exe"
 
 function Ensure-Venv {
-  if (-not (Test-Path `$VenvPath)) {
-    python -m venv `$VenvPath
+  if (-not (Test-Path $VenvPath)) {
+    python -m venv $VenvPath
   }
 }
 
 function Install-Deps {
-  & `$Py -m pip install -U pip
-  & `$Pip install -r requirements.txt -r requirements-dev.txt
+  & $Py -m pip install -U pip
+  & $Pip install -r requirements.txt -r requirements-dev.txt
 }
 
 function Ensure-Artifacts {
   New-Item -ItemType Directory -Force -Path "artifacts\context" | Out-Null
 }
 
-switch (`$Task) {
+switch ($Task) {
   "init" {
     Ensure-Venv
     Install-Deps
   }
   "fmt" {
     Ensure-Venv
-    & `$Py -m ruff format .
+    & $Py -m ruff format .
   }
   "lint" {
     Ensure-Venv
-    & `$Py -m ruff check .
+    & $Py -m ruff check .
   }
   "type" {
     Ensure-Venv
-    & `$Py -m mypy .
+    & $Py -m mypy .
   }
   "test" {
     Ensure-Venv
-    & `$Py -m pytest -q
+    & $Py -m pytest -q
   }
   "fix" {
     Ensure-Venv
-    & `$Py -m ruff format .
-    & `$Py -m ruff check . --fix
+    & $Py -m ruff format .
+    & $Py -m ruff check . --fix
   }
   "context" {
     Ensure-Venv
@@ -256,15 +270,15 @@ switch (`$Task) {
       git rev-parse HEAD > artifacts\context\git_commit.txt
       git status --porcelain=v1 > artifacts\context\git_status.txt
     } catch {}
-    & `$Py scripts\export_context.py --out artifacts\context\context.md
+    & $Py scripts\export_context.py --out artifacts\context\context.md
   }
   "check" {
     Ensure-Venv
     powershell -ExecutionPolicy Bypass -File scripts/dev.ps1 context
-    & `$Py -m ruff format --check .
-    & `$Py -m ruff check .
-    & `$Py -m mypy .
-    & `$Py -m pytest -q
+    & $Py -m ruff format --check .
+    & $Py -m ruff check .
+    & $Py -m mypy .
+    & $Py -m pytest -q
   }
   "clean" {
     Remove-Item -Recurse -Force artifacts -ErrorAction SilentlyContinue
@@ -272,7 +286,10 @@ switch (`$Task) {
 }
 "@
 
-Write-FileUtf8 "scripts/export_context.py" @"
+# -----------------------
+# scripts/export_context.py
+# -----------------------
+Write-TextFile "scripts/export_context.py" @"
 from __future__ import annotations
 
 import argparse
@@ -319,11 +336,14 @@ if __name__ == "__main__":
     main()
 "@
 
-Write-FileUtf8 "src/__init__.py" @"
+# -------
+# src/*
+# -------
+Write-TextFile "src/__init__.py" @"
 __all__ = []
 "@
 
-Write-FileUtf8 "src/config.py" @"
+Write-TextFile "src/config.py" @"
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -354,7 +374,7 @@ def load_settings() -> AppSettings:
     return AppSettings(baseline_time=baseline_time, dingtalk=dingtalk)
 "@
 
-Write-FileUtf8 "src/main.py" @"
+Write-TextFile "src/main.py" @"
 from __future__ import annotations
 
 from pathlib import Path
@@ -379,11 +399,11 @@ if __name__ == "__main__":
     main()
 "@
 
-Write-FileUtf8 "src/risk/__init__.py" @"
+Write-TextFile "src/risk/__init__.py" @"
 __all__ = ["state", "manager"]
 "@
 
-Write-FileUtf8 "src/risk/state.py" @"
+Write-TextFile "src/risk/state.py" @"
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -431,7 +451,7 @@ class RiskState:
         return (equity_now - self.e0) / self.e0
 "@
 
-Write-FileUtf8 "src/risk/manager.py" @"
+Write-TextFile "src/risk/manager.py" @"
 from __future__ import annotations
 
 import time
@@ -512,11 +532,11 @@ class RiskManager:
         return Decision(True, "ok")
 "@
 
-Write-FileUtf8 "src/alerts/__init__.py" @"
+Write-TextFile "src/alerts/__init__.py" @"
 __all__ = ["dingtalk"]
 "@
 
-Write-FileUtf8 "src/alerts/dingtalk.py" @"
+Write-TextFile "src/alerts/dingtalk.py" @"
 from __future__ import annotations
 
 import hmac
@@ -554,7 +574,10 @@ def send_markdown(cfg: DingTalkConfig, title: str, markdown_text: str) -> None:
     r.raise_for_status()
 "@
 
-Write-FileUtf8 "tests/test_risk_state_machine.py" @"
+# ------
+# tests/*
+# ------
+Write-TextFile "tests/test_risk_state_machine.py" @"
 from __future__ import annotations
 
 from src.risk.manager import RiskManager
@@ -652,7 +675,8 @@ def test_margin_gate_blocks_open_in_recovery() -> None:
     assert d.reason == "blocked_by_margin_ratio"
 "@
 
-Write-Host "OK. Files generated. Next:"
+Write-Host "Bootstrap files written."
+Write-Host "Next:"
 Write-Host "  git add ."
-Write-Host "  git commit -m 'chore: bootstrap skeleton + ci'"
+Write-Host "  git commit -m `"chore: bootstrap skeleton + ci`""
 Write-Host "  git push"
