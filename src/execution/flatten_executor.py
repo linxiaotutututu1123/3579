@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import time
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 from src.execution.broker import Broker, CloseTodayRejected, OrderAck, OrderRejected
 from src.execution.events import ExecutionEvent, ExecutionEventType
