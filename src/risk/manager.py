@@ -71,10 +71,9 @@ class RiskManager:
         if dd <= self.cfg.dd_limit:
             if not self.state.kill_switch_fired_today:
                 self._fire_kill_switch(dd=dd, equity=snap.equity)
-            else:
-                if self.state.mode != RiskMode.LOCKED:
-                    self.state.mode = RiskMode.LOCKED
-                    self._emit(RiskEventType.LOCKED_FOR_DAY, {"dd": dd, "equity": snap.equity})
+            elif self.state.mode == RiskMode.RECOVERY:
+                self.state.mode = RiskMode.LOCKED
+                self._emit(RiskEventType.LOCKED_FOR_DAY, {"dd": dd, "equity": snap.equity})
 
     def _fire_kill_switch(self, *, dd: float, equity: float) -> None:
         self.state.kill_switch_fired_today = True
