@@ -33,7 +33,7 @@ def test_kill_switch_triggers_flatten_execution() -> None:
         force_flatten_all_cb=flatten_all,
         now_cb=lambda: 0.0,
     )
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
+    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="")
     rm.pop_events()  # ignore baseline event
 
     # Broker/Executor

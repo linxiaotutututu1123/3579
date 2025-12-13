@@ -17,6 +17,6 @@ def test_init_gate_blocks_open_until_baseline_set() -> None:
     assert d.allow_open is False
     assert d.reason == "blocked_by_init:no_baseline"
 
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
+    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="")
     d2 = rm.can_open(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
     assert d2.allow_open is True

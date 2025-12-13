@@ -25,7 +25,7 @@ def test_events_baseline_kill_switch_recovery() -> None:
         now_cb=now_cb,
     )
 
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
+    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="")
     ev = rm.pop_events()
     assert [e.type for e in ev] == [RiskEventType.BASELINE_SET]
 
@@ -54,7 +54,7 @@ def test_events_locked_for_day_on_second_breach() -> None:
         force_flatten_all_cb=lambda: None,
         now_cb=now_cb,
     )
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
+    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="")
     rm.pop_events()
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0))
