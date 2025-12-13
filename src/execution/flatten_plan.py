@@ -72,7 +72,9 @@ def plan_force_flatten(
     prices.append(start)  # stage1 quote
     for i in range(1, policy.stage2_requotes + 1):
         prices.append(start + step * i)  # stage2 requotes
-    for i in range(policy.stage2_requotes + 1, policy.stage2_requotes + policy.max_cross_levels + 1):
+    for i in range(
+        policy.stage2_requotes + 1, policy.stage2_requotes + policy.max_cross_levels + 1
+    ):
         prices.append(start + step * i)  # stage3 bounded
 
     intents: list[OrderIntent] = []
