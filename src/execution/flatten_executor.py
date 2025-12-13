@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 
 from src.execution.broker import Broker, CloseTodayRejected, OrderAck, OrderRejected
@@ -50,7 +50,7 @@ def _find_next_more_aggressive_close(
 
 
 class FlattenExecutor:
-    def __init__(self, broker: Broker, *, now_cb=time.time) -> None:
+    def __init__(self, broker: Broker, *, now_cb: Callable[[], float] = time.time) -> None:
         self._broker = broker
         self._now = now_cb
         self._events: list[ExecutionEvent] = []
