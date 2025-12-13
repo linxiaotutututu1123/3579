@@ -4,7 +4,9 @@
       "Bash(python -m pytest:*)",
       "Bash(python -m ruff format:*)",
       "Bash(python -m ruff check:*)",
-      "Bash(python -m mypy:*)"
+      "Bash(python -m mypy:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)"
     ]
   }
 }
