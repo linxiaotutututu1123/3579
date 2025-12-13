@@ -1,6 +1,4 @@
-
-
-# RiskPolicy v1.1 (Final)
+﻿# RiskPolicy v1.1 (Final)
 
 ## Instruments
 - AO (SHFE), SA (CZCE), LC (GFEX) + 2 auto-selected later
