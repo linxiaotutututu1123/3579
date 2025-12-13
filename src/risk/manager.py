@@ -89,6 +89,10 @@ class RiskManager:
         self._force_flatten_all()
 
     def can_open(self, snap: AccountSnapshot) -> Decision:
+        # INIT gate: until baseline(E0) is set at 09:00, forbid opening positions
+        if self.state.e0 is None:
+            return Decision(False, "blocked_by_init:no_baseline")
+
         if self.state.mode in (RiskMode.COOLDOWN, RiskMode.LOCKED):
             return Decision(False, f"blocked_by_mode:{self.state.mode.value}")
 

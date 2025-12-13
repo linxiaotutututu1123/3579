@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 from src.execution.broker import Broker, CloseTodayRejected, OrderAck, OrderRejected
 from src.execution.order_types import Offset, OrderIntent, Side
