@@ -46,7 +46,9 @@ class RiskManager:
 
         if self.state.mode == RiskMode.COOLDOWN and self.state.cooldown_end_ts is not None:
             if now_ts >= self.state.cooldown_end_ts:
+                # cooldown结束这一刻只做状态切换，不在同一次 update 中再次触发 dd 判定
                 self.state.mode = RiskMode.RECOVERY
+                return
 
         dd = self.state.dd(snap.equity)
 
