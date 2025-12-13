@@ -38,7 +38,10 @@ def test_executor_emits_events_and_drain_clears() -> None:
     exe.execute(intents)
     ev = exe.drain_events()
 
-    assert [e.type for e in ev] == [ExecutionEventType.ORDER_REJECTED, ExecutionEventType.ORDER_PLACED]
+    assert [e.type for e in ev] == [
+        ExecutionEventType.ORDER_REJECTED,
+        ExecutionEventType.ORDER_PLACED,
+    ]
 
     ev2 = exe.drain_events()
     assert ev2 == []
