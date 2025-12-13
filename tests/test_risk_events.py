@@ -37,7 +37,7 @@ def test_events_baseline_kill_switch_recovery() -> None:
 
     now["t"] = 11
     rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0))
-    assert rm.state.mode == RiskMode.RECOVERY
+    assert rm.state.mode == RiskMode.RECOVERY  # type: ignore[comparison-overlap]
     ev = rm.pop_events()
     assert [e.type for e in ev] == [RiskEventType.ENTER_RECOVERY]
 
