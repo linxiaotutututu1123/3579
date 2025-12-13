@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Mapping, Sequence
 
-from src.execution.broker import Broker
 from src.execution.flatten_executor import ExecutionRecord, FlattenExecutor
 from src.execution.flatten_plan import BookTop, FlattenSpec, PositionToClose, build_flatten_intents
 from src.risk.events import RiskEvent, RiskEventType
