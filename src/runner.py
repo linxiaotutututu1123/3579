@@ -16,7 +16,9 @@ class Components:
     flatten: FlattenExecutor
 
 
-def init_components(*, broker: Broker, risk_cfg: RiskConfig | None = None) -> Components:
+def init_components(
+    *, broker: Broker, risk_cfg: RiskConfig | None = None
+) -> Components:
     """
     App composition root.
     - Loads settings/env
@@ -27,7 +29,7 @@ def init_components(*, broker: Broker, risk_cfg: RiskConfig | None = None) -> Co
 
     cfg = risk_cfg or RiskConfig()
 
-    # callbacks are still stubs here; later Step we will wire to Broker/OMS cancel/flatten actions
+    # callbacks are stubs; later wire to Broker/OMS cancel/flatten
     def cancel_all() -> None:
         # placeholder: integrate with OMS later
         return
@@ -36,7 +38,9 @@ def init_components(*, broker: Broker, risk_cfg: RiskConfig | None = None) -> Co
         # placeholder: integrate with flatten runner later
         return
 
-    risk = RiskManager(cfg, cancel_all_cb=cancel_all, force_flatten_all_cb=force_flatten_all)
+    risk = RiskManager(
+        cfg, cancel_all_cb=cancel_all, force_flatten_all_cb=force_flatten_all
+    )
     flatten = FlattenExecutor(broker)
 
     return Components(settings=settings, risk=risk, flatten=flatten)
