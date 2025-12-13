@@ -18,7 +18,12 @@ def test_kill_switch_then_cooldown_then_recovery() -> None:
         return now["t"]
 
     cfg = RiskConfig(dd_limit=-0.03, cooldown_seconds=90 * 60)
-    rm = RiskManager(cfg, cancel_all_cb=cancel_all, force_flatten_all_cb=flatten_all, now_cb=now_cb)
+    rm = RiskManager(
+        cfg,
+        cancel_all_cb=cancel_all,
+        force_flatten_all_cb=flatten_all,
+        now_cb=now_cb,
+    )
 
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
     assert rm.state.mode == RiskMode.NORMAL

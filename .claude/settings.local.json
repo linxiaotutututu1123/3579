@@ -6,7 +6,8 @@
       "Bash(python -m ruff check:*)",
       "Bash(python -m mypy:*)",
       "Bash(gh run list:*)",
-      "Bash(gh run view:*)"
+      "Bash(gh run view:*)",
+      "Bash(xxd:*)"
     ]
   }
 }
