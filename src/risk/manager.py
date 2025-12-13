@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Protocol
 
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode, RiskState
 
@@ -17,6 +17,10 @@ CancelAllCb = Callable[[], None]
 ForceFlattenAllCb = Callable[[], None]
 
 
+class NowCb(Protocol):
+    def __call__(self) -> float: ...
+
+
 class RiskManager:
     def __init__(
         self,
@@ -24,7 +28,7 @@ class RiskManager:
         *,
         cancel_all_cb: CancelAllCb,
         force_flatten_all_cb: ForceFlattenAllCb,
-        now_cb=time.time,
+        now_cb: NowCb = time.time,
     ) -> None:
         self.cfg = cfg
         self.state = RiskState()
@@ -44,11 +48,11 @@ class RiskManager:
 
         now_ts = self._now()
 
-        if self.state.mode == RiskMode.COOLDOWN and self.state.cooldown_end_ts is not None:
-            if now_ts >= self.state.cooldown_end_ts:
-                # cooldown结束这一刻只做状态切换，不在同一次 update 中再次触发 dd 判定
+        # 冷却期：只负责到点切换 RECOVERY，不做 dd 触发/锁仓判定
+        if self.state.mode == RiskMode.COOLDOWN:
+            if self.state.cooldown_end_ts is not None and now_ts >= self.state.cooldown_end_ts:
                 self.state.mode = RiskMode.RECOVERY
-                return
+            return
 
         dd = self.state.dd(snap.equity)
 

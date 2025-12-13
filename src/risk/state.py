@@ -34,10 +34,16 @@ class AccountSnapshot:
 
 @dataclass
 class RiskState:
-    mode: RiskMode = RiskMode.NORMAL
-    kill_switch_fired_today: bool = False
-    e0: float | None = None
-    cooldown_end_ts: float | None = None
+    mode: RiskMode
+    kill_switch_fired_today: bool
+    e0: float | None
+    cooldown_end_ts: float | None
+
+    def __init__(self) -> None:
+        self.mode = RiskMode.NORMAL
+        self.kill_switch_fired_today = False
+        self.e0 = None
+        self.cooldown_end_ts = None
 
     def dd(self, equity_now: float) -> float:
         if self.e0 is None or self.e0 == 0:
