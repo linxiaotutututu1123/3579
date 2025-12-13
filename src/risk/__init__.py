@@ -1,1 +1,1 @@
-﻿__all__ = ["state", "manager"]
+__all__ = ["state", "manager"]

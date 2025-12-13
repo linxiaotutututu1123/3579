@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from src.risk.manager import RiskManager
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode

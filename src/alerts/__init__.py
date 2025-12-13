@@ -1,1 +1,1 @@
-﻿__all__ = ["dingtalk"]
+__all__ = ["dingtalk"]
