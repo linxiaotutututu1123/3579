@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Protocol
+from typing import LiteralString, Protocol, TypeAlias
 
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode, RiskState
 
@@ -14,8 +14,8 @@ class Decision:
     reason: str = ""
 
 
-CancelAllCb = Callable[[], None]
-ForceFlattenAllCb = Callable[[], None]
+CancelAllCb: TypeAlias = Callable[[], None]
+ForceFlattenAllCb: TypeAlias = Callable[[], None]
 
 
 class NowCb(Protocol):
@@ -23,6 +23,9 @@ class NowCb(Protocol):
 
 
 class RiskManager:
+    cfg: RiskConfig
+    state: RiskState
+
     def __init__(
         self,
         cfg: RiskConfig,
@@ -33,9 +36,9 @@ class RiskManager:
     ) -> None:
         self.cfg = cfg
         self.state = RiskState()
-        self._cancel_all = cancel_all_cb
-        self._force_flatten_all = force_flatten_all_cb
-        self._now = now_cb
+        self._cancel_all: CancelAllCb = cancel_all_cb
+        self._force_flatten_all: ForceFlattenAllCb = force_flatten_all_cb
+        self._now: NowCb = now_cb
 
     def on_day_start_0900(self, snap: AccountSnapshot) -> None:
         self.state.e0 = snap.equity
@@ -47,15 +50,16 @@ class RiskManager:
         if self.state.e0 is None:
             return
 
-        now_ts = self._now()
+        now_ts: float = self._now()
 
         # 冷却期：只负责到点切换 RECOVERY，不做 dd 触发/锁仓判定
         if self.state.mode == RiskMode.COOLDOWN:
-            if self.state.cooldown_end_ts is not None and now_ts >= self.state.cooldown_end_ts:
+            if (self.state.cooldown_end_ts is not None
+                    and now_ts >= self.state.cooldown_end_ts):
                 self.state.mode = RiskMode.RECOVERY
             return
 
-        dd = self.state.dd(snap.equity)
+        dd: float = self.state.dd(equity_now=snap.equity)
 
         if dd <= self.cfg.dd_limit:
             if not self.state.kill_switch_fired_today:
@@ -72,7 +76,8 @@ class RiskManager:
 
     def can_open(self, snap: AccountSnapshot) -> Decision:
         if self.state.mode in (RiskMode.COOLDOWN, RiskMode.LOCKED):
-            return Decision(False, f"blocked_by_mode:{self.state.mode.value}")
+            reason: LiteralString = f"blocked_by_mode:{self.state.mode.value}"
+            return Decision(allow_open=False, reason=reason)
 
         max_margin = (
             self.cfg.max_margin_normal
@@ -80,6 +85,6 @@ class RiskManager:
             else self.cfg.max_margin_recovery
         )
         if snap.margin_ratio > max_margin:
-            return Decision(False, "blocked_by_margin_ratio")
+            return Decision(allow_open=False, reason="blocked_by_margin_ratio")
 
-        return Decision(True, "ok")
+        return Decision(allow_open=True, reason="ok")
