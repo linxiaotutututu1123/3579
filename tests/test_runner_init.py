@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from src.execution.broker import Broker, OrderAck
-from src.execution.order_types import Offset, OrderIntent, Side
+from src.execution.order_types import OrderIntent
 from src.runner import init_components
 
 
