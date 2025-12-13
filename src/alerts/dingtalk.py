@@ -18,7 +18,11 @@ class DingTalkConfig:
 
 def _sign(secret: str, timestamp_ms: int) -> str:
     string_to_sign = f"{timestamp_ms}\n{secret}"
-    h = hmac.new(secret.encode("utf-8"), string_to_sign.encode("utf-8"), digestmod="sha256").digest()
+    h = hmac.new(
+        secret.encode("utf-8"),
+        string_to_sign.encode("utf-8"),
+        digestmod="sha256",
+    ).digest()
     return urllib.parse.quote_plus(b64encode(h).decode("utf-8"))
 
 
@@ -30,6 +34,9 @@ def send_markdown(cfg: DingTalkConfig, title: str, markdown_text: str) -> None:
         connector = "&" if "?" in url else "?"
         url = f"{url}{connector}timestamp={ts}&sign={sign}"
 
-    payload = {"msgtype": "markdown", "markdown": {"title": title, "text": markdown_text}}
+    payload = {
+        "msgtype": "markdown",
+        "markdown": {"title": title, "text": markdown_text},
+    }
     r = requests.post(url, json=payload, timeout=cfg.timeout_seconds)
     r.raise_for_status()
