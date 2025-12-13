@@ -1,24 +1,24 @@
-﻿Param(
+Param(
   [Parameter(Position=0)]
   [ValidateSet("init","check","fix","test","type","lint","fmt","context","clean")]
   [string]$Command = "check"
 )
 
-Stop = "Stop"
+$ErrorActionPreference = "Stop"
 
- = ".venv"
- = Join-Path  "Scripts\python.exe"
- = Join-Path  "Scripts\pip.exe"
+$VenvDir = ".venv"
+$Python = Join-Path $VenvDir "Scripts\python.exe"
+$Pip = Join-Path $VenvDir "Scripts\pip.exe"
 
 function Ensure-Venv {
-  if (-not (Test-Path )) {
-    python -m venv 
+  if (-not (Test-Path $VenvDir)) {
+    python -m venv $VenvDir
   }
 }
 
 function Install-Deps {
-  &  -m pip install -U pip
-  &  install -r requirements.txt -r requirements-dev.txt
+  & $Python -m pip install -U pip
+  & $Pip install -r requirements.txt -r requirements-dev.txt
 }
 
 function Ensure-Artifacts {
@@ -32,24 +32,24 @@ switch ($Command) {
   }
   "fmt" {
     Ensure-Venv
-    &  -m ruff format .
+    & $Python -m ruff format .
   }
   "lint" {
     Ensure-Venv
-    &  -m ruff check .
+    & $Python -m ruff check .
   }
   "type" {
     Ensure-Venv
-    &  -m mypy .
+    & $Python -m mypy .
   }
   "test" {
     Ensure-Venv
-    &  -m pytest -q
+    & $Python -m pytest -q
   }
   "fix" {
     Ensure-Venv
-    &  -m ruff format .
-    &  -m ruff check . --fix
+    & $Python -m ruff format .
+    & $Python -m ruff check . --fix
   }
   "context" {
     Ensure-Venv
@@ -59,15 +59,15 @@ switch ($Command) {
       git rev-parse HEAD > artifacts\context\git_commit.txt
       git status --porcelain=v1 > artifacts\context\git_status.txt
     } catch {}
-    &  scripts\export_context.py --out artifacts\context\context.md
+    & $Python scripts\export_context.py --out artifacts\context\context.md
   }
   "check" {
     Ensure-Venv
     powershell -ExecutionPolicy Bypass -File scripts/dev.ps1 context
-    &  -m ruff format --check .
-    &  -m ruff check .
-    &  -m mypy .
-    &  -m pytest -q
+    & $Python -m ruff format --check .
+    & $Python -m ruff check .
+    & $Python -m mypy .
+    & $Python -m pytest -q
   }
   "clean" {
     Remove-Item -Recurse -Force artifacts -ErrorAction SilentlyContinue
