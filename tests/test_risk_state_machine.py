@@ -29,7 +29,7 @@ def test_kill_switch_then_cooldown_then_recovery() -> None:
     assert rm.state.mode == RiskMode.NORMAL
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0))
-    assert rm.state.mode == RiskMode.COOLDOWN
+    assert rm.state.mode == RiskMode.COOLDOWN  # type: ignore[comparison-overlap]
     assert rm.state.kill_switch_fired_today is True
     assert calls["cancel"] == 1
     assert calls["flatten"] == 1
