@@ -46,6 +46,7 @@ jobs:
           .\.venv\Scripts\python.exe -m pytest -q
 
       - name: Export context artifact (optional)
+        continue-on-error: true
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path artifacts\context | Out-Null
