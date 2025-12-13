@@ -44,7 +44,7 @@ jobs:
           .\.venv\Scripts\python.exe -m ruff format --check .
           .\.venv\Scripts\python.exe -m ruff check .
           .\.venv\Scripts\python.exe -m mypy .
-          .\.venv\Scripts\python.exe -m pytest -q
+          .\.venv\Scripts\python.exe -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=85
 
       - name: Export context artifact (optional)
         continue-on-error: true
