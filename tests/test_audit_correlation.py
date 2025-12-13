@@ -15,7 +15,7 @@ class NoopBroker(Broker):
         return OrderAck(order_id="oid-1")
 
 
-def test_all_risk_events_share_same_correlation_id_and_snapshot_hash_present() -> None:
+def test_audit_snapshot_event_and_correlation_id_are_added() -> None:
     rm = RiskManager(
         RiskConfig(dd_limit=-0.03, cooldown_seconds=10),
         cancel_all_cb=lambda: None,
@@ -23,7 +23,7 @@ def test_all_risk_events_share_same_correlation_id_and_snapshot_hash_present() -
         now_cb=lambda: 0.0,
     )
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
-    rm.pop_events()
+    rm.pop_events()  # ignore baseline event
 
     exe = FlattenExecutor(NoopBroker(), now_cb=lambda: 123.0)
 
@@ -38,10 +38,13 @@ def test_all_risk_events_share_same_correlation_id_and_snapshot_hash_present() -
     )
 
     assert res.correlation_id != ""
-    assert len(res.snapshot_hash) == 64
+    assert len(res.snapshot_hash) == 64  # sha256 hex
+
+    # first event is always the audit snapshot
     assert res.risk_events[0].type == RiskEventType.AUDIT_SNAPSHOT
     assert res.risk_events[0].ts == 999.0
+    assert res.risk_events[0].correlation_id == res.correlation_id
     assert res.risk_events[0].data["snapshot_hash"] == res.snapshot_hash
 
-    cids = {e.correlation_id for e in res.risk_events}
-    assert cids == {res.correlation_id}
+    # all risk events share the same correlation_id
+    assert {e.correlation_id for e in res.risk_events} == {res.correlation_id}

@@ -37,17 +37,12 @@ def _hash_snapshot(
     books: Mapping[str, BookTop],
 ) -> str:
     pos_data = [
-        {
-            "symbol": p.symbol,
-            "net_qty": p.net_qty,
-            "today_qty": p.today_qty,
-            "yesterday_qty": p.yesterday_qty,
-        }
+        {"symbol": p.symbol, "net_qty": p.net_qty, "today_qty": p.today_qty, "yesterday_qty": p.yesterday_qty}
         for p in sorted(positions, key=lambda x: x.symbol)
     ]
     book_data = {
-        k: {"best_bid": v.best_bid, "best_ask": v.best_ask, "tick": v.tick}
-        for k, v in sorted(books.items(), key=lambda kv: kv[0])
+        sym: {"best_bid": b.best_bid, "best_ask": b.best_ask, "tick": b.tick}
+        for sym, b in sorted(books.items(), key=lambda kv: kv[0])
     }
     payload = {
         "snap": {"equity": snap.equity, "margin_used": snap.margin_used},
@@ -68,39 +63,25 @@ def handle_risk_update(
     flatten_spec: FlattenSpec | None = None,
     now_cb: NowCb = time.time,
 ) -> OrchestratorResult:
-    """
-    Highest-grade glue:
-    - generate correlation_id for this tick
-    - compute snapshot hash for audit/replay
-    - update risk state
-    - drain risk events
-    - if kill switch fired, generate flatten intents and execute (passing correlation_id)
-    """
     correlation_id = uuid.uuid4().hex
     snapshot_hash = _hash_snapshot(snap=snap, positions=positions, books=books)
 
-    risk.update(snap)
-    raw_risk_events = risk.pop_events()
+    risk.update(snap, correlation_id=correlation_id)
+    risk_events = risk.pop_events()
 
-    ts = now_cb()
-
-    # Prepend audit snapshot event, and attach correlation_id to all events.
-    risk_events: list[RiskEvent] = [
+    # Highest-grade: always include audit snapshot event as the first event.
+    risk_events = [
         RiskEvent(
             type=RiskEventType.AUDIT_SNAPSHOT,
-            ts=ts,
+            ts=now_cb(),
             correlation_id=correlation_id,
             data={"snapshot_hash": snapshot_hash},
-        )
+        ),
+        *risk_events,
     ]
-    risk_events.extend(
-        RiskEvent(type=e.type, ts=e.ts, correlation_id=correlation_id, data=e.data)
-        for e in raw_risk_events
-    )
 
     exec_records: list[ExecutionRecord] = []
-
-    fired = any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in raw_risk_events)
+    fired = any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in risk_events)
     if fired:
         spec = flatten_spec or FlattenSpec()
         for pos in positions:

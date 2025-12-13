@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any, Protocol
 
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode, RiskState
@@ -18,6 +19,10 @@ CancelAllCb = Callable[[], None]
 ForceFlattenAllCb = Callable[[], None]
 
 
+class NowCb(Protocol):
+    def __call__(self) -> float: ...
+
+
 class RiskManager:
     def __init__(
         self,
@@ -25,7 +30,7 @@ class RiskManager:
         *,
         cancel_all_cb: CancelAllCb,
         force_flatten_all_cb: ForceFlattenAllCb,
-        now_cb: Callable[[], float] = time.time,
+        now_cb: NowCb = time.time,
     ) -> None:
         self.cfg = cfg
         self.state = RiskState()
@@ -35,63 +40,80 @@ class RiskManager:
         self._events: list[RiskEvent] = []
 
     def pop_events(self) -> list[RiskEvent]:
-        ev, self._events = self._events, []
+        ev = self._events[:]
+        self._events.clear()
         return ev
 
-    def _emit(self, type_: RiskEventType, data: dict, correlation_id: str = "") -> None:
-        self._events.append(
-            RiskEvent(type=type_, ts=self._now(), correlation_id=correlation_id, data=data)
-        )
-
-    def on_day_start_0900(self, snap: AccountSnapshot) -> None:
+    def on_day_start_0900(self, snap: AccountSnapshot, *, correlation_id: str) -> None:
         self.state.e0 = snap.equity
         self.state.mode = RiskMode.NORMAL
         self.state.kill_switch_fired_today = False
         self.state.cooldown_end_ts = None
-        self._emit(RiskEventType.BASELINE_SET, {"e0": snap.equity})
 
-    def update(self, snap: AccountSnapshot) -> None:
+        self._events.append(
+            RiskEvent(
+                type=RiskEventType.BASELINE_SET,
+                ts=self._now(),
+                correlation_id=correlation_id,
+                data={"e0": snap.equity},
+            )
+        )
+
+    def update(self, snap: AccountSnapshot, *, correlation_id: str) -> None:
+        # INIT gate (baseline missing)
         if self.state.e0 is None:
             return
 
         now_ts = self._now()
 
-        # cooldown -> recovery transition happens on time
-        if (
-            self.state.mode == RiskMode.COOLDOWN
-            and self.state.cooldown_end_ts is not None
-            and now_ts >= self.state.cooldown_end_ts
-        ):
-            self.state.mode = RiskMode.RECOVERY
-            self._emit(
-                RiskEventType.ENTER_RECOVERY, {"cooldown_end_ts": self.state.cooldown_end_ts}
-            )
+        if self.state.mode == RiskMode.COOLDOWN:
+            if self.state.cooldown_end_ts is not None and now_ts >= self.state.cooldown_end_ts:
+                self.state.mode = RiskMode.RECOVERY
+                self._events.append(
+                    RiskEvent(
+                        type=RiskEventType.ENTER_RECOVERY,
+                        ts=now_ts,
+                        correlation_id=correlation_id,
+                        data={"cooldown_end_ts": self.state.cooldown_end_ts},
+                    )
+                )
+            return
 
         dd = self.state.dd(snap.equity)
 
-        # dd breach handling
         if dd <= self.cfg.dd_limit:
             if not self.state.kill_switch_fired_today:
-                self._fire_kill_switch(dd=dd, equity=snap.equity)
-            elif self.state.mode == RiskMode.RECOVERY:
+                self._fire_kill_switch(correlation_id=correlation_id)
+            else:
                 self.state.mode = RiskMode.LOCKED
-                self._emit(RiskEventType.LOCKED_FOR_DAY, {"dd": dd, "equity": snap.equity})
+                self._events.append(
+                    RiskEvent(
+                        type=RiskEventType.LOCKED_FOR_DAY,
+                        ts=now_ts,
+                        correlation_id=correlation_id,
+                        data={"dd": dd},
+                    )
+                )
 
-    def _fire_kill_switch(self, *, dd: float, equity: float) -> None:
+    def _fire_kill_switch(self, *, correlation_id: str) -> None:
+        now_ts = self._now()
         self.state.kill_switch_fired_today = True
         self.state.mode = RiskMode.COOLDOWN
-        self.state.cooldown_end_ts = self._now() + self.cfg.cooldown_seconds
-
-        self._emit(
-            RiskEventType.KILL_SWITCH_FIRED,
-            {"dd": dd, "equity": equity, "cooldown_end_ts": self.state.cooldown_end_ts},
-        )
+        self.state.cooldown_end_ts = now_ts + self.cfg.cooldown_seconds
 
         self._cancel_all()
         self._force_flatten_all()
 
+        self._events.append(
+            RiskEvent(
+                type=RiskEventType.KILL_SWITCH_FIRED,
+                ts=now_ts,
+                correlation_id=correlation_id,
+                data={"cooldown_end_ts": self.state.cooldown_end_ts},
+            )
+        )
+
     def can_open(self, snap: AccountSnapshot) -> Decision:
-        # INIT gate: until baseline(E0) is set at 09:00, forbid opening positions
         if self.state.e0 is None:
             return Decision(False, "blocked_by_init:no_baseline")
 
