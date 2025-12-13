@@ -13,6 +13,7 @@ class ExecutionEventType(str, Enum):
 class ExecutionEvent:
     type: ExecutionEventType
     ts: float
+    correlation_id: str
     symbol: str
     side: str
     offset: str

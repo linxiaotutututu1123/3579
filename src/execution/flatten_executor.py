@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Callable, Iterable
 from dataclasses import dataclass
+from typing import Iterable
 
 from src.execution.broker import Broker, CloseTodayRejected, OrderAck, OrderRejected
 from src.execution.events import ExecutionEvent, ExecutionEventType
@@ -22,7 +22,6 @@ class ExecutionRecord:
 def _is_more_aggressive(reference: OrderIntent, candidate: OrderIntent) -> bool:
     if reference.side != candidate.side:
         return False
-    # SELL => more aggressive is LOWER price; BUY => higher price
     if reference.side == Side.SELL:
         return candidate.price < reference.price
     return candidate.price > reference.price
@@ -50,7 +49,7 @@ def _find_next_more_aggressive_close(
 
 
 class FlattenExecutor:
-    def __init__(self, broker: Broker, *, now_cb: Callable[[], float] = time.time) -> None:
+    def __init__(self, broker: Broker, *, now_cb=time.time) -> None:
         self._broker = broker
         self._now = now_cb
         self._events: list[ExecutionEvent] = []
@@ -60,7 +59,7 @@ class FlattenExecutor:
         self._events.clear()
         return ev
 
-    def execute(self, intents: Iterable[OrderIntent]) -> list[ExecutionRecord]:
+    def execute(self, intents: Iterable[OrderIntent], *, correlation_id: str = "") -> list[ExecutionRecord]:
         intents_list = list(intents)
         records: list[ExecutionRecord] = []
 
@@ -70,17 +69,13 @@ class FlattenExecutor:
             ts = self._now()
             try:
                 ack: OrderAck = self._broker.place_order(intent)
-                rec = ExecutionRecord(
-                    intent=intent,
-                    ok=True,
-                    order_id=ack.order_id,
-                    note="placed",
-                )
+                rec = ExecutionRecord(intent=intent, ok=True, order_id=ack.order_id, note="placed")
                 records.append(rec)
                 self._events.append(
                     ExecutionEvent(
                         type=ExecutionEventType.ORDER_PLACED,
                         ts=ts,
+                        correlation_id=correlation_id,
                         symbol=intent.symbol,
                         side=intent.side.value,
                         offset=intent.offset.value,
@@ -104,6 +99,7 @@ class FlattenExecutor:
                     ExecutionEvent(
                         type=ExecutionEventType.ORDER_REJECTED,
                         ts=ts,
+                        correlation_id=correlation_id,
                         symbol=intent.symbol,
                         side=intent.side.value,
                         offset=intent.offset.value,
@@ -116,9 +112,7 @@ class FlattenExecutor:
                 )
 
                 if intent.offset == Offset.CLOSETODAY:
-                    j = _find_next_more_aggressive_close(
-                        intents_list, start_index=i, reference=intent
-                    )
+                    j = _find_next_more_aggressive_close(intents_list, start_index=i, reference=intent)
                     if j is not None:
                         i = j
                         continue
@@ -136,6 +130,7 @@ class FlattenExecutor:
                     ExecutionEvent(
                         type=ExecutionEventType.ORDER_REJECTED,
                         ts=ts,
+                        correlation_id=correlation_id,
                         symbol=intent.symbol,
                         side=intent.side.value,
                         offset=intent.offset.value,
