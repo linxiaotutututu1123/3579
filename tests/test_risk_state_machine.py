@@ -70,7 +70,7 @@ def test_second_breach_locks_for_day() -> None:
 
     now["t"] = 2
     rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0))
-    assert rm.state.mode == RiskMode.RECOVERY
+    assert rm.state.mode == RiskMode.RECOVERY  # type: ignore[comparison-overlap]
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0))
     assert rm.state.mode == RiskMode.LOCKED
