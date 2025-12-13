@@ -34,7 +34,7 @@ def test_kill_switch_triggers_flatten_execution() -> None:
         now_cb=lambda: 0.0,
     )
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
-    rm.drain_events()  # ignore baseline event
+    rm.pop_events()  # ignore baseline event
 
     # Broker/Executor
     broker = CountingBroker()

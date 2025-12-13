@@ -32,7 +32,7 @@ def handle_risk_update(
     - if kill switch fired, generate flatten intents for each position and execute
     """
     risk.update(snap)
-    risk_events = risk.drain_events()
+    risk_events = risk.pop_events()
 
     exec_records: list[ExecutionRecord] = []
 
