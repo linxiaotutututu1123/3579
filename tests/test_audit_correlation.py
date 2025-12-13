@@ -23,7 +23,7 @@ def test_audit_snapshot_event_and_correlation_id_are_added() -> None:
         now_cb=lambda: 0.0,
     )
     snap = AccountSnapshot(equity=1_000_000.0, margin_used=0.0)
-    rm.on_day_start_0900(snap, correlation_id="init")
+    rm.on_day_start_0900(snap, correlation_id="init", correlation_id="")
     rm.pop_events()  # clear baseline event
 
     exe = FlattenExecutor(NoopBroker(), now_cb=lambda: 123.0)
