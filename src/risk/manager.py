@@ -24,7 +24,7 @@ class RiskManager:
         *,
         cancel_all_cb: CancelAllCb,
         force_flatten_all_cb: ForceFlattenAllCb,
-        now_cb=time.time,
+        now_cb: Callable[[], float] = time.time,
     ) -> None:
         self.cfg = cfg
         self.state = RiskState()
