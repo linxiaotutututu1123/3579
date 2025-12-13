@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
+from collections.abc import Iterable
 
 from src.execution.broker import Broker, CloseTodayRejected, OrderAck, OrderRejected
 from src.execution.order_types import Offset, OrderIntent, Side
@@ -94,7 +94,9 @@ class FlattenExecutor:
                 )
 
                 if intent.offset == Offset.CLOSETODAY:
-                    j = _find_next_more_aggressive_close(intents_list, start_index=i, reference=intent)
+                    j = _find_next_more_aggressive_close(
+                        intents_list, start_index=i, reference=intent
+                    )
                     if j is not None:
                         i = j
                         continue

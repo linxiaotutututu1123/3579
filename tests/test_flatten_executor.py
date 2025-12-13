@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import itertools
-
 from src.execution.broker import Broker, CloseTodayRejected, OrderAck, OrderRejected
 from src.execution.flatten_executor import FlattenExecutor
 from src.execution.order_types import Offset, OrderIntent, Side
