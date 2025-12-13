@@ -6,99 +6,122 @@ from src.execution.order_types import Offset, OrderIntent, Side
 
 
 @dataclass(frozen=True)
-class FlattenPolicy:
-    """
-    Implements SPEC_RISK force-flatten *planning*.
-    Execution (placing/canceling orders) will come later.
-
-    Stages:
-    - Stage1: hold near best for t1 seconds (here we only emit the initial quote)
-    - Stage2: dt requotes, each step moves 1 tick further through the book
-    - Stage3: more aggressive crossing, bounded by max_cross_levels
-    """
-
-    t1_seconds: int = 5
-    stage2_dt_seconds: int = 2
-    stage2_requotes: int = 12
-    tick_size: float = 1.0
-    max_cross_levels: int = 12
-
-
-@dataclass(frozen=True)
 class BookTop:
     best_bid: float
     best_ask: float
+    tick: float
 
 
-def _clamp_qty(qty: int) -> int:
-    if qty < 0:
-        raise ValueError("qty must be >= 0")
-    return qty
+@dataclass(frozen=True)
+class PositionToClose:
+    symbol: str
+    net_qty: int
+    # Split into today/yesterday quantities to model CloseToday priority.
+    # Use absolute quantities here; sign is carried by net_qty.
+    today_qty: int
+    yesterday_qty: int
+
+    def __post_init__(self) -> None:
+        if self.today_qty < 0 or self.yesterday_qty < 0:
+            raise ValueError("today_qty/yesterday_qty must be >= 0.")
+        if abs(self.net_qty) != self.today_qty + self.yesterday_qty:
+            raise ValueError("abs(net_qty) must equal today_qty + yesterday_qty.")
 
 
-def plan_force_flatten(
+@dataclass(frozen=True)
+class FlattenSpec:
+    stage1_cross_ticks: int = 0
+    stage2_requotes: int = 12
+    stage2_step_ticks: int = 1
+    stage3_max_cross_levels: int = 12
+
+
+def _quantize(price: float, tick: float) -> float:
+    steps = round(price / tick)
+    return steps * tick
+
+
+def _sell_price(book: BookTop, cross_ticks: int) -> float:
+    # SELL: more aggressive => lower price
+    return _quantize(book.best_bid - cross_ticks * book.tick, book.tick)
+
+
+def _buy_price(book: BookTop, cross_ticks: int) -> float:
+    # BUY: more aggressive => higher price
+    return _quantize(book.best_ask + cross_ticks * book.tick, book.tick)
+
+
+def build_flatten_intents(
     *,
-    symbol: str,
+    pos: PositionToClose,
     book: BookTop,
-    net_pos: int,
-    close_today_qty: int,
-    policy: FlattenPolicy,
+    spec: FlattenSpec,
 ) -> list[OrderIntent]:
     """
-    Returns a list of OrderIntent to try sequentially.
-    - net_pos > 0: long -> need SELL to flatten
-    - net_pos < 0: short -> need BUY to flatten
-    - close_today_qty: quantity eligible for CLOSETODAY (<= abs(net_pos))
+    Planning-only: build deterministic OrderIntents for flattening a position.
+    - net_qty > 0 (long): SELL close
+    - net_qty < 0 (short): BUY close
+    LIMIT-only, CloseToday first.
     """
-    _clamp_qty(abs(net_pos))
-    close_today_qty = _clamp_qty(close_today_qty)
-
-    abs_pos = abs(net_pos)
-    if abs_pos == 0:
+    if pos.net_qty == 0:
         return []
 
-    if close_today_qty > abs_pos:
-        raise ValueError("close_today_qty cannot exceed abs(net_pos)")
+    side = Side.SELL if pos.net_qty > 0 else Side.BUY
 
-    side = Side.SELL if net_pos > 0 else Side.BUY
+    chunks: list[tuple[Offset, int]] = []
+    if pos.today_qty > 0:
+        chunks.append((Offset.CLOSETODAY, pos.today_qty))
+    if pos.yesterday_qty > 0:
+        chunks.append((Offset.CLOSE, pos.yesterday_qty))
 
-    # price ladder: stage1 (1 quote) + stage2 (n quotes) + stage3 (up to max cross levels)
-    # For SELL: start at best_bid then step down (worse price) by tick to get filled.
-    # For BUY : start at best_ask then step up  (worse price) by tick to get filled.
-    start = book.best_bid if side == Side.SELL else book.best_ask
-    step = -policy.tick_size if side == Side.SELL else policy.tick_size
-
-    prices: list[float] = []
-    prices.append(start)  # stage1 quote
-    for i in range(1, policy.stage2_requotes + 1):
-        prices.append(start + step * i)  # stage2 requotes
-    for i in range(
-        policy.stage2_requotes + 1, policy.stage2_requotes + policy.max_cross_levels + 1
-    ):
-        prices.append(start + step * i)  # stage3 bounded
+    def price_for_cross(cross_ticks: int) -> float:
+        if side == Side.SELL:
+            return _sell_price(book, cross_ticks)
+        return _buy_price(book, cross_ticks)
 
     intents: list[OrderIntent] = []
-    remaining = abs_pos
 
-    def emit(offset: Offset, qty: int, reason: str) -> None:
-        if qty <= 0:
-            return
-        for p in prices:
+    # Stage1
+    for offset, qty in chunks:
+        intents.append(
+            OrderIntent(
+                symbol=pos.symbol,
+                side=side,
+                offset=offset,
+                price=price_for_cross(spec.stage1_cross_ticks),
+                qty=qty,
+                reason="flatten:stage1",
+            )
+        )
+
+    # Stage2
+    for i in range(spec.stage2_requotes):
+        cross = (i + 1) * spec.stage2_step_ticks
+        for offset, qty in chunks:
             intents.append(
                 OrderIntent(
-                    symbol=symbol,
+                    symbol=pos.symbol,
                     side=side,
                     offset=offset,
-                    price=p,
+                    price=price_for_cross(cross),
                     qty=qty,
-                    reason=reason,
+                    reason=f"flatten:stage2:{i+1}",
                 )
             )
 
-    # Prefer CLOSETODAY first (SPEC) then fallback CLOSE for remaining
-    ct = min(close_today_qty, remaining)
-    emit(Offset.CLOSETODAY, ct, "force_flatten:prefer_closetoday")
-    remaining -= ct
-    emit(Offset.CLOSE, remaining, "force_flatten:fallback_close")
+    # Stage3
+    for lvl in range(1, spec.stage3_max_cross_levels + 1):
+        cross = lvl
+        for offset, qty in chunks:
+            intents.append(
+                OrderIntent(
+                    symbol=pos.symbol,
+                    side=side,
+                    offset=offset,
+                    price=price_for_cross(cross),
+                    qty=qty,
+                    reason=f"flatten:stage3:{lvl}",
+                )
+            )
 
     return intents

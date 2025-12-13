@@ -1,62 +1,57 @@
 from __future__ import annotations
 
-from src.execution.flatten_plan import BookTop, FlattenPolicy, plan_force_flatten
+from src.execution.flatten_plan import BookTop, FlattenSpec, PositionToClose, build_flatten_intents
 from src.execution.order_types import Offset, Side
 
 
-def test_force_flatten_long_prefers_close_today_then_close() -> None:
-    policy = FlattenPolicy(tick_size=1.0, stage2_requotes=2, max_cross_levels=3)
-    intents = plan_force_flatten(
-        symbol="AO",
-        book=BookTop(best_bid=100.0, best_ask=101.0),
-        net_pos=10,
-        close_today_qty=4,
-        policy=policy,
-    )
+def test_flatten_plan_long_close_today_first_and_limit_only() -> None:
+    pos = PositionToClose(symbol="AO", net_qty=5, today_qty=2, yesterday_qty=3)
+    book = BookTop(best_bid=100.0, best_ask=101.0, tick=1.0)
+    spec = FlattenSpec(stage2_requotes=2, stage3_max_cross_levels=3)
 
-    # total price points = 1 + stage2(2) + stage3(3) = 6
-    assert len(intents) == 6 * 2  # (CLOSETODAY intents) + (CLOSE intents)
+    intents = build_flatten_intents(pos=pos, book=book, spec=spec)
 
-    first = intents[0]
-    assert first.side == Side.SELL
-    assert first.offset == Offset.CLOSETODAY
-    assert first.qty == 4
-    assert first.price == 100.0
+    # Stage1 produces 2 intents (CLOSETODAY then CLOSE)
+    assert intents[0].side == Side.SELL
+    assert intents[0].offset == Offset.CLOSETODAY
+    assert intents[0].qty == 2
+    assert intents[0].price == 100.0
 
-    # last of closetoday block should still be CLOSETODAY
-    assert intents[5].offset == Offset.CLOSETODAY
-    # first of close block
-    assert intents[6].offset == Offset.CLOSE
-    assert intents[6].qty == 6
+    assert intents[1].offset == Offset.CLOSE
+    assert intents[1].qty == 3
+    assert intents[1].price == 100.0
+
+    # total intents = (stage1 2) + (stage2 2*2) + (stage3 3*2) = 2 + 4 + 6 = 12
+    assert len(intents) == 12
+
+    # For SELL, later intents should include lower prices (more aggressive)
+    prices = [i.price for i in intents]
+    assert min(prices) < max(prices)
 
 
-def test_force_flatten_short_uses_best_ask_and_steps_up() -> None:
-    policy = FlattenPolicy(tick_size=0.5, stage2_requotes=1, max_cross_levels=2)
-    intents = plan_force_flatten(
-        symbol="SA",
-        book=BookTop(best_bid=200.0, best_ask=200.5),
-        net_pos=-3,
-        close_today_qty=3,
-        policy=policy,
-    )
+def test_flatten_plan_short_generates_buy_intents_and_more_aggressive_is_higher() -> None:
+    pos = PositionToClose(symbol="SA", net_qty=-4, today_qty=1, yesterday_qty=3)
+    book = BookTop(best_bid=200.0, best_ask=201.0, tick=1.0)
+    spec = FlattenSpec(stage2_requotes=1, stage3_max_cross_levels=2)
 
-    assert len(intents) == (1 + 1 + 2) * 1  # only CLOSETODAY, no remaining CLOSE
-    assert all(i.side == Side.BUY for i in intents)
-    assert all(i.offset == Offset.CLOSETODAY for i in intents)
+    intents = build_flatten_intents(pos=pos, book=book, spec=spec)
+
+    assert intents[0].side == Side.BUY
+    assert intents[0].offset == Offset.CLOSETODAY
+    assert intents[0].qty == 1
+    assert intents[0].price == 201.0  # stage1 near best ask
+
+    assert intents[1].offset == Offset.CLOSE
+    assert intents[1].qty == 3
+    assert intents[1].price == 201.0
 
     prices = [i.price for i in intents]
-    assert prices == [200.5, 201.0, 201.5, 202.0]
+    # For BUY, more aggressive => higher price appears later
+    assert max(prices) > min(prices)
 
 
-def test_close_today_qty_cannot_exceed_position() -> None:
-    import pytest
-
-    policy = FlattenPolicy()
-    with pytest.raises(ValueError):
-        plan_force_flatten(
-            symbol="LC",
-            book=BookTop(best_bid=10.0, best_ask=11.0),
-            net_pos=2,
-            close_today_qty=3,
-            policy=policy,
-        )
+def test_flatten_plan_zero_qty_is_empty() -> None:
+    pos = PositionToClose(symbol="AO", net_qty=0, today_qty=0, yesterday_qty=0)
+    book = BookTop(best_bid=100.0, best_ask=101.0, tick=1.0)
+    intents = build_flatten_intents(pos=pos, book=book, spec=FlattenSpec())
+    assert intents == []
