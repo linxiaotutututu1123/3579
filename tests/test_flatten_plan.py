@@ -49,8 +49,10 @@ def test_force_flatten_short_uses_best_ask_and_steps_up() -> None:
 
 
 def test_close_today_qty_cannot_exceed_position() -> None:
+    import pytest
+
     policy = FlattenPolicy()
-    try:
+    with pytest.raises(ValueError):
         plan_force_flatten(
             symbol="LC",
             book=BookTop(best_bid=10.0, best_ask=11.0),
@@ -58,6 +60,3 @@ def test_close_today_qty_cannot_exceed_position() -> None:
             close_today_qty=3,
             policy=policy,
         )
-        assert False, "expected ValueError"
-    except ValueError:
-        pass
