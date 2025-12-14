@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol
 
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode, RiskState
@@ -43,6 +43,22 @@ class RiskManager:
         ev = self._events[:]
         self._events.clear()
         return ev
+
+    def emit(
+        self,
+        *,
+        event_type: RiskEventType,
+        correlation_id: str,
+        data: dict[str, Any],
+    ) -> None:
+        self._events.append(
+            RiskEvent(
+                type=event_type,
+                ts=self._now(),
+                correlation_id=correlation_id,
+                data=data,
+            )
+        )
 
     def on_day_start_0900(self, snap: AccountSnapshot, *, correlation_id: str) -> None:
         self.state.e0 = snap.equity
