@@ -119,7 +119,7 @@ def run_replay_tick_mode2(
         TradingTickResult with all events and portfolio info
     """
     from src.trading.controls import TradeControls, TradeMode
-    from src.trading.orchestrator import TradingTickResult, handle_trading_tick
+    from src.trading.orchestrator import handle_trading_tick
 
     fault = fault or FaultConfig()
 
