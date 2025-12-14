@@ -49,20 +49,24 @@ COV_THRESHOLD := 85
 # Python 路径覆盖：make ci PY=/custom/python
 # 如果用户在命令行传入 PY=xxx，则使用用户指定的
 # 否则使用下面按平台写死的 venv 路径
+#
+# 注意：ifeq 块顶格，避免 tab/space 混用问题
 ifeq ($(OS),Windows_NT)
-    # Windows: 写死 venv 路径（用 / 避免反斜杠在命令拼接时出问题）
-    _PY_DEFAULT := .venv/Scripts/python.exe
-    _PIP_DEFAULT := .venv/Scripts/pip.exe
-    RM := del /Q /F 2>nul || true
-    RMDIR := rmdir /S /Q 2>nul || true
-    MKDIR := mkdir
+# Windows: 写死 venv 路径（用 / 避免反斜杠在命令拼接时出问题）
+_PY_DEFAULT := .venv/Scripts/python.exe
+_PIP_DEFAULT := .venv/Scripts/pip.exe
+_VENV_CHECK := if not exist ".venv\Scripts\python.exe" (echo ERROR: venv not found. Run: python -m venv .venv && exit /b 1)
+RM := del /Q /F 2>nul || true
+RMDIR := rmdir /S /Q 2>nul || true
+MKDIR := mkdir
 else
-    # Linux/Mac: 写死 venv 路径
-    _PY_DEFAULT := .venv/bin/python
-    _PIP_DEFAULT := .venv/bin/pip
-    RM := rm -f
-    RMDIR := rm -rf
-    MKDIR := mkdir -p
+# Linux/Mac: 写死 venv 路径
+_PY_DEFAULT := .venv/bin/python
+_PIP_DEFAULT := .venv/bin/pip
+_VENV_CHECK := test -x .venv/bin/python || { echo "ERROR: venv not found. Run: python -m venv .venv"; exit 1; }
+RM := rm -f
+RMDIR := rm -rf
+MKDIR := mkdir -p
 endif
 
 # 外部可覆盖，默认用平台写死值
@@ -73,9 +77,15 @@ PIP ?= $(_PIP_DEFAULT)
 PYTHON := $(PY)
 
 # -----------------------------------------------------------------------------
+# venv 检查（友好错误提示）
+# -----------------------------------------------------------------------------
+venv-check:
+	@$(_VENV_CHECK)
+
+# -----------------------------------------------------------------------------
 # 安装
 # -----------------------------------------------------------------------------
-install:
+install: venv-check
 	$(PIP) install -r requirements.txt
 
 install-dev: install
