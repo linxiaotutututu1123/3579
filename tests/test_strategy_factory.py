@@ -1,4 +1,5 @@
 """Tests for strategy factory."""
+
 from __future__ import annotations
 
 from src.config import AppSettings
