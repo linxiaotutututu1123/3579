@@ -17,7 +17,7 @@ class RiskConfig:
     dd_limit: float = -0.03
     cooldown_seconds: int = 600
     max_margin_normal: float = 0.30
-    max_margin_recovery: float = 0.10
+    max_margin_recovery: float = 0.50
 
 
 @dataclass
