@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import time
 import uuid
 from collections.abc import Callable, Mapping, Sequence
@@ -10,6 +9,7 @@ from typing import Any
 
 from src.execution.events import ExecutionEvent
 from src.execution.flatten_executor import ExecutionRecord, FlattenExecutor
+from src.trading.utils import stable_json
 from src.execution.flatten_plan import BookTop, FlattenSpec, PositionToClose, build_flatten_intents
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.manager import RiskManager
@@ -25,10 +25,6 @@ class OrchestratorResult:
     snapshot_hash: str
     events: list[Event]
     execution_records: list[ExecutionRecord]
-
-
-def _stable_json(obj: Any) -> str:
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
 def _hash_snapshot(
@@ -55,7 +51,7 @@ def _hash_snapshot(
         "positions": pos_data,
         "books": book_data,
     }
-    raw = _stable_json(payload).encode("utf-8")
+    raw = stable_json(payload).encode("utf-8")
     return hashlib.sha256(raw).hexdigest()
 
 
