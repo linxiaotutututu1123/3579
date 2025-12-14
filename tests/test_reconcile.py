@@ -105,7 +105,7 @@ class TestReconcilePositions:
     def test_missing_actual(self) -> None:
         """Missing actual position is detected."""
         expected = {"AO": 1}
-        actual = {}
+        actual: dict[str, int] = {}
         report = reconcile_positions(expected, actual)
         assert report.all_matched is False
         r = report.results[0]
@@ -113,7 +113,7 @@ class TestReconcilePositions:
 
     def test_missing_expected(self) -> None:
         """Unexpected actual position is detected."""
-        expected = {}
+        expected: dict[str, int] = {}
         actual = {"AO": 1}
         report = reconcile_positions(expected, actual)
         assert report.all_matched is False
