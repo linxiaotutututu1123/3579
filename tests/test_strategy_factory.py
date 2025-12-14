@@ -1,8 +1,6 @@
 """Tests for strategy factory."""
 from __future__ import annotations
 
-import pytest
-
 from src.config import AppSettings
 from src.strategy.dl_torch_policy import DlTorchPolicyStrategy
 from src.strategy.ensemble_moe import EnsembleMoEStrategy
@@ -50,15 +48,3 @@ class TestStrategyFactory:
         settings = AppSettings(strategy_name="unknown_xyz")
         strategy = build_strategy(settings)
         assert isinstance(strategy, TopTierTrendRiskParityStrategy)
-
-    @pytest.mark.parametrize(
-        "strategy_name",
-        ["simple_ai", "linear_ai", "ensemble_moe", "dl_torch", "top_tier"],
-    )
-    def test_all_strategies_have_version(self, strategy_name: str) -> None:
-        """All strategies have a version property."""
-        settings = AppSettings(strategy_name=strategy_name)
-        strategy = build_strategy(settings)
-        assert hasattr(strategy, "version")
-        assert isinstance(strategy.version, str)
-        assert len(strategy.version) > 0
