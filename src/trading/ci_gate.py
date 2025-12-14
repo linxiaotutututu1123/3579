@@ -206,7 +206,7 @@ def log_gate_report(report: GateReport) -> None:
 
 
 # =============================================================================
-# 退出码约定
+# 退出码约定（军规级）
 # =============================================================================
 class ExitCode:
     """Standard exit codes for CI gate.
@@ -220,6 +220,9 @@ class ExitCode:
         5 = Coverage threshold not met
         6 = Risk limits not configured
         7 = Broker credentials invalid
+        8 = Replay failed (reserved for sim_gate)
+        9 = Sim failed (reserved for sim_gate)
+        12 = Policy violation (military-grade enforcement)
     """
 
     SUCCESS = 0
@@ -230,6 +233,9 @@ class ExitCode:
     COVERAGE_FAIL = 5
     RISK_CONFIG_FAIL = 6
     BROKER_CREDS_FAIL = 7
+    REPLAY_FAIL = 8
+    SIM_FAIL = 9
+    POLICY_VIOLATION = 12
 
 
 def get_exit_code(report: GateReport) -> int:
