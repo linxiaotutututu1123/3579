@@ -145,40 +145,24 @@ ci-json: venv-check
 	$(PYTHON) -c "from src.trading.ci_gate import run_ci_with_json_report; import sys; r = run_ci_with_json_report('$(PYTHON)', 'artifacts/check/report.json', $(COV_THRESHOLD)); print(f'CI: {r.overall}'); sys.exit(r.exit_code)"
 
 # -----------------------------------------------------------------------------
-# 回放/仿真（Replay/Sim）
+# 回放/仿真（Replay/Sim）- 使用统一入口，自动启用 CHECK_MODE
 # -----------------------------------------------------------------------------
 
-# Replay validation
+# Replay validation (CHECK_MODE enabled)
 replay: venv-check
-	$(PYTHON) -m pytest tests/ -k "replay" -q
+	$(PYTHON) -m src.trading.replay --python $(PYTHON)
 
-# Replay with JSON report
+# Replay with JSON report (exit code: 0=pass, 8=fail)
 replay-json: venv-check
-	@mkdir -p artifacts/sim
-	$(PYTHON) -c "\
-from src.trading.sim_gate import SimGate, get_sim_exit_code; \
-import subprocess, sys; \
-gate = SimGate('replay'); \
-r = subprocess.run(['$(PYTHON)', '-m', 'pytest', 'tests/', '-k', 'replay', '-q'], capture_output=True, text=True); \
-gate.record_pass('replay') if r.returncode == 0 else gate.record_failure('replay', 0, {}, {}, r.stdout[-300:]); \
-gate.save_report('artifacts/sim/report.json'); \
-sys.exit(get_sim_exit_code(gate.report))"
+	$(PYTHON) -m src.trading.replay --python $(PYTHON) --output artifacts/sim/report.json
 
-# Simulation
+# Simulation (CHECK_MODE enabled)
 sim: venv-check
-	$(PYTHON) -m pytest tests/ -k "sim" -q
+	$(PYTHON) -m src.trading.sim --python $(PYTHON)
 
-# Simulation with JSON report
+# Simulation with JSON report (exit code: 0=pass, 9=fail)
 sim-json: venv-check
-	@mkdir -p artifacts/sim
-	$(PYTHON) -c "\
-from src.trading.sim_gate import SimGate, get_sim_exit_code; \
-import subprocess, sys; \
-gate = SimGate('sim'); \
-r = subprocess.run(['$(PYTHON)', '-m', 'pytest', 'tests/', '-k', 'sim', '-q'], capture_output=True, text=True); \
-gate.record_pass('sim') if r.returncode == 0 else gate.record_failure('sim', 0, {}, {}, r.stdout[-300:]); \
-gate.save_report('artifacts/sim/report.json'); \
-sys.exit(get_sim_exit_code(gate.report))"
+	$(PYTHON) -m src.trading.sim --python $(PYTHON) --output artifacts/sim/report.json
 
 # -----------------------------------------------------------------------------
 # 上下文导出（分层）
