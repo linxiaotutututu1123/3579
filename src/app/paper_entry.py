@@ -7,7 +7,7 @@ Behavior:
 - Ensures TRADE_MODE defaults to PAPER when not already set.
 - Delegates execution to src.runner.run_f21().
 
-If run_f21 is not implemented yet, raises a clear RuntimeError.
+Uses broker_factory from F20 for automatic PAPER/LIVE broker selection.
 """
 
 from __future__ import annotations
@@ -15,23 +15,26 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from src.execution.broker import Broker
+from src.config import AppSettings
+from src.execution.broker_factory import broker_factory
 from src.runner import LiveTickData
+from src.strategy.factory import build_strategy
 
 if TYPE_CHECKING:
     from src.strategy.base import Strategy
 
 
-def _missing_broker_factory(*_: object, **__: object) -> Broker:
-    raise RuntimeError("broker_factory not wired for PAPER entrypoint yet.")
-
-
-def _missing_strategy_factory(*_: object, **__: object) -> Strategy:
-    raise RuntimeError("strategy_factory not wired for PAPER entrypoint yet.")
+def _strategy_factory(settings: AppSettings) -> Strategy:
+    """Build strategy from settings."""
+    return build_strategy(settings.strategy_name, settings.strategy_symbols)
 
 
 def _missing_fetch_tick() -> LiveTickData:
-    raise RuntimeError("fetch_tick not wired for PAPER entrypoint yet.")
+    """Placeholder for tick fetcher - can use replay or simulated data."""
+    raise RuntimeError(
+        "fetch_tick not implemented. "
+        "Implement a tick source (e.g., replay data) for paper trading."
+    )
 
 
 def main() -> None:
@@ -47,11 +50,12 @@ def main() -> None:
     if not callable(run_f21):
         raise RuntimeError("Implement src.runner.run_f21() first.")
 
+    # broker_factory (from F20) returns NoopBroker for PAPER mode
     run_f21(
-        broker_factory=_missing_broker_factory,
-        strategy_factory=_missing_strategy_factory,
+        broker_factory=broker_factory,
+        strategy_factory=_strategy_factory,
         fetch_tick=_missing_fetch_tick,
-        run_forever=False,
+        run_forever=True,
     )
 
 
