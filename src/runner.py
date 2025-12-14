@@ -70,7 +70,7 @@ def run_f21(
     fetch_tick: Callable[[], LiveTickData],
     now_cb: Callable[[], float] = time.time,
     risk_cfg: RiskConfig | None = None,
-    run_once: bool = False,
+    run_forever: bool = True,
 ) -> None:
     """
     Skeleton for live runner (F21).
@@ -93,15 +93,46 @@ def run_f21(
     components = init_components(broker=live_broker, risk_cfg=risk_cfg)
     strategy = strategy_factory(settings)
 
-    # TODO(F21): 主循环
-    # - 09:00/on_day_start_0900
-    # - handle_risk_update -> handle_trading_tick 顺序
-    # - 日志落地
+    def _run_once() -> None:
+        tick = fetch_tick()
 
-    if run_once:
-        # 预期在 PAPER 下可执行到此处，不触发 CTP import
-        _tick = fetch_tick()
-        _ = (components, strategy, _tick, now_cb)
-        return
+        # Day-start baseline: first tick (or when e0 missing) sets baseline.
+        if components.risk.state.e0 is None:
+            cid = uuid.uuid4().hex
+            components.risk.on_day_start_0900(tick.snap, correlation_id=cid)
 
-    raise NotImplementedError("F21 live runner loop pending implementation.")
+        risk_result = handle_risk_update(
+            risk=components.risk,
+            executor=components.flatten,
+            snap=tick.snap,
+            positions=tick.positions,
+            books=tick.books,
+            now_cb=lambda: tick.now_ts,
+        )
+
+        # Prepare trading inputs
+        prices: dict[str, float] = {sym: (b.best_bid + b.best_ask) / 2.0 for sym, b in tick.books.items()}
+        current_net_qty: dict[str, int] = {pos.symbol: pos.net_qty for pos in tick.positions}
+
+        requested_mode = settings.trade_mode.upper() if isinstance(settings.trade_mode, str) else str(settings.trade_mode)
+        effective_mode = TradeMode.LIVE if requested_mode == TradeMode.LIVE.value else TradeMode.PAPER
+        controls = TradeControls(mode=effective_mode)
+
+        handle_trading_tick(
+            strategy=strategy,
+            risk=components.risk,
+            executor=components.flatten,
+            controls=controls,
+            snap=tick.snap,
+            prices=prices,
+            bars_1m=tick.bars_1m,
+            current_net_qty=current_net_qty,
+            correlation_id=risk_result.correlation_id,
+            now_cb=lambda: tick.now_ts,
+        )
+
+    if run_forever:
+        while True:
+            _run_once()
+    else:
+        _run_once()
