@@ -12,14 +12,14 @@ This module provides a unified entry point for simulation that:
 from __future__ import annotations
 
 import argparse
+import contextlib
 import logging
 import subprocess
 import sys
 import time
-from pathlib import Path
 
 from src.trading.ci_gate import enable_check_mode, is_check_mode
-from src.trading.sim_gate import SimExitCode, SimGate, SimMetrics
+from src.trading.sim_gate import SimExitCode, SimGate
 
 logger = logging.getLogger(__name__)
 
@@ -101,15 +101,11 @@ def parse_test_output(output: str) -> tuple[int, int, list[str]]:
             parts = line.split()
             for i, part in enumerate(parts):
                 if part == "passed" and i > 0:
-                    try:
+                    with contextlib.suppress(ValueError):
                         passed = int(parts[i - 1])
-                    except ValueError:
-                        pass
                 if part == "failed" and i > 0:
-                    try:
+                    with contextlib.suppress(ValueError):
                         failed = int(parts[i - 1])
-                    except ValueError:
-                        pass
 
         # Collect FAILED test names
         if "FAILED" in line:
