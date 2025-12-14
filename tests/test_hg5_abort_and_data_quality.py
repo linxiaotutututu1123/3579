@@ -22,7 +22,8 @@ def test_abort_after_too_many_rejections_and_emit_missing_book() -> None:
         force_flatten_all_cb=lambda: None,
         now_cb=lambda: 1.0,
     )
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="baseline")
+    snap = AccountSnapshot(equity=1_000_000.0, margin_used=0.0)
+    rm.on_day_start_0900(snap, correlation_id="baseline")
     rm.pop_events()
 
     exe = FlattenExecutor(AlwaysRejectBroker(), now_cb=lambda: 2.0)
