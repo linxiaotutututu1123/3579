@@ -28,18 +28,18 @@ def test_kill_switch_then_cooldown_then_recovery() -> None:
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.NORMAL
 
-    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.COOLDOWN  # type: ignore[comparison-overlap]
     assert rm.state.kill_switch_fired_today is True
     assert calls["cancel"] == 1
     assert calls["flatten"] == 1
 
     now["t"] = 60 * 60
-    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.COOLDOWN
 
     now["t"] = 90 * 60 + 1
-    rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.RECOVERY
 
 
@@ -64,15 +64,15 @@ def test_second_breach_locks_for_day() -> None:
     )
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="")
 
-    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.COOLDOWN
     assert calls["cancel"] == 1
 
     now["t"] = 2
-    rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.RECOVERY  # type: ignore[comparison-overlap]
 
-    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.LOCKED
     assert calls["cancel"] == 1
     assert calls["flatten"] == 1

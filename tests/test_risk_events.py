@@ -29,14 +29,14 @@ def test_events_baseline_kill_switch_recovery() -> None:
     ev = rm.pop_events()
     assert [e.type for e in ev] == [RiskEventType.BASELINE_SET]
 
-    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.COOLDOWN
     ev = rm.pop_events()
     assert [e.type for e in ev] == [RiskEventType.KILL_SWITCH_FIRED]
     assert calls["cancel"] == 1 and calls["flatten"] == 1
 
     now["t"] = 11
-    rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.RECOVERY  # type: ignore[comparison-overlap]
     ev = rm.pop_events()
     assert [e.type for e in ev] == [RiskEventType.ENTER_RECOVERY]
@@ -57,14 +57,14 @@ def test_events_locked_for_day_on_second_breach() -> None:
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="")
     rm.pop_events()
 
-    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="")
     rm.pop_events()
 
     now["t"] = 2
-    rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0), correlation_id="")
     rm.pop_events()
 
-    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0, correlation_id=""))
+    rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="")
     assert rm.state.mode == RiskMode.LOCKED
     ev = rm.pop_events()
     assert [e.type for e in ev] == [RiskEventType.LOCKED_FOR_DAY]
