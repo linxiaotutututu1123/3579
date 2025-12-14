@@ -214,6 +214,134 @@ function Invoke-CI {
     Write-Host "=============================================="
 }
 
+function Invoke-CIJson {
+    Assert-VenvExists
+    Write-Host "Running CI with JSON report..." -ForegroundColor Cyan
+    New-Item -ItemType Directory -Force -Path artifacts\check | Out-Null
+    & $PYTHON -c @"
+from src.trading.ci_gate import run_ci_with_json_report
+import sys
+report = run_ci_with_json_report(
+    python_exe=r'$PYTHON',
+    output_path='artifacts/check/report.json',
+    cov_threshold=$COV_THRESHOLD
+)
+print(f'CI Report: {report.overall} (exit_code={report.exit_code})')
+sys.exit(report.exit_code)
+"@
+    $code = $LASTEXITCODE
+    if ($code -ne 0) {
+        Write-Host "CI JSON report saved to artifacts\check\report.json" -ForegroundColor Yellow
+        exit $code
+    }
+    Write-Host "CI JSON report saved to artifacts\check\report.json" -ForegroundColor Green
+}
+
+function Invoke-Replay {
+    Assert-VenvExists
+    Write-Host "Running replay validation..." -ForegroundColor Cyan
+    & $PYTHON -m pytest tests/ -k "replay" -q
+    if ($LASTEXITCODE -ne 0) { exit 10 }
+}
+
+function Invoke-ReplayJson {
+    Assert-VenvExists
+    Write-Host "Running replay with JSON report..." -ForegroundColor Cyan
+    New-Item -ItemType Directory -Force -Path artifacts\sim | Out-Null
+    & $PYTHON -c @"
+from src.trading.sim_gate import SimGate, get_sim_exit_code
+import subprocess
+import sys
+
+gate = SimGate(sim_type='replay')
+
+# Run replay tests
+result = subprocess.run(
+    [r'$PYTHON', '-m', 'pytest', 'tests/', '-k', 'replay', '-q', '--tb=short'],
+    capture_output=True,
+    text=True
+)
+
+if result.returncode == 0:
+    gate.record_pass('replay_tests')
+else:
+    # Parse failures from output
+    for line in result.stdout.split('\n'):
+        if 'FAILED' in line:
+            gate.record_failure(
+                scenario=line.split('::')[-1] if '::' in line else 'unknown',
+                tick=0,
+                expected={'status': 'pass'},
+                actual={'status': 'fail'},
+                error=line
+            )
+    if not gate.report.failures:
+        gate.record_failure('replay_tests', 0, {}, {}, result.stdout[-500:])
+
+gate.save_report('artifacts/sim/report.json')
+print(f'Replay Report: {gate.report.overall.value}')
+sys.exit(get_sim_exit_code(gate.report))
+"@
+    $code = $LASTEXITCODE
+    if ($code -ne 0) {
+        Write-Host "Replay JSON report saved to artifacts\sim\report.json" -ForegroundColor Yellow
+        exit $code
+    }
+    Write-Host "Replay JSON report saved to artifacts\sim\report.json" -ForegroundColor Green
+}
+
+function Invoke-Sim {
+    Assert-VenvExists
+    Write-Host "Running simulation..." -ForegroundColor Cyan
+    & $PYTHON -m pytest tests/ -k "sim" -q
+    if ($LASTEXITCODE -ne 0) { exit 11 }
+}
+
+function Invoke-SimJson {
+    Assert-VenvExists
+    Write-Host "Running simulation with JSON report..." -ForegroundColor Cyan
+    New-Item -ItemType Directory -Force -Path artifacts\sim | Out-Null
+    & $PYTHON -c @"
+from src.trading.sim_gate import SimGate, get_sim_exit_code
+import subprocess
+import sys
+
+gate = SimGate(sim_type='sim')
+
+# Run sim tests
+result = subprocess.run(
+    [r'$PYTHON', '-m', 'pytest', 'tests/', '-k', 'sim', '-q', '--tb=short'],
+    capture_output=True,
+    text=True
+)
+
+if result.returncode == 0:
+    gate.record_pass('sim_tests')
+else:
+    for line in result.stdout.split('\n'):
+        if 'FAILED' in line:
+            gate.record_failure(
+                scenario=line.split('::')[-1] if '::' in line else 'unknown',
+                tick=0,
+                expected={'status': 'pass'},
+                actual={'status': 'fail'},
+                error=line
+            )
+    if not gate.report.failures:
+        gate.record_failure('sim_tests', 0, {}, {}, result.stdout[-500:])
+
+gate.save_report('artifacts/sim/report.json')
+print(f'Sim Report: {gate.report.overall.value}')
+sys.exit(get_sim_exit_code(gate.report))
+"@
+    $code = $LASTEXITCODE
+    if ($code -ne 0) {
+        Write-Host "Sim JSON report saved to artifacts\sim\report.json" -ForegroundColor Yellow
+        exit $code
+    }
+    Write-Host "Sim JSON report saved to artifacts\sim\report.json" -ForegroundColor Green
+}
+
 function Invoke-Context {
     param([string]$Level = "lite")
     Write-Host "Exporting context (level: $Level)..." -ForegroundColor Cyan
@@ -275,6 +403,11 @@ try {
         "test-fast"     { Invoke-TestFast }
         "check"         { Invoke-Check }
         "ci"            { Invoke-CI }
+        "ci-json"       { Invoke-CIJson }
+        "replay"        { Invoke-Replay }
+        "replay-json"   { Invoke-ReplayJson }
+        "sim"           { Invoke-Sim }
+        "sim-json"      { Invoke-SimJson }
         "context"       { Invoke-Context -Level "lite" }
         "context-dev"   { Invoke-Context -Level "dev" }
         "context-debug" { Invoke-Context -Level "debug" }
