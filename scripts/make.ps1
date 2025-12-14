@@ -111,7 +111,8 @@ function Show-Help {
     
     # 分组显示
     $groups = [ordered]@{
-        "Quality Gates" = @("format", "format-check", "lint", "lint-fix", "type", "test", "test-fast", "check", "ci")
+        "Quality Gates" = @("format", "format-check", "lint", "lint-fix", "type", "test", "test-fast", "check", "ci", "ci-json")
+        "Replay/Sim" = @("replay", "replay-json", "sim", "sim-json")
         "Context Export" = @("context", "context-dev", "context-debug")
         "Build" = @("build", "build-paper", "build-live")
         "Utility" = @("install", "install-dev", "clean", "help")
