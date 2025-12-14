@@ -64,10 +64,18 @@ def handle_risk_update(
     flatten_spec: FlattenSpec | None = None,
     now_cb: NowCb = time.time,
 ) -> OrchestratorResult:
+    """
+    Highest-grade tick handler:
+    - generate correlation_id
+    - compute snapshot hash
+    - update risk (risk events are emitted at the source with correlation_id)
+    - if kill switch fired: execute flatten with correlation_id, and collect execution events
+    - return unified event stream (audit + risk + execution)
+    """
     correlation_id = uuid.uuid4().hex
     snapshot_hash = _hash_snapshot(snap=snap, positions=positions, books=books)
 
-    # risk update emits correlated RiskEvents at the source
+    # Risk updates emit correlated events at the source (RiskManager is highest-grade already)
     risk.update(snap, correlation_id=correlation_id)
     risk_events = risk.pop_events()
 
@@ -87,9 +95,11 @@ def handle_risk_update(
         for pos in positions:
             book = books.get(pos.symbol)
             if book is None:
+                # Highest-grade next step: emit DataQuality event + alert.
                 continue
             intents = build_flatten_intents(pos=pos, book=book, spec=spec)
             exec_records.extend(executor.execute(intents, correlation_id=correlation_id))
+
         exec_events = executor.drain_events()
 
     events: list[Event] = [audit_event, *risk_events, *exec_events]
