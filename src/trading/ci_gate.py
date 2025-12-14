@@ -490,6 +490,76 @@ def parse_pytest_output(output: str) -> list[CIStepFailure]:
     return failures
 
 
+# =============================================================================
+# Hints 生成（常见错误的修复建议）
+# =============================================================================
+
+STEP_HINTS: dict[str, dict[str, list[str]]] = {
+    "format-check": {
+        "default": [
+            "Run: make format (or .\\scripts\\make.ps1 format) to auto-fix",
+            "Most format issues can be auto-fixed by ruff",
+        ],
+    },
+    "lint": {
+        "E501": ["Line too long - break into multiple lines or use parentheses"],
+        "F401": ["Unused import - remove the import statement"],
+        "F841": ["Unused variable - remove or use the variable"],
+        "E711": ["Use 'is None' instead of '== None'"],
+        "E712": ["Use 'is True/False' instead of '== True/False'"],
+        "default": [
+            "Run: make lint-fix to auto-fix some issues",
+            "Check ruff docs for rule explanation",
+        ],
+    },
+    "type": {
+        "default": [
+            "Add type annotations to function parameters and return values",
+            "Use 'Any' as escape hatch if truly dynamic typing needed",
+            "Check mypy docs for error explanation",
+        ],
+        "incompatible": ["Check if types match between assignment and variable"],
+        "missing": ["Add missing type stub or use 'type: ignore' comment"],
+    },
+    "test": {
+        "default": [
+            "Check test assertion - expected vs actual values",
+            "Run specific test: pytest tests/test_xxx.py::test_name -xvs",
+        ],
+        "coverage": [
+            "Add tests for uncovered code paths",
+            "Current threshold: 85% - check coverage report for gaps",
+        ],
+    },
+}
+
+
+def get_hints_for_step(step_name: str, failures: list[CIStepFailure], output: str) -> list[str]:
+    """Generate hints based on step name and failures."""
+    hints: list[str] = []
+    step_hints = STEP_HINTS.get(step_name, {})
+
+    # Check for specific rule hints
+    seen_rules: set[str] = set()
+    for failure in failures:
+        rule = failure.rule
+        if rule not in seen_rules and rule in step_hints:
+            hints.extend(step_hints[rule])
+            seen_rules.add(rule)
+
+    # Check output for keywords
+    if "coverage" in output.lower() and "coverage" in step_hints:
+        hints.extend(step_hints["coverage"])
+    if "incompatible" in output.lower() and "incompatible" in step_hints:
+        hints.extend(step_hints["incompatible"])
+
+    # Add default hints if no specific ones found
+    if not hints and "default" in step_hints:
+        hints.extend(step_hints["default"])
+
+    return hints[:5]  # Limit to 5 hints
+
+
 def run_ci_step(
     name: str,
     command: list[str],
