@@ -7,16 +7,22 @@ CTP SDK is imported lazily to allow CI environments without the SDK installed.
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from src.execution.broker import Broker, OrderAck, OrderRejected
 from src.execution.order_types import OrderIntent
+from src.trading.controls import TradeMode
 
 if TYPE_CHECKING:
     pass
 
 logger = logging.getLogger(__name__)
+
+
+class CtpConfigError(Exception):
+    """Raised when CTP configuration is invalid or missing."""
 
 
 class CtpNotAvailableError(Exception):
@@ -38,6 +44,55 @@ class CtpConfig:
     app_id: str = ""
     auth_code: str = ""
     instrument_ids: tuple[str, ...] = ()
+
+
+_REQUIRED_CTP_ENV_VARS = (
+    "CTP_FRONT_ADDR",
+    "CTP_BROKER_ID",
+    "CTP_USER_ID",
+    "CTP_PASSWORD",
+)
+
+_OPTIONAL_CTP_ENV_VARS = (
+    "CTP_APP_ID",
+    "CTP_AUTH_CODE",
+)
+
+
+def validate_ctp_env(trade_mode: TradeMode) -> CtpConfig | None:
+    """
+    Validate CTP environment variables and return config.
+
+    Args:
+        trade_mode: Current trade mode (PAPER or LIVE)
+
+    Returns:
+        CtpConfig if LIVE mode and all required vars present, None if PAPER mode
+
+    Raises:
+        CtpConfigError: If LIVE mode and any required variable is missing
+    """
+    if trade_mode == TradeMode.PAPER:
+        # PAPER mode does not require CTP configuration
+        return None
+
+    # LIVE mode requires all mandatory CTP environment variables
+    missing = [k for k in _REQUIRED_CTP_ENV_VARS if not os.environ.get(k)]
+    if missing:
+        joined = ", ".join(missing)
+        raise CtpConfigError(
+            f"Missing required CTP environment variables for LIVE mode: {joined}. "
+            "Set them before running in LIVE mode."
+        )
+
+    return CtpConfig(
+        front_addr=os.environ["CTP_FRONT_ADDR"],
+        broker_id=os.environ["CTP_BROKER_ID"],
+        user_id=os.environ["CTP_USER_ID"],
+        password=os.environ["CTP_PASSWORD"],
+        app_id=os.environ.get("CTP_APP_ID", ""),
+        auth_code=os.environ.get("CTP_AUTH_CODE", ""),
+    )
 
 
 def _lazy_import_ctp() -> Any:
