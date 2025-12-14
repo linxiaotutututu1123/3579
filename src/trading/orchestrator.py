@@ -108,7 +108,7 @@ def handle_trading_tick(
         mid_prices=prices,
     )
 
-    all_intents = close_intents + open_intents
+    all_intents = list(close_intents) + list(open_intents)
     if all_intents:
         intent_data: list[dict[str, Any]] = [
             {

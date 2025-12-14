@@ -13,22 +13,23 @@ def test_cross_zero_long_to_short() -> None:
         features_hash="abc",
     )
 
-    intents = build_rebalance_intents(
+    close_intents, open_intents = build_rebalance_intents(
         current_net_qty={"AO": 1},
         target=target,
         mid_prices={"AO": 100.0},
     )
 
-    assert len(intents) == 2
-    assert intents[0].symbol == "AO"
-    assert intents[0].side == Side.SELL
-    assert intents[0].offset == Offset.CLOSE
-    assert intents[0].qty == 1
+    assert len(close_intents) == 1
+    assert close_intents[0].symbol == "AO"
+    assert close_intents[0].side == Side.SELL
+    assert close_intents[0].offset == Offset.CLOSE
+    assert close_intents[0].qty == 1
 
-    assert intents[1].symbol == "AO"
-    assert intents[1].side == Side.SELL
-    assert intents[1].offset == Offset.OPEN
-    assert intents[1].qty == 2
+    assert len(open_intents) == 1
+    assert open_intents[0].symbol == "AO"
+    assert open_intents[0].side == Side.SELL
+    assert open_intents[0].offset == Offset.OPEN
+    assert open_intents[0].qty == 2
 
 
 def test_cross_zero_short_to_long() -> None:
@@ -39,22 +40,23 @@ def test_cross_zero_short_to_long() -> None:
         features_hash="abc",
     )
 
-    intents = build_rebalance_intents(
+    close_intents, open_intents = build_rebalance_intents(
         current_net_qty={"AO": -3},
         target=target,
         mid_prices={"AO": 100.0},
     )
 
-    assert len(intents) == 2
-    assert intents[0].symbol == "AO"
-    assert intents[0].side == Side.BUY
-    assert intents[0].offset == Offset.CLOSE
-    assert intents[0].qty == 3
+    assert len(close_intents) == 1
+    assert close_intents[0].symbol == "AO"
+    assert close_intents[0].side == Side.BUY
+    assert close_intents[0].offset == Offset.CLOSE
+    assert close_intents[0].qty == 3
 
-    assert intents[1].symbol == "AO"
-    assert intents[1].side == Side.BUY
-    assert intents[1].offset == Offset.OPEN
-    assert intents[1].qty == 1
+    assert len(open_intents) == 1
+    assert open_intents[0].symbol == "AO"
+    assert open_intents[0].side == Side.BUY
+    assert open_intents[0].offset == Offset.OPEN
+    assert open_intents[0].qty == 1
 
 
 def test_same_direction_add_long() -> None:
@@ -65,16 +67,17 @@ def test_same_direction_add_long() -> None:
         features_hash="abc",
     )
 
-    intents = build_rebalance_intents(
+    close_intents, open_intents = build_rebalance_intents(
         current_net_qty={"AO": 1},
         target=target,
         mid_prices={"AO": 100.0},
     )
 
-    assert len(intents) == 1
-    assert intents[0].side == Side.BUY
-    assert intents[0].offset == Offset.OPEN
-    assert intents[0].qty == 2
+    assert len(close_intents) == 0
+    assert len(open_intents) == 1
+    assert open_intents[0].side == Side.BUY
+    assert open_intents[0].offset == Offset.OPEN
+    assert open_intents[0].qty == 2
 
 
 def test_same_direction_reduce_long() -> None:
@@ -85,16 +88,16 @@ def test_same_direction_reduce_long() -> None:
         features_hash="abc",
     )
 
-    intents = build_rebalance_intents(
+    close_intents, open_intents = build_rebalance_intents(
         current_net_qty={"AO": 3},
         target=target,
         mid_prices={"AO": 100.0},
     )
 
-    assert len(intents) == 1
-    assert intents[0].side == Side.SELL
-    assert intents[0].offset == Offset.CLOSE
-    assert intents[0].qty == 2
+    assert len(close_intents) == 1
+    assert close_intents[0].side == Side.SELL
+    assert close_intents[0].offset == Offset.CLOSE
+    assert close_intents[0].qty == 2
     assert len(open_intents) == 0
 
 
