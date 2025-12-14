@@ -7,9 +7,12 @@ import pytest
 from src.execution.ctp_broker import (
     CtpBroker,
     CtpConfig,
+    CtpConfigError,
     CtpNotAvailableError,
+    validate_ctp_env,
 )
 from src.execution.order_types import Offset, OrderIntent, Side
+from src.trading.controls import TradeMode
 
 
 def _make_config() -> CtpConfig:
