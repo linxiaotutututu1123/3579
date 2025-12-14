@@ -89,9 +89,7 @@ class TestBrokerProtocol:
                 raise NotImplementedError
 
         broker = TestBroker()
-        intent = OrderIntent(
-            symbol="AO", side=Side.BUY, offset=Offset.OPEN, price=100.0, qty=1
-        )
+        intent = OrderIntent(symbol="AO", side=Side.BUY, offset=Offset.OPEN, price=100.0, qty=1)
         with pytest.raises(NotImplementedError):
             broker.place_order(intent)
 
@@ -125,9 +123,7 @@ class TestCtpBrokerCoverage:
         # Simulate SDK available but not connected
         broker._ctp = object()  # Mock non-None SDK
         broker._connected = False
-        intent = OrderIntent(
-            symbol="au2412", side=Side.BUY, offset=Offset.OPEN, qty=1, price=500.0
-        )
+        intent = OrderIntent(symbol="au2412", side=Side.BUY, offset=Offset.OPEN, qty=1, price=500.0)
         with pytest.raises(OrderRejected, match="Not connected"):
             broker.place_order(intent)
 
@@ -142,9 +138,7 @@ class TestCtpBrokerCoverage:
         broker = CtpBroker(config)
         broker._ctp = object()  # Mock non-None SDK
         broker._connected = True
-        intent = OrderIntent(
-            symbol="au2412", side=Side.BUY, offset=Offset.OPEN, qty=1, price=500.0
-        )
+        intent = OrderIntent(symbol="au2412", side=Side.BUY, offset=Offset.OPEN, qty=1, price=500.0)
         ack = broker.place_order(intent)
         assert ack.order_id.startswith("CTP_")
 
@@ -200,7 +194,9 @@ class TestOrderTrackerCoverage:
         """update_state sets error_message."""
         tracker = OrderExecutionTracker()
         tracker.create_order("O1", "AO", "BUY", 10, 100.0)
-        track = tracker.update_state("O1", OrderState.REJECTED, error_message="Rejected by exchange")
+        track = tracker.update_state(
+            "O1", OrderState.REJECTED, error_message="Rejected by exchange"
+        )
         assert track is not None
         assert track.error_message == "Rejected by exchange"
 
@@ -267,9 +263,7 @@ class TestStrategyCoverage:
 
         # Test with very short bars (insufficient)
         short_bars = _generate_bars(10)
-        state = MarketState(
-            prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars}
-        )
+        state = MarketState(prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars})
         result = strategy.on_tick(state)
         assert result.target_net_qty["AO"] == 0
 
@@ -298,9 +292,7 @@ class TestStrategyCoverage:
 
         # Test with short bars for breakout signal
         short_bars = _generate_bars(25)  # Just above 20 min for breakout
-        state = MarketState(
-            prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars}
-        )
+        state = MarketState(prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars})
         result = strategy.on_tick(state)
         # Should return 0 due to insufficient window
         assert result.target_net_qty["AO"] == 0
@@ -317,9 +309,7 @@ class TestStrategyCoverage:
             }
             for i in range(300)
         ]
-        state = MarketState(
-            prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": flat_bars}
-        )
+        state = MarketState(prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": flat_bars})
         result = strategy.on_tick(state)
         assert isinstance(result.target_net_qty["AO"], int)
 
@@ -330,9 +320,7 @@ class TestStrategyCoverage:
 
         # Test with very short bars
         short_bars = _generate_bars(5)
-        state = MarketState(
-            prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars}
-        )
+        state = MarketState(prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars})
         result = strategy.on_tick(state)
         assert result.target_net_qty["AO"] == 0
 
@@ -504,4 +492,3 @@ class TestRunnerCoverage:
         assert components.settings is not None
         assert components.risk is not None
         assert components.flatten is not None
-
