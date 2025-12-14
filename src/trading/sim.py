@@ -71,7 +71,8 @@ def run_sim_tests(
     try:
         result = subprocess.run(
             cmd,
-            check=False, capture_output=True,
+            check=False,
+            capture_output=True,
             text=True,
             timeout=600,  # 10 minute timeout for sim
         )
