@@ -601,17 +601,21 @@ def run_ci_step(
         # Parse failures if parser provided
         failures = parser(output) if parser else []
 
-        # Truncate output summary
+        # Truncate output summary to first 50 lines
         output_lines = output.strip().split("\n")
-        output_summary = "\n".join(output_lines[:20])  # First 20 lines
+        summary = "\n".join(output_lines[:50])
+
+        # Generate hints
+        hints = get_hints_for_step(name, failures, output)
 
         return CIStep(
             name=name,
             status=CIStepStatus.FAIL,
             exit_code=exit_code_on_fail,
             duration_ms=duration_ms,
-            output_summary=output_summary,
+            summary=summary,
             failures=failures,
+            hints=hints,
         )
 
     except subprocess.TimeoutExpired:
@@ -621,7 +625,8 @@ def run_ci_step(
             status=CIStepStatus.FAIL,
             exit_code=exit_code_on_fail,
             duration_ms=duration_ms,
-            output_summary="Command timed out after 600 seconds",
+            summary="Command timed out after 600 seconds",
+            hints=["Check for infinite loops or very slow operations"],
         )
     except Exception as e:
         duration_ms = int((time.time() - start) * 1000)
@@ -630,7 +635,8 @@ def run_ci_step(
             status=CIStepStatus.FAIL,
             exit_code=exit_code_on_fail,
             duration_ms=duration_ms,
-            output_summary=f"Error running command: {e}",
+            summary=f"Error running command: {e}",
+            hints=["Check if the command exists and dependencies are installed"],
         )
 
 

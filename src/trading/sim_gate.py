@@ -217,17 +217,13 @@ class SimExitCode:
 
     Exit codes:
         0 = All scenarios passed
-        10 = Replay failed
-        11 = Sim failed
-        12 = Scenario assertion failed
-        13 = Replay determinism check failed
+        8 = Replay failed
+        9 = Sim failed
     """
 
     SUCCESS = 0
-    REPLAY_FAIL = 10
-    SIM_FAIL = 11
-    ASSERTION_FAIL = 12
-    DETERMINISM_FAIL = 13
+    REPLAY_FAIL = 8
+    SIM_FAIL = 9
 
 
 def get_sim_exit_code(report: SimReport) -> int:
