@@ -1,35 +1,108 @@
 {
   "version": "2.0",
-  "timestamp": "2025-12-14T23:49:24.111591+00:00",
+  "timestamp": "2025-12-14T23:49:58.346964+00:00",
   "all_passed": false,
-  "failed_step": "format-check",
+  "failed_step": "type",
   "overall": "FAIL",
-  "exit_code": 2,
+  "exit_code": 3,
   "steps": [
     {
       "name": "format-check",
-      "status": "FAIL",
-      "exit_code": 2,
-      "duration_ms": 61,
-      "summary": "Would reformat: scripts\\export_context.py\nWould reformat: src\\trading\\replay.py\nWould reformat: src\\trading\\sim.py\n3 files would be reformatted, 95 files already formatted",
-      "hints": [
-        "Run: make format (or .\\scripts\\make.ps1 format) to auto-fix",
-        "Most format issues can be auto-fixed by ruff"
-      ]
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 59
     },
     {
       "name": "lint",
-      "status": "SKIP",
-      "exit_code": null,
-      "duration_ms": 0,
-      "reason": "previous step failed"
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 57
     },
     {
       "name": "type",
-      "status": "SKIP",
-      "exit_code": null,
-      "duration_ms": 0,
-      "reason": "previous step failed"
+      "status": "FAIL",
+      "exit_code": 3,
+      "duration_ms": 15884,
+      "summary": "tests\\test_order_types_offset_open.py:15: error: Statement is unreachable \n[unreachable]\n        assert Offset.CLOSE == \"CLOSE\"\n        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ntests\\test_risk_state_machine.py:33: error: Statement is unreachable \n[unreachable]\n        assert rm.state.kill_switch_fired_today is True\n        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ntests\\test_risk_state_machine.py:75: error: Statement is unreachable \n[unreachable]\n        rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), corr...\n        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~...\ntests\\test_risk_events.py:41: error: Statement is unreachable  [unreachable]\n        ev = rm.pop_events()\n        ^~~~~~~~~~~~~~~~~~~~\ntests\\test_risk_daily_loss_lockout.py:42: error: Statement is unreachable \n[unreachable]\n        assert calls[\"cancel\"] == 1\n        ^~~~~~~~~~~~~~~~~~~~~~~~~~~\nsrc\\trading\\sim_gate.py:341: error: Library stubs not installed for \"yaml\" \n[import-untyped]\n        import yaml\n    ^\nsrc\\trading\\sim_gate.py:341: note: Hint: \"python3 -m pip install types-PyYAML\"\nsrc\\trading\\sim_gate.py:341: note: (or run \"mypy --install-types\" to install all missing stub packages)\nsrc\\trading\\sim_gate.py:341: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports\ntests\\test_runner_f21_paper_smoke.py:56: error: Name \"runner.AppSettings\" is\nnot defined  [name-defined]\n            settings: runner.AppSettings,\n                      ^\ntests\\test_runner_f21_paper_smoke.py:60: error: Name \"runner.AppSettings\" is\nnot defined  [name-defined]\n        def fake_strategy_factory(settings: runner.AppSettings) -> Strateg...\n                                            ^\ntests\\test_coverage_complete.py:211: error: Module \"src.replay.runner\" does not\nexplicitly export attribute \"BookTop\"  [attr-defined]\n            from src.replay.runner import BookTop, NoopBroker\n            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nFound 9 errors in 7 files (checked 98 source files)",
+      "failures": [
+        {
+          "file": "tests\\test_order_types_offset_open.py",
+          "line": 15,
+          "rule": "error",
+          "message": "Statement is unreachable"
+        },
+        {
+          "file": "tests\\test_risk_state_machine.py",
+          "line": 33,
+          "rule": "error",
+          "message": "Statement is unreachable"
+        },
+        {
+          "file": "tests\\test_risk_state_machine.py",
+          "line": 75,
+          "rule": "error",
+          "message": "Statement is unreachable"
+        },
+        {
+          "file": "tests\\test_risk_events.py",
+          "line": 41,
+          "rule": "error",
+          "message": "Statement is unreachable  [unreachable]"
+        },
+        {
+          "file": "tests\\test_risk_daily_loss_lockout.py",
+          "line": 42,
+          "rule": "error",
+          "message": "Statement is unreachable"
+        },
+        {
+          "file": "src\\trading\\sim_gate.py",
+          "line": 341,
+          "rule": "error",
+          "message": "Library stubs not installed for \"yaml\""
+        },
+        {
+          "file": "src\\trading\\sim_gate.py",
+          "line": 341,
+          "rule": "note",
+          "message": "Hint: \"python3 -m pip install types-PyYAML\""
+        },
+        {
+          "file": "src\\trading\\sim_gate.py",
+          "line": 341,
+          "rule": "note",
+          "message": "(or run \"mypy --install-types\" to install all missing stub packages)"
+        },
+        {
+          "file": "src\\trading\\sim_gate.py",
+          "line": 341,
+          "rule": "note",
+          "message": "See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports"
+        },
+        {
+          "file": "tests\\test_runner_f21_paper_smoke.py",
+          "line": 56,
+          "rule": "error",
+          "message": "Name \"runner.AppSettings\" is"
+        },
+        {
+          "file": "tests\\test_runner_f21_paper_smoke.py",
+          "line": 60,
+          "rule": "error",
+          "message": "Name \"runner.AppSettings\" is"
+        },
+        {
+          "file": "tests\\test_coverage_complete.py",
+          "line": 211,
+          "rule": "error",
+          "message": "Module \"src.replay.runner\" does not"
+        }
+      ],
+      "hints": [
+        "Add type annotations to function parameters and return values",
+        "Use 'Any' as escape hatch if truly dynamic typing needed",
+        "Check mypy docs for error explanation"
+      ]
     },
     {
       "name": "test",
