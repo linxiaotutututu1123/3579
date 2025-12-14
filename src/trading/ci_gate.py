@@ -2,6 +2,7 @@
 
 Provides pre-deployment checks that must pass before LIVE trading.
 """
+
 from __future__ import annotations
 
 import logging
@@ -64,7 +65,9 @@ class GateReport:
     def summary(self) -> str:
         """Generate summary string."""
         status = "PASS" if self.all_passed else "FAIL"
-        return f"CI Gate [{self.target_mode}]: {status} ({self.pass_count}/{len(self.checks)} passed)"
+        return (
+            f"CI Gate [{self.target_mode}]: {status} ({self.pass_count}/{len(self.checks)} passed)"
+        )
 
 
 class CIGate:
@@ -93,9 +96,7 @@ class CIGate:
         required: bool = True,
     ) -> None:
         """Add a gate check."""
-        self._checks.append(
-            GateCheck(name=name, status=status, message=message, required=required)
-        )
+        self._checks.append(GateCheck(name=name, status=status, message=message, required=required))
 
     def check_tests_pass(self, test_passed: bool) -> None:
         """Check if all tests passed."""
