@@ -54,11 +54,10 @@ def clamp_target(
             audit.setdefault("turnover_clamped", {})[sym] = tgt
 
         decision = risk.can_open(snap)
-        if not decision.allow_open:
-            if abs(tgt) > abs(cur):
-                if cur >= 0 and tgt > cur or cur <= 0 and tgt < cur:
-                    tgt = cur
-                    audit.setdefault("margin_gate_blocked_add", {})[sym] = True
+        is_adding = (cur >= 0 and tgt > cur) or (cur <= 0 and tgt < cur)
+        if not decision.allow_open and abs(tgt) > abs(cur) and is_adding:
+            tgt = cur
+            audit.setdefault("margin_gate_blocked_add", {})[sym] = True
 
         clamped_qty[sym] = tgt
 
