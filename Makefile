@@ -9,7 +9,7 @@
 #   make ci PY=.venv/bin/python  # 指定 Python 路径
 # =============================================================================
 
-.PHONY: all format lint type test check ci clean build context help
+.PHONY: all format lint type test check ci ci-json replay replay-json sim sim-json clean build context help
 
 # -----------------------------------------------------------------------------
 # 默认目标
