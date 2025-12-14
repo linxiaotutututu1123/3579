@@ -4,6 +4,8 @@
 
 ## 退出码表
 
+### CI 检查退出码
+
 | 退出码 | 名称 | 含义 | 触发条件 |
 |:------:|------|------|---------|
 | `0` | SUCCESS | 全部通过 | 所有检查通过 |
@@ -15,7 +17,38 @@
 | `6` | RISK_CONFIG_FAIL | 风控配置缺失 | LIVE 模式缺少风控配置 |
 | `7` | BROKER_CREDS_FAIL | Broker 凭证无效 | LIVE 模式凭证验证失败 |
 
+### Replay/Sim 退出码
+
+| 退出码 | 名称 | 含义 | 触发条件 |
+|:------:|------|------|---------|
+| `0` | SUCCESS | 全部通过 | 所有场景通过 |
+| `8` | REPLAY_FAIL | Replay 失败 | replay 测试有失败 |
+| `9` | SIM_FAIL | Sim 失败 | sim 测试有失败 |
+
 ## 使用方式
+
+### 统一入口命令
+
+```powershell
+# CI 检查（输出 JSON 到 artifacts/check/report.json）
+.\scripts\make.ps1 ci-json
+
+# Replay 检查（自动启用 CHECK_MODE，输出到 artifacts/sim/report.json）
+.\scripts\make.ps1 replay-json
+
+# Sim 检查（自动启用 CHECK_MODE，输出到 artifacts/sim/report.json）
+.\scripts\make.ps1 sim-json
+```
+
+### 直接调用模块入口
+
+```bash
+# Replay（自动启用 CHECK_MODE）
+python -m src.trading.replay --output artifacts/sim/report.json
+
+# Sim（自动启用 CHECK_MODE）
+python -m src.trading.sim --output artifacts/sim/report.json
+```
 
 ### Makefile
 
@@ -24,8 +57,12 @@
 make ci
 
 # 生成 JSON 报告
-make check-report
+make ci-json
 # 输出: artifacts/check/report.json
+
+# Replay/Sim（自动启用 CHECK_MODE）
+make replay-json
+make sim-json
 ```
 
 ### Python
