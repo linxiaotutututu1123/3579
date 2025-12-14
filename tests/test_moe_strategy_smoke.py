@@ -60,24 +60,22 @@ def test_moe_strategy_returns_valid_portfolio() -> None:
 
 
 def test_moe_strategy_gating_weights_sum_to_one() -> None:
-    """Gating weights should approximately sum to 1."""
+    """Gating weights should sum to 1 (internal method test)."""
     symbols = ["AO"]
     strategy = EnsembleMoEStrategy(symbols=symbols)
 
-    bars_1m = {"AO": _generate_bars(300)}
-    prices = {"AO": 100.0}
+    # Test _compute_gating directly with sample regime
+    regime = {"trend_strength": 0.05, "vol_level": 0.02, "noise_ratio": 2.0}
+    w_trend, w_mr, w_br = strategy._compute_gating(regime)
 
-    state = MarketState(prices=prices, equity=1_000_000.0, bars_1m=bars_1m)
+    # Gating weights must sum to 1
+    total = w_trend + w_mr + w_br
+    assert abs(total - 1.0) < 1e-6, f"Gating weights sum to {total}, expected 1.0"
 
-    # Access internal to verify gating (via features reconstruction)
-    result = strategy.on_tick(state)
-
-    # The features_hash is computed from all_features which includes gating
-    # We verify by running a second call and checking consistency
-    result2 = strategy.on_tick(state)
-
-    assert result.features_hash == result2.features_hash
-    assert result.target_net_qty == result2.target_net_qty
+    # All weights must be non-negative
+    assert w_trend >= 0
+    assert w_mr >= 0
+    assert w_br >= 0
 
 
 def test_moe_strategy_insufficient_bars() -> None:
