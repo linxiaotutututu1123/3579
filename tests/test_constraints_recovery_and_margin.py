@@ -118,6 +118,7 @@ def test_turnover_clamped_limits_delta_per_tick() -> None:
     snap = AccountSnapshot(equity=1_000_000.0, margin_used=100_000.0)
 
     # Target delta is 5, but max_turnover_qty_per_tick=2
+    # Use large max_abs_qty_per_symbol so abs clamp doesn't interfere
     target = TargetPortfolio(
         target_net_qty={"AO": 5},
         model_version="test",
@@ -129,6 +130,7 @@ def test_turnover_clamped_limits_delta_per_tick() -> None:
         snap=snap,
         current_net_qty={"AO": 0},
         target=target,
+        max_abs_qty_per_symbol=10,
         max_turnover_qty_per_tick=2,
     )
 
@@ -144,6 +146,7 @@ def test_turnover_clamped_negative_direction() -> None:
     snap = AccountSnapshot(equity=1_000_000.0, margin_used=100_000.0)
 
     # Target delta is -5, but max_turnover_qty_per_tick=2
+    # Use large max_abs_qty_per_symbol so abs clamp doesn't interfere
     target = TargetPortfolio(
         target_net_qty={"AO": -5},
         model_version="test",
@@ -155,6 +158,7 @@ def test_turnover_clamped_negative_direction() -> None:
         snap=snap,
         current_net_qty={"AO": 0},
         target=target,
+        max_abs_qty_per_symbol=10,
         max_turnover_qty_per_tick=2,
     )
 
