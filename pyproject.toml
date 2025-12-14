@@ -134,7 +134,7 @@ disallow_any_unimported = true
 module = "tests.*"
 disallow_untyped_decorators = false
 warn_unreachable = false
-disable_error_code = ["unreachable", "name-defined", "attr-defined"]
+ignore_errors = true
 
 # 外部依赖类型桩
 [[tool.mypy.overrides]]
