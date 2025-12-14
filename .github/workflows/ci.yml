@@ -7,9 +7,81 @@ on:
     branches: ["**"]
 
 jobs:
+  # ===========================================================================
+  # 主检查：Ubuntu（快、便宜、标准）
+  # ===========================================================================
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      # Quality Gate (Exit codes: 0=pass, 2=format/lint, 3=type, 4=test)
+      - name: Format check
+        id: format
+        run: python -m ruff format --check . || exit 2
+
+      - name: Lint check
+        id: lint
+        run: python -m ruff check . || exit 2
+
+      - name: Type check
+        id: type
+        run: python -m mypy . || exit 3
+
+      - name: Test with coverage
+        id: test
+        run: python -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=85 || exit 4
+
+      # Generate check report (JSON)
+      - name: Generate check report
+        if: always()
+        run: |
+          mkdir -p artifacts/check
+          cat << EOF > artifacts/check/report.json
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "commit": "${{ github.sha }}",
+            "branch": "${{ github.ref_name }}",
+            "os": "ubuntu-latest",
+            "checks": [
+              {"name": "format", "status": "${{ steps.format.outcome == 'success' && 'PASS' || 'FAIL' }}"},
+              {"name": "lint", "status": "${{ steps.lint.outcome == 'success' && 'PASS' || 'FAIL' }}"},
+              {"name": "type", "status": "${{ steps.type.outcome == 'success' && 'PASS' || 'FAIL' }}"},
+              {"name": "test", "status": "${{ steps.test.outcome == 'success' && 'PASS' || 'FAIL' }}"}
+            ]
+          }
+          EOF
+          cat artifacts/check/report.json
+
+      - name: Upload check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: check-report-ubuntu
+          path: artifacts/check
+          if-no-files-found: ignore
+
+  # ===========================================================================
+  # Windows 验证：确保 Windows 兼容（CTP SDK 目标平台）
+  # ===========================================================================
   windows-check:
     runs-on: windows-latest
     timeout-minutes: 20
+    needs: check  # 先跑 Ubuntu，通过后再跑 Windows
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,99 +97,32 @@ jobs:
         run: |
           python -m venv .venv
           .\.venv\Scripts\python.exe -m pip install -U pip setuptools wheel
-          .\.venv\Scripts\python.exe -m pip --version
-          .\.venv\Scripts\python.exe --version
 
-      - name: Install deps (base)
+      - name: Install deps
         shell: pwsh
         run: |
-          .\.venv\Scripts\python.exe -m pip install -v --retries 10 --timeout 60 --progress-bar off -r requirements.txt
+          .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+          .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 
-      - name: Install deps (dev)
+      # Windows 只跑测试（format/lint/type 已在 Ubuntu 验证）
+      - name: Test on Windows
         shell: pwsh
         run: |
-          .\.venv\Scripts\python.exe -m pip install -v --retries 10 --timeout 60 --progress-bar off -r requirements-dev.txt
+          .\.venv\Scripts\python.exe -m pytest -q --cov=src --cov-fail-under=85
 
-      # =========================================================================
-      # Quality Gate (与 Makefile 完全一致)
-      # Exit codes: 0=pass, 2=format/lint, 3=type, 4=test, 5=coverage
-      # =========================================================================
-      - name: Format check
-        id: format
-        shell: pwsh
-        run: |
-          .\.venv\Scripts\python.exe -m ruff format --check .
-          if ($LASTEXITCODE -ne 0) { exit 2 }
-
-      - name: Lint check
-        id: lint
-        shell: pwsh
-        run: |
-          .\.venv\Scripts\python.exe -m ruff check .
-          if ($LASTEXITCODE -ne 0) { exit 2 }
-
-      - name: Type check
-        id: type
-        shell: pwsh
-        run: |
-          .\.venv\Scripts\python.exe -m mypy .
-          if ($LASTEXITCODE -ne 0) { exit 3 }
-
-      - name: Test with coverage
-        id: test
-        shell: pwsh
-        run: |
-          .\.venv\Scripts\python.exe -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=85
-          if ($LASTEXITCODE -ne 0) { exit 4 }
-
-      # =========================================================================
-      # Generate check report (JSON for external consumption)
-      # =========================================================================
-      - name: Generate check report
-        if: always()
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path artifacts\check | Out-Null
-          $report = @{
-            timestamp = (Get-Date -Format "o")
-            commit = "${{ github.sha }}"
-            branch = "${{ github.ref_name }}"
-            checks = @(
-              @{ name = "format"; status = if ("${{ steps.format.outcome }}" -eq "success") { "PASS" } else { "FAIL" } }
-              @{ name = "lint"; status = if ("${{ steps.lint.outcome }}" -eq "success") { "PASS" } else { "FAIL" } }
-              @{ name = "type"; status = if ("${{ steps.type.outcome }}" -eq "success") { "PASS" } else { "FAIL" } }
-              @{ name = "test"; status = if ("${{ steps.test.outcome }}" -eq "success") { "PASS" } else { "FAIL" } }
-            )
-            all_passed = ("${{ steps.format.outcome }}" -eq "success" -and "${{ steps.lint.outcome }}" -eq "success" -and "${{ steps.type.outcome }}" -eq "success" -and "${{ steps.test.outcome }}" -eq "success")
-          }
-          $report | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 artifacts\check\report.json
-          Write-Host "Check report generated: artifacts\check\report.json"
-          Get-Content artifacts\check\report.json
-
-      # =========================================================================
-      # Export context (安全过滤，不输出敏感信息)
-      # =========================================================================
-      - name: Export context artifact
+      # Export context (仅 Windows，因为这是目标部署平台)
+      - name: Export context
         if: always()
         continue-on-error: true
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path artifacts\context | Out-Null
-          # NOTE: export_context.py has built-in security filters for .env, secrets, CTP accounts
           .\.venv\Scripts\python.exe scripts\export_context.py --out artifacts\context\context.md --level lite
 
-      - name: Upload check artifact
+      - name: Upload context
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: check-report
-          path: artifacts/check
-          if-no-files-found: ignore
-
-      - name: Upload context artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: context
+          name: context-windows
           path: artifacts/context
           if-no-files-found: ignore
