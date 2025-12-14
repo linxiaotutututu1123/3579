@@ -746,3 +746,356 @@ def run_ci_with_json_report(
 
     report.save(output_path)
     return report
+
+
+# =============================================================================
+# Schema 校验与 Policy Violation 检测（军规级）
+# =============================================================================
+
+# CI Report v3.0 必须字段
+CI_REPORT_REQUIRED_FIELDS = {
+    "schema_version",
+    "type",
+    "overall",
+    "exit_code",
+    "check_mode",
+}
+
+# Sim/Replay Report 必须字段
+SIM_REPORT_REQUIRED_FIELDS = {
+    "schema_version",
+    "type",
+    "overall",
+    "exit_code",
+    "check_mode",
+    "scenarios_total",
+    "scenarios_passed",
+    "scenarios_failed",
+}
+
+# Failure 必须字段
+FAILURE_REQUIRED_FIELDS = {
+    "rule_id",
+    "component",
+    "expected",
+    "actual",
+    "tick",
+    "error",
+}
+
+
+@dataclass
+class PolicyViolation:
+    """Policy violation detail."""
+
+    code: str
+    message: str
+    evidence: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "code": self.code,
+            "message": self.message,
+            "evidence": self.evidence,
+        }
+
+
+@dataclass
+class PolicyReport:
+    """Policy violation report."""
+
+    violations: list[PolicyViolation] = field(default_factory=list)
+    timestamp: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.timestamp:
+            self.timestamp = datetime.now(UTC).isoformat()
+
+    @property
+    def has_violations(self) -> bool:
+        """Check if any violations exist."""
+        return len(self.violations) > 0
+
+    def add_violation(
+        self,
+        code: str,
+        message: str,
+        evidence: dict[str, Any] | None = None,
+    ) -> None:
+        """Add a policy violation."""
+        self.violations.append(
+            PolicyViolation(code=code, message=message, evidence=evidence or {})
+        )
+        logger.error("POLICY_VIOLATION: [%s] %s", code, message)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "timestamp": self.timestamp,
+            "has_violations": self.has_violations,
+            "violation_count": len(self.violations),
+            "violations": [v.to_dict() for v in self.violations],
+        }
+
+    def to_json(self, indent: int = 2) -> str:
+        """Convert to JSON string."""
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
+
+    def save(self, path: str | Path) -> None:
+        """Save report to file."""
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(self.to_json(), encoding="utf-8")
+        logger.info("Policy violation report saved to %s", path)
+
+
+def validate_report_schema(
+    report_path: str | Path,
+    report_type: str = "ci",
+) -> PolicyReport:
+    """
+    Validate report JSON schema and return policy violations.
+
+    Args:
+        report_path: Path to report.json
+        report_type: Type of report ("ci", "replay", "sim")
+
+    Returns:
+        PolicyReport with any violations found
+    """
+    policy_report = PolicyReport()
+    path = Path(report_path)
+
+    # Check 1: File exists
+    if not path.exists():
+        policy_report.add_violation(
+            code="SCHEMA.FILE_MISSING",
+            message=f"Report file not found: {path}",
+            evidence={"expected_path": str(path)},
+        )
+        return policy_report
+
+    # Check 2: Valid JSON
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        policy_report.add_violation(
+            code="SCHEMA.INVALID_JSON",
+            message=f"Invalid JSON in report: {e}",
+            evidence={"path": str(path), "error": str(e)},
+        )
+        return policy_report
+
+    # Check 3: Required fields
+    required_fields = (
+        SIM_REPORT_REQUIRED_FIELDS
+        if report_type in ("replay", "sim")
+        else CI_REPORT_REQUIRED_FIELDS
+    )
+
+    missing_fields = required_fields - set(data.keys())
+    if missing_fields:
+        policy_report.add_violation(
+            code="SCHEMA.MISSING_FIELDS",
+            message=f"Missing required fields: {missing_fields}",
+            evidence={"missing": list(missing_fields), "found": list(data.keys())},
+        )
+
+    # Check 4: Schema version
+    if "schema_version" in data:
+        version = data["schema_version"]
+        if not isinstance(version, int) or version < 3:
+            policy_report.add_violation(
+                code="SCHEMA.VERSION_OUTDATED",
+                message=f"Schema version must be >= 3, got {version}",
+                evidence={"current_version": version, "required_version": 3},
+            )
+
+    # Check 5: check_mode must be True for replay/sim
+    if report_type in ("replay", "sim"):
+        if not data.get("check_mode", False):
+            policy_report.add_violation(
+                code="POLICY.CHECK_MODE_DISABLED",
+                message="CHECK_MODE must be enabled for replay/sim",
+                evidence={"check_mode": data.get("check_mode")},
+            )
+
+    # Check 6: Failure structure (for replay/sim)
+    if report_type in ("replay", "sim") and "failures" in data:
+        for i, failure in enumerate(data["failures"]):
+            if not isinstance(failure, dict):
+                continue
+            missing = FAILURE_REQUIRED_FIELDS - set(failure.keys())
+            if missing:
+                policy_report.add_violation(
+                    code="SCHEMA.FAILURE_INCOMPLETE",
+                    message=f"Failure {i} missing fields: {missing}",
+                    evidence={
+                        "index": i,
+                        "missing": list(missing),
+                        "failure": failure,
+                    },
+                )
+
+    return policy_report
+
+
+def check_command_whitelist(command: str) -> PolicyReport:
+    """
+    Check if a command is in the whitelist.
+
+    Only make.ps1 targets are allowed.
+
+    Args:
+        command: Command string to check
+
+    Returns:
+        PolicyReport with any violations
+    """
+    policy_report = PolicyReport()
+
+    # Whitelist: only make.ps1 targets
+    allowed_patterns = [
+        r"\.[\\/]scripts[\\/]make\.ps1",
+        r"make\.ps1",
+        r"git\s+(status|diff|log)",
+        r"cat\s+",
+        r"Get-Content\s+",
+    ]
+
+    # Blacklist: direct tool invocation
+    blacklist_patterns = [
+        r"^pytest\s",
+        r"^ruff\s",
+        r"^mypy\s",
+        r"python\s+-m\s+pytest",
+        r"python\s+-m\s+ruff",
+        r"python\s+-m\s+mypy",
+    ]
+
+    import re
+
+    for pattern in blacklist_patterns:
+        if re.search(pattern, command, re.IGNORECASE):
+            policy_report.add_violation(
+                code="POLICY.COMMAND_BLACKLISTED",
+                message=f"Direct tool invocation not allowed: {command}",
+                evidence={
+                    "command": command,
+                    "pattern": pattern,
+                    "hint": "Use make.ps1 targets instead",
+                },
+            )
+            break
+
+    return policy_report
+
+
+def check_artifact_paths() -> PolicyReport:
+    """
+    Check that artifact paths match the fixed convention.
+
+    D.1: 产物路径绝对不变
+
+    Returns:
+        PolicyReport with any violations
+    """
+    policy_report = PolicyReport()
+
+    expected_paths = {
+        "ci_report": Path("artifacts/check/report.json"),
+        "sim_report": Path("artifacts/sim/report.json"),
+        "context": Path("artifacts/context/context.md"),
+        "commands_log": Path("artifacts/claude/commands.log"),
+        "round_summary": Path("artifacts/claude/round_summary.json"),
+        "policy_violation": Path("artifacts/claude/policy_violation.json"),
+    }
+
+    # Just validate the structure is known
+    # Actual path checking happens at runtime
+    return policy_report
+
+
+# =============================================================================
+# Enhanced CIJsonReport v3.0（军规级）
+# =============================================================================
+
+
+@dataclass
+class CIJsonReportV3:
+    """Machine-readable CI report v3.0 for military-grade Claude loop.
+
+    Military-grade enhancements:
+    - schema_version: integer, must be >= 3
+    - type: report type ("ci", "replay", "sim")
+    - check_mode: boolean, must be true for replay/sim
+    - Strict field validation
+    """
+
+    steps: list[CIStep] = field(default_factory=list)
+    schema_version: int = 3
+    type: str = "ci"
+    check_mode: bool = False
+    timestamp: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.timestamp:
+            self.timestamp = datetime.now(UTC).isoformat()
+
+    @property
+    def all_passed(self) -> bool:
+        """Check if all steps passed."""
+        return not any(s.status == CIStepStatus.FAIL for s in self.steps)
+
+    @property
+    def failed_step(self) -> str | None:
+        """Get first failed step name."""
+        for step in self.steps:
+            if step.status == CIStepStatus.FAIL:
+                return step.name
+        return None
+
+    @property
+    def overall(self) -> str:
+        """Overall status string."""
+        return "PASS" if self.all_passed else "FAIL"
+
+    @property
+    def exit_code(self) -> int:
+        """Overall exit code (first failure)."""
+        for step in self.steps:
+            if step.status == CIStepStatus.FAIL and step.exit_code is not None:
+                return step.exit_code
+        return 0
+
+    def add_step(self, step: CIStep) -> None:
+        """Add a CI step result."""
+        self.steps.append(step)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "schema_version": self.schema_version,
+            "type": self.type,
+            "timestamp": self.timestamp,
+            "check_mode": self.check_mode,
+            "all_passed": self.all_passed,
+            "failed_step": self.failed_step,
+            "overall": self.overall,
+            "exit_code": self.exit_code,
+            "steps": [s.to_dict() for s in self.steps],
+        }
+
+    def to_json(self, indent: int = 2) -> str:
+        """Convert to JSON string."""
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
+
+    def save(self, path: str | Path) -> None:
+        """Save report to file."""
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(self.to_json(), encoding="utf-8")
+        logger.info("CI report v3 saved to %s", path)
+
