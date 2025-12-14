@@ -296,3 +296,353 @@ def assert_not_check_mode(operation: str = "place_order") -> None:
         msg = f"BLOCKED: {operation} is forbidden in CHECK_MODE=1"
         logger.error(msg)
         raise RuntimeError(msg)
+
+
+# =============================================================================
+# CI JSON 报告生成（供 Claude 自动闭环使用）
+# =============================================================================
+
+
+class CIStepStatus(str, Enum):
+    """CI step status."""
+
+    PASS = "PASS"
+    FAIL = "FAIL"
+    SKIP = "SKIP"
+
+
+@dataclass
+class CIStepFailure:
+    """Single failure detail within a CI step."""
+
+    file: str
+    line: int
+    rule: str
+    message: str
+
+
+@dataclass
+class CIStep:
+    """Single CI step result."""
+
+    name: str
+    status: CIStepStatus
+    exit_code: int | None = None
+    duration_ms: int = 0
+    output_summary: str = ""
+    reason: str = ""  # For SKIP status
+    failures: list[CIStepFailure] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        result: dict[str, Any] = {
+            "name": self.name,
+            "status": self.status.value,
+            "exit_code": self.exit_code,
+            "duration_ms": self.duration_ms,
+        }
+        if self.status == CIStepStatus.SKIP:
+            result["reason"] = self.reason
+        elif self.status == CIStepStatus.FAIL:
+            result["output_summary"] = self.output_summary
+            if self.failures:
+                result["failures"] = [asdict(f) for f in self.failures]
+        return result
+
+
+@dataclass
+class CIJsonReport:
+    """Machine-readable CI report for Claude automated loop."""
+
+    steps: list[CIStep] = field(default_factory=list)
+    version: str = "1.0"
+    timestamp: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.timestamp:
+            self.timestamp = datetime.now(timezone.utc).isoformat()
+
+    @property
+    def overall(self) -> str:
+        """Overall status."""
+        if any(s.status == CIStepStatus.FAIL for s in self.steps):
+            return "FAIL"
+        return "PASS"
+
+    @property
+    def exit_code(self) -> int:
+        """Overall exit code (first failure)."""
+        for step in self.steps:
+            if step.status == CIStepStatus.FAIL and step.exit_code is not None:
+                return step.exit_code
+        return 0
+
+    def add_step(self, step: CIStep) -> None:
+        """Add a CI step result."""
+        self.steps.append(step)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "version": self.version,
+            "timestamp": self.timestamp,
+            "overall": self.overall,
+            "exit_code": self.exit_code,
+            "steps": [s.to_dict() for s in self.steps],
+        }
+
+    def to_json(self, indent: int = 2) -> str:
+        """Convert to JSON string."""
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
+
+    def save(self, path: str | Path) -> None:
+        """Save report to file."""
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(self.to_json(), encoding="utf-8")
+        logger.info("CI report saved to %s", path)
+
+
+def parse_ruff_output(output: str) -> list[CIStepFailure]:
+    """Parse ruff output into structured failures."""
+    failures = []
+    for line in output.strip().split("\n"):
+        if not line.strip():
+            continue
+        # Format: path/file.py:line:col: RULE message
+        parts = line.split(":", 3)
+        if len(parts) >= 4:
+            file_path = parts[0]
+            try:
+                line_no = int(parts[1])
+            except ValueError:
+                continue
+            rest = parts[3].strip()
+            # Extract rule code (e.g., E501, W503)
+            rule_parts = rest.split(" ", 1)
+            rule = rule_parts[0] if rule_parts else ""
+            message = rule_parts[1] if len(rule_parts) > 1 else rest
+            failures.append(
+                CIStepFailure(file=file_path, line=line_no, rule=rule, message=message)
+            )
+    return failures
+
+
+def parse_mypy_output(output: str) -> list[CIStepFailure]:
+    """Parse mypy output into structured failures."""
+    failures = []
+    for line in output.strip().split("\n"):
+        if not line.strip() or line.startswith("Found"):
+            continue
+        # Format: path/file.py:line: error: message
+        parts = line.split(":", 3)
+        if len(parts) >= 3:
+            file_path = parts[0]
+            try:
+                line_no = int(parts[1])
+            except ValueError:
+                continue
+            message = parts[2].strip() if len(parts) == 3 else parts[3].strip()
+            rule = "type-error"
+            if ": error:" in line:
+                rule = "error"
+            elif ": note:" in line:
+                rule = "note"
+            failures.append(
+                CIStepFailure(file=file_path, line=line_no, rule=rule, message=message)
+            )
+    return failures
+
+
+def parse_pytest_output(output: str) -> list[CIStepFailure]:
+    """Parse pytest output into structured failures."""
+    failures = []
+    # Look for FAILED lines
+    for line in output.strip().split("\n"):
+        if "FAILED" in line:
+            # Format: FAILED tests/test_foo.py::test_bar - AssertionError
+            parts = line.split(" ", 2)
+            if len(parts) >= 2:
+                test_path = parts[1].split("::")[0] if "::" in parts[1] else parts[1]
+                message = parts[2] if len(parts) > 2 else "test failed"
+                failures.append(
+                    CIStepFailure(file=test_path, line=0, rule="FAILED", message=message)
+                )
+    return failures
+
+
+def run_ci_step(
+    name: str,
+    command: list[str],
+    exit_code_on_fail: int,
+    parser: Any = None,  # Callable[[str], list[CIStepFailure]]
+) -> CIStep:
+    """
+    Run a single CI step and capture result.
+
+    Args:
+        name: Step name (format-check, lint, type, test)
+        command: Command to run
+        exit_code_on_fail: Exit code to use on failure
+        parser: Optional output parser function
+
+    Returns:
+        CIStep with result
+    """
+    start = time.time()
+
+    try:
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=600,  # 10 minute timeout
+        )
+        duration_ms = int((time.time() - start) * 1000)
+        output = result.stdout + result.stderr
+
+        if result.returncode == 0:
+            return CIStep(
+                name=name,
+                status=CIStepStatus.PASS,
+                exit_code=0,
+                duration_ms=duration_ms,
+            )
+
+        # Parse failures if parser provided
+        failures = parser(output) if parser else []
+
+        # Truncate output summary
+        output_lines = output.strip().split("\n")
+        output_summary = "\n".join(output_lines[:20])  # First 20 lines
+
+        return CIStep(
+            name=name,
+            status=CIStepStatus.FAIL,
+            exit_code=exit_code_on_fail,
+            duration_ms=duration_ms,
+            output_summary=output_summary,
+            failures=failures,
+        )
+
+    except subprocess.TimeoutExpired:
+        duration_ms = int((time.time() - start) * 1000)
+        return CIStep(
+            name=name,
+            status=CIStepStatus.FAIL,
+            exit_code=exit_code_on_fail,
+            duration_ms=duration_ms,
+            output_summary="Command timed out after 600 seconds",
+        )
+    except Exception as e:
+        duration_ms = int((time.time() - start) * 1000)
+        return CIStep(
+            name=name,
+            status=CIStepStatus.FAIL,
+            exit_code=exit_code_on_fail,
+            duration_ms=duration_ms,
+            output_summary=f"Error running command: {e}",
+        )
+
+
+def run_ci_with_json_report(
+    python_exe: str = ".venv/Scripts/python.exe",
+    output_path: str = "artifacts/check/report.json",
+    cov_threshold: int = 85,
+) -> CIJsonReport:
+    """
+    Run full CI pipeline and generate JSON report.
+
+    Args:
+        python_exe: Path to Python executable
+        output_path: Output path for JSON report
+        cov_threshold: Coverage threshold percentage
+
+    Returns:
+        CIJsonReport with all results
+    """
+    report = CIJsonReport()
+
+    # Step 1: Format check
+    step = run_ci_step(
+        name="format-check",
+        command=[python_exe, "-m", "ruff", "format", "--check", "."],
+        exit_code_on_fail=ExitCode.FORMAT_LINT_FAIL,
+        parser=parse_ruff_output,
+    )
+    report.add_step(step)
+
+    if step.status == CIStepStatus.FAIL:
+        # Skip remaining steps
+        for name in ["lint", "type", "test"]:
+            report.add_step(
+                CIStep(
+                    name=name,
+                    status=CIStepStatus.SKIP,
+                    reason="previous step failed",
+                )
+            )
+        report.save(output_path)
+        return report
+
+    # Step 2: Lint
+    step = run_ci_step(
+        name="lint",
+        command=[python_exe, "-m", "ruff", "check", "."],
+        exit_code_on_fail=ExitCode.FORMAT_LINT_FAIL,
+        parser=parse_ruff_output,
+    )
+    report.add_step(step)
+
+    if step.status == CIStepStatus.FAIL:
+        for name in ["type", "test"]:
+            report.add_step(
+                CIStep(
+                    name=name,
+                    status=CIStepStatus.SKIP,
+                    reason="previous step failed",
+                )
+            )
+        report.save(output_path)
+        return report
+
+    # Step 3: Type check
+    step = run_ci_step(
+        name="type",
+        command=[python_exe, "-m", "mypy", "."],
+        exit_code_on_fail=ExitCode.TYPE_CHECK_FAIL,
+        parser=parse_mypy_output,
+    )
+    report.add_step(step)
+
+    if step.status == CIStepStatus.FAIL:
+        report.add_step(
+            CIStep(
+                name="test",
+                status=CIStepStatus.SKIP,
+                reason="previous step failed",
+            )
+        )
+        report.save(output_path)
+        return report
+
+    # Step 4: Test
+    step = run_ci_step(
+        name="test",
+        command=[
+            python_exe,
+            "-m",
+            "pytest",
+            "-q",
+            "--cov=src",
+            "--cov-report=term-missing:skip-covered",
+            f"--cov-fail-under={cov_threshold}",
+        ],
+        exit_code_on_fail=ExitCode.TEST_FAIL,
+        parser=parse_pytest_output,
+    )
+    report.add_step(step)
+
+    report.save(output_path)
+    return report
+
