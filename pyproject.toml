@@ -116,6 +116,7 @@ exclude = [
     "^build/",
     "^\\.venv/",
     "^artifacts/",
+    "^tests/",
 ]
 
 # 核心模块使用最严格模式
