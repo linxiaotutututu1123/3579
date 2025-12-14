@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1765738003699,
+  "updatedAt": 1765738180819,
   "running": 0,
   "queued": 0,
   "maxWorkers": 3,
@@ -8,7 +8,7 @@
     "state": "ok",
     "message": "Gemini CLI available (0.19.4)",
     "version": "0.19.4",
-    "lastChecked": 1765738003442,
+    "lastChecked": 1765738180557,
     "mode": "cli"
   },
   "tasks": []
