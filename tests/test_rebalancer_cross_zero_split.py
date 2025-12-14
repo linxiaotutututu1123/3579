@@ -85,16 +85,16 @@ def test_same_direction_reduce_long() -> None:
         features_hash="abc",
     )
 
-    close_intents, open_intents = build_rebalance_intents(
+    intents = build_rebalance_intents(
         current_net_qty={"AO": 3},
         target=target,
         mid_prices={"AO": 100.0},
     )
 
-    assert len(close_intents) == 1
-    assert close_intents[0].side == Side.SELL
-    assert close_intents[0].offset == Offset.CLOSE
-    assert close_intents[0].qty == 2
+    assert len(intents) == 1
+    assert intents[0].side == Side.SELL
+    assert intents[0].offset == Offset.CLOSE
+    assert intents[0].qty == 2
     assert len(open_intents) == 0
 
 
