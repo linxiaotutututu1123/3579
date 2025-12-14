@@ -1,13 +1,20 @@
 """CI gate checks for LIVE mode deployment.
 
 Provides pre-deployment checks that must pass before LIVE trading.
+Also provides machine-readable JSON report generation for Claude automated loop.
 """
 
 from __future__ import annotations
 
+import json
 import logging
-from dataclasses import dataclass
+import subprocess
+import time
+from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
 from enum import Enum
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
