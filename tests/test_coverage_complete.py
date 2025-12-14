@@ -181,14 +181,14 @@ class TestFlattenPlanCoverage:
     """Coverage tests for flatten plan."""
 
     def test_position_invalid_today_qty(self) -> None:
-        """Position raises for negative today_qty."""
+        """PositionToClose raises for negative today_qty."""
         with pytest.raises(ValueError, match="today_qty/yesterday_qty must be >= 0"):
-            Position(symbol="AO", net_qty=1, today_qty=-1, yesterday_qty=2)
+            PositionToClose(symbol="AO", net_qty=1, today_qty=-1, yesterday_qty=2)
 
     def test_position_invalid_sum(self) -> None:
-        """Position raises when sum doesn't match net_qty."""
+        """PositionToClose raises when sum doesn't match net_qty."""
         with pytest.raises(ValueError, match="abs.net_qty. must equal"):
-            Position(symbol="AO", net_qty=5, today_qty=1, yesterday_qty=1)
+            PositionToClose(symbol="AO", net_qty=5, today_qty=1, yesterday_qty=1)
 
 
 class TestOrderTrackerCoverage:
