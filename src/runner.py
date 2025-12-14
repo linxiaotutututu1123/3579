@@ -37,7 +37,7 @@ class LiveTickData:
     now_ts: float
 
 
-def init_components(*, broker: Broker, risk_cfg: RiskConfig | None = None) -> Components:
+def init_components(broker: Broker, risk_cfg: RiskConfig | None = None) -> Components:
     """
     App composition root.
     - Loads settings/env
@@ -121,7 +121,9 @@ def run_f21(
             if isinstance(settings.trade_mode, str)
             else str(settings.trade_mode)
         )
-        effective_mode = TradeMode.LIVE if requested_mode == TradeMode.LIVE.value else TradeMode.PAPER
+        effective_mode = (
+            TradeMode.LIVE if requested_mode == TradeMode.LIVE.value else TradeMode.PAPER
+        )
         controls = TradeControls(mode=effective_mode)
 
         handle_trading_tick(
