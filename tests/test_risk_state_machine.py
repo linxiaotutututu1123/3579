@@ -88,13 +88,13 @@ def test_margin_gate_blocks_open_in_recovery() -> None:
         calls["flatten"] += 1
 
     rm = RiskManager(
-        RiskConfig(max_margin_recovery=0.40),
+        RiskConfig(max_margin_recovery=0.50),
         cancel_all_cb=cancel_all,
         force_flatten_all_cb=flatten_all,
     )
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="")
 
     rm.state.mode = RiskMode.RECOVERY
-    d = rm.can_open(AccountSnapshot(equity=1_000_000.0, margin_used=450_000.0))
+    d = rm.can_open(AccountSnapshot(equity=1_000_000.0, margin_used=550_000.0))
     assert d.allow_open is False
     assert d.reason == "blocked_by_margin_ratio"
