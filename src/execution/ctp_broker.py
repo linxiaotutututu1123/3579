@@ -16,6 +16,7 @@ from src.execution.broker import Broker, OrderAck, OrderRejected
 from src.execution.order_types import OrderIntent
 from src.trading.controls import TradeMode
 
+
 if TYPE_CHECKING:
     pass
 
@@ -99,7 +100,7 @@ def validate_ctp_env(trade_mode: TradeMode) -> CtpConfig | None:
 def _lazy_import_ctp() -> Any:
     """Lazy import CTP SDK. Returns None if not available."""
     try:
-        import ctp  # type: ignore[import-not-found]  # noqa: PLC0415
+        import ctp  # type: ignore[import-not-found]
 
         return ctp
     except ImportError:

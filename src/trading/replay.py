@@ -21,6 +21,7 @@ import time
 from src.trading.ci_gate import enable_check_mode, is_check_mode
 from src.trading.sim_gate import SimExitCode, SimGate
 
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_OUTPUT = "artifacts/sim/report.json"
@@ -70,7 +71,7 @@ def run_replay_tests(
     try:
         result = subprocess.run(
             cmd,
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=300,  # 5 minute timeout
         )

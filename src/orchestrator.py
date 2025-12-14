@@ -14,6 +14,7 @@ from src.risk.manager import RiskManager
 from src.risk.state import AccountSnapshot
 from src.trading.utils import stable_json
 
+
 NowCb = Callable[[], float]
 Event = RiskEvent | ExecutionEvent
 

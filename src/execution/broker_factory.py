@@ -18,6 +18,7 @@ from src.config import AppSettings
 from src.execution.broker import Broker, NoopBroker
 from src.trading.controls import TradeMode
 
+
 if TYPE_CHECKING:
     pass
 

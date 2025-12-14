@@ -1,5 +1,5 @@
 """Comprehensive tests to achieve 100% code coverage."""
-# ruff: noqa: F401, F811, E501
+# ruff: noqa: F401, F811
 
 from __future__ import annotations
 
@@ -41,6 +41,7 @@ from src.trading.controls import TradeControls, TradeMode
 from src.trading.live_guard import LiveModeGuard
 from src.trading.orchestrator import handle_trading_tick
 from src.trading.reconcile import ReconcileStatus, log_reconcile_report, reconcile_positions
+
 
 if TYPE_CHECKING:
     pass
@@ -219,7 +220,7 @@ class TestReplayCoverage:
         risk.on_day_start_0900(snap, correlation_id="test")
 
         strategy = LinearAIStrategy(symbols=["AO"])
-        _broker = NoopBroker()  # noqa: F841
+        _broker = NoopBroker()
         flatten_spec = FlattenSpec()
 
         result = run_replay_tick_mode2(

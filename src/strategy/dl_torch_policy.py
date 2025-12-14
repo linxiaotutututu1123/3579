@@ -15,6 +15,7 @@ from src.strategy.dl.weights import load_model_and_hash
 from src.strategy.types import MarketState, TargetPortfolio
 from src.trading.utils import stable_hash
 
+
 # Default model path (relative to repo root)
 DEFAULT_MODEL_PATH = os.path.join(
     os.path.dirname(__file__), "dl", "assets", "dl_torch_v1_state_dict.pt"

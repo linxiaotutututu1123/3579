@@ -21,6 +21,7 @@ from src.execution.broker_factory import broker_factory
 from src.runner import LiveTickData
 from src.strategy.factory import build_strategy
 
+
 if TYPE_CHECKING:
     from src.strategy.base import Strategy
 

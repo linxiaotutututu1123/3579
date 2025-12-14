@@ -590,7 +590,8 @@ def run_ci_step(
     try:
         result = subprocess.run(
             command,
-            check=False, capture_output=True,
+            check=False,
+            capture_output=True,
             text=True,
             timeout=600,  # 10 minute timeout
         )

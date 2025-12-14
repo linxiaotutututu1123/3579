@@ -132,7 +132,7 @@ class TopTierTrendRiskParityStrategy(Strategy):
         """
         total_abs_signal = sum(abs(s) for s in signals.values())
         if total_abs_signal < 1e-12:
-            return {sym: 0.0 for sym in signals}
+            return dict.fromkeys(signals, 0.0)
 
         targets: dict[str, float] = {}
         for sym, sig in signals.items():

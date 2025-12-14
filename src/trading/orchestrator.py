@@ -19,6 +19,7 @@ from src.trading.controls import TradeControls, TradeMode
 from src.trading.events import TradingEvent, TradingEventType
 from src.trading.serial_exec import execute_close_then_open
 
+
 Event = RiskEvent | ExecutionEvent | TradingEvent
 
 

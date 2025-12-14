@@ -7,6 +7,7 @@ from src.strategy.base import Strategy
 from src.strategy.types import Bar1m, MarketState, TargetPortfolio
 from src.trading.utils import stable_hash
 
+
 # Default weights for linear combination of features
 DEFAULT_WEIGHTS: dict[str, float] = {
     "mom_15": 0.8,

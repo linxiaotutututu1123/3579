@@ -13,6 +13,7 @@ from src.risk.manager import RiskManager
 from src.risk.state import AccountSnapshot
 from src.trading.orchestrator import TradingTickResult
 
+
 if TYPE_CHECKING:
     from src.strategy.base import Strategy
     from src.strategy.types import Bar1m

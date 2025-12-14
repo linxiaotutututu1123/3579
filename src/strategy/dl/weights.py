@@ -8,6 +8,7 @@ import torch
 
 from src.strategy.dl.model import TinyMLP
 
+
 # Cache for loaded models
 _model_cache: dict[str, tuple[TinyMLP, str]] = {}
 

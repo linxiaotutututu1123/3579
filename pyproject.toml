@@ -42,12 +42,21 @@ ignore = [
     # 允许的例外（必须有理由）
     "PLR0913",  # 允许函数参数超过 5 个（某些 API 需要）
     "PLR0911",  # 允许多个 return 语句（复杂逻辑需要）
+    "PLR0912",  # 允许多个分支（复杂逻辑需要）
     "PLR2004",  # 允许魔法数字（配置常量）
     "TRY003",   # 允许长异常消息
+    "TRY004",   # 允许 RuntimeError 代替 TypeError
+    "TRY300",   # 允许 try 内 return
+    "ARG001",   # 允许未使用参数（接口预留）
     "ARG002",   # 允许未使用的方法参数（接口兼容）
     "B008",     # 允许函数默认参数使用函数调用（FastAPI 依赖）
+    "RUF002",   # 允许中文全角字符在 docstring 中
     "RUF003",   # 允许中文全角字符在注释中
+    "RUF034",   # 允许冗余条件（可读性）
+    "RUF046",   # 允许 int(round(...))（明确意图）
+    "RET504",   # 允许 return 前赋值（调试友好）
     "PLW0603",  # 允许 global 语句（状态管理需要）
+    "PLW1510",  # 允许 subprocess.run 不带 check
     "PLC0415",  # 允许函数内 import（延迟加载）
     "SIM102",   # 允许嵌套 if（可读性）
     "PERF401",  # 允许循环 append（可读性）
@@ -56,9 +65,13 @@ ignore = [
 # 各模块单独配置
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
-    "ARG001",   # 测试函数允许未使用参数（fixtures）
     "S101",     # 测试允许 assert
-    "PLR2004",  # 测试允许魔法数字
+    "SLF001",   # 测试允许访问私有成员
+    "PT011",    # 测试允许宽泛的 pytest.raises
+    "PT018",    # 测试允许复合断言
+    "RUF043",   # 测试允许非原始正则
+    "RUF059",   # 测试允许未使用的解包变量
+    "PLR0124",  # 测试允许 NaN 检查 (qty == qty)
 ]
 "scripts/*" = [
     "T201",     # 脚本允许 print

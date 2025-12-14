@@ -17,6 +17,7 @@ import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 
+
 # =============================================================================
 # 分层文件列表
 # =============================================================================
@@ -125,7 +126,7 @@ def get_tree_output() -> str:
         # Windows tree command
         result = subprocess.run(
             ["tree", "/F", "/A"],
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=30,
             cwd=".",
@@ -156,7 +157,7 @@ def get_git_info() -> dict[str, str]:
     try:
         result = subprocess.run(
             ["git", "rev-parse", "HEAD"],
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=10,
         )
@@ -167,7 +168,7 @@ def get_git_info() -> dict[str, str]:
     try:
         result = subprocess.run(
             ["git", "branch", "--show-current"],
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=10,
         )
