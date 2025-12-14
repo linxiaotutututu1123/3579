@@ -30,11 +30,40 @@ param(
 $ErrorActionPreference = "Stop"
 
 # =============================================================================
+# Targets 定义（单一数据源，help 自动生成，避免文档漂移）
+# =============================================================================
+$TARGETS = [ordered]@{
+    # 质量门
+    "format"       = "Format code (ruff format)"
+    "format-check" = "Check format without modifying"
+    "lint"         = "Lint code (ruff check)"
+    "lint-fix"     = "Lint with auto-fix"
+    "type"         = "Type check (mypy)"
+    "test"         = "Run tests (pytest, 85% coverage gate)"
+    "test-fast"    = "Run tests (fast, no coverage)"
+    "check"        = "Run all checks without modifying files"
+    "ci"           = "Full CI pipeline (format-check + lint + type + test)"
+    # 上下文导出
+    "context"      = "Export lite context"
+    "context-dev"  = "Export dev context"
+    "context-debug"= "Export debug context"
+    # 构建
+    "build"        = "Build both exe files"
+    "build-paper"  = "Build 3579-paper.exe"
+    "build-live"   = "Build 3579-live.exe"
+    # 工具
+    "install"      = "Install dependencies"
+    "install-dev"  = "Install dev dependencies"
+    "clean"        = "Clean build artifacts"
+    "help"         = "Show this help message"
+}
+
+# =============================================================================
 # 配置：明确使用 venv 中的 Python，不依赖系统 PATH
 # 支持环境变量覆盖：$env:PY=python .\scripts\make.ps1 ci
 # =============================================================================
-$_PY_DEFAULT = Join-Path $PSScriptRoot "..\.venv\Scripts\python.exe"
-$_PIP_DEFAULT = Join-Path $PSScriptRoot "..\.venv\Scripts\pip.exe"
+$_PY_DEFAULT = Join-Path $PSScriptRoot "../.venv/Scripts/python.exe"
+$_PIP_DEFAULT = Join-Path $PSScriptRoot "../.venv/Scripts/pip.exe"
 
 # 支持外部覆盖（与 Makefile 的 PY ?= 对齐）
 if ($env:PY) {
@@ -66,36 +95,35 @@ function Assert-VenvExists {
 # =============================================================================
 
 function Show-Help {
-    Write-Host "3579 Trading System - PowerShell Task Runner"
-    Write-Host "============================================="
+    Write-Host "3579 Trading System - PowerShell Task Runner" -ForegroundColor Cyan
+    Write-Host "=============================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "Usage: .\scripts\make.ps1 <target>"
     Write-Host ""
-    Write-Host "Quality Gates:"
-    Write-Host "  format       - Format code (ruff format)"
-    Write-Host "  lint         - Lint code (ruff check)"
-    Write-Host "  type         - Type check (mypy)"
-    Write-Host "  test         - Run tests (pytest, 85% coverage gate)"
-    Write-Host "  check        - Run all checks without modifying files"
-    Write-Host "  ci           - Full CI pipeline"
+    Write-Host "Available Targets:" -ForegroundColor Yellow
+    
+    # 分组显示
+    $groups = [ordered]@{
+        "Quality Gates" = @("format", "format-check", "lint", "lint-fix", "type", "test", "test-fast", "check", "ci")
+        "Context Export" = @("context", "context-dev", "context-debug")
+        "Build" = @("build", "build-paper", "build-live")
+        "Utility" = @("install", "install-dev", "clean", "help")
+    }
+    
+    foreach ($group in $groups.GetEnumerator()) {
+        Write-Host ""
+        Write-Host "  $($group.Key):" -ForegroundColor Green
+        foreach ($target in $group.Value) {
+            if ($TARGETS.Contains($target)) {
+                $desc = $TARGETS[$target]
+                Write-Host ("    {0,-14} - {1}" -f $target, $desc)
+            }
+        }
+    }
+    
     Write-Host ""
-    Write-Host "Context Export:"
-    Write-Host "  context      - Export lite context"
-    Write-Host "  context-dev  - Export dev context"
-    Write-Host "  context-debug- Export debug context"
-    Write-Host ""
-    Write-Host "Build:"
-    Write-Host "  build-paper  - Build 3579-paper.exe"
-    Write-Host "  build-live   - Build 3579-live.exe"
-    Write-Host "  build        - Build both exe files"
-    Write-Host ""
-    Write-Host "Utility:"
-    Write-Host "  install      - Install dependencies"
-    Write-Host "  install-dev  - Install dev dependencies"
-    Write-Host "  clean        - Clean build artifacts"
-    Write-Host ""
-    Write-Host "Python: $PYTHON"
-    Write-Host "Override: `$env:PY='python' .\scripts\make.ps1 ci"
+    Write-Host "Python: $PYTHON" -ForegroundColor Gray
+    Write-Host "Override: `$env:PY='python' .\scripts\make.ps1 ci" -ForegroundColor Gray
 }
 
 function Invoke-Install {
