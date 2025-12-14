@@ -208,10 +208,8 @@ class TestReplayCoverage:
 
     def test_run_replay_tick_mode2(self) -> None:
         """Test replay tick mode2 execution."""
-        from src.execution.broker import NoopBroker
-        from src.execution.flatten_executor import FlattenExecutor
         from src.execution.flatten_plan import FlattenSpec
-        from src.replay.runner import BookTop
+        from src.replay.runner import BookTop, NoopBroker
 
         snap = AccountSnapshot(equity=1_000_000, margin_used=100_000)
         positions: list[PositionToClose] = []
