@@ -67,12 +67,14 @@ jobs:
           EOF
           cat artifacts/check/report.json
 
+      # 白名单上传：只上传明确指定的文件，避免敏感信息泄露
       - name: Upload check report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: check-report-ubuntu
-          path: artifacts/check
+          path: |
+            artifacts/check/report.json
           if-no-files-found: ignore
 
   # ===========================================================================
