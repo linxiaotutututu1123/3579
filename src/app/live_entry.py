@@ -14,7 +14,7 @@ If run_f21 is not implemented yet, raises a clear RuntimeError.
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, NoReturn
+from typing import TYPE_CHECKING
 
 from src.execution.broker import Broker
 from src.runner import LiveTickData
