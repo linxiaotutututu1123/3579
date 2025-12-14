@@ -20,14 +20,16 @@ def _generate_fake_bars(n: int, base_price: float = 100.0, seed: int = 42) -> li
         close = price + change
         price = close
 
-        bars.append(Bar1m(
-            ts=float(i * 60),
-            open=open_price,
-            high=high,
-            low=low,
-            close=close,
-            volume=float(random.randint(100, 1000)),
-        ))
+        bars.append(
+            Bar1m(
+                ts=float(i * 60),
+                open=open_price,
+                high=high,
+                low=low,
+                close=close,
+                volume=float(random.randint(100, 1000)),
+            )
+        )
 
     return bars
 

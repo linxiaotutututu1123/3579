@@ -9,7 +9,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from src.strategy.base import Strategy
-from src.strategy.types import Bar1m, MarketState, TargetPortfolio
+from src.strategy.types import MarketState, TargetPortfolio
 
 
 def _stable_json(obj: object) -> str:
@@ -81,7 +81,9 @@ class TopTierTrendRiskParityStrategy(Strategy):
         final_targets = {sym: int(round(smoothed_targets.get(sym, 0.0))) for sym in symbols}
 
         for sym in symbols:
-            final_targets[sym] = max(-cfg.max_abs_qty_per_symbol, min(cfg.max_abs_qty_per_symbol, final_targets[sym]))
+            final_targets[sym] = max(
+                -cfg.max_abs_qty_per_symbol, min(cfg.max_abs_qty_per_symbol, final_targets[sym])
+            )
 
         features["raw_targets"] = {k: float(v) for k, v in raw_targets.items()}
         features["smoothed_targets"] = {k: float(v) for k, v in smoothed_targets.items()}
@@ -93,7 +95,9 @@ class TopTierTrendRiskParityStrategy(Strategy):
             features_hash=features_hash,
         )
 
-    def _compute_momentum(self, closes: np.ndarray, windows: tuple[int, int, int]) -> tuple[float, float, float]:
+    def _compute_momentum(
+        self, closes: np.ndarray, windows: tuple[int, int, int]
+    ) -> tuple[float, float, float]:
         """Compute log-return momentum for each window."""
         results: list[float] = []
         for w in windows:

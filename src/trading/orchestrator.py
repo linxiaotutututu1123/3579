@@ -67,19 +67,23 @@ def handle_trading_tick(
     )
     target = strategy.on_tick(market_state)
 
-    events.append(TradingEvent(
-        type=TradingEventType.SIGNAL_GENERATED,
-        ts=now_cb(),
-        correlation_id=cid,
-        data={"model_version": target.model_version, "features_hash": target.features_hash},
-    ))
+    events.append(
+        TradingEvent(
+            type=TradingEventType.SIGNAL_GENERATED,
+            ts=now_cb(),
+            correlation_id=cid,
+            data={"model_version": target.model_version, "features_hash": target.features_hash},
+        )
+    )
 
-    events.append(TradingEvent(
-        type=TradingEventType.TARGET_PORTFOLIO_SET,
-        ts=now_cb(),
-        correlation_id=cid,
-        data={"target_net_qty": dict(target.target_net_qty)},
-    ))
+    events.append(
+        TradingEvent(
+            type=TradingEventType.TARGET_PORTFOLIO_SET,
+            ts=now_cb(),
+            correlation_id=cid,
+            data={"target_net_qty": dict(target.target_net_qty)},
+        )
+    )
 
     clamped, audit = clamp_target(
         risk=risk,
@@ -89,12 +93,14 @@ def handle_trading_tick(
     )
 
     if clamped.target_net_qty != target.target_net_qty or audit:
-        events.append(TradingEvent(
-            type=TradingEventType.TARGET_PORTFOLIO_CLAMPED,
-            ts=now_cb(),
-            correlation_id=cid,
-            data={"clamped_net_qty": dict(clamped.target_net_qty), "audit": audit},
-        ))
+        events.append(
+            TradingEvent(
+                type=TradingEventType.TARGET_PORTFOLIO_CLAMPED,
+                ts=now_cb(),
+                correlation_id=cid,
+                data={"clamped_net_qty": dict(clamped.target_net_qty), "audit": audit},
+            )
+        )
 
     close_intents, open_intents = build_rebalance_intents(
         current_net_qty=current_net_qty,
@@ -115,12 +121,14 @@ def handle_trading_tick(
             }
             for i in all_intents
         ]
-        events.append(TradingEvent(
-            type=TradingEventType.ORDERS_INTENDED,
-            ts=now_cb(),
-            correlation_id=cid,
-            data={"intents": intent_data},
-        ))
+        events.append(
+            TradingEvent(
+                type=TradingEventType.ORDERS_INTENDED,
+                ts=now_cb(),
+                correlation_id=cid,
+                data={"intents": intent_data},
+            )
+        )
 
     if controls.mode == TradeMode.PAPER:
         return TradingTickResult(
@@ -131,12 +139,14 @@ def handle_trading_tick(
         )
 
     if all_intents:
-        events.append(TradingEvent(
-            type=TradingEventType.ORDERS_SENT,
-            ts=now_cb(),
-            correlation_id=cid,
-            data={"close_count": len(close_intents), "open_count": len(open_intents)},
-        ))
+        events.append(
+            TradingEvent(
+                type=TradingEventType.ORDERS_SENT,
+                ts=now_cb(),
+                correlation_id=cid,
+                data={"close_count": len(close_intents), "open_count": len(open_intents)},
+            )
+        )
 
         trading_events, exec_events = execute_close_then_open(
             executor=executor,

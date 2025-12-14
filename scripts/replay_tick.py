@@ -20,14 +20,11 @@ def main() -> int:
     snap = AccountSnapshot(**payload["snap"])
     positions = [PositionToClose(**p) for p in payload["positions"]]
     books = {k: BookTop(**v) for k, v in payload["books"].items()}
-    flatten_spec = (
-        FlattenSpec(**payload["flatten_spec"]) if "flatten_spec" in payload else None
-    )
+    flatten_spec = FlattenSpec(**payload["flatten_spec"]) if "flatten_spec" in payload else None
 
     fault_data = payload.get("fault", {})
     fault = FaultConfig(
-        missing_book_symbols=set(fault_data.get("missing_book_symbols", []))
-        or None,
+        missing_book_symbols=set(fault_data.get("missing_book_symbols", [])) or None,
         reject_all=bool(fault_data.get("reject_all", False)),
     )
 

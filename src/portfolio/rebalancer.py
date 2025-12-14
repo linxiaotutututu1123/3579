@@ -38,95 +38,115 @@ def build_rebalance_intents(
         price = mid_prices.get(sym, 0.0)
 
         if cur > 0 and tgt < 0:
-            close_intents.append(OrderIntent(
-                symbol=sym,
-                side=Side.SELL,
-                offset=Offset.CLOSE,
-                price=price,
-                qty=cur,
-                reason="close_long_before_short",
-            ))
-            open_intents.append(OrderIntent(
-                symbol=sym,
-                side=Side.SELL,
-                offset=Offset.OPEN,
-                price=price,
-                qty=abs(tgt),
-                reason="open_short_after_close",
-            ))
-        elif cur < 0 and tgt > 0:
-            close_intents.append(OrderIntent(
-                symbol=sym,
-                side=Side.BUY,
-                offset=Offset.CLOSE,
-                price=price,
-                qty=abs(cur),
-                reason="close_short_before_long",
-            ))
-            open_intents.append(OrderIntent(
-                symbol=sym,
-                side=Side.BUY,
-                offset=Offset.OPEN,
-                price=price,
-                qty=tgt,
-                reason="open_long_after_close",
-            ))
-        elif cur > 0 and tgt >= 0:
-            if delta > 0:
-                open_intents.append(OrderIntent(
-                    symbol=sym,
-                    side=Side.BUY,
-                    offset=Offset.OPEN,
-                    price=price,
-                    qty=delta,
-                    reason="add_long",
-                ))
-            else:
-                close_intents.append(OrderIntent(
+            close_intents.append(
+                OrderIntent(
                     symbol=sym,
                     side=Side.SELL,
                     offset=Offset.CLOSE,
                     price=price,
-                    qty=abs(delta),
-                    reason="reduce_long",
-                ))
-        elif cur < 0 and tgt <= 0:
-            if delta < 0:
-                open_intents.append(OrderIntent(
-                    symbol=sym,
-                    side=Side.SELL,
-                    offset=Offset.OPEN,
-                    price=price,
-                    qty=abs(delta),
-                    reason="add_short",
-                ))
-            else:
-                close_intents.append(OrderIntent(
-                    symbol=sym,
-                    side=Side.BUY,
-                    offset=Offset.CLOSE,
-                    price=price,
-                    qty=delta,
-                    reason="reduce_short",
-                ))
-        elif cur == 0:
-            if tgt > 0:
-                open_intents.append(OrderIntent(
-                    symbol=sym,
-                    side=Side.BUY,
-                    offset=Offset.OPEN,
-                    price=price,
-                    qty=tgt,
-                    reason="open_long",
-                ))
-            else:
-                open_intents.append(OrderIntent(
+                    qty=cur,
+                    reason="close_long_before_short",
+                )
+            )
+            open_intents.append(
+                OrderIntent(
                     symbol=sym,
                     side=Side.SELL,
                     offset=Offset.OPEN,
                     price=price,
                     qty=abs(tgt),
-                    reason="open_short",
-                ))
+                    reason="open_short_after_close",
+                )
+            )
+        elif cur < 0 and tgt > 0:
+            close_intents.append(
+                OrderIntent(
+                    symbol=sym,
+                    side=Side.BUY,
+                    offset=Offset.CLOSE,
+                    price=price,
+                    qty=abs(cur),
+                    reason="close_short_before_long",
+                )
+            )
+            open_intents.append(
+                OrderIntent(
+                    symbol=sym,
+                    side=Side.BUY,
+                    offset=Offset.OPEN,
+                    price=price,
+                    qty=tgt,
+                    reason="open_long_after_close",
+                )
+            )
+        elif cur > 0 and tgt >= 0:
+            if delta > 0:
+                open_intents.append(
+                    OrderIntent(
+                        symbol=sym,
+                        side=Side.BUY,
+                        offset=Offset.OPEN,
+                        price=price,
+                        qty=delta,
+                        reason="add_long",
+                    )
+                )
+            else:
+                close_intents.append(
+                    OrderIntent(
+                        symbol=sym,
+                        side=Side.SELL,
+                        offset=Offset.CLOSE,
+                        price=price,
+                        qty=abs(delta),
+                        reason="reduce_long",
+                    )
+                )
+        elif cur < 0 and tgt <= 0:
+            if delta < 0:
+                open_intents.append(
+                    OrderIntent(
+                        symbol=sym,
+                        side=Side.SELL,
+                        offset=Offset.OPEN,
+                        price=price,
+                        qty=abs(delta),
+                        reason="add_short",
+                    )
+                )
+            else:
+                close_intents.append(
+                    OrderIntent(
+                        symbol=sym,
+                        side=Side.BUY,
+                        offset=Offset.CLOSE,
+                        price=price,
+                        qty=delta,
+                        reason="reduce_short",
+                    )
+                )
+        elif cur == 0:
+            if tgt > 0:
+                open_intents.append(
+                    OrderIntent(
+                        symbol=sym,
+                        side=Side.BUY,
+                        offset=Offset.OPEN,
+                        price=price,
+                        qty=tgt,
+                        reason="open_long",
+                    )
+                )
+            else:
+                open_intents.append(
+                    OrderIntent(
+                        symbol=sym,
+                        side=Side.SELL,
+                        offset=Offset.OPEN,
+                        price=price,
+                        qty=abs(tgt),
+                        reason="open_short",
+                    )
+                )
 
     return close_intents, open_intents

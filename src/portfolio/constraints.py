@@ -56,10 +56,7 @@ def clamp_target(
         decision = risk.can_open(snap)
         if not decision.allow_open:
             if abs(tgt) > abs(cur):
-                if cur >= 0 and tgt > cur:
-                    tgt = cur
-                    audit.setdefault("margin_gate_blocked_add", {})[sym] = True
-                elif cur <= 0 and tgt < cur:
+                if cur >= 0 and tgt > cur or cur <= 0 and tgt < cur:
                     tgt = cur
                     audit.setdefault("margin_gate_blocked_add", {})[sym] = True
 

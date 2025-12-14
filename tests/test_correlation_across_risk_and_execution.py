@@ -42,8 +42,7 @@ def test_correlation_id_propagates_from_risk_to_execution_events() -> None:
     assert len(res.snapshot_hash) == 64
 
     kill_fired = any(
-        isinstance(e, RiskEvent) and e.type == RiskEventType.KILL_SWITCH_FIRED
-        for e in res.events
+        isinstance(e, RiskEvent) and e.type == RiskEventType.KILL_SWITCH_FIRED for e in res.events
     )
     assert kill_fired
 

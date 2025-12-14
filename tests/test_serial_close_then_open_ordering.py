@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.execution.broker import Broker, CloseTodayRejected, OrderAck, OrderRejected
+from src.execution.broker import Broker, OrderAck, OrderRejected
 from src.execution.flatten_executor import FlattenExecutor
 from src.execution.order_types import Offset, OrderIntent, Side
 from src.trading.events import TradingEventType
@@ -94,7 +94,9 @@ def test_close_rejection_skips_open_orders() -> None:
 
     assert len(broker.orders) == 0
 
-    skip_events = [e for e in trading_events if e.type == TradingEventType.OPEN_SKIPPED_DUE_TO_CLOSE_FAILURE]
+    skip_events = [
+        e for e in trading_events if e.type == TradingEventType.OPEN_SKIPPED_DUE_TO_CLOSE_FAILURE
+    ]
     assert len(skip_events) == 1
     assert skip_events[0].data["skipped_open_count"] == 1
 
