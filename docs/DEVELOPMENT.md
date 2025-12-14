@@ -15,6 +15,11 @@ This document describes the development environment setup, quality gates, and tr
 
 **FORBIDDEN**: Running tools directly (e.g., `ruff .`, `mypy .`, `pytest`)
 
+**Exception**: Direct tool invocation is allowed for:
+- Debugging a specific file: `ruff check src/foo.py --select E501`
+- IDE integration (VS Code, PyCharm auto-format)
+- One-off exploration (not for CI/commit validation)
+
 **WHY**: Entry point ensures:
 - Correct venv Python is used
 - Consistent exit codes
@@ -23,10 +28,18 @@ This document describes the development environment setup, quality gates, and tr
 ### 2. CI Must Use Entry Commands Only
 
 ```yaml
+# Ubuntu job:
 # [OK] CORRECT
 - run: make ci
 
-# [X] WRONG - bypasses entry point
+# Windows job:
+# [OK] CORRECT  
+- run: pwsh -File scripts/make.ps1 ci
+# or
+- shell: pwsh
+  run: .\scripts\make.ps1 ci
+
+# [X] WRONG - bypasses entry point (any platform)
 - run: ruff format --check .
 - run: mypy .
 - run: pytest
@@ -41,15 +54,15 @@ from src.trading.ci_gate import assert_not_check_mode
 
 class Broker:
     def place_order(self, order):
-        assert_not_check_mode()  # <-- REQUIRED
+        assert_not_check_mode("place_order")  # <-- REQUIRED with action name
         # ... actual order placement
     
     def cancel_order(self, order_id):
-        assert_not_check_mode()  # <-- REQUIRED
+        assert_not_check_mode("cancel_order")  # <-- REQUIRED with action name
         # ... actual cancellation
     
     def flatten_all(self):
-        assert_not_check_mode()  # <-- REQUIRED
+        assert_not_check_mode("flatten_all")  # <-- REQUIRED with action name
         # ... actual flattening
 ```
 
@@ -181,7 +194,7 @@ Task runners use `.venv` in project root by default:
 
 | Platform | Default Python Path |
 |----------|---------------------|
-| Windows | `.venv/Scripts/python.exe` |
+| Windows | `.venv\Scripts\python.exe` |
 | Linux/Mac | `.venv/bin/python` |
 
 ### Override Behavior
@@ -219,7 +232,7 @@ $env:PY='python'; .\scripts\make.ps1 ci; Remove-Item Env:PY
 If venv doesn't exist, you'll see a friendly error:
 
 ```
-ERROR: Python not found at .venv/Scripts/python.exe
+ERROR: Python not found at .venv\Scripts\python.exe
 Run: python -m venv .venv
 Or override: $env:PY='python' .\scripts\make.ps1 ci
 ```
@@ -236,6 +249,8 @@ All code must pass these checks before merging:
 | Lint | ruff check | 2 | Code style checks |
 | Type | mypy | 3 | Static type checking |
 | Test | pytest | 4 | Unit tests + coverage >= 85% |
+
+**Note**: These exit codes are **mapped by the entry scripts** (`make.ps1` / `Makefile`), not the raw tool output. The tools themselves return 1 for most failures. The entry scripts translate tool failures to our standard exit codes for consistent CI behavior.
 
 ### Exit Code Convention
 
@@ -296,6 +311,16 @@ Context export automatically filters sensitive files:
 - `**/secrets/**`
 - `**/credentials/**`
 - CTP account configuration files
+
+### CI Upload Policy (IMPORTANT)
+
+| Level | CI Upload | Reason |
+|-------|-----------|--------|
+| lite | Yes | Safe, minimal metadata only |
+| dev | Yes | Safe, code interfaces only |
+| debug | **NO** | May contain audit logs, order history, trade data |
+
+**Rule**: CI only uploads `artifacts/context/context.md` (lite level). Debug output is for local debugging only.
 
 ---
 
