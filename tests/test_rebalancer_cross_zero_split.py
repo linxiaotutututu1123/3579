@@ -39,23 +39,22 @@ def test_cross_zero_short_to_long() -> None:
         features_hash="abc",
     )
 
-    close_intents, open_intents = build_rebalance_intents(
+    intents = build_rebalance_intents(
         current_net_qty={"AO": -3},
         target=target,
         mid_prices={"AO": 100.0},
     )
 
-    assert len(close_intents) == 1
-    assert close_intents[0].symbol == "AO"
-    assert close_intents[0].side == Side.BUY
-    assert close_intents[0].offset == Offset.CLOSE
-    assert close_intents[0].qty == 3
+    assert len(intents) == 2
+    assert intents[0].symbol == "AO"
+    assert intents[0].side == Side.BUY
+    assert intents[0].offset == Offset.CLOSE
+    assert intents[0].qty == 3
 
-    assert len(open_intents) == 1
-    assert open_intents[0].symbol == "AO"
-    assert open_intents[0].side == Side.BUY
-    assert open_intents[0].offset == Offset.OPEN
-    assert open_intents[0].qty == 1
+    assert intents[1].symbol == "AO"
+    assert intents[1].side == Side.BUY
+    assert intents[1].offset == Offset.OPEN
+    assert intents[1].qty == 1
 
 
 def test_same_direction_add_long() -> None:
