@@ -41,8 +41,12 @@ def test_correlation_id_propagates_from_risk_to_execution_events() -> None:
     assert res.correlation_id != ""
     assert len(res.snapshot_hash) == 64
 
-    assert any(isinstance(e, RiskEvent) and e.type == RiskEventType.KILL_SWITCH_FIRED for e in res.events)
+    kill_fired = any(
+        isinstance(e, RiskEvent) and e.type == RiskEventType.KILL_SWITCH_FIRED
+        for e in res.events
+    )
+    assert kill_fired
 
     # Every event must share the same correlation_id (highest-grade traceability)
-    cids = {getattr(e, "correlation_id") for e in res.events}
+    cids = {e.correlation_id for e in res.events}
     assert cids == {res.correlation_id}
