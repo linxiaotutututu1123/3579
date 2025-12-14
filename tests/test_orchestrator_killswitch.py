@@ -58,6 +58,6 @@ def test_kill_switch_triggers_flatten_execution() -> None:
         flatten_spec=FlattenSpec(stage2_requotes=0, stage3_max_cross_levels=0),
     )
 
-    assert any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in res.risk_events)
+    assert any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in res.events)
     assert len(broker.calls) > 0
     assert len(res.execution_records) == len(broker.calls)

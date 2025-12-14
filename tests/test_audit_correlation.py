@@ -42,10 +42,10 @@ def test_audit_snapshot_event_and_correlation_id_are_added() -> None:
     assert len(res.snapshot_hash) == 64  # sha256 hex
 
     # first event is always the audit snapshot
-    assert res.risk_events[0].type == RiskEventType.AUDIT_SNAPSHOT
-    assert res.risk_events[0].ts == 999.0
-    assert res.risk_events[0].correlation_id == res.correlation_id
-    assert res.risk_events[0].data["snapshot_hash"] == res.snapshot_hash
+    assert res.events[0].type == RiskEventType.AUDIT_SNAPSHOT
+    assert res.events[0].ts == 999.0
+    assert res.events[0].correlation_id == res.correlation_id
+    assert res.events[0].data["snapshot_hash"] == res.snapshot_hash
 
     # all risk events share the same correlation_id
-    assert {e.correlation_id for e in res.risk_events} == {res.correlation_id}
+    assert {e.correlation_id for e in res.events} == {res.correlation_id}
