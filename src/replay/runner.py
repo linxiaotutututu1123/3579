@@ -91,13 +91,14 @@ def run_replay_tick_mode2(
     *,
     risk: RiskManager,
     snap: AccountSnapshot,
+    positions: Sequence[PositionToClose],
     books: Mapping[str, BookTop],
     bars_1m: Mapping[str, Sequence[Bar1m]],
     strategy: Strategy,
-    current_net_qty: Mapping[str, int],
+    flatten_spec: FlattenSpec | None = None,
     fault: FaultConfig | None = None,
     now_ts: float = 0.0,
-    correlation_id: str | None = None,
+    trade_mode: str = "PAPER",
 ) -> TradingTickResult:
     """
     Run a single tick replay for Mode 2 (trading pipeline).
@@ -107,13 +108,13 @@ def run_replay_tick_mode2(
     Args:
         risk: RiskManager instance
         snap: Current account snapshot
+        positions: Positions to derive current net qty
         books: Order book data for mid price calculation
         bars_1m: 1-minute bar data for strategy (oldest to newest)
         strategy: Strategy instance
-        current_net_qty: Current net positions
         fault: Optional fault injection config
         now_ts: Timestamp for this tick
-        correlation_id: Optional correlation ID for tracing
+        trade_mode: Requested trade mode (LIVE coerced to PAPER during replay)
 
     Returns:
         TradingTickResult with all events and portfolio info
@@ -123,21 +124,40 @@ def run_replay_tick_mode2(
 
     fault = fault or FaultConfig()
 
+    # Apply fault: missing_book_symbols
+    effective_books: dict[str, BookTop] = {}
+    for sym, book in books.items():
+        if fault.missing_book_symbols and sym in fault.missing_book_symbols:
+            continue
+        effective_books[sym] = book
+
     # Select broker based on fault config
     broker: Broker = RejectAllBroker() if fault.reject_all else NoopBroker()
     executor = FlattenExecutor(broker, now_cb=lambda: now_ts)
 
+    risk_result = handle_risk_update(
+        risk=risk,
+        executor=executor,
+        snap=snap,
+        positions=positions,
+        books=effective_books,
+        flatten_spec=flatten_spec,
+        now_cb=lambda: now_ts,
+    )
+
     # Calculate mid prices from books
     prices: dict[str, float] = {}
-    for sym, book in books.items():
-        if fault.missing_book_symbols and sym in fault.missing_book_symbols:
-            continue
+    for sym, book in effective_books.items():
         prices[sym] = (book.best_bid + book.best_ask) / 2.0
 
-    # Always use PAPER mode in replay to prevent accidental orders
-    controls = TradeControls(mode=TradeMode.PAPER)
+    current_net_qty: Mapping[str, int] = {pos.symbol: pos.net_qty for pos in positions}
 
-    return handle_trading_tick(
+    # Always use PAPER mode in replay to prevent accidental orders (even if LIVE requested)
+    requested_mode = trade_mode.upper() if isinstance(trade_mode, str) else trade_mode.value
+    effective_mode = TradeMode.PAPER if requested_mode == TradeMode.LIVE.value else TradeMode.PAPER
+    controls = TradeControls(mode=effective_mode)
+
+    trading_result = handle_trading_tick(
         strategy=strategy,
         risk=risk,
         executor=executor,
@@ -146,6 +166,13 @@ def run_replay_tick_mode2(
         prices=prices,
         bars_1m=bars_1m,
         current_net_qty=current_net_qty,
-        correlation_id=correlation_id,
+        correlation_id=risk_result.correlation_id,
         now_cb=lambda: now_ts,
+    )
+
+    return TradingTickResult(
+        correlation_id=trading_result.correlation_id,
+        events=[*risk_result.events, *trading_result.events],
+        target_portfolio=trading_result.target_portfolio,
+        clamped_portfolio=trading_result.clamped_portfolio,
     )
