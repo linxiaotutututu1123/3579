@@ -78,9 +78,7 @@ class TestBrokerFactoryPaper:
         broker = broker_factory(settings)
         assert isinstance(broker, NoopBroker)
 
-    def test_paper_does_not_require_ctp_env_vars(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_paper_does_not_require_ctp_env_vars(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """PAPER mode works without CTP environment variables."""
         # Clear all CTP env vars
         for var in ("CTP_FRONT_ADDR", "CTP_BROKER_ID", "CTP_USER_ID", "CTP_PASSWORD"):
@@ -109,9 +107,7 @@ class TestBrokerFactoryLive:
             broker_factory(settings)
         assert "Missing required CTP environment variables" in str(exc_info.value)
 
-    def test_live_with_env_but_no_sdk_raises(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_live_with_env_but_no_sdk_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """LIVE mode with env vars but no SDK raises CtpNotAvailableError."""
         # Set required CTP env vars
         monkeypatch.setenv("CTP_FRONT_ADDR", "tcp://127.0.0.1:10130")

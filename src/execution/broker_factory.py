@@ -44,9 +44,7 @@ def _normalize_trade_mode(mode_str: str) -> TradeMode:
         return TradeMode.PAPER
     if mode_upper == "LIVE":
         return TradeMode.LIVE
-    raise BrokerFactoryError(
-        f"Unknown trade mode: {mode_str!r}. Must be 'PAPER' or 'LIVE'."
-    )
+    raise BrokerFactoryError(f"Unknown trade mode: {mode_str!r}. Must be 'PAPER' or 'LIVE'.")
 
 
 def broker_factory(settings: AppSettings) -> Broker:
@@ -77,8 +75,6 @@ def broker_factory(settings: AppSettings) -> Broker:
     ctp_config = validate_ctp_env(trade_mode)
     if ctp_config is None:
         # This should not happen for LIVE mode, but handle defensively
-        raise BrokerFactoryError(
-            "validate_ctp_env returned None for LIVE mode (unexpected)"
-        )
+        raise BrokerFactoryError("validate_ctp_env returned None for LIVE mode (unexpected)")
 
     return CtpBroker(ctp_config, trade_mode=trade_mode)
