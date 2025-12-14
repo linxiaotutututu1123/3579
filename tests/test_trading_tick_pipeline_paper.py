@@ -41,6 +41,7 @@ def test_paper_mode_does_not_place_orders() -> None:
         force_flatten_all_cb=lambda: None,
     )
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.pop_events()  # Clear baseline event before test
 
     strategy = SimpleAIStrategy(symbols=["AO", "SA", "LC"])
     controls = TradeControls(mode=TradeMode.PAPER)
@@ -77,6 +78,7 @@ def test_paper_mode_returns_target_portfolio() -> None:
         force_flatten_all_cb=lambda: None,
     )
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.pop_events()  # Clear baseline event before test
 
     strategy = SimpleAIStrategy(symbols=["AO"])
     controls = TradeControls(mode=TradeMode.PAPER)
@@ -108,6 +110,7 @@ def test_correlation_id_propagates() -> None:
         force_flatten_all_cb=lambda: None,
     )
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.pop_events()  # Clear baseline event before test
 
     strategy = SimpleAIStrategy(symbols=["AO"])
     controls = TradeControls(mode=TradeMode.PAPER)
