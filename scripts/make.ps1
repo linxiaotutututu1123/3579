@@ -19,7 +19,8 @@ param(
     [ValidateSet(
         "help", "install", "install-dev",
         "format", "format-check", "lint", "lint-fix", "type", "test", "test-fast",
-        "check", "ci",
+        "check", "ci", "ci-json",
+        "replay", "replay-json", "sim", "sim-json",
         "context", "context-dev", "context-debug",
         "build", "build-paper", "build-live",
         "clean"
