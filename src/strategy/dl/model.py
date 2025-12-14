@@ -1,4 +1,5 @@
 """Tiny MLP model for DL strategy."""
+
 from __future__ import annotations
 
 import torch

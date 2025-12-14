@@ -1,4 +1,5 @@
 """Smoke tests for DL torch policy strategy."""
+
 from __future__ import annotations
 
 import math

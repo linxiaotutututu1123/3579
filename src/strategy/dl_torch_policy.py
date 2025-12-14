@@ -1,4 +1,5 @@
 """Deep learning torch-based trading strategy (inference only)."""
+
 from __future__ import annotations
 
 import contextlib

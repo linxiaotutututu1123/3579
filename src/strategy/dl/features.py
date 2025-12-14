@@ -1,4 +1,5 @@
 """Feature extraction for DL strategy."""
+
 from __future__ import annotations
 
 import math
