@@ -31,7 +31,7 @@ def _missing_broker_factory(*_: object, **__: object) -> Broker:
     raise RuntimeError("broker_factory not wired for LIVE entrypoint yet.")
 
 
-def _missing_strategy_factory(*_: object, **__: object):
+def _missing_strategy_factory(*_: object, **__: object) -> object:
     raise RuntimeError("strategy_factory not wired for LIVE entrypoint yet.")
 
 
