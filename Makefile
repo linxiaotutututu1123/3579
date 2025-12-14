@@ -1,6 +1,7 @@
 # =============================================================================
 # 3579 Trading System - Makefile
 # 单一入口，强一致性，CI 与本地完全对齐
+# 跨平台：Linux/Mac 用 make，Windows 用 make（需安装）或 .\scripts\make.ps1
 # =============================================================================
 
 .PHONY: all format lint type test check ci clean build context help
@@ -36,21 +37,27 @@ help:
 	@echo "  make install-dev      - Install dev dependencies"
 
 # -----------------------------------------------------------------------------
-# 变量
+# 变量（跨平台）
 # -----------------------------------------------------------------------------
-PYTHON := .venv/Scripts/python.exe
-PIP := .venv/Scripts/pip.exe
 COV_THRESHOLD := 85
 
-# Windows 兼容
+# 检测操作系统
 ifeq ($(OS),Windows_NT)
+    # Windows
     PYTHON := .venv\Scripts\python.exe
     PIP := .venv\Scripts\pip.exe
-    RM := del /Q /F
-    RMDIR := rmdir /S /Q
+    RM := del /Q /F 2>nul || true
+    RMDIR := rmdir /S /Q 2>nul || true
+    MKDIR := mkdir
+    SEP := \\
 else
+    # Linux/Mac
+    PYTHON := .venv/bin/python
+    PIP := .venv/bin/pip
     RM := rm -f
     RMDIR := rm -rf
+    MKDIR := mkdir -p
+    SEP := /
 endif
 
 # -----------------------------------------------------------------------------
@@ -104,26 +111,6 @@ ci: format-check lint type test
 	@echo "=============================================="
 
 # -----------------------------------------------------------------------------
-# CHECK 模式（生成报告 + 退出码约定）
-# -----------------------------------------------------------------------------
-# 退出码约定:
-#   0 = 全部通过
-#   2 = 格式/Lint 失败
-#   3 = 类型检查失败
-#   4 = 测试失败
-#   5 = 覆盖率不足
-
-check-report:
-	@mkdir -p artifacts/check
-	@echo '{"timestamp":"$(shell date -u +%Y-%m-%dT%H:%M:%SZ)","checks":[' > artifacts/check/report.json
-	@$(PYTHON) -m ruff format --check . && echo '{"name":"format","status":"PASS"},' >> artifacts/check/report.json || (echo '{"name":"format","status":"FAIL"},' >> artifacts/check/report.json && exit 2)
-	@$(PYTHON) -m ruff check . && echo '{"name":"lint","status":"PASS"},' >> artifacts/check/report.json || (echo '{"name":"lint","status":"FAIL"},' >> artifacts/check/report.json && exit 2)
-	@$(PYTHON) -m mypy . && echo '{"name":"type","status":"PASS"},' >> artifacts/check/report.json || (echo '{"name":"type","status":"FAIL"},' >> artifacts/check/report.json && exit 3)
-	@$(PYTHON) -m pytest -q --cov=src --cov-fail-under=$(COV_THRESHOLD) && echo '{"name":"test","status":"PASS"}' >> artifacts/check/report.json || (echo '{"name":"test","status":"FAIL"}' >> artifacts/check/report.json && exit 4)
-	@echo ']}' >> artifacts/check/report.json
-	@echo "Report: artifacts/check/report.json"
-
-# -----------------------------------------------------------------------------
 # 上下文导出（分层）
 # -----------------------------------------------------------------------------
 
@@ -140,7 +127,7 @@ context-debug:
 	$(PYTHON) scripts/export_context.py --out artifacts/context/context.md --level debug
 
 # -----------------------------------------------------------------------------
-# 构建
+# 构建（仅 Windows）
 # -----------------------------------------------------------------------------
 build-paper:
 	$(PYTHON) -m PyInstaller 3579-paper.spec --noconfirm
@@ -154,5 +141,14 @@ build: build-paper build-live
 # 清理
 # -----------------------------------------------------------------------------
 clean:
-	$(RMDIR) build dist __pycache__ .pytest_cache .mypy_cache .ruff_cache .coverage 2>nul || true
-	$(RMDIR) artifacts/check 2>nul || true
+ifeq ($(OS),Windows_NT)
+	-$(RMDIR) build
+	-$(RMDIR) dist
+	-$(RMDIR) __pycache__
+	-$(RMDIR) .pytest_cache
+	-$(RMDIR) .mypy_cache
+	-$(RMDIR) .ruff_cache
+	-$(RM) .coverage
+else
+	$(RMDIR) build dist __pycache__ .pytest_cache .mypy_cache .ruff_cache .coverage
+endif
