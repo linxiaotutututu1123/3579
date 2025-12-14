@@ -38,25 +38,84 @@ jobs:
         run: |
           .\.venv\Scripts\python.exe -m pip install -v --retries 10 --timeout 60 --progress-bar off -r requirements-dev.txt
 
-      - name: Run quality gate
+      # =========================================================================
+      # Quality Gate (与 Makefile 完全一致)
+      # Exit codes: 0=pass, 2=format/lint, 3=type, 4=test, 5=coverage
+      # =========================================================================
+      - name: Format check
+        id: format
         shell: pwsh
         run: |
           .\.venv\Scripts\python.exe -m ruff format --check .
-          .\.venv\Scripts\python.exe -m ruff check .
-          .\.venv\Scripts\python.exe -m mypy .
-          .\.venv\Scripts\python.exe -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=85
+          if ($LASTEXITCODE -ne 0) { exit 2 }
 
-      - name: Export context artifact (optional)
+      - name: Lint check
+        id: lint
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\python.exe -m ruff check .
+          if ($LASTEXITCODE -ne 0) { exit 2 }
+
+      - name: Type check
+        id: type
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\python.exe -m mypy .
+          if ($LASTEXITCODE -ne 0) { exit 3 }
+
+      - name: Test with coverage
+        id: test
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\python.exe -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=85
+          if ($LASTEXITCODE -ne 0) { exit 4 }
+
+      # =========================================================================
+      # Generate check report (JSON for external consumption)
+      # =========================================================================
+      - name: Generate check report
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts\check | Out-Null
+          $report = @{
+            timestamp = (Get-Date -Format "o")
+            commit = "${{ github.sha }}"
+            branch = "${{ github.ref_name }}"
+            checks = @(
+              @{ name = "format"; status = if ("${{ steps.format.outcome }}" -eq "success") { "PASS" } else { "FAIL" } }
+              @{ name = "lint"; status = if ("${{ steps.lint.outcome }}" -eq "success") { "PASS" } else { "FAIL" } }
+              @{ name = "type"; status = if ("${{ steps.type.outcome }}" -eq "success") { "PASS" } else { "FAIL" } }
+              @{ name = "test"; status = if ("${{ steps.test.outcome }}" -eq "success") { "PASS" } else { "FAIL" } }
+            )
+            all_passed = ("${{ steps.format.outcome }}" -eq "success" -and "${{ steps.lint.outcome }}" -eq "success" -and "${{ steps.type.outcome }}" -eq "success" -and "${{ steps.test.outcome }}" -eq "success")
+          }
+          $report | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 artifacts\check\report.json
+          Write-Host "Check report generated: artifacts\check\report.json"
+          Get-Content artifacts\check\report.json
+
+      # =========================================================================
+      # Export context (安全过滤，不输出敏感信息)
+      # =========================================================================
+      - name: Export context artifact
+        if: always()
         continue-on-error: true
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path artifacts\context | Out-Null
-          try { tree /F > artifacts\context\tree.txt } catch {}
-          try { git rev-parse HEAD > artifacts\context\git_commit.txt } catch {}
-          try { git status --porcelain=v1 > artifacts\context\git_status.txt } catch {}
-          .\.venv\Scripts\python.exe scripts\export_context.py --out artifacts\context\context.md
+          # NOTE: export_context.py has built-in security filters for .env, secrets, CTP accounts
+          .\.venv\Scripts\python.exe scripts\export_context.py --out artifacts\context\context.md --level lite
+
+      - name: Upload check artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: check-report
+          path: artifacts/check
+          if-no-files-found: ignore
 
       - name: Upload context artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: context
