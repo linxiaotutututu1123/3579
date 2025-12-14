@@ -63,6 +63,7 @@ def handle_risk_update(
     books: Mapping[str, BookTop],
     flatten_spec: FlattenSpec | None = None,
     now_cb: NowCb = time.time,
+    max_rejections: int = 10,  # HG-5
 ) -> OrchestratorResult:
     correlation_id = uuid.uuid4().hex
     snapshot_hash = _hash_snapshot(snap=snap, positions=positions, books=books)
@@ -79,23 +80,55 @@ def handle_risk_update(
 
     exec_records: list[ExecutionRecord] = []
     exec_events: list[ExecutionEvent] = []
+    local_risk_events: list[RiskEvent] = []  # HG-5 (orchestrator-emitted)
 
     kill_fired = any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in base_risk_events)
     if kill_fired and risk.try_start_flatten(correlation_id=correlation_id):
         spec = flatten_spec or FlattenSpec()
+        rejections = 0
+
         for pos in positions:
             book = books.get(pos.symbol)
             if book is None:
+                local_risk_events.append(
+                    RiskEvent(
+                        type=RiskEventType.DATA_QUALITY_MISSING_BOOK,
+                        ts=now_cb(),
+                        correlation_id=correlation_id,
+                        data={"symbol": pos.symbol},
+                    )
+                )
                 continue
+
             intents = build_flatten_intents(pos=pos, book=book, spec=spec)
-            exec_records.extend(executor.execute(intents, correlation_id=correlation_id))
+            recs = executor.execute(intents, correlation_id=correlation_id)
+            exec_records.extend(recs)
+
+            # count failed records as rejections
+            rejections += sum(1 for r in recs if not r.ok)
+            if rejections >= max_rejections:
+                local_risk_events.append(
+                    RiskEvent(
+                        type=RiskEventType.FLATTEN_ABORTED_TOO_MANY_REJECTIONS,
+                        ts=now_cb(),
+                        correlation_id=correlation_id,
+                        data={"rejections": rejections, "max_rejections": max_rejections},
+                    )
+                )
+                break
 
         exec_events = executor.drain_events()
+        # even if aborted, we consider today's flatten attempt completed (your choice 1)
         risk.mark_flatten_done(correlation_id=correlation_id)
 
-    # Important: include events emitted by try_start_flatten/mark_flatten_done too
     extra_risk_events = risk.pop_events()
-    events: list[Event] = [audit_event, *base_risk_events, *extra_risk_events, *exec_events]
+    events: list[Event] = [
+        audit_event,
+        *base_risk_events,
+        *extra_risk_events,
+        *local_risk_events,
+        *exec_events,
+    ]
 
     return OrchestratorResult(
         correlation_id=correlation_id,
