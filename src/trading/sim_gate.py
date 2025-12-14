@@ -324,6 +324,7 @@ def get_sim_exit_code(report: SimReport) -> int:
 # V2 Required Scenarios 加载与校验（军规级）
 # =============================================================================
 
+
 def load_required_scenarios(
     yaml_path: str | Path = "V2_REQUIRED_SCENARIOS.yml",
 ) -> dict[str, Any]:
@@ -391,11 +392,13 @@ def validate_scenario_coverage(
     # Check for missing rule_ids in failures
     for failure in report.failures:
         if not failure.rule_id or failure.rule_id.startswith("UNKNOWN."):
-            violations.append({
-                "type": "MISSING_RULE_ID",
-                "scenario": failure.scenario,
-                "message": "Failure missing proper rule_id",
-            })
+            violations.append(
+                {
+                    "type": "MISSING_RULE_ID",
+                    "scenario": failure.scenario,
+                    "message": "Failure missing proper rule_id",
+                }
+            )
 
     return violations
 

@@ -1,39 +1,40 @@
 {
   "version": "2.0",
-  "timestamp": "2025-12-14T23:07:38.883811+00:00",
+  "timestamp": "2025-12-14T23:44:26.891858+00:00",
   "all_passed": false,
-  "failed_step": "test",
+  "failed_step": "lint",
   "overall": "FAIL",
-  "exit_code": 4,
+  "exit_code": 2,
   "steps": [
     {
       "name": "format-check",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 57
+      "duration_ms": 60
     },
     {
       "name": "lint",
-      "status": "PASS",
-      "exit_code": 0,
-      "duration_ms": 64
+      "status": "FAIL",
+      "exit_code": 2,
+      "duration_ms": 69,
+      "summary": "Error running command: unsupported operand type(s) for +: 'NoneType' and 'str'",
+      "hints": [
+        "Check if the command exists and dependencies are installed"
+      ]
     },
     {
       "name": "type",
-      "status": "PASS",
-      "exit_code": 0,
-      "duration_ms": 2802
+      "status": "SKIP",
+      "exit_code": null,
+      "duration_ms": 0,
+      "reason": "previous step failed"
     },
     {
       "name": "test",
-      "status": "FAIL",
-      "exit_code": 4,
-      "duration_ms": 3225,
-      "summary": "........................................................................ [ 29%]\n........................................................................ [ 59%]\n........................................................................ [ 88%]\n...........................\nERROR: Coverage failure: total of 76 is less than fail-under=85\n                                                                         [100%]\n=============================== tests coverage ================================\n______________ coverage: platform win32, python 3.12.10-final-0 _______________\n\nName                                         Stmts   Miss  Cover   Missing\n--------------------------------------------------------------------------\nsrc\\app\\live_entry.py                           26     26     0%   14-83\nsrc\\app\\paper_entry.py                          20     20     0%   13-62\nsrc\\config.py                                   26      1    96%   33\nsrc\\execution\\broker.py                         15      1    93%   25\nsrc\\execution\\broker_factory.py                 22      1    95%   78\nsrc\\execution\\ctp_broker.py                     88      9    90%   104, 158-164, 193, 222-223\nsrc\\execution\\flatten_executor.py               73      4    95%   39, 41, 43, 45\nsrc\\main.py                                     14      1    93%   22\nsrc\\replay\\runner.py                            56      1    98%   131\nsrc\\risk\\manager.py                             84      2    98%   84, 195\nsrc\\risk\\state.py                               37      1    97%   32\nsrc\\runner.py                                   60      4    93%   55, 59, 146-147\nsrc\\strategy\\base.py                             7      1    86%   14\nsrc\\strategy\\ensemble_moe.py                   101      6    94%   101, 119, 178, 182, 188, 194\nsrc\\strategy\\linear_ai.py                       81      3    96%   113, 123, 137\nsrc\\strategy\\top_tier_trend_risk_parity.py      92      3    97%   100, 109, 113\nsrc\\trading\\ci_gate.py                         297    156    47%   240-258, 270-271, 277, 282, 295-298, 339-353, 372-373, 378, 383-386, 391, 396-399, 403, 407, 419, 423-426, 431-449, 454-473, 478-490, 539-560, 581-633, 659-742\nsrc\\trading\\orchestrator.py                     53      5    91%   99, 145-162\nsrc\\trading\\replay.py                           88     88     0%   12-241\nsrc\\trading\\sim.py                              88     88     0%   12-239\nsrc\\trading\\sim_gate.py                        113    113     0%   7-298\n--------------------------------------------------------------------------\nTOTAL                                         2217    534    76%\n\n37 files skipped due to complete coverage.\nFAIL Required test coverage of 85% not reached. Total coverage: 75.91%\n243 passed in 2.49s",
-      "hints": [
-        "Add tests for uncovered code paths",
-        "Current threshold: 85% - check coverage report for gaps"
-      ]
+      "status": "SKIP",
+      "exit_code": null,
+      "duration_ms": 0,
+      "reason": "previous step failed"
     }
   ]
 }

@@ -824,9 +824,7 @@ class PolicyReport:
         evidence: dict[str, Any] | None = None,
     ) -> None:
         """Add a policy violation."""
-        self.violations.append(
-            PolicyViolation(code=code, message=message, evidence=evidence or {})
-        )
+        self.violations.append(PolicyViolation(code=code, message=message, evidence=evidence or {}))
         logger.error("POLICY_VIOLATION: [%s] %s", code, message)
 
     def to_dict(self) -> dict[str, Any]:
@@ -1098,4 +1096,3 @@ class CIJsonReportV3:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(self.to_json(), encoding="utf-8")
         logger.info("CI report v3 saved to %s", path)
-
