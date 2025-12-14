@@ -67,7 +67,14 @@ jobs:
           EOF
           cat artifacts/check/report.json
 
-      # 白名单上传：只上传明确指定的文件，避免敏感信息泄露
+      # =========================================================================
+      # [!] SECURITY: Whitelist upload only - DO NOT change to:
+      #     path: artifacts
+      #     path: artifacts/**
+      #     path: artifacts/*
+      # Only upload explicitly named files to prevent sensitive data leakage.
+      # See docs/DEVELOPMENT.md "CI Upload Policy" for details.
+      # =========================================================================
       - name: Upload check report
         if: always()
         uses: actions/upload-artifact@v4
@@ -154,7 +161,15 @@ jobs:
           New-Item -ItemType Directory -Force -Path artifacts\context | Out-Null
           .\.venv\Scripts\python.exe scripts\export_context.py --out artifacts\context\context.md --level lite
 
-      # 白名单上传：只上传明确指定的文件，避免敏感信息泄露
+      # =========================================================================
+      # [!] SECURITY: Whitelist upload only - DO NOT change to:
+      #     path: artifacts
+      #     path: artifacts/**
+      #     path: artifacts/*
+      # Only upload explicitly named files to prevent sensitive data leakage.
+      # Debug-level context is LOCAL ONLY - never upload to CI.
+      # See docs/DEVELOPMENT.md "CI Upload Policy" for details.
+      # =========================================================================
       - name: Upload context
         if: always()
         uses: actions/upload-artifact@v4
