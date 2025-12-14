@@ -329,9 +329,10 @@ class CIStep:
     status: CIStepStatus
     exit_code: int | None = None
     duration_ms: int = 0
-    output_summary: str = ""
+    summary: str = ""  # First 50 lines of output
     reason: str = ""  # For SKIP status
     failures: list[CIStepFailure] = field(default_factory=list)
+    hints: list[str] = field(default_factory=list)  # Common fix suggestions
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
@@ -344,9 +345,11 @@ class CIStep:
         if self.status == CIStepStatus.SKIP:
             result["reason"] = self.reason
         elif self.status == CIStepStatus.FAIL:
-            result["output_summary"] = self.output_summary
+            result["summary"] = self.summary
             if self.failures:
                 result["failures"] = [asdict(f) for f in self.failures]
+            if self.hints:
+                result["hints"] = self.hints
         return result
 
 
