@@ -58,7 +58,6 @@ def _validate_ctp_env() -> None:
 
 def main() -> None:
     os.environ.setdefault("TRADE_MODE", "LIVE")
-    _validate_ctp_env()
 
     try:
         from src.runner import run_f21
@@ -70,11 +69,13 @@ def main() -> None:
     if not callable(run_f21):
         raise RuntimeError("Implement src.runner.run_f21() first.")
 
+    # broker_factory (from F20) handles LIVE CTP validation internally
+    # when it detects TRADE_MODE=LIVE and calls validate_ctp_env()
     run_f21(
-        broker_factory=_missing_broker_factory,
-        strategy_factory=_missing_strategy_factory,
+        broker_factory=broker_factory,
+        strategy_factory=_strategy_factory,
         fetch_tick=_missing_fetch_tick,
-        run_forever=False,
+        run_forever=True,
     )
 
 
