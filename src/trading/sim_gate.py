@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -67,7 +67,7 @@ class SimReport:
 
     def __post_init__(self) -> None:
         if not self.timestamp:
-            self.timestamp = datetime.now(timezone.utc).isoformat()
+            self.timestamp = datetime.now(UTC).isoformat()
 
     @property
     def overall(self) -> SimStatus:
@@ -299,7 +299,9 @@ def log_sim_report(report: SimReport) -> None:
     logger.info("  Total ticks: %d", report.metrics.total_ticks)
     logger.info("  Avg tick duration: %.2f ms", report.metrics.avg_tick_duration_ms)
     logger.info("  Max drawdown: %.2f%%", report.metrics.max_drawdown_pct)
-    logger.info("  Orders: %d placed, %d rejected, %d filled",
-                report.metrics.orders_placed,
-                report.metrics.orders_rejected,
-                report.metrics.orders_filled)
+    logger.info(
+        "  Orders: %d placed, %d rejected, %d filled",
+        report.metrics.orders_placed,
+        report.metrics.orders_rejected,
+        report.metrics.orders_filled,
+    )

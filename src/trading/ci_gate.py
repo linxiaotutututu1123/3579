@@ -11,7 +11,7 @@ import logging
 import subprocess
 import time
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -360,7 +360,7 @@ class CIJsonReport:
 
     def __post_init__(self) -> None:
         if not self.timestamp:
-            self.timestamp = datetime.now(timezone.utc).isoformat()
+            self.timestamp = datetime.now(UTC).isoformat()
 
     @property
     def overall(self) -> str:
@@ -422,9 +422,7 @@ def parse_ruff_output(output: str) -> list[CIStepFailure]:
             rule_parts = rest.split(" ", 1)
             rule = rule_parts[0] if rule_parts else ""
             message = rule_parts[1] if len(rule_parts) > 1 else rest
-            failures.append(
-                CIStepFailure(file=file_path, line=line_no, rule=rule, message=message)
-            )
+            failures.append(CIStepFailure(file=file_path, line=line_no, rule=rule, message=message))
     return failures
 
 
@@ -448,9 +446,7 @@ def parse_mypy_output(output: str) -> list[CIStepFailure]:
                 rule = "error"
             elif ": note:" in line:
                 rule = "note"
-            failures.append(
-                CIStepFailure(file=file_path, line=line_no, rule=rule, message=message)
-            )
+            failures.append(CIStepFailure(file=file_path, line=line_no, rule=rule, message=message))
     return failures
 
 
@@ -645,4 +641,3 @@ def run_ci_with_json_report(
 
     report.save(output_path)
     return report
-
