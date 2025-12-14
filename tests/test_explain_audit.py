@@ -45,7 +45,7 @@ class TestExplainResult:
         )
         try:
             result.strategy_name = "changed"  # type: ignore[misc]
-            assert False, "Should raise FrozenInstanceError"
+            raise AssertionError("Should raise FrozenInstanceError")
         except AttributeError:
             pass  # Expected
 
