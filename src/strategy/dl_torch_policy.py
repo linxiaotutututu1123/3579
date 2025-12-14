@@ -1,6 +1,7 @@
 """Deep learning torch-based trading strategy (inference only)."""
 from __future__ import annotations
 
+import contextlib
 import os
 from collections.abc import Sequence
 
@@ -46,10 +47,8 @@ class DlTorchPolicyStrategy(Strategy):
 
         # Ensure determinism
         torch.set_num_threads(1)
-        try:
+        with contextlib.suppress(Exception):
             torch.use_deterministic_algorithms(True)
-        except Exception:
-            pass  # Not all operations support deterministic mode
 
         # Load model
         feature_dim = get_feature_dim(window)

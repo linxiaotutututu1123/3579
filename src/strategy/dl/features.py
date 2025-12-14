@@ -62,7 +62,7 @@ def build_features(bars: Sequence[Bar1m], window: int = 60) -> np.ndarray:
         ranges = (ranges - range_mean) / range_std
 
     # Concatenate all features
-    features = np.concatenate([returns, volumes, ranges]).astype(np.float32)
+    features: np.ndarray = np.concatenate([returns, volumes, ranges]).astype(np.float32)
 
     return features
 

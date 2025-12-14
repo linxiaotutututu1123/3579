@@ -1,17 +1,14 @@
 """Inference policy for DL strategy."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import numpy as np
 import torch
 
-if TYPE_CHECKING:
-    from src.strategy.dl.model import TinyMLP
+from src.strategy.dl.model import TinyMLP
 
 
 def infer_score(
-    model: "TinyMLP",
+    model: TinyMLP,
     features: np.ndarray,
     device: str = "cpu",
 ) -> float:
