@@ -1003,7 +1003,8 @@ def check_artifact_paths() -> PolicyReport:
     """
     policy_report = PolicyReport()
 
-    expected_paths = {
+    # D.1 convention: fixed paths (kept for documentation, actual validation at runtime)
+    _expected_paths = {
         "ci_report": Path("artifacts/check/report.json"),
         "sim_report": Path("artifacts/sim/report.json"),
         "context": Path("artifacts/context/context.md"),
