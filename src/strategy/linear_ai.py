@@ -68,7 +68,7 @@ class LinearAIStrategy(Strategy):
 
     def _compute_features(
         self, bars: Sequence[Bar1m], symbol: str
-    ) -> dict[str, float | bool]:
+    ) -> dict[str, object]:
         """Compute features from bar data."""
         if len(bars) < self._window:
             return {"insufficient_bars": True, "symbol": symbol}
@@ -100,7 +100,7 @@ class LinearAIStrategy(Strategy):
             "vol_shock_60": vol_shock_60,
         }
 
-    def _compute_score(self, features: dict[str, float | bool]) -> float:
+    def _compute_score(self, features: dict[str, object]) -> float:
         """Compute linear score from features and weights."""
         score = 0.0
         for name, weight in self._weights.items():

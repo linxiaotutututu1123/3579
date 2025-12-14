@@ -17,11 +17,12 @@ def _generate_bars(n: int, base_price: float = 100.0, trend: float = 0.001) -> l
         low = price * 0.995
         bars.append(
             {
+                "ts": 1700000000.0 + i * 60,
                 "open": price * 0.999,
                 "high": high,
                 "low": low,
                 "close": price,
-                "volume": 1000 + i,
+                "volume": 1000.0 + i,
             }
         )
     return bars
@@ -77,7 +78,13 @@ def test_linear_ai_insufficient_bars_returns_zero() -> None:
 def test_linear_ai_custom_weights() -> None:
     """Custom weights should be used in scoring."""
     symbols = ["AO"]
-    custom_weights = {"mom_15": 2.0, "mom_60": 0.0, "vol_60": 0.0, "range_60": 0.0, "vol_shock_60": 0.0}
+    custom_weights = {
+        "mom_15": 2.0,
+        "mom_60": 0.0,
+        "vol_60": 0.0,
+        "range_60": 0.0,
+        "vol_shock_60": 0.0,
+    }
     strategy = LinearAIStrategy(symbols=symbols, weights=custom_weights)
 
     bars_1m = {"AO": _generate_bars(300, trend=0.01)}  # Strong uptrend
