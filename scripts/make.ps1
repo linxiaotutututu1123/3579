@@ -31,16 +31,34 @@ $ErrorActionPreference = "Stop"
 
 # =============================================================================
 # 配置：明确使用 venv 中的 Python，不依赖系统 PATH
+# 支持环境变量覆盖：$env:PY=python .\scripts\make.ps1 ci
 # =============================================================================
-$PYTHON = Join-Path $PSScriptRoot "..\\.venv\\Scripts\\python.exe"
-$PIP = Join-Path $PSScriptRoot "..\\.venv\\Scripts\\pip.exe"
+$_PY_DEFAULT = Join-Path $PSScriptRoot "..\.venv\Scripts\python.exe"
+$_PIP_DEFAULT = Join-Path $PSScriptRoot "..\.venv\Scripts\pip.exe"
+
+# 支持外部覆盖（与 Makefile 的 PY ?= 对齐）
+if ($env:PY) {
+    $PYTHON = $env:PY
+} else {
+    $PYTHON = $_PY_DEFAULT
+}
+
+if ($env:PIP) {
+    $PIP = $env:PIP
+} else {
+    $PIP = $_PIP_DEFAULT
+}
+
 $COV_THRESHOLD = 85
 
-# 验证 venv 存在
-if (-not (Test-Path $PYTHON)) {
-    Write-Host "ERROR: venv not found at $PYTHON" -ForegroundColor Red
-    Write-Host "Run: python -m venv .venv" -ForegroundColor Yellow
-    exit 1
+# 验证 Python 存在（友好错误提示）
+function Assert-VenvExists {
+    if (-not (Test-Path $PYTHON)) {
+        Write-Host "ERROR: Python not found at $PYTHON" -ForegroundColor Red
+        Write-Host "Run: python -m venv .venv" -ForegroundColor Yellow
+        Write-Host "Or override: `$env:PY='python' .\scripts\make.ps1 ci" -ForegroundColor Yellow
+        exit 1
+    }
 }
 
 # =============================================================================
