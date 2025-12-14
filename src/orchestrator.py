@@ -8,22 +8,23 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from src.execution.events import ExecutionEvent
 from src.execution.flatten_executor import ExecutionRecord, FlattenExecutor
 from src.execution.flatten_plan import BookTop, FlattenSpec, PositionToClose, build_flatten_intents
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.manager import RiskManager
 from src.risk.state import AccountSnapshot
 
+NowCb = Callable[[], float]
+Event = RiskEvent | ExecutionEvent
+
 
 @dataclass(frozen=True)
 class OrchestratorResult:
-    risk_events: list[RiskEvent]
-    execution_records: list[ExecutionRecord]
     correlation_id: str
     snapshot_hash: str
-
-
-NowCb = Callable[[], float]
+    events: list[Event]
+    execution_records: list[ExecutionRecord]
 
 
 def _stable_json(obj: Any) -> str:
@@ -37,12 +38,7 @@ def _hash_snapshot(
     books: Mapping[str, BookTop],
 ) -> str:
     pos_data = [
-        {
-            "symbol": p.symbol,
-            "net_qty": p.net_qty,
-            "today_qty": p.today_qty,
-            "yesterday_qty": p.yesterday_qty,
-        }
+        {"symbol": p.symbol, "net_qty": p.net_qty, "today_qty": p.today_qty, "yesterday_qty": p.yesterday_qty}
         for p in sorted(positions, key=lambda x: x.symbol)
     ]
     book_data = {
@@ -71,21 +67,20 @@ def handle_risk_update(
     correlation_id = uuid.uuid4().hex
     snapshot_hash = _hash_snapshot(snap=snap, positions=positions, books=books)
 
+    # risk update emits correlated RiskEvents at the source
     risk.update(snap, correlation_id=correlation_id)
     risk_events = risk.pop_events()
 
-    # Highest-grade: always include audit snapshot event as the first event.
-    risk_events = [
-        RiskEvent(
-            type=RiskEventType.AUDIT_SNAPSHOT,
-            ts=now_cb(),
-            correlation_id=correlation_id,
-            data={"snapshot_hash": snapshot_hash},
-        ),
-        *risk_events,
-    ]
+    audit_event = RiskEvent(
+        type=RiskEventType.AUDIT_SNAPSHOT,
+        ts=now_cb(),
+        correlation_id=correlation_id,
+        data={"snapshot_hash": snapshot_hash},
+    )
 
     exec_records: list[ExecutionRecord] = []
+    exec_events: list[ExecutionEvent] = []
+
     fired = any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in risk_events)
     if fired:
         spec = flatten_spec or FlattenSpec()
@@ -95,10 +90,12 @@ def handle_risk_update(
                 continue
             intents = build_flatten_intents(pos=pos, book=book, spec=spec)
             exec_records.extend(executor.execute(intents, correlation_id=correlation_id))
+        exec_events = executor.drain_events()
 
+    events: list[Event] = [audit_event, *risk_events, *exec_events]
     return OrchestratorResult(
-        risk_events=risk_events,
-        execution_records=exec_records,
         correlation_id=correlation_id,
         snapshot_hash=snapshot_hash,
+        events=events,
+        execution_records=exec_records,
     )
