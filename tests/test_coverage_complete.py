@@ -214,8 +214,8 @@ class TestReplayCoverage:
         from src.replay.runner import BookTop
 
         snap = AccountSnapshot(equity=1_000_000, margin_used=100_000)
-        positions: list[Position] = []
-        books = {"AO": BookTop(best_bid=100.0, best_ask=101.0)}
+        positions: list[PositionToClose] = []
+        books = {"AO": BookTop(best_bid=100.0, best_ask=101.0, tick=0.5)}
         bars_1m = {"AO": _generate_bars(300)}
 
         cfg = RiskConfig()
