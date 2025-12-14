@@ -2,6 +2,7 @@
 
 Validates that all strategy implementations conform to the Strategy interface contract.
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
