@@ -11,6 +11,7 @@ import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
+from src.brokers.ctp.mapping import offset_to_ctp_offset_flag, side_to_ctp_direction
 from src.execution.broker import Broker, OrderAck, OrderRejected
 from src.execution.order_types import OrderIntent
 from src.trading.controls import TradeMode
@@ -108,23 +109,32 @@ def _lazy_import_ctp() -> Any:
 class CtpBroker(Broker):
     """CTP broker implementation with lazy SDK import."""
 
-    def __init__(self, config: CtpConfig) -> None:
+    def __init__(
+        self, config: CtpConfig, trade_mode: TradeMode = TradeMode.PAPER
+    ) -> None:
         """
         Initialize CTP broker.
 
         Args:
             config: CTP connection configuration
+            trade_mode: Trading mode (PAPER allows mock, LIVE requires SDK)
 
         Raises:
-            CtpNotAvailableError: If CTP SDK is not installed
+            CtpNotAvailableError: If LIVE mode and CTP SDK is not installed
         """
         self._config = config
+        self._trade_mode = trade_mode
         self._ctp = _lazy_import_ctp()
         self._connected = False
         self._order_ref = 0
 
         if self._ctp is None:
-            logger.warning("CTP SDK not available - running in mock mode")
+            if trade_mode == TradeMode.LIVE:
+                raise CtpNotAvailableError(
+                    "CTP SDK not installed but LIVE mode requires it. "
+                    "Install CTP SDK or use PAPER mode."
+                )
+            logger.warning("CTP SDK not available - running in PAPER mock mode")
 
     @property
     def is_sdk_available(self) -> bool:
@@ -173,13 +183,28 @@ class CtpBroker(Broker):
 
         Raises:
             OrderRejected: If order is rejected
-            CtpNotAvailableError: If SDK not available
+            CtpNotAvailableError: If LIVE mode and SDK not available
         """
+        # Convert to CTP protocol values using F18 mapping
+        ctp_direction = side_to_ctp_direction(intent.side)
+        ctp_offset_flag = offset_to_ctp_offset_flag(intent.offset)
+
         if self._ctp is None:
-            # Mock mode - generate fake order ID
+            if self._trade_mode == TradeMode.LIVE:
+                # LIVE mode without SDK is a hard error
+                raise CtpNotAvailableError(
+                    "Cannot place order: CTP SDK not available in LIVE mode"
+                )
+            # PAPER mock mode - generate fake order ID
             self._order_ref += 1
             order_id = f"MOCK_{self._order_ref:06d}"
-            logger.info("Mock order placed: %s for %s", order_id, intent)
+            logger.info(
+                "Mock order placed: %s for %s (dir=%s, offset=%s)",
+                order_id,
+                intent,
+                ctp_direction,
+                ctp_offset_flag,
+            )
             return OrderAck(order_id=order_id)
 
         if not self._connected:
@@ -187,9 +212,16 @@ class CtpBroker(Broker):
 
         try:
             # Real CTP order submission would happen here
+            # ctp_direction and ctp_offset_flag would be passed to CTP API
             self._order_ref += 1
             order_id = f"CTP_{self._order_ref:06d}"
-            logger.info("CTP order placed: %s for %s", order_id, intent)
+            logger.info(
+                "CTP order placed: %s for %s (dir=%s, offset=%s)",
+                order_id,
+                intent,
+                ctp_direction,
+                ctp_offset_flag,
+            )
             return OrderAck(order_id=order_id)
         except Exception as e:
             raise OrderRejected(f"CTP order failed: {e}") from e
