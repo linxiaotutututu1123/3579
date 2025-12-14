@@ -355,10 +355,17 @@ class CIStep:
 
 @dataclass
 class CIJsonReport:
-    """Machine-readable CI report for Claude automated loop."""
+    """Machine-readable CI report for Claude automated loop.
+
+    Enhanced structure for stable Claude parsing:
+    - all_passed: boolean for quick check
+    - failed_step: first failed step name (or null)
+    - exit_code: mapped exit code
+    - steps: detailed per-step results with hints
+    """
 
     steps: list[CIStep] = field(default_factory=list)
-    version: str = "1.0"
+    version: str = "2.0"
     timestamp: str = ""
 
     def __post_init__(self) -> None:
@@ -366,11 +373,22 @@ class CIJsonReport:
             self.timestamp = datetime.now(UTC).isoformat()
 
     @property
+    def all_passed(self) -> bool:
+        """Check if all steps passed."""
+        return not any(s.status == CIStepStatus.FAIL for s in self.steps)
+
+    @property
+    def failed_step(self) -> str | None:
+        """Get first failed step name."""
+        for step in self.steps:
+            if step.status == CIStepStatus.FAIL:
+                return step.name
+        return None
+
+    @property
     def overall(self) -> str:
-        """Overall status."""
-        if any(s.status == CIStepStatus.FAIL for s in self.steps):
-            return "FAIL"
-        return "PASS"
+        """Overall status string."""
+        return "PASS" if self.all_passed else "FAIL"
 
     @property
     def exit_code(self) -> int:
@@ -389,6 +407,8 @@ class CIJsonReport:
         return {
             "version": self.version,
             "timestamp": self.timestamp,
+            "all_passed": self.all_passed,
+            "failed_step": self.failed_step,
             "overall": self.overall,
             "exit_code": self.exit_code,
             "steps": [s.to_dict() for s in self.steps],
