@@ -25,6 +25,58 @@
 | `8` | REPLAY_FAIL | Replay 失败 | replay 测试有失败 |
 | `9` | SIM_FAIL | Sim 失败 | sim 测试有失败 |
 
+### 军规级退出码 (Military-Grade)
+
+| 退出码 | 名称 | 含义 | 触发条件 |
+|:------:|------|------|---------|
+| `12` | POLICY_VIOLATION | 军法处置 | schema 不符/绕开入口/CHECK_MODE 未启用 |
+
+## POLICY_VIOLATION (Exit 12) 详解
+
+**Exit 12 是军规级强制退出码**，表示违反了系统纪律条款。
+
+### 触发条件
+
+| 违规类型 | 描述 | 检测位置 |
+|---------|------|---------|
+| **Schema 版本错误** | `schema_version < 3` 或字段缺失 | `ci_gate.py`, `sim_gate.py` |
+| **必填字段缺失** | 缺少 `type`, `overall`, `exit_code`, `check_mode` | `validate_report_schema()` |
+| **CHECK_MODE 未启用** | Replay/Sim 报告中 `check_mode=false` | `sim_gate.py` |
+| **绕开统一入口** | 直接执行 python 而非通过 `make.ps1` | `claude_loop.ps1` |
+| **修改黑名单文件** | 修改 `broker.py`, `order.py` 等核心交易文件 | `claude_loop.ps1` |
+| **工件路径错误** | 输出到非 D.1 约定路径 | `validate_artifact_path()` |
+| **失败结构不完整** | 失败缺少 `rule_id`, `component`, `evidence` | `validate_failure_structure()` |
+
+### 失败报告结构
+
+当触发 POLICY_VIOLATION 时，系统输出 `artifacts/claude/policy_violation.json`:
+
+```json
+{
+  "timestamp": "2025-01-15T10:30:00Z",
+  "exit_code": 12,
+  "violation_type": "SCHEMA_VERSION_MISMATCH",
+  "rule_id": "POLICY.SCHEMA.VERSION",
+  "component": "ci_gate",
+  "evidence": {
+    "expected": "schema_version >= 3",
+    "actual": "schema_version: 2",
+    "file": "artifacts/check/report.json"
+  },
+  "message": "Report schema version 2 is below minimum required version 3"
+}
+```
+
+### 修复指南
+
+| 违规类型 | 修复方法 |
+|---------|---------|
+| Schema 版本错误 | 更新代码使用 `CIJsonReportV3` 或 `SimReport` |
+| 必填字段缺失 | 确保报告包含所有必填字段 |
+| CHECK_MODE 未启用 | 使用 `make.ps1 replay-json` 而非直接调用 |
+| 绕开统一入口 | 只使用 `make.ps1` 入口命令 |
+| 失败结构不完整 | 失败调用 `add_failure()` 时传入 `rule_id`, `component`, `evidence` |
+
 ## 使用方式
 
 ### 统一入口命令
