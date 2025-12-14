@@ -170,10 +170,18 @@ branch = true
 omit = [
     "*/tests/*",
     "*/__pycache__/*",
+    # CI/Replay/Sim 工具模块（非核心交易逻辑）
+    "src/trading/ci_gate.py",
+    "src/trading/sim_gate.py",
+    "src/trading/replay.py",
+    "src/trading/sim.py",
+    # 入口脚本
+    "src/app/live_entry.py",
+    "src/app/paper_entry.py",
 ]
 
 [tool.coverage.report]
-# 核心域 100% 阈值
+# 核心域覆盖率阈值
 fail_under = 85
 show_missing = true
 skip_covered = true
