@@ -6,13 +6,8 @@ from typing import Any
 
 
 def stable_json(obj: Any) -> str:
-    """JSON serialize with deterministic key ordering.
-
-    Uses allow_nan=False to reject NaN/Inf values, ensuring valid JSON output.
-    """
-    return json.dumps(
-        obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
-    )
+    """JSON serialize with deterministic key ordering."""
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
 def stable_hash(obj: Any) -> str:
