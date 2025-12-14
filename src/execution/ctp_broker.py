@@ -3,6 +3,7 @@
 This module provides a CTP (China Trading Platform) broker implementation.
 CTP SDK is imported lazily to allow CI environments without the SDK installed.
 """
+
 from __future__ import annotations
 
 import logging

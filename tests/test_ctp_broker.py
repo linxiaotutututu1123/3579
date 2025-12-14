@@ -1,4 +1,5 @@
 """Tests for CTP broker with lazy import."""
+
 from __future__ import annotations
 
 import pytest
