@@ -1,6 +1,0 @@
-ruff>=0.7
-mypy>=1.11,<1.19
-pytest>=8.2
-types-requests>=2.32
-pytest-cov
-numpy>=1.26
