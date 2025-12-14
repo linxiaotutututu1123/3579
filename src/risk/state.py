@@ -16,8 +16,9 @@ class RiskMode(str, Enum):
 class RiskConfig:
     dd_limit: float = -0.03
     cooldown_seconds: int = 600
-    max_margin_normal: float = 0.30
+    max_margin_normal: float = 0.70
     max_margin_recovery: float = 0.50
+    recovery_risk_multiplier: float = 0.30
 
 
 @dataclass
