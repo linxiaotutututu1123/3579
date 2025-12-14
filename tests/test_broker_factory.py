@@ -107,7 +107,9 @@ class TestBrokerFactoryLive:
             broker_factory(settings)
         assert "Missing required CTP environment variables" in str(exc_info.value)
 
-    def test_live_with_env_but_no_sdk_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_live_with_env_but_no_sdk_raises(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """LIVE mode with env vars but no SDK raises CtpNotAvailableError."""
         # Set required CTP env vars
         monkeypatch.setenv("CTP_FRONT_ADDR", "tcp://127.0.0.1:10130")
@@ -115,10 +117,15 @@ class TestBrokerFactoryLive:
         monkeypatch.setenv("CTP_USER_ID", "testuser")
         monkeypatch.setenv("CTP_PASSWORD", "testpass")
 
+        # Mock _lazy_import_ctp to always return None (simulate no SDK installed)
+        # This ensures test is stable regardless of whether CTP SDK is installed
+        monkeypatch.setattr(
+            "src.execution.ctp_broker._lazy_import_ctp", lambda: None
+        )
+
         from src.execution.ctp_broker import CtpNotAvailableError
 
         settings = AppSettings(trade_mode="LIVE")
-        # Since CTP SDK is not installed in CI, this should raise
         with pytest.raises(CtpNotAvailableError) as exc_info:
             broker_factory(settings)
         assert "LIVE mode requires it" in str(exc_info.value)
