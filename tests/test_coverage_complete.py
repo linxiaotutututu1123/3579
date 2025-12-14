@@ -1,8 +1,10 @@
 """Comprehensive tests to achieve 100% code coverage."""
+# ruff: noqa: F401, F811, E501
 
 from __future__ import annotations
 
 import math
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
@@ -474,7 +476,12 @@ class TestRebalancerCoverage:
 class TestMainCoverage:
     """Coverage tests for main module."""
 
-    def test_main_func(self, tmp_path: "pytest.TempPathFactory", monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    def test_main_func(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
         """Test main function execution."""
         # Clear env to avoid loading existing .env
         monkeypatch.chdir(tmp_path)
