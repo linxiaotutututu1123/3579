@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from src.config import AppSettings, load_settings
 from src.execution.broker import Broker
+from src.execution.broker_factory import broker_factory as default_broker_factory
 from src.execution.flatten_executor import FlattenExecutor
 from src.execution.flatten_plan import BookTop, PositionToClose
 from src.orchestrator import handle_risk_update
