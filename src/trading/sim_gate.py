@@ -86,7 +86,15 @@ class SimMetrics:
 
 @dataclass
 class SimReport:
-    """Full simulation/replay report."""
+    """Full simulation/replay report (military-grade v3.0).
+
+    Military-grade enhancements:
+    - schema_version: integer, must be >= 3
+    - type: "replay" or "sim"
+    - check_mode: must be True
+    - exit_code: 0/8/9
+    - failures with rule_id/component/evidence
+    """
 
     type: str  # "replay" or "sim"
     scenarios_total: int = 0
@@ -94,7 +102,8 @@ class SimReport:
     scenarios_failed: int = 0
     failures: list[ScenarioFailure] = field(default_factory=list)
     metrics: SimMetrics = field(default_factory=SimMetrics)
-    version: str = "1.0"
+    schema_version: int = 3
+    check_mode: bool = False
     timestamp: str = ""
 
     def __post_init__(self) -> None:
@@ -111,11 +120,18 @@ class SimReport:
         """Check if all scenarios passed."""
         return self.scenarios_failed == 0
 
-    def add_pass(self, scenario: str) -> None:
+    @property
+    def exit_code(self) -> int:
+        """Get exit code based on type and status."""
+        if self.passed:
+            return SimExitCode.SUCCESS
+        return SimExitCode.REPLAY_FAIL if self.type == "replay" else SimExitCode.SIM_FAIL
+
+    def add_pass(self, scenario: str, rule_id: str = "", component: str = "") -> None:
         """Record a passed scenario."""
         self.scenarios_total += 1
         self.scenarios_passed += 1
-        logger.info("PASS: %s", scenario)
+        logger.info("PASS: %s [%s]", scenario, rule_id or "no_rule_id")
 
     def add_failure(
         self,
@@ -124,32 +140,41 @@ class SimReport:
         expected: dict[str, Any],
         actual: dict[str, Any],
         error: str,
+        *,
+        rule_id: str = "",
+        component: str = "",
+        evidence: dict[str, Any] | None = None,
     ) -> None:
-        """Record a failed scenario."""
+        """Record a failed scenario (military-grade v3.0)."""
         self.scenarios_total += 1
         self.scenarios_failed += 1
         self.failures.append(
             ScenarioFailure(
                 scenario=scenario,
+                rule_id=rule_id or f"UNKNOWN.{scenario.upper().replace(' ', '_')}",
+                component=component or "unknown",
                 tick=tick,
                 expected=expected,
                 actual=actual,
                 error=error,
+                evidence=evidence or {},
             )
         )
-        logger.error("FAIL: %s at tick %d: %s", scenario, tick, error)
+        logger.error("FAIL: %s [%s] at tick %d: %s", scenario, rule_id, tick, error)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
-            "version": self.version,
-            "timestamp": self.timestamp,
+            "schema_version": self.schema_version,
             "type": self.type,
+            "timestamp": self.timestamp,
+            "check_mode": self.check_mode,
             "overall": self.overall.value,
+            "exit_code": self.exit_code,
             "scenarios_total": self.scenarios_total,
             "scenarios_passed": self.scenarios_passed,
             "scenarios_failed": self.scenarios_failed,
-            "failures": [asdict(f) for f in self.failures],
+            "failures": [f.to_dict() for f in self.failures],
             "metrics": self.metrics.to_dict(),
         }
 
