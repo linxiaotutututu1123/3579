@@ -66,9 +66,7 @@ class LinearAIStrategy(Strategy):
             features_hash=features_hash,
         )
 
-    def _compute_features(
-        self, bars: Sequence[Bar1m], symbol: str
-    ) -> dict[str, object]:
+    def _compute_features(self, bars: Sequence[Bar1m], symbol: str) -> dict[str, object]:
         """Compute features from bar data."""
         if len(bars) < self._window:
             return {"insufficient_bars": True, "symbol": symbol}
