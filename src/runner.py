@@ -10,10 +10,10 @@ from src.config import AppSettings, load_settings
 from src.execution.broker import Broker
 from src.execution.flatten_executor import FlattenExecutor
 from src.execution.flatten_plan import BookTop, PositionToClose
+from src.orchestrator import handle_risk_update
 from src.risk.manager import RiskManager
 from src.risk.state import AccountSnapshot, RiskConfig
 from src.trading.controls import TradeControls, TradeMode
-from src.orchestrator import handle_risk_update
 from src.trading.orchestrator import handle_trading_tick
 
 if TYPE_CHECKING:
@@ -66,7 +66,7 @@ def init_components(*, broker: Broker, risk_cfg: RiskConfig | None = None) -> Co
 def run_f21(
     *,
     broker_factory: Callable[[AppSettings], Broker],
-    strategy_factory: Callable[[AppSettings], "Strategy"],
+    strategy_factory: Callable[[AppSettings], Strategy],
     fetch_tick: Callable[[], LiveTickData],
     now_cb: Callable[[], float] = time.time,
     risk_cfg: RiskConfig | None = None,
@@ -111,10 +111,16 @@ def run_f21(
         )
 
         # Prepare trading inputs
-        prices: dict[str, float] = {sym: (b.best_bid + b.best_ask) / 2.0 for sym, b in tick.books.items()}
+        prices: dict[str, float] = {
+            sym: (book.best_bid + book.best_ask) / 2.0 for sym, book in tick.books.items()
+        }
         current_net_qty: dict[str, int] = {pos.symbol: pos.net_qty for pos in tick.positions}
 
-        requested_mode = settings.trade_mode.upper() if isinstance(settings.trade_mode, str) else str(settings.trade_mode)
+        requested_mode = (
+            settings.trade_mode.upper()
+            if isinstance(settings.trade_mode, str)
+            else str(settings.trade_mode)
+        )
         effective_mode = TradeMode.LIVE if requested_mode == TradeMode.LIVE.value else TradeMode.PAPER
         controls = TradeControls(mode=effective_mode)
 
