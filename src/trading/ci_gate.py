@@ -289,4 +289,3 @@ def assert_not_check_mode(operation: str = "place_order") -> None:
         msg = f"BLOCKED: {operation} is forbidden in CHECK_MODE=1"
         logger.error(msg)
         raise RuntimeError(msg)
-
