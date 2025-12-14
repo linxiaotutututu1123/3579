@@ -709,10 +709,10 @@ def run_ci_with_json_report(
         report.save(output_path)
         return report
 
-    # Step 3: Type check
+    # Step 3: Type check (src only, tests excluded via pyproject.toml)
     step = run_ci_step(
         name="type",
-        command=[python_exe, "-m", "mypy", "."],
+        command=[python_exe, "-m", "mypy", "src"],
         exit_code_on_fail=ExitCode.TYPE_CHECK_FAIL,
         parser=parse_mypy_output,
     )
