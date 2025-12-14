@@ -4,7 +4,7 @@ This document describes the development environment setup, quality gates, and tr
 
 ---
 
-## ⚠️ Critical Rules (MUST READ)
+## [!] Critical Rules (MUST READ)
 
 ### 1. Single Entry Point
 
@@ -23,10 +23,10 @@ This document describes the development environment setup, quality gates, and tr
 ### 2. CI Must Use Entry Commands Only
 
 ```yaml
-# ✅ CORRECT
+# [OK] CORRECT
 - run: make ci
 
-# ❌ WRONG - bypasses entry point
+# [X] WRONG - bypasses entry point
 - run: ruff format --check .
 - run: mypy .
 - run: pytest
@@ -41,15 +41,15 @@ from src.trading.ci_gate import assert_not_check_mode
 
 class Broker:
     def place_order(self, order):
-        assert_not_check_mode()  # ← REQUIRED
+        assert_not_check_mode()  # <-- REQUIRED
         # ... actual order placement
     
     def cancel_order(self, order_id):
-        assert_not_check_mode()  # ← REQUIRED
+        assert_not_check_mode()  # <-- REQUIRED
         # ... actual cancellation
     
     def flatten_all(self):
-        assert_not_check_mode()  # ← REQUIRED
+        assert_not_check_mode()  # <-- REQUIRED
         # ... actual flattening
 ```
 
