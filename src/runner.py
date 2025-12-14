@@ -66,7 +66,7 @@ def init_components(broker: Broker, risk_cfg: RiskConfig | None = None) -> Compo
 
 def run_f21(
     *,
-    broker_factory: Callable[[AppSettings], Broker],
+    broker_factory: Callable[[AppSettings], Broker] | None = None,
     strategy_factory: Callable[[AppSettings], Strategy],
     fetch_tick: Callable[[], LiveTickData],
     now_cb: Callable[[], float] = time.time,
@@ -90,7 +90,9 @@ def run_f21(
 
     settings = load_settings()
 
-    live_broker = broker_factory(settings)
+    # Use default broker_factory from F20 if not provided
+    _broker_factory = broker_factory or default_broker_factory
+    live_broker = _broker_factory(settings)
     components = init_components(broker=live_broker, risk_cfg=risk_cfg)
     strategy = strategy_factory(settings)
 
