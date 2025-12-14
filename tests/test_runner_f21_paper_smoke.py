@@ -1,5 +1,6 @@
 import types
-from collections.abc import Callable
+
+import pytest
 
 from src import runner
 from src.execution.broker import Broker, OrderAck
@@ -18,7 +19,7 @@ class FakeStrategy:
         return types.SimpleNamespace(model_version="v0", features_hash="hash", target_net_qty={})
 
 
-def test_run_f21_paper_calls_risk_then_trade(monkeypatch: Callable[..., None]) -> None:
+def test_run_f21_paper_calls_risk_then_trade(monkeypatch: pytest.MonkeyPatch) -> None:
     call_order: list[str] = []
 
     def fake_handle_risk_update(**kwargs: object) -> types.SimpleNamespace:
@@ -27,7 +28,12 @@ def test_run_f21_paper_calls_risk_then_trade(monkeypatch: Callable[..., None]) -
 
     def fake_handle_trading_tick(**kwargs: object) -> types.SimpleNamespace:
         call_order.append("trade")
-        return types.SimpleNamespace(correlation_id="cid", events=[], target_portfolio=None, clamped_portfolio=None)
+        return types.SimpleNamespace(
+            correlation_id="cid",
+            events=[],
+            target_portfolio=None,
+            clamped_portfolio=None,
+        )
 
     monkeypatch.setenv("TRADE_MODE", "PAPER")
     monkeypatch.setattr(runner, "handle_risk_update", fake_handle_risk_update)
