@@ -96,7 +96,7 @@ install-dev: install
 # -----------------------------------------------------------------------------
 
 # 格式化（会修改文件）
-format:
+format: venv-check
 	$(PYTHON) -m ruff format .
 
 # 格式检查（不修改，只检查）
@@ -124,10 +124,10 @@ test-fast:
 	$(PYTHON) -m pytest -q -x
 
 # 所有检查（不修改文件）- 用于 pre-commit 或手动验证
-check: format-check lint type test
+check: venv-check format-check lint type test
 
 # CI 完整流程（与 .github/workflows/ci.yml 完全一致）
-ci: format-check lint type test
+ci: venv-check format-check lint type test
 	@echo "=============================================="
 	@echo "CI Gate PASSED"
 	@echo "=============================================="
