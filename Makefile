@@ -139,6 +139,47 @@ ci: venv-check format-check lint type test
 	@echo "CI Gate PASSED"
 	@echo "=============================================="
 
+# CI with JSON report (for Claude automated loop)
+ci-json: venv-check
+	@mkdir -p artifacts/check
+	$(PYTHON) -c "from src.trading.ci_gate import run_ci_with_json_report; import sys; r = run_ci_with_json_report('$(PYTHON)', 'artifacts/check/report.json', $(COV_THRESHOLD)); print(f'CI: {r.overall}'); sys.exit(r.exit_code)"
+
+# -----------------------------------------------------------------------------
+# 回放/仿真（Replay/Sim）
+# -----------------------------------------------------------------------------
+
+# Replay validation
+replay: venv-check
+	$(PYTHON) -m pytest tests/ -k "replay" -q
+
+# Replay with JSON report
+replay-json: venv-check
+	@mkdir -p artifacts/sim
+	$(PYTHON) -c "\
+from src.trading.sim_gate import SimGate, get_sim_exit_code; \
+import subprocess, sys; \
+gate = SimGate('replay'); \
+r = subprocess.run(['$(PYTHON)', '-m', 'pytest', 'tests/', '-k', 'replay', '-q'], capture_output=True, text=True); \
+gate.record_pass('replay') if r.returncode == 0 else gate.record_failure('replay', 0, {}, {}, r.stdout[-300:]); \
+gate.save_report('artifacts/sim/report.json'); \
+sys.exit(get_sim_exit_code(gate.report))"
+
+# Simulation
+sim: venv-check
+	$(PYTHON) -m pytest tests/ -k "sim" -q
+
+# Simulation with JSON report
+sim-json: venv-check
+	@mkdir -p artifacts/sim
+	$(PYTHON) -c "\
+from src.trading.sim_gate import SimGate, get_sim_exit_code; \
+import subprocess, sys; \
+gate = SimGate('sim'); \
+r = subprocess.run(['$(PYTHON)', '-m', 'pytest', 'tests/', '-k', 'sim', '-q'], capture_output=True, text=True); \
+gate.record_pass('sim') if r.returncode == 0 else gate.record_failure('sim', 0, {}, {}, r.stdout[-300:]); \
+gate.save_report('artifacts/sim/report.json'); \
+sys.exit(get_sim_exit_code(gate.report))"
+
 # -----------------------------------------------------------------------------
 # 上下文导出（分层）
 # -----------------------------------------------------------------------------
