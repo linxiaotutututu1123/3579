@@ -5,15 +5,14 @@ import time
 import uuid
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
 
 from src.execution.events import ExecutionEvent
 from src.execution.flatten_executor import ExecutionRecord, FlattenExecutor
-from src.trading.utils import stable_json
 from src.execution.flatten_plan import BookTop, FlattenSpec, PositionToClose, build_flatten_intents
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.manager import RiskManager
 from src.risk.state import AccountSnapshot
+from src.trading.utils import stable_json
 
 NowCb = Callable[[], float]
 Event = RiskEvent | ExecutionEvent
