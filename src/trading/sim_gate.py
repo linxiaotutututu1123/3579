@@ -2,6 +2,13 @@
 
 Provides simulation and replay result reporting in JSON format for
 Claude automated loop integration.
+
+Military-grade v3.0 enhancements:
+- schema_version: integer, must be >= 3
+- rule_id: scenario identifier (e.g., UNIV.DOMINANT.BASIC)
+- component: module under test
+- evidence: state snapshot for debugging
+- check_mode: mandatory for all replay/sim
 """
 
 from __future__ import annotations
@@ -26,13 +33,38 @@ class SimStatus(str, Enum):
 
 @dataclass(frozen=True)
 class ScenarioFailure:
-    """Single scenario failure detail."""
+    """Single scenario failure detail (military-grade v3.0).
+
+    All fields are required for Claude to auto-fix:
+    - rule_id: unique scenario identifier
+    - component: module under test
+    - tick: when the failure occurred
+    - expected/actual: comparison values
+    - error: human-readable description
+    - evidence: state snapshot for debugging
+    """
 
     scenario: str
+    rule_id: str  # e.g., "UNIV.DOMINANT.BASIC"
+    component: str  # e.g., "universe_selector"
     tick: int
     expected: dict[str, Any]
     actual: dict[str, Any]
     error: str
+    evidence: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "scenario": self.scenario,
+            "rule_id": self.rule_id,
+            "component": self.component,
+            "tick": self.tick,
+            "expected": self.expected,
+            "actual": self.actual,
+            "error": self.error,
+            "evidence": self.evidence,
+        }
 
 
 @dataclass
