@@ -67,6 +67,9 @@ def handle_trading_tick(
     )
     target = strategy.on_tick(market_state)
 
+    def _sorted_qty(qty_map: Mapping[str, int]) -> dict[str, int]:
+        return {sym: qty_map[sym] for sym in sorted(qty_map)}
+
     events.append(
         TradingEvent(
             type=TradingEventType.SIGNAL_GENERATED,
@@ -81,7 +84,7 @@ def handle_trading_tick(
             type=TradingEventType.TARGET_PORTFOLIO_SET,
             ts=now_cb(),
             correlation_id=cid,
-            data={"target_net_qty": dict(target.target_net_qty)},
+            data={"target_net_qty": _sorted_qty(target.target_net_qty)},
         )
     )
 
@@ -98,7 +101,7 @@ def handle_trading_tick(
                 type=TradingEventType.TARGET_PORTFOLIO_CLAMPED,
                 ts=now_cb(),
                 correlation_id=cid,
-                data={"clamped_net_qty": dict(clamped.target_net_qty), "audit": audit},
+                data={"clamped_net_qty": _sorted_qty(clamped.target_net_qty), "audit": audit},
             )
         )
 
