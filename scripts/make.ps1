@@ -30,11 +30,18 @@ param(
 $ErrorActionPreference = "Stop"
 
 # =============================================================================
-# 配置
+# 配置：明确使用 venv 中的 Python，不依赖系统 PATH
 # =============================================================================
-$PYTHON = ".\.venv\Scripts\python.exe"
-$PIP = ".\.venv\Scripts\pip.exe"
+$PYTHON = Join-Path $PSScriptRoot "..\\.venv\\Scripts\\python.exe"
+$PIP = Join-Path $PSScriptRoot "..\\.venv\\Scripts\\pip.exe"
 $COV_THRESHOLD = 85
+
+# 验证 venv 存在
+if (-not (Test-Path $PYTHON)) {
+    Write-Host "ERROR: venv not found at $PYTHON" -ForegroundColor Red
+    Write-Host "Run: python -m venv .venv" -ForegroundColor Yellow
+    exit 1
+}
 
 # =============================================================================
 # 函数
@@ -68,51 +75,63 @@ function Show-Help {
     Write-Host "  install      - Install dependencies"
     Write-Host "  install-dev  - Install dev dependencies"
     Write-Host "  clean        - Clean build artifacts"
-}
-
-function Invoke-Python {
-    param([string[]]$Args)
-    & $PYTHON @Args
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    Write-Host ""
+    Write-Host "Python: $PYTHON"
 }
 
 function Invoke-Install {
+    Write-Host "Installing base dependencies..." -ForegroundColor Cyan
     & $PIP install -r requirements.txt
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-InstallDev {
     Invoke-Install
+    Write-Host "Installing dev dependencies..." -ForegroundColor Cyan
     & $PIP install -r requirements-dev.txt
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-Format {
-    Invoke-Python -m ruff format .
+    Write-Host "Formatting code..." -ForegroundColor Cyan
+    & $PYTHON -m ruff format .
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-FormatCheck {
-    Invoke-Python -m ruff format --check .
+    Write-Host "Checking format..." -ForegroundColor Cyan
+    & $PYTHON -m ruff format --check .
+    if ($LASTEXITCODE -ne 0) { exit 2 }
 }
 
 function Invoke-Lint {
-    Invoke-Python -m ruff check .
+    Write-Host "Linting..." -ForegroundColor Cyan
+    & $PYTHON -m ruff check .
+    if ($LASTEXITCODE -ne 0) { exit 2 }
 }
 
 function Invoke-LintFix {
-    Invoke-Python -m ruff check --fix .
+    Write-Host "Linting with auto-fix..." -ForegroundColor Cyan
+    & $PYTHON -m ruff check --fix .
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-Type {
-    Invoke-Python -m mypy .
+    Write-Host "Type checking..." -ForegroundColor Cyan
+    & $PYTHON -m mypy .
+    if ($LASTEXITCODE -ne 0) { exit 3 }
 }
 
 function Invoke-Test {
-    Invoke-Python -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=$COV_THRESHOLD
+    Write-Host "Running tests (coverage threshold: $COV_THRESHOLD%)..." -ForegroundColor Cyan
+    & $PYTHON -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=$COV_THRESHOLD
+    if ($LASTEXITCODE -ne 0) { exit 4 }
 }
 
 function Invoke-TestFast {
-    Invoke-Python -m pytest -q -x
+    Write-Host "Running tests (fast, no coverage)..." -ForegroundColor Cyan
+    & $PYTHON -m pytest -q -x
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-Check {
@@ -123,24 +142,35 @@ function Invoke-Check {
 }
 
 function Invoke-CI {
-    Invoke-Check
     Write-Host "=============================================="
-    Write-Host "CI Gate PASSED"
+    Write-Host "Running CI Gate..."
+    Write-Host "Python: $PYTHON"
+    Write-Host "=============================================="
+    Invoke-Check
+    Write-Host ""
+    Write-Host "=============================================="
+    Write-Host "CI Gate PASSED" -ForegroundColor Green
     Write-Host "=============================================="
 }
 
 function Invoke-Context {
     param([string]$Level = "lite")
+    Write-Host "Exporting context (level: $Level)..." -ForegroundColor Cyan
     New-Item -ItemType Directory -Force -Path artifacts\context | Out-Null
-    Invoke-Python scripts/export_context.py --out artifacts/context/context.md --level $Level
+    & $PYTHON scripts/export_context.py --out artifacts/context/context.md --level $Level
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-BuildPaper {
-    Invoke-Python -m PyInstaller 3579-paper.spec --noconfirm
+    Write-Host "Building 3579-paper.exe..." -ForegroundColor Cyan
+    & $PYTHON -m PyInstaller 3579-paper.spec --noconfirm
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-BuildLive {
-    Invoke-Python -m PyInstaller 3579-live.spec --noconfirm
+    Write-Host "Building 3579-live.exe..." -ForegroundColor Cyan
+    & $PYTHON -m PyInstaller 3579-live.spec --noconfirm
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-Build {
@@ -149,39 +179,50 @@ function Invoke-Build {
 }
 
 function Invoke-Clean {
+    Write-Host "Cleaning build artifacts..." -ForegroundColor Cyan
     $dirs = @("build", "dist", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache")
     foreach ($dir in $dirs) {
         if (Test-Path $dir) {
             Remove-Item -Recurse -Force $dir -ErrorAction SilentlyContinue
+            Write-Host "  Removed: $dir"
         }
     }
     if (Test-Path ".coverage") {
         Remove-Item -Force ".coverage" -ErrorAction SilentlyContinue
+        Write-Host "  Removed: .coverage"
     }
 }
 
 # =============================================================================
 # 主入口
 # =============================================================================
-switch ($Target) {
-    "help"          { Show-Help }
-    "install"       { Invoke-Install }
-    "install-dev"   { Invoke-InstallDev }
-    "format"        { Invoke-Format }
-    "format-check"  { Invoke-FormatCheck }
-    "lint"          { Invoke-Lint }
-    "lint-fix"      { Invoke-LintFix }
-    "type"          { Invoke-Type }
-    "test"          { Invoke-Test }
-    "test-fast"     { Invoke-TestFast }
-    "check"         { Invoke-Check }
-    "ci"            { Invoke-CI }
-    "context"       { Invoke-Context -Level "lite" }
-    "context-dev"   { Invoke-Context -Level "dev" }
-    "context-debug" { Invoke-Context -Level "debug" }
-    "build"         { Invoke-Build }
-    "build-paper"   { Invoke-BuildPaper }
-    "build-live"    { Invoke-BuildLive }
-    "clean"         { Invoke-Clean }
-    default         { Show-Help }
+
+# 切换到项目根目录（脚本所在目录的父目录）
+Push-Location (Join-Path $PSScriptRoot "..")
+
+try {
+    switch ($Target) {
+        "help"          { Show-Help }
+        "install"       { Invoke-Install }
+        "install-dev"   { Invoke-InstallDev }
+        "format"        { Invoke-Format }
+        "format-check"  { Invoke-FormatCheck }
+        "lint"          { Invoke-Lint }
+        "lint-fix"      { Invoke-LintFix }
+        "type"          { Invoke-Type }
+        "test"          { Invoke-Test }
+        "test-fast"     { Invoke-TestFast }
+        "check"         { Invoke-Check }
+        "ci"            { Invoke-CI }
+        "context"       { Invoke-Context -Level "lite" }
+        "context-dev"   { Invoke-Context -Level "dev" }
+        "context-debug" { Invoke-Context -Level "debug" }
+        "build"         { Invoke-Build }
+        "build-paper"   { Invoke-BuildPaper }
+        "build-live"    { Invoke-BuildLive }
+        "clean"         { Invoke-Clean }
+        default         { Show-Help }
+    }
+} finally {
+    Pop-Location
 }
