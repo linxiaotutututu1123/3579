@@ -239,49 +239,15 @@ sys.exit(report.exit_code)
 
 function Invoke-Replay {
     Assert-VenvExists
-    Write-Host "Running replay validation..." -ForegroundColor Cyan
-    & $PYTHON -m pytest tests/ -k "replay" -q
-    if ($LASTEXITCODE -ne 0) { exit 10 }
+    Write-Host "Running replay validation (CHECK_MODE enabled)..." -ForegroundColor Cyan
+    & $PYTHON -m src.trading.replay --python $PYTHON
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-ReplayJson {
     Assert-VenvExists
-    Write-Host "Running replay with JSON report..." -ForegroundColor Cyan
-    New-Item -ItemType Directory -Force -Path artifacts\sim | Out-Null
-    & $PYTHON -c @"
-from src.trading.sim_gate import SimGate, get_sim_exit_code
-import subprocess
-import sys
-
-gate = SimGate(sim_type='replay')
-
-# Run replay tests
-result = subprocess.run(
-    [r'$PYTHON', '-m', 'pytest', 'tests/', '-k', 'replay', '-q', '--tb=short'],
-    capture_output=True,
-    text=True
-)
-
-if result.returncode == 0:
-    gate.record_pass('replay_tests')
-else:
-    # Parse failures from output
-    for line in result.stdout.split('\n'):
-        if 'FAILED' in line:
-            gate.record_failure(
-                scenario=line.split('::')[-1] if '::' in line else 'unknown',
-                tick=0,
-                expected={'status': 'pass'},
-                actual={'status': 'fail'},
-                error=line
-            )
-    if not gate.report.failures:
-        gate.record_failure('replay_tests', 0, {}, {}, result.stdout[-500:])
-
-gate.save_report('artifacts/sim/report.json')
-print(f'Replay Report: {gate.report.overall.value}')
-sys.exit(get_sim_exit_code(gate.report))
-"@
+    Write-Host "Running replay with JSON report (CHECK_MODE enabled)..." -ForegroundColor Cyan
+    & $PYTHON -m src.trading.replay --python $PYTHON --output artifacts/sim/report.json
     $code = $LASTEXITCODE
     if ($code -ne 0) {
         Write-Host "Replay JSON report saved to artifacts\sim\report.json" -ForegroundColor Yellow
@@ -292,48 +258,15 @@ sys.exit(get_sim_exit_code(gate.report))
 
 function Invoke-Sim {
     Assert-VenvExists
-    Write-Host "Running simulation..." -ForegroundColor Cyan
-    & $PYTHON -m pytest tests/ -k "sim" -q
-    if ($LASTEXITCODE -ne 0) { exit 11 }
+    Write-Host "Running simulation (CHECK_MODE enabled)..." -ForegroundColor Cyan
+    & $PYTHON -m src.trading.sim --python $PYTHON
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-SimJson {
     Assert-VenvExists
-    Write-Host "Running simulation with JSON report..." -ForegroundColor Cyan
-    New-Item -ItemType Directory -Force -Path artifacts\sim | Out-Null
-    & $PYTHON -c @"
-from src.trading.sim_gate import SimGate, get_sim_exit_code
-import subprocess
-import sys
-
-gate = SimGate(sim_type='sim')
-
-# Run sim tests
-result = subprocess.run(
-    [r'$PYTHON', '-m', 'pytest', 'tests/', '-k', 'sim', '-q', '--tb=short'],
-    capture_output=True,
-    text=True
-)
-
-if result.returncode == 0:
-    gate.record_pass('sim_tests')
-else:
-    for line in result.stdout.split('\n'):
-        if 'FAILED' in line:
-            gate.record_failure(
-                scenario=line.split('::')[-1] if '::' in line else 'unknown',
-                tick=0,
-                expected={'status': 'pass'},
-                actual={'status': 'fail'},
-                error=line
-            )
-    if not gate.report.failures:
-        gate.record_failure('sim_tests', 0, {}, {}, result.stdout[-500:])
-
-gate.save_report('artifacts/sim/report.json')
-print(f'Sim Report: {gate.report.overall.value}')
-sys.exit(get_sim_exit_code(gate.report))
-"@
+    Write-Host "Running simulation with JSON report (CHECK_MODE enabled)..." -ForegroundColor Cyan
+    & $PYTHON -m src.trading.sim --python $PYTHON --output artifacts/sim/report.json
     $code = $LASTEXITCODE
     if ($code -ne 0) {
         Write-Host "Sim JSON report saved to artifacts\sim\report.json" -ForegroundColor Yellow
