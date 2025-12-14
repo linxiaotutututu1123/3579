@@ -10,6 +10,7 @@ class Side(str, Enum):
 
 
 class Offset(str, Enum):
+    OPEN = "OPEN"
     CLOSETODAY = "CLOSETODAY"
     CLOSE = "CLOSE"
 
