@@ -32,8 +32,7 @@ def _strategy_factory(settings: AppSettings) -> Strategy:
 def _missing_fetch_tick() -> LiveTickData:
     """Placeholder for tick fetcher - can use replay or simulated data."""
     raise RuntimeError(
-        "fetch_tick not implemented. "
-        "Implement a tick source (e.g., replay data) for paper trading."
+        "fetch_tick not implemented. Implement a tick source (e.g., replay data) for paper trading."
     )
 
 
