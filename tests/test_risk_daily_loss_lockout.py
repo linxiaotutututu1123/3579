@@ -33,11 +33,11 @@ def test_daily_loss_lockout_flow() -> None:
     )
 
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
-    assert rm.state.mode == RiskMode.NORMAL
+    assert rm.state.mode.value == RiskMode.NORMAL.value
     assert rm.state.kill_switch_fired_today is False
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="cid")
-    assert rm.state.mode == RiskMode.COOLDOWN
+    assert rm.state.mode.value == RiskMode.COOLDOWN.value
     assert rm.state.kill_switch_fired_today is True
     assert calls["cancel"] == 1
     assert calls["flatten"] == 1
@@ -48,14 +48,14 @@ def test_daily_loss_lockout_flow() -> None:
 
     now["t"] = 90 * 60 + 1
     rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0), correlation_id="cid")
-    assert rm.state.mode == RiskMode.RECOVERY
+    assert rm.state.mode.value == RiskMode.RECOVERY.value
 
     events = rm.pop_events()
     recovery_events = [e for e in events if e.type == RiskEventType.ENTER_RECOVERY]
     assert len(recovery_events) == 1
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="cid")
-    assert rm.state.mode == RiskMode.LOCKED
+    assert rm.state.mode.value == RiskMode.LOCKED.value
     assert calls["cancel"] == 1
     assert calls["flatten"] == 1
 
@@ -94,9 +94,9 @@ def test_callbacks_only_called_once_on_first_breach() -> None:
 
     now["t"] = 2
     rm.update(AccountSnapshot(equity=980_000.0, margin_used=0.0), correlation_id="cid")
-    assert rm.state.mode == RiskMode.RECOVERY
+    assert rm.state.mode.value == RiskMode.RECOVERY.value
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="cid")
-    assert rm.state.mode == RiskMode.LOCKED
+    assert rm.state.mode.value == RiskMode.LOCKED.value
     assert calls["cancel"] == 1
     assert calls["flatten"] == 1
