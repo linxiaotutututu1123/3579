@@ -1,15 +1,10 @@
 from __future__ import annotations
 
-import hashlib
-import json
 from collections.abc import Sequence
 
 from src.strategy.base import Strategy
 from src.strategy.types import MarketState, TargetPortfolio
-
-
-def _stable_json(obj: object) -> str:
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+from src.trading.utils import stable_hash
 
 
 class SimpleAIStrategy(Strategy):
@@ -27,7 +22,7 @@ class SimpleAIStrategy(Strategy):
             features[sym] = price
             target_net_qty[sym] = 1 if price > 0 else 0
 
-        features_hash = hashlib.sha256(_stable_json(features).encode()).hexdigest()
+        features_hash = stable_hash(features)
 
         return TargetPortfolio(
             target_net_qty=target_net_qty,

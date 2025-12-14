@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import hashlib
-import json
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -10,10 +8,7 @@ import numpy as np
 
 from src.strategy.base import Strategy
 from src.strategy.types import MarketState, TargetPortfolio
-
-
-def _stable_json(obj: object) -> str:
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+from src.trading.utils import stable_hash
 
 
 @dataclass
@@ -87,7 +82,7 @@ class TopTierTrendRiskParityStrategy(Strategy):
 
         features["raw_targets"] = {k: float(v) for k, v in raw_targets.items()}
         features["smoothed_targets"] = {k: float(v) for k, v in smoothed_targets.items()}
-        features_hash = hashlib.sha256(_stable_json(features).encode()).hexdigest()
+        features_hash = stable_hash(features)
 
         return TargetPortfolio(
             target_net_qty=final_targets,
