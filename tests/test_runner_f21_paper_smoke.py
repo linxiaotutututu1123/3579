@@ -50,7 +50,9 @@ def test_run_f21_paper_calls_risk_then_trade(monkeypatch: pytest.MonkeyPatch) ->
     def fake_fetch_tick() -> runner.LiveTickData:
         return tick
 
-    def fake_broker_factory(settings: runner.AppSettings) -> Broker:  # should not import CTP in PAPER
+    def fake_broker_factory(
+        settings: runner.AppSettings,
+    ) -> Broker:  # should not import CTP in PAPER
         return FakeBroker()
 
     def fake_strategy_factory(settings: runner.AppSettings) -> FakeStrategy:
