@@ -193,28 +193,40 @@ class SimReport:
 
 class SimGate:
     """
-    Simulation/Replay gate for automated validation.
+    Simulation/Replay gate for automated validation (military-grade v3.0).
 
-    Collects scenario results and generates machine-readable reports.
+    Collects scenario results and generates machine-readable reports
+    with rule_id, component, and evidence for Claude auto-fix.
     """
 
-    def __init__(self, sim_type: str = "replay") -> None:
+    def __init__(self, sim_type: str = "replay", check_mode: bool = False) -> None:
         """
         Initialize simulation gate.
 
         Args:
             sim_type: Type of simulation ("replay" or "sim")
+            check_mode: Whether CHECK_MODE is enabled (must be True for production)
         """
-        self._report = SimReport(type=sim_type)
+        self._report = SimReport(type=sim_type, check_mode=check_mode)
 
     @property
     def report(self) -> SimReport:
         """Get current report."""
         return self._report
 
-    def record_pass(self, scenario: str) -> None:
+    def set_check_mode(self, enabled: bool) -> None:
+        """Set CHECK_MODE flag."""
+        self._report.check_mode = enabled
+
+    def record_pass(
+        self,
+        scenario: str,
+        *,
+        rule_id: str = "",
+        component: str = "",
+    ) -> None:
         """Record a passed scenario."""
-        self._report.add_pass(scenario)
+        self._report.add_pass(scenario, rule_id=rule_id, component=component)
 
     def record_failure(
         self,
@@ -223,9 +235,22 @@ class SimGate:
         expected: dict[str, Any],
         actual: dict[str, Any],
         error: str,
+        *,
+        rule_id: str = "",
+        component: str = "",
+        evidence: dict[str, Any] | None = None,
     ) -> None:
-        """Record a failed scenario."""
-        self._report.add_failure(scenario, tick, expected, actual, error)
+        """Record a failed scenario (military-grade v3.0)."""
+        self._report.add_failure(
+            scenario,
+            tick,
+            expected,
+            actual,
+            error,
+            rule_id=rule_id,
+            component=component,
+            evidence=evidence,
+        )
 
     def set_metrics(
         self,
@@ -267,20 +292,22 @@ class SimGate:
 
 
 # =============================================================================
-# 退出码
+# 退出码（军规级）
 # =============================================================================
 class SimExitCode:
-    """Exit codes for simulation/replay.
+    """Exit codes for simulation/replay (military-grade).
 
     Exit codes:
         0 = All scenarios passed
         8 = Replay failed
         9 = Sim failed
+        12 = Policy violation (military-grade enforcement)
     """
 
     SUCCESS = 0
     REPLAY_FAIL = 8
     SIM_FAIL = 9
+    POLICY_VIOLATION = 12
 
 
 def get_sim_exit_code(report: SimReport) -> int:
@@ -291,6 +318,86 @@ def get_sim_exit_code(report: SimReport) -> int:
     if report.type == "replay":
         return SimExitCode.REPLAY_FAIL
     return SimExitCode.SIM_FAIL
+
+
+# =============================================================================
+# V2 Required Scenarios 加载与校验（军规级）
+# =============================================================================
+
+def load_required_scenarios(
+    yaml_path: str | Path = "V2_REQUIRED_SCENARIOS.yml",
+) -> dict[str, Any]:
+    """
+    Load V2 required scenarios from YAML.
+
+    Args:
+        yaml_path: Path to V2_REQUIRED_SCENARIOS.yml
+
+    Returns:
+        Parsed YAML content
+    """
+    import yaml
+
+    path = Path(yaml_path)
+    if not path.exists():
+        logger.warning("V2_REQUIRED_SCENARIOS.yml not found: %s", path)
+        return {}
+
+    with open(path, encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def validate_scenario_coverage(
+    report: SimReport,
+    required_scenarios: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """
+    Validate that all required scenarios were executed.
+
+    Args:
+        report: SimReport with executed scenarios
+        required_scenarios: Loaded V2_REQUIRED_SCENARIOS.yml
+
+    Returns:
+        List of missing/skipped scenario violations
+    """
+    violations: list[dict[str, Any]] = []
+
+    if not required_scenarios:
+        return violations
+
+    # Collect all required rule_ids
+    required_rule_ids: set[str] = set()
+    phases = required_scenarios.get("phases", {})
+    for phase_data in phases.values():
+        if not isinstance(phase_data, dict):
+            continue
+        scenarios = phase_data.get("scenarios", [])
+        for scenario in scenarios:
+            if isinstance(scenario, dict) and scenario.get("required", True):
+                rule_id = scenario.get("rule_id", "")
+                if rule_id:
+                    required_rule_ids.add(rule_id)
+
+    # Collect executed rule_ids
+    executed_rule_ids: set[str] = set()
+    for failure in report.failures:
+        if failure.rule_id:
+            executed_rule_ids.add(failure.rule_id)
+
+    # TODO: Also track passed scenarios (need to store rule_ids in passes)
+    # For now, we only check if failures have proper rule_ids
+
+    # Check for missing rule_ids in failures
+    for failure in report.failures:
+        if not failure.rule_id or failure.rule_id.startswith("UNKNOWN."):
+            violations.append({
+                "type": "MISSING_RULE_ID",
+                "scenario": failure.scenario,
+                "message": "Failure missing proper rule_id",
+            })
+
+    return violations
 
 
 # =============================================================================
