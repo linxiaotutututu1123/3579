@@ -16,7 +16,8 @@
       "mcp__ide__getDiagnostics",
       "Bash(git rev-parse:*)",
       "Bash(git checkout:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(git merge copilot/fix-windows-ci-failures -m \"Merge F10 changes from copilot branch\")"
     ]
   }
 }
