@@ -51,10 +51,17 @@ class TestCtpBroker:
         broker.disconnect()
         assert broker.is_connected is False
 
-    def test_place_order_mock_mode(self) -> None:
-        """place_order() works in mock mode without SDK."""
+    def test_init_live_mode_without_sdk_raises(self) -> None:
+        """LIVE mode without SDK raises CtpNotAvailableError at init."""
         config = _make_config()
-        broker = CtpBroker(config)
+        with pytest.raises(CtpNotAvailableError) as exc_info:
+            CtpBroker(config, trade_mode=TradeMode.LIVE)
+        assert "LIVE mode requires it" in str(exc_info.value)
+
+    def test_place_order_paper_mode_mock(self) -> None:
+        """place_order() works in PAPER mock mode without SDK."""
+        config = _make_config()
+        broker = CtpBroker(config, trade_mode=TradeMode.PAPER)
         intent = OrderIntent(
             symbol="au2412",
             side=Side.BUY,
@@ -68,7 +75,7 @@ class TestCtpBroker:
     def test_place_order_increments_ref(self) -> None:
         """Order refs increment on each order."""
         config = _make_config()
-        broker = CtpBroker(config)
+        broker = CtpBroker(config, trade_mode=TradeMode.PAPER)
         intent = OrderIntent(
             symbol="au2412",
             side=Side.BUY,
@@ -80,10 +87,28 @@ class TestCtpBroker:
         ack2 = broker.place_order(intent)
         assert ack1.order_id != ack2.order_id
 
+    def test_place_order_uses_ctp_mapping(self) -> None:
+        """place_order uses F18 mapping for Side/Offset conversion."""
+        config = _make_config()
+        broker = CtpBroker(config, trade_mode=TradeMode.PAPER)
+        # Test with different Side/Offset combinations
+        for side in Side:
+            for offset in Offset:
+                intent = OrderIntent(
+                    symbol="au2412",
+                    side=side,
+                    offset=offset,
+                    qty=1,
+                    price=500.0,
+                )
+                # Should not raise - mapping is valid for all known values
+                ack = broker.place_order(intent)
+                assert ack.order_id.startswith("MOCK_")
+
     def test_repr(self) -> None:
         """__repr__ returns useful string."""
         config = _make_config()
-        broker = CtpBroker(config)
+        broker = CtpBroker(config, trade_mode=TradeMode.PAPER)
         s = repr(broker)
         assert "CtpBroker" in s
         assert "9999" in s
