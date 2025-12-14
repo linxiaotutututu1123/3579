@@ -2,6 +2,7 @@
 
 Provides structured explanation of strategy outputs for debugging and audit trails.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

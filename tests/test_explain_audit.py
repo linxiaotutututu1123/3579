@@ -1,4 +1,5 @@
 """Tests for explain/audit layer."""
+
 from __future__ import annotations
 
 from src.strategy.explain import ExplainResult, explain_portfolio_decision
