@@ -38,7 +38,12 @@ def _hash_snapshot(
     books: Mapping[str, BookTop],
 ) -> str:
     pos_data = [
-        {"symbol": p.symbol, "net_qty": p.net_qty, "today_qty": p.today_qty, "yesterday_qty": p.yesterday_qty}
+        {
+            "symbol": p.symbol,
+            "net_qty": p.net_qty,
+            "today_qty": p.today_qty,
+            "yesterday_qty": p.yesterday_qty,
+        }
         for p in sorted(positions, key=lambda x: x.symbol)
     ]
     book_data = {
