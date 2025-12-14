@@ -50,6 +50,10 @@ class RiskManager:
         self.state.kill_switch_fired_today = False
         self.state.cooldown_end_ts = None
 
+        # reset highest-grade idempotency flags for the new day
+        self.state.flatten_in_progress = False
+        self.state.flatten_completed_today = False
+
         self._events.append(
             RiskEvent(
                 type=RiskEventType.BASELINE_SET,
@@ -60,7 +64,6 @@ class RiskManager:
         )
 
     def update(self, snap: AccountSnapshot, *, correlation_id: str) -> None:
-        # INIT gate (baseline missing)
         if self.state.e0 is None:
             return
 
@@ -110,6 +113,61 @@ class RiskManager:
                 ts=now_ts,
                 correlation_id=correlation_id,
                 data={"cooldown_end_ts": self.state.cooldown_end_ts},
+            )
+        )
+
+    # ---------- Highest-grade flatten idempotency ----------
+    def try_start_flatten(self, *, correlation_id: str) -> bool:
+        """
+        Returns True exactly once per day (first successful start).
+        Subsequent attempts are skipped (either in-progress or already completed today).
+        """
+        now_ts = self._now()
+
+        if self.state.flatten_in_progress:
+            self._events.append(
+                RiskEvent(
+                    type=RiskEventType.FLATTEN_SKIPPED_ALREADY_IN_PROGRESS,
+                    ts=now_ts,
+                    correlation_id=correlation_id,
+                    data={},
+                )
+            )
+            return False
+
+        if self.state.flatten_completed_today:
+            # Reuse the same event type to keep it minimal; data indicates why.
+            self._events.append(
+                RiskEvent(
+                    type=RiskEventType.FLATTEN_SKIPPED_ALREADY_IN_PROGRESS,
+                    ts=now_ts,
+                    correlation_id=correlation_id,
+                    data={"reason": "already_completed_today"},
+                )
+            )
+            return False
+
+        self.state.flatten_in_progress = True
+        self._events.append(
+            RiskEvent(
+                type=RiskEventType.FLATTEN_STARTED,
+                ts=now_ts,
+                correlation_id=correlation_id,
+                data={},
+            )
+        )
+        return True
+
+    def mark_flatten_done(self, *, correlation_id: str) -> None:
+        now_ts = self._now()
+        self.state.flatten_in_progress = False
+        self.state.flatten_completed_today = True
+        self._events.append(
+            RiskEvent(
+                type=RiskEventType.FLATTEN_COMPLETED,
+                ts=now_ts,
+                correlation_id=correlation_id,
+                data={},
             )
         )
 

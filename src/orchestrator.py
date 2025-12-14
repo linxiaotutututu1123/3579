@@ -38,12 +38,7 @@ def _hash_snapshot(
     books: Mapping[str, BookTop],
 ) -> str:
     pos_data = [
-        {
-            "symbol": p.symbol,
-            "net_qty": p.net_qty,
-            "today_qty": p.today_qty,
-            "yesterday_qty": p.yesterday_qty,
-        }
+        {"symbol": p.symbol, "net_qty": p.net_qty, "today_qty": p.today_qty, "yesterday_qty": p.yesterday_qty}
         for p in sorted(positions, key=lambda x: x.symbol)
     ]
     book_data = {
@@ -69,20 +64,11 @@ def handle_risk_update(
     flatten_spec: FlattenSpec | None = None,
     now_cb: NowCb = time.time,
 ) -> OrchestratorResult:
-    """
-    Highest-grade tick handler:
-    - generate correlation_id
-    - compute snapshot hash
-    - update risk (risk events are emitted at the source with correlation_id)
-    - if kill switch fired: execute flatten with correlation_id, and collect execution events
-    - return unified event stream (audit + risk + execution)
-    """
     correlation_id = uuid.uuid4().hex
     snapshot_hash = _hash_snapshot(snap=snap, positions=positions, books=books)
 
-    # Risk updates emit correlated events at the source (RiskManager is highest-grade already)
     risk.update(snap, correlation_id=correlation_id)
-    risk_events = risk.pop_events()
+    base_risk_events = risk.pop_events()
 
     audit_event = RiskEvent(
         type=RiskEventType.AUDIT_SNAPSHOT,
@@ -94,20 +80,23 @@ def handle_risk_update(
     exec_records: list[ExecutionRecord] = []
     exec_events: list[ExecutionEvent] = []
 
-    fired = any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in risk_events)
-    if fired:
+    kill_fired = any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in base_risk_events)
+    if kill_fired and risk.try_start_flatten(correlation_id=correlation_id):
         spec = flatten_spec or FlattenSpec()
         for pos in positions:
             book = books.get(pos.symbol)
             if book is None:
-                # Highest-grade next step: emit DataQuality event + alert.
                 continue
             intents = build_flatten_intents(pos=pos, book=book, spec=spec)
             exec_records.extend(executor.execute(intents, correlation_id=correlation_id))
 
         exec_events = executor.drain_events()
+        risk.mark_flatten_done(correlation_id=correlation_id)
 
-    events: list[Event] = [audit_event, *risk_events, *exec_events]
+    # Important: include events emitted by try_start_flatten/mark_flatten_done too
+    extra_risk_events = risk.pop_events()
+    events: list[Event] = [audit_event, *base_risk_events, *extra_risk_events, *exec_events]
+
     return OrchestratorResult(
         correlation_id=correlation_id,
         snapshot_hash=snapshot_hash,
