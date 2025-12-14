@@ -1,11 +1,10 @@
 import types
-
-import pytest
+from collections.abc import Callable
 
 from src import runner
 from src.execution.broker import Broker, OrderAck
-from src.execution.order_types import OrderIntent
 from src.execution.flatten_plan import BookTop, PositionToClose
+from src.execution.order_types import OrderIntent
 from src.risk.state import AccountSnapshot
 
 
@@ -15,18 +14,18 @@ class FakeBroker(Broker):
 
 
 class FakeStrategy:
-    def on_tick(self, market_state: object):
+    def on_tick(self, market_state: object) -> types.SimpleNamespace:
         return types.SimpleNamespace(model_version="v0", features_hash="hash", target_net_qty={})
 
 
-def test_run_f21_paper_calls_risk_then_trade(monkeypatch):
+def test_run_f21_paper_calls_risk_then_trade(monkeypatch: Callable[..., None]) -> None:
     call_order: list[str] = []
 
-    def fake_handle_risk_update(**kwargs):
+    def fake_handle_risk_update(**kwargs: object) -> types.SimpleNamespace:
         call_order.append("risk")
         return types.SimpleNamespace(correlation_id="cid", events=[], execution_records=[])
 
-    def fake_handle_trading_tick(**kwargs):
+    def fake_handle_trading_tick(**kwargs: object) -> types.SimpleNamespace:
         call_order.append("trade")
         return types.SimpleNamespace(correlation_id="cid", events=[], target_portfolio=None, clamped_portfolio=None)
 
@@ -42,13 +41,13 @@ def test_run_f21_paper_calls_risk_then_trade(monkeypatch):
         now_ts=0.0,
     )
 
-    def fake_fetch_tick():
+    def fake_fetch_tick() -> runner.LiveTickData:
         return tick
 
-    def fake_broker_factory(settings):  # should not import CTP in PAPER
+    def fake_broker_factory(settings: runner.AppSettings) -> Broker:  # should not import CTP in PAPER
         return FakeBroker()
 
-    def fake_strategy_factory(settings):
+    def fake_strategy_factory(settings: runner.AppSettings) -> FakeStrategy:
         return FakeStrategy()
 
     runner.run_f21(
