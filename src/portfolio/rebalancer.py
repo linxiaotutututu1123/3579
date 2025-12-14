@@ -11,7 +11,7 @@ def build_rebalance_intents(
     current_net_qty: Mapping[str, int],
     target: TargetPortfolio,
     mid_prices: Mapping[str, float],
-) -> list[OrderIntent]:
+) -> tuple[list[OrderIntent], list[OrderIntent]]:
     """
     Build order intents to rebalance from current to target positions.
 
@@ -149,4 +149,4 @@ def build_rebalance_intents(
                     )
                 )
 
-    return close_intents + open_intents
+    return close_intents, open_intents
