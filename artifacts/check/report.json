@@ -1,91 +1,39 @@
 {
   "version": "2.0",
-  "timestamp": "2025-12-14T23:51:42.128731+00:00",
+  "timestamp": "2025-12-14T23:54:08.315635+00:00",
   "all_passed": false,
-  "failed_step": "type",
+  "failed_step": "test",
   "overall": "FAIL",
-  "exit_code": 3,
+  "exit_code": 4,
   "steps": [
     {
       "name": "format-check",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 57
+      "duration_ms": 70
     },
     {
       "name": "lint",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 56
+      "duration_ms": 83
     },
     {
       "name": "type",
-      "status": "FAIL",
-      "exit_code": 3,
-      "duration_ms": 10631,
-      "summary": "tests\\test_order_types_offset_open.py:15: error: Statement is unreachable \n[unreachable]\n        assert Offset.CLOSE == \"CLOSE\"\n        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ntests\\test_risk_state_machine.py:33: error: Statement is unreachable \n[unreachable]\n        assert rm.state.kill_switch_fired_today is True\n        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ntests\\test_risk_state_machine.py:75: error: Statement is unreachable \n[unreachable]\n        rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), corr...\n        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~...\ntests\\test_risk_events.py:41: error: Statement is unreachable  [unreachable]\n        ev = rm.pop_events()\n        ^~~~~~~~~~~~~~~~~~~~\ntests\\test_risk_daily_loss_lockout.py:42: error: Statement is unreachable \n[unreachable]\n        assert calls[\"cancel\"] == 1\n        ^~~~~~~~~~~~~~~~~~~~~~~~~~~\ntests\\test_runner_f21_paper_smoke.py:56: error: Name \"runner.AppSettings\" is\nnot defined  [name-defined]\n            settings: runner.AppSettings,\n                      ^\ntests\\test_runner_f21_paper_smoke.py:60: error: Name \"runner.AppSettings\" is\nnot defined  [name-defined]\n        def fake_strategy_factory(settings: runner.AppSettings) -> Strateg...\n                                            ^\ntests\\test_coverage_complete.py:211: error: Module \"src.replay.runner\" does not\nexplicitly export attribute \"BookTop\"  [attr-defined]\n            from src.replay.runner import BookTop, NoopBroker\n            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nFound 8 errors in 6 files (checked 98 source files)",
-      "failures": [
-        {
-          "file": "tests\\test_order_types_offset_open.py",
-          "line": 15,
-          "rule": "error",
-          "message": "Statement is unreachable"
-        },
-        {
-          "file": "tests\\test_risk_state_machine.py",
-          "line": 33,
-          "rule": "error",
-          "message": "Statement is unreachable"
-        },
-        {
-          "file": "tests\\test_risk_state_machine.py",
-          "line": 75,
-          "rule": "error",
-          "message": "Statement is unreachable"
-        },
-        {
-          "file": "tests\\test_risk_events.py",
-          "line": 41,
-          "rule": "error",
-          "message": "Statement is unreachable  [unreachable]"
-        },
-        {
-          "file": "tests\\test_risk_daily_loss_lockout.py",
-          "line": 42,
-          "rule": "error",
-          "message": "Statement is unreachable"
-        },
-        {
-          "file": "tests\\test_runner_f21_paper_smoke.py",
-          "line": 56,
-          "rule": "error",
-          "message": "Name \"runner.AppSettings\" is"
-        },
-        {
-          "file": "tests\\test_runner_f21_paper_smoke.py",
-          "line": 60,
-          "rule": "error",
-          "message": "Name \"runner.AppSettings\" is"
-        },
-        {
-          "file": "tests\\test_coverage_complete.py",
-          "line": 211,
-          "rule": "error",
-          "message": "Module \"src.replay.runner\" does not"
-        }
-      ],
-      "hints": [
-        "Add type annotations to function parameters and return values",
-        "Use 'Any' as escape hatch if truly dynamic typing needed",
-        "Check mypy docs for error explanation"
-      ]
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 1585
     },
     {
       "name": "test",
-      "status": "SKIP",
-      "exit_code": null,
-      "duration_ms": 0,
-      "reason": "previous step failed"
+      "status": "FAIL",
+      "exit_code": 4,
+      "duration_ms": 3596,
+      "summary": "........................................................................ [ 29%]\n........................................................................ [ 59%]\n........................................................................ [ 88%]\n...........................\nERROR: Coverage failure: total of 69 is less than fail-under=85\n                                                                         [100%]\n=============================== tests coverage ================================\n______________ coverage: platform win32, python 3.12.10-final-0 _______________\n\nName                                         Stmts   Miss Branch BrPart  Cover   Missing\n----------------------------------------------------------------------------------------\nsrc\\app\\live_entry.py                           24     24      4      0     0%   14-75\nsrc\\app\\paper_entry.py                          18     18      2      0     0%   13-54\nsrc\\config.py                                   26      1      2      1    93%   33\nsrc\\execution\\broker_factory.py                 22      1      8      1    93%   79\nsrc\\execution\\ctp_broker.py                     88      9     18      3    89%   105, 130->exit, 159-165, 194, 223-224\nsrc\\execution\\flatten_executor.py               73      4     22      5    91%   39, 41, 43, 45, 116->123\nsrc\\execution\\flatten_plan.py                   57      0     22      1    99%   72->74\nsrc\\portfolio\\rebalancer.py                     34      0     20      1    98%   128->30\nsrc\\replay\\runner.py                            56      1     10      1    97%   132\nsrc\\risk\\manager.py                             85      2     22      3    95%   23->exit, 84, 195\nsrc\\risk\\state.py                               37      1      4      1    95%   32\nsrc\\runner.py                                   60      4      4      2    91%   56, 60, 104->108, 147-148\nsrc\\strategy\\dl\\features.py                     36      0     16      4    92%   40->39, 45->49, 50->54, 56->55\nsrc\\strategy\\dl\\policy.py                       13      0      2      1    93%   32->35\nsrc\\strategy\\ensemble_moe.py                   101      6     22      7    89%   101, 119, 178, 182, 188, 191->190, 194\nsrc\\strategy\\linear_ai.py                       81      3     28      4    94%   107->105, 114, 124, 138\nsrc\\strategy\\top_tier_trend_risk_parity.py      92      3     22      3    95%   100, 109, 113\nsrc\\trading\\ci_gate.py                         416    229    120      1    35%   205->exit, 247-265, 277-278, 284, 289, 302-305, 346-360, 379-380, 385, 390-393, 398, 403-406, 410, 414, 426, 430-433, 438-456, 461-480, 485-497, 546-567, 588-641, 667-750, 799, 814-815, 820, 829-830, 834, 843, 847-850, 867-942, 957-993, 1005-1019, 1045-1046, 1051, 1056-1059, 1064, 1069-1072, 1076, 1080, 1094, 1098-1101\nsrc\\trading\\live_guard.py                       54      0      8      1    98%   137->exit\nsrc\\trading\\orchestrator.py                     53      5      8      2    89%   100, 146-163\nsrc\\trading\\replay.py                           86     86     26      0     0%   12-239\nsrc\\trading\\serial_exec.py                      26      0      6      1    97%   66->71\nsrc\\trading\\sim.py                              86     86     26      0     0%   12-237\nsrc\\trading\\sim_gate.py                        158    158     36      0     0%   14-466\n----------------------------------------------------------------------------------------\nTOTAL                                         2368    641    548     43    69%\n\n34 files skipped due to complete coverage.\nFAIL Required test coverage of 85% not reached. Total coverage: 69.34%",
+      "hints": [
+        "Add tests for uncovered code paths",
+        "Current threshold: 85% - check coverage report for gaps"
+      ]
     }
   ]
 }
