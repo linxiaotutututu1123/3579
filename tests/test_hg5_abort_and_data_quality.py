@@ -46,5 +46,9 @@ def test_abort_after_too_many_rejections_and_emit_missing_book() -> None:
     )
 
     risk_events = [e for e in res.events if isinstance(e, RiskEvent)]
-    assert any(e.type == RiskEventType.DATA_QUALITY_MISSING_BOOK and e.data["symbol"] == "MISS" for e in risk_events)
+    has_missing_book = any(
+        e.type == RiskEventType.DATA_QUALITY_MISSING_BOOK and e.data["symbol"] == "MISS"
+        for e in risk_events
+    )
+    assert has_missing_book
     assert any(e.type == RiskEventType.FLATTEN_ABORTED_TOO_MANY_REJECTIONS for e in risk_events)
