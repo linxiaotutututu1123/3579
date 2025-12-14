@@ -4,6 +4,65 @@ This document describes the development environment setup, quality gates, and tr
 
 ---
 
+## ⚠️ Critical Rules (MUST READ)
+
+### 1. Single Entry Point
+
+| Platform | Entry Point | Example |
+|----------|-------------|---------|
+| Windows | `.\scripts\make.ps1` | `.\scripts\make.ps1 ci` |
+| Linux/Mac | `make` | `make ci` |
+
+**FORBIDDEN**: Running tools directly (e.g., `ruff .`, `mypy .`, `pytest`)
+
+**WHY**: Entry point ensures:
+- Correct venv Python is used
+- Consistent exit codes
+- CHECK_MODE properly set in CI
+
+### 2. CI Must Use Entry Commands Only
+
+```yaml
+# ✅ CORRECT
+- run: make ci
+
+# ❌ WRONG - bypasses entry point
+- run: ruff format --check .
+- run: mypy .
+- run: pytest
+```
+
+### 3. CHECK_MODE Protection
+
+All trading APIs MUST call `assert_not_check_mode()` before execution:
+
+```python
+from src.trading.ci_gate import assert_not_check_mode
+
+class Broker:
+    def place_order(self, order):
+        assert_not_check_mode()  # ← REQUIRED
+        # ... actual order placement
+    
+    def cancel_order(self, order_id):
+        assert_not_check_mode()  # ← REQUIRED
+        # ... actual cancellation
+    
+    def flatten_all(self):
+        assert_not_check_mode()  # ← REQUIRED
+        # ... actual flattening
+```
+
+**Protected APIs**:
+- `place_order()` - Order placement
+- `cancel_order()` - Order cancellation  
+- `flatten_all()` / `flatten_position()` - Position flattening
+- Any CTP API calls that modify positions
+
+**WHY**: Prevents accidental live trading during CI/tests.
+
+---
+
 ## Table of Contents
 
 1. [Requirements](#requirements)
