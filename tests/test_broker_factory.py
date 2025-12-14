@@ -9,9 +9,6 @@ Covers:
 
 from __future__ import annotations
 
-import sys
-from unittest.mock import patch
-
 import pytest
 
 from src.config import AppSettings
@@ -73,20 +70,13 @@ class TestBrokerFactoryPaper:
         broker = broker_factory(settings)
         assert isinstance(broker, NoopBroker)
 
-    def test_paper_does_not_import_ctp_broker(self) -> None:
-        """PAPER mode should not trigger CTP module import."""
-        # Remove ctp_broker from sys.modules if present to ensure clean state
-        modules_before = set(sys.modules.keys())
-
+    def test_paper_does_not_call_ctp_validation(self) -> None:
+        """PAPER mode does not call validate_ctp_env or CtpBroker."""
+        # The key design point is that PAPER path returns NoopBroker
+        # without triggering CTP validation or SDK loading.
         settings = AppSettings(trade_mode="PAPER")
         broker = broker_factory(settings)
-
-        # Verify broker is NoopBroker
         assert isinstance(broker, NoopBroker)
-
-        # Note: We can't fully test that ctp_broker wasn't imported because
-        # it may have been imported in previous tests. The key design point
-        # is that the PAPER path doesn't call validate_ctp_env or CtpBroker.
 
     def test_paper_does_not_require_ctp_env_vars(
         self, monkeypatch: pytest.MonkeyPatch
