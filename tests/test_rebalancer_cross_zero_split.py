@@ -65,17 +65,16 @@ def test_same_direction_add_long() -> None:
         features_hash="abc",
     )
 
-    close_intents, open_intents = build_rebalance_intents(
+    intents = build_rebalance_intents(
         current_net_qty={"AO": 1},
         target=target,
         mid_prices={"AO": 100.0},
     )
 
-    assert len(close_intents) == 0
-    assert len(open_intents) == 1
-    assert open_intents[0].side == Side.BUY
-    assert open_intents[0].offset == Offset.OPEN
-    assert open_intents[0].qty == 2
+    assert len(intents) == 1
+    assert intents[0].side == Side.BUY
+    assert intents[0].offset == Offset.OPEN
+    assert intents[0].qty == 2
 
 
 def test_same_direction_reduce_long() -> None:
