@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+<<<<<<< HEAD
       "Bash(python -m pytest:*)",
       "Bash(python -m ruff format:*)",
       "Bash(python -m ruff check:*)",
@@ -18,6 +19,9 @@
       "Bash(git checkout:*)",
       "Bash(git pull:*)",
       "Bash(git merge copilot/fix-windows-ci-failures -m \"Merge F10 changes from copilot branch\")"
+=======
+      "Bash(powershell:*)"
+>>>>>>> 0fd04e9a5195e33fe75cc052414481398d4bb29b
     ]
   }
 }
