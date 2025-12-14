@@ -196,3 +196,97 @@ def log_gate_report(report: GateReport) -> None:
         logger.info("  %s %s %s: %s", req_str, status_str, check.name, check.message)
     if report.blocking_failures:
         logger.error("Blocking failures: %d", len(report.blocking_failures))
+
+
+# =============================================================================
+# 退出码约定
+# =============================================================================
+class ExitCode:
+    """Standard exit codes for CI gate.
+
+    Exit codes:
+        0 = All checks passed
+        1 = General error (unexpected)
+        2 = Format or Lint check failed
+        3 = Type check failed
+        4 = Test failed
+        5 = Coverage threshold not met
+        6 = Risk limits not configured
+        7 = Broker credentials invalid
+    """
+
+    SUCCESS = 0
+    GENERAL_ERROR = 1
+    FORMAT_LINT_FAIL = 2
+    TYPE_CHECK_FAIL = 3
+    TEST_FAIL = 4
+    COVERAGE_FAIL = 5
+    RISK_CONFIG_FAIL = 6
+    BROKER_CREDS_FAIL = 7
+
+
+def get_exit_code(report: GateReport) -> int:
+    """Determine exit code based on gate report.
+
+    Returns appropriate exit code based on first blocking failure.
+    """
+    if report.all_passed:
+        return ExitCode.SUCCESS
+
+    # Check failures in order of priority
+    for check in report.blocking_failures:
+        if check.name in ("format_pass", "lint_pass"):
+            return ExitCode.FORMAT_LINT_FAIL
+        if check.name == "type_check_pass":
+            return ExitCode.TYPE_CHECK_FAIL
+        if check.name == "tests_pass":
+            return ExitCode.TEST_FAIL
+        if check.name == "coverage_pass":
+            return ExitCode.COVERAGE_FAIL
+        if check.name == "risk_limits_configured":
+            return ExitCode.RISK_CONFIG_FAIL
+        if check.name == "broker_credentials":
+            return ExitCode.BROKER_CREDS_FAIL
+
+    return ExitCode.GENERAL_ERROR
+
+
+# =============================================================================
+# CHECK 模式硬禁令
+# =============================================================================
+_CHECK_MODE_ENABLED: bool = False
+
+
+def enable_check_mode() -> None:
+    """Enable CHECK mode - blocks all broker operations."""
+    global _CHECK_MODE_ENABLED
+    _CHECK_MODE_ENABLED = True
+    logger.warning("CHECK_MODE enabled - broker.place_order will be blocked")
+
+
+def disable_check_mode() -> None:
+    """Disable CHECK mode."""
+    global _CHECK_MODE_ENABLED
+    _CHECK_MODE_ENABLED = False
+
+
+def is_check_mode() -> bool:
+    """Check if CHECK mode is active."""
+    return _CHECK_MODE_ENABLED
+
+
+def assert_not_check_mode(operation: str = "place_order") -> None:
+    """Assert that we are NOT in CHECK mode.
+
+    Raises:
+        RuntimeError: If CHECK mode is enabled and broker operation is attempted.
+
+    Usage:
+        # In broker.place_order():
+        assert_not_check_mode("place_order")
+    """
+    if _CHECK_MODE_ENABLED:
+        msg = f"BLOCKED: {operation} is forbidden in CHECK_MODE=1"
+        logger.error(msg)
+        raise RuntimeError(msg)
+
