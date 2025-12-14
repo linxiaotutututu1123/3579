@@ -110,3 +110,55 @@ def test_locked_blocks_all_trading() -> None:
 
     assert clamped.target_net_qty["AO"] == 1
     assert audit.get("blocked_by_mode") == "LOCKED"
+
+
+def test_turnover_clamped_limits_delta_per_tick() -> None:
+    """Turnover clamp limits delta to max_turnover_qty_per_tick."""
+    rm = _make_risk_manager(RiskMode.NORMAL)
+    snap = AccountSnapshot(equity=1_000_000.0, margin_used=100_000.0)
+
+    # Target delta is 5, but max_turnover_qty_per_tick=2
+    target = TargetPortfolio(
+        target_net_qty={"AO": 5},
+        model_version="test",
+        features_hash="abc",
+    )
+
+    clamped, audit = clamp_target(
+        risk=rm,
+        snap=snap,
+        current_net_qty={"AO": 0},
+        target=target,
+        max_turnover_qty_per_tick=2,
+    )
+
+    # Should clamp to current + 2 = 2
+    assert clamped.target_net_qty["AO"] == 2
+    assert "turnover_clamped" in audit
+    assert audit["turnover_clamped"]["AO"] == 2
+
+
+def test_turnover_clamped_negative_direction() -> None:
+    """Turnover clamp works for reducing positions too."""
+    rm = _make_risk_manager(RiskMode.NORMAL)
+    snap = AccountSnapshot(equity=1_000_000.0, margin_used=100_000.0)
+
+    # Target delta is -5, but max_turnover_qty_per_tick=2
+    target = TargetPortfolio(
+        target_net_qty={"AO": -5},
+        model_version="test",
+        features_hash="abc",
+    )
+
+    clamped, audit = clamp_target(
+        risk=rm,
+        snap=snap,
+        current_net_qty={"AO": 0},
+        target=target,
+        max_turnover_qty_per_tick=2,
+    )
+
+    # Should clamp to current - 2 = -2
+    assert clamped.target_net_qty["AO"] == -2
+    assert "turnover_clamped" in audit
+    assert audit["turnover_clamped"]["AO"] == -2
