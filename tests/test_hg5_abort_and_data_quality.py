@@ -33,11 +33,12 @@ def test_abort_after_too_many_rejections_and_emit_missing_book() -> None:
         executor=exe,
         snap=AccountSnapshot(equity=969_000.0, margin_used=0.0),
         positions=[
-            PositionToClose(symbol="AO", net_qty=1, today_qty=1, yesterday_qty=0),
+            # MISS first (no book) -> DATA_QUALITY_MISSING_BOOK
             PositionToClose(symbol="MISS", net_qty=1, today_qty=1, yesterday_qty=0),
+            # AO second (has book, will be rejected) -> FLATTEN_ABORTED_TOO_MANY_REJECTIONS
+            PositionToClose(symbol="AO", net_qty=1, today_qty=1, yesterday_qty=0),
         ],
         books={
-            # AO has book, MISS intentionally missing
             "AO": BookTop(best_bid=100.0, best_ask=101.0, tick=1.0),
         },
         flatten_spec=FlattenSpec(stage2_requotes=0, stage3_max_cross_levels=0),
