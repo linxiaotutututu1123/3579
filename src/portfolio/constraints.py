@@ -37,7 +37,7 @@ def clamp_target(
     clamped_qty: dict[str, int] = {}
     symbols = set(target.target_net_qty.keys()) | set(current_net_qty.keys())
 
-    for sym in symbols:
+    for sym in sorted(symbols):
         tgt = target.target_net_qty.get(sym, 0)
         cur = current_net_qty.get(sym, 0)
 

@@ -27,7 +27,7 @@ def build_rebalance_intents(
 
     symbols = set(target.target_net_qty.keys()) | set(current_net_qty.keys())
 
-    for sym in symbols:
+    for sym in sorted(symbols):
         cur = current_net_qty.get(sym, 0)
         tgt = target.target_net_qty.get(sym, 0)
         delta = tgt - cur
