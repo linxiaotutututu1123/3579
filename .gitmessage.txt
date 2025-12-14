@@ -1,1 +1,145 @@
-大苏打大大大大大大
+认真阅读下面要说的所有内容    把我们现在没有的全加上 有的按照这些去这些升级 ：
+A。
+docs/AUTOMATION_CLAUDE_LOOP.md          # 强化：可自动检测的军规条款 + 违规格式
+docs/V2_ACCEPTANCE_MATRIX.md            # 把 V2 验收矩阵写成人类可读总表
+scripts/v2_required_scenarios.yml       # 单一数据源：V2 必过 scenario 列表（最关键）
+scripts/coverage_exceptions.yml         # 非核心豁免（必须带原因，CI 打印）
+scripts/json_schema/ci_report.schema.json
+scripts/json_schema/sim_report.schema.json
+scripts/validate_policy.ps1             # 检测：路径、json schema、命令白名单、debug 上传等
+scripts/validate_policy.py              # 跨平台版（Linux CI 用），或只用 python 即可
+src/trading/ci_gate.py                  # 强制 schema_version + 写 report + schema 校验函数
+src/trading/sim_gate.py                 # 强制 rule_id/component/evidence + required scenarios 校验
+scripts/claude_loop.ps1                 # 升级：commands.log + round_summary + policy_violation + exit 12
+.github/workflows/ci.yml                # 新增 policy-check job/step（不改你白名单上传原则）
+pyproject.toml                          # mypy strict + coverage 规则（core=100%）
+B. 退出码标准（军规扩展）
+完整固定如下（核心是 12）：
+
+0 PASS
+2 FORMAT/LINT FAIL（由入口映射）
+3 TYPE FAIL（入口映射）
+4 TEST FAIL
+5 COVERAGE FAIL
+8 REPLAY_FAIL
+9 SIM_FAIL
+12 POLICY_VIOLATION（军法处置：不按契约/不按 schema/绕开入口）
+强制措施：任何“报告缺失/不合规/命令越权”都不要落到 8/9/2/3/4/5，而是直接 12。
+C. 报告 JSON “强 schema + 强定位”（必须）
+你提出的字段要求完全正确。把它变成严格 schema 文件，并在 ci_gate.py/sim_gate.py 里做硬校验：
+
+1) 强制顶层字段（缺一不可）
+schema_version（int）
+type（ci|replay|sim）
+overall（PASS|FAIL）
+exit_code（int）
+check_mode（bool）
+timestamp（ISO8601）
+run_id（关联 7.2）
+exec_id（关联 7.2）
+artifacts（把关键产物路径列出来）
+steps[]（ci） / scenarios[]|failures[]（sim/replay）
+2) failure 必须包含（缺一 → 12）
+scenario
+rule_id
+component
+event_id 或 tick
+expected
+actual
+error
+evidence（dict，哪怕是空也必须存在）
+
+
+
+D. “命令白名单 + 违规即停”的军规执行器（claude_loop.ps1）
+你要的“令行禁止”核心就在这里：把‘禁止’变成代码检查。
+
+你要实现的 3 个产物（每轮都生成）
+artifacts/claude/commands.log：记录本轮跑了哪些命令（只允 scripts/make.ps1 targets）
+artifacts/claude/round_summary.json：每轮摘要（ci/replay/sim 的 overall + failed_step/scenarios）
+artifacts/claude/policy_violation.json：违规细节（type、command、why、suggest_fix）
+违规触发（任何一个都 exit 12）
+发现执行了非白名单命令（或 claude_loop 检测到用户绕开）
+report.json 不存在
+report.json schema_version 不匹配 / schema 校验失败
+replay/sim 里 check_mode=false
+产物路径不对（你 D.1 “绝对不变”）
+你提到“未读取 context.md”无法完全自动检测。做法：要求 context-dev 生成 context_manifest_sha，并强制 claude_loop 在每轮写入 round_summary.json 携带该 sha。没有 sha → 12。这样至少确保“刷新过 context，并且有可审计指纹”。
+
+V2 的 tests 必须同步升级到“军规级”，否则你只是在“用军规 CI 跑一套不军规的测试”，最后 Claude 依然可能把功能做成“表面 CI 绿、但 spec 漏实现/边界没覆盖/回放不稳”。
+
+但要注意：军规测试不是“把测试写多”，而是把测试变成可强制执行的验收契约，并且让 Claude 能靠 JSON/场景失败信息自动修复。
+
+下面给你一套 V2 测试军规化的落地标准 如果不如现在的就不用改 如果比现在的严格 就必须改（你可以直接写进 V2 规则里）。
+
+1) 覆盖率：V2 核心域必须 100%（测试必须配合）
+src/trading/**
+src/execution/**
+src/risk/**
+src/market/**（Universe Selector / 连续性）
+=> 对应地，tests 里必须补齐：
+
+正常路径
+失败路径（异常/拒单/断线/超时）
+关键状态机转移（FSM）
+守护逻辑（CHECK_MODE、live_guard、risk gate）
+否则 100% 覆盖根本达不到。
+
+2) 测试分层：Unit / Integration / Scenario（全部军规化）
+A. Unit Tests（最严格：纯函数/类）
+要求：
+
+断言必须具体（ expected/actual 结构化 ）
+禁止时间/随机不稳定：必须可 seed、可固定 clock
+对关键逻辑使用参数化测试覆盖边界（阈值、换月、冷却期）
+适用：Universe Selector、Risk rules、PositionTracker reconcile 等。
+
+B. Integration Tests（契约级）
+要求：
+
+通过“接口契约”测试模块协作：runner ↔ orchestrator ↔ risk ↔ broker(adaptor)
+使用 fake broker / simulated exchange（永不触达真实 broker）
+必测：断线重连、拒单恢复、超时撤单/追价、回滚/对冲
+C. Scenario Tests（系统级军规：replay/sim）
+这就是你的 sim_gate.py / replay-json。 要求：
+
+scenarios 列表必须来自 V2_REQUIRED_SCENARIOS.yml
+缺失/skip 直接失败（POLICY.SCENARIO.MISSING）
+failure 必须带 rule_id/component/evidence/event_id（Claude 才能自动修）
+3) “军规测试”必须增加 5 条硬规则（建议写进开发契约）
+禁止 flaky：同一 seed（或 replay 数据）重复跑结果必须一致
+禁止 Live side-effect：任何触发交易 side-effect 的路径必须有 assert_not_check_mode() 覆盖，并有测试证明它会拦截
+禁止弱断言：不允许只断言 “不抛异常 / 返回非空”，必须断言状态机/持仓/订单/事件流关键字段
+失败必须可定位：测试失败信息必须包含 rule_id 或至少包含 scenario 名称 + 组件名称
+回归必须自动：修复 replay/sim 后必须再跑 ci-json（你契约里已有，tests 也要遵守）
+4) V2 里 tests 要不要“改代码结构”？通常要
+想做到军规测试，通常需要把 V2 核心逻辑变成更可测的形态：
+
+抽象 clock（可注入 FakeClock）
+抽象随机源（可 seed）
+broker/exchange 全部接口化（fake/sim 实现）
+事件流用 JSONL 记录（你 spec 7.1/7.2），测试能断言事件序列
+这不是“为了测试而测试”，而是为了让 Claude 能自动修复时有“稳定复现环境”。
+
+5) 最关键：把 V2 spec 的每条功能点都落到 tests + scenarios
+你问“V2 的 TEST 是不是也要改”，答案是：
+
+要：单测/集成测试是覆盖率与静态正确性的基础
+更要：scenario（replay/sim）是 spec 验收的强门槛
+两者缺一不可。
+G. 把 7.1/7.2 也纳入军规：JSONL 事件流 + run_id/exec_id
+你贴的 spec（7.1/7.2）非常适合做“自动调试闭环”的上限增强：
+
+sim/replay 每个关键事件写一行 JSONL 到：
+artifacts/sim/events.jsonl（白名单：本地可生成，CI 默认不上传；或只上传 head/tail 摘要）
+每行必须包含：
+run_id, exec_id, event_id, ts, component, event_type, payload
+report.json 中必须引用：
+events_jsonl_path
+以及 failures 里放 event_id，做到“一键定位到那一行事件”
+这会让 Claude 修 bug 的速度大幅提升，因为它不需要猜测执行序列。
+
+最后更新AUTOMATION_CLAUDE_LOOP.md 成为军规级版本
+
+
+
