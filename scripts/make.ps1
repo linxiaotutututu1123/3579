@@ -95,9 +95,11 @@ function Show-Help {
     Write-Host "  clean        - Clean build artifacts"
     Write-Host ""
     Write-Host "Python: $PYTHON"
+    Write-Host "Override: `$env:PY='python' .\scripts\make.ps1 ci"
 }
 
 function Invoke-Install {
+    Assert-VenvExists
     Write-Host "Installing base dependencies..." -ForegroundColor Cyan
     & $PIP install -r requirements.txt
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -111,18 +113,21 @@ function Invoke-InstallDev {
 }
 
 function Invoke-Format {
+    Assert-VenvExists
     Write-Host "Formatting code..." -ForegroundColor Cyan
     & $PYTHON -m ruff format .
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 function Invoke-FormatCheck {
+    Assert-VenvExists
     Write-Host "Checking format..." -ForegroundColor Cyan
     & $PYTHON -m ruff format --check .
     if ($LASTEXITCODE -ne 0) { exit 2 }
 }
 
 function Invoke-Lint {
+    Assert-VenvExists
     Write-Host "Linting..." -ForegroundColor Cyan
     & $PYTHON -m ruff check .
     if ($LASTEXITCODE -ne 0) { exit 2 }
@@ -135,12 +140,14 @@ function Invoke-LintFix {
 }
 
 function Invoke-Type {
+    Assert-VenvExists
     Write-Host "Type checking..." -ForegroundColor Cyan
     & $PYTHON -m mypy .
     if ($LASTEXITCODE -ne 0) { exit 3 }
 }
 
 function Invoke-Test {
+    Assert-VenvExists
     Write-Host "Running tests (coverage threshold: $COV_THRESHOLD%)..." -ForegroundColor Cyan
     & $PYTHON -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=$COV_THRESHOLD
     if ($LASTEXITCODE -ne 0) { exit 4 }
