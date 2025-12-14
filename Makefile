@@ -46,23 +46,28 @@ help:
 # -----------------------------------------------------------------------------
 COV_THRESHOLD := 85
 
-# Python 路径：可通过 make ci PY=/path/to/python 覆盖
-# 默认使用 venv，但 CI 可以传入具体路径
+# Python 路径覆盖：make ci PY=/custom/python
+# 如果用户在命令行传入 PY=xxx，则使用用户指定的
+# 否则使用下面按平台写死的 venv 路径
 ifeq ($(OS),Windows_NT)
-    # Windows 默认
-    PY ?= .venv\Scripts\python.exe
-    PIP ?= .venv\Scripts\pip.exe
+    # Windows: 写死 venv 路径
+    _PY_DEFAULT := .venv\Scripts\python.exe
+    _PIP_DEFAULT := .venv\Scripts\pip.exe
     RM := del /Q /F 2>nul || true
     RMDIR := rmdir /S /Q 2>nul || true
     MKDIR := mkdir
 else
-    # Linux/Mac 默认
-    PY ?= .venv/bin/python
-    PIP ?= .venv/bin/pip
+    # Linux/Mac: 写死 venv 路径
+    _PY_DEFAULT := .venv/bin/python
+    _PIP_DEFAULT := .venv/bin/pip
     RM := rm -f
     RMDIR := rm -rf
     MKDIR := mkdir -p
 endif
+
+# 外部可覆盖，默认用平台写死值
+PY ?= $(_PY_DEFAULT)
+PIP ?= $(_PIP_DEFAULT)
 
 # 向后兼容：PYTHON 作为 PY 的别名
 PYTHON := $(PY)
