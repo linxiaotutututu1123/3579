@@ -9,7 +9,7 @@ from src.execution.ctp_broker import (
     CtpConfig,
     CtpNotAvailableError,
 )
-from src.execution.order_types import Direction, Offset, OrderIntent
+from src.execution.order_types import Offset, OrderIntent, Side
 
 
 def _make_config() -> CtpConfig:
@@ -54,9 +54,9 @@ class TestCtpBroker:
         broker = CtpBroker(config)
         intent = OrderIntent(
             symbol="au2412",
-            direction=Direction.BUY,
+            side=Side.BUY,
             offset=Offset.OPEN,
-            volume=1,
+            qty=1,
             price=500.0,
         )
         ack = broker.place_order(intent)
@@ -68,9 +68,9 @@ class TestCtpBroker:
         broker = CtpBroker(config)
         intent = OrderIntent(
             symbol="au2412",
-            direction=Direction.BUY,
+            side=Side.BUY,
             offset=Offset.OPEN,
-            volume=1,
+            qty=1,
             price=500.0,
         )
         ack1 = broker.place_order(intent)

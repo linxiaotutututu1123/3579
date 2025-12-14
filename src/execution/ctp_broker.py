@@ -43,7 +43,7 @@ class CtpConfig:
 def _lazy_import_ctp() -> Any:
     """Lazy import CTP SDK. Returns None if not available."""
     try:
-        import ctp  # noqa: PLC0415
+        import ctp  # type: ignore[import-not-found]  # noqa: PLC0415
 
         return ctp
     except ImportError:
