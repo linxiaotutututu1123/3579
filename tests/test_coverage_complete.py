@@ -223,7 +223,7 @@ class TestReplayCoverage:
         risk.on_day_start_0900(snap, correlation_id="test")
 
         strategy = LinearAIStrategy(symbols=["AO"])
-        broker = NoopBroker()
+        _broker = NoopBroker()  # noqa: F841
         flatten_spec = FlattenSpec()
 
         result = run_replay_tick_mode2(
@@ -409,6 +409,7 @@ class TestTradingOrchestratorCoverage:
         risk.on_day_start_0900(snap, correlation_id="test")
 
         strategy = LinearAIStrategy(symbols=["AO"])
+        broker = NoopBroker()
         executor = FlattenExecutor(broker, now_cb=lambda: 1700000000.0)
         controls = TradeControls(mode=TradeMode.LIVE)
 

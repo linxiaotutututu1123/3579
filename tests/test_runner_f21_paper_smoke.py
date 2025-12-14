@@ -1,4 +1,5 @@
 import types
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -7,6 +8,8 @@ from src.execution.broker import Broker, OrderAck
 from src.execution.flatten_plan import BookTop, PositionToClose
 from src.execution.order_types import OrderIntent
 from src.risk.state import AccountSnapshot
+from src.strategy.base import Strategy
+from src.strategy.types import MarketState, TargetPortfolio
 
 
 class FakeBroker(Broker):
@@ -14,9 +17,9 @@ class FakeBroker(Broker):
         return OrderAck(order_id=f"paper-{intent.symbol}")
 
 
-class FakeStrategy:
-    def on_tick(self, market_state: object) -> types.SimpleNamespace:
-        return types.SimpleNamespace(model_version="v0", features_hash="hash", target_net_qty={})
+class FakeStrategy(Strategy):
+    def on_tick(self, state: MarketState) -> TargetPortfolio:
+        return TargetPortfolio(model_version="v0", features_hash="hash", target_net_qty={})
 
 
 def test_run_f21_paper_calls_risk_then_trade(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -55,7 +58,7 @@ def test_run_f21_paper_calls_risk_then_trade(monkeypatch: pytest.MonkeyPatch) ->
     ) -> Broker:  # should not import CTP in PAPER
         return FakeBroker()
 
-    def fake_strategy_factory(settings: runner.AppSettings) -> FakeStrategy:
+    def fake_strategy_factory(settings: runner.AppSettings) -> Strategy:
         return FakeStrategy()
 
     runner.run_f21(

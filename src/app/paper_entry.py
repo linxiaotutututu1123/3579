@@ -13,16 +13,20 @@ If run_f21 is not implemented yet, raises a clear RuntimeError.
 from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
 from src.execution.broker import Broker
 from src.runner import LiveTickData
+
+if TYPE_CHECKING:
+    from src.strategy.base import Strategy
 
 
 def _missing_broker_factory(*_: object, **__: object) -> Broker:
     raise RuntimeError("broker_factory not wired for PAPER entrypoint yet.")
 
 
-def _missing_strategy_factory(*_: object, **__: object) -> object:
+def _missing_strategy_factory(*_: object, **__: object) -> "Strategy":
     raise RuntimeError("strategy_factory not wired for PAPER entrypoint yet.")
 
 
