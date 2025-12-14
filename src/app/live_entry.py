@@ -35,7 +35,7 @@ _REQUIRED_CTP_ENV_VARS = (
 
 def _strategy_factory(settings: AppSettings) -> Strategy:
     """Build strategy from settings."""
-    return build_strategy(settings.strategy_name, settings.strategy_symbols)
+    return build_strategy(settings)
 
 
 def _missing_fetch_tick() -> LiveTickData:
