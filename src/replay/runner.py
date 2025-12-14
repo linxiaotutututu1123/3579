@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from src.execution.broker import Broker, OrderAck, OrderRejected
 from src.execution.flatten_executor import FlattenExecutor
@@ -9,6 +9,7 @@ from src.execution.flatten_plan import BookTop, FlattenSpec, PositionToClose
 from src.execution.order_types import OrderIntent
 from src.orchestrator import OrchestratorResult, handle_risk_update
 from src.risk.manager import RiskManager
+from src.risk.state import AccountSnapshot
 
 
 @dataclass(frozen=True)
@@ -37,18 +38,10 @@ class NoopBroker(Broker):
         return OrderAck(order_id=f"replay-{self._counter}")
 
 
-@dataclass
-class ReplayContext:
-    """Mutable context for replay execution."""
-
-    now_ts: float = 0.0
-    order_counter: int = field(default=0, init=False)
-
-
 def run_replay_tick(
     *,
     risk: RiskManager,
-    snap: "AccountSnapshot",
+    snap: AccountSnapshot,
     positions: Sequence[PositionToClose],
     books: Mapping[str, BookTop],
     flatten_spec: FlattenSpec | None = None,
@@ -62,8 +55,6 @@ def run_replay_tick(
     This function is deterministic: given the same inputs, it produces
     the same snapshot_hash and event sequence (modulo correlation_id).
     """
-    from src.risk.state import AccountSnapshot
-
     fault = fault or FaultConfig()
 
     # Apply fault: missing_book_symbols
@@ -74,11 +65,7 @@ def run_replay_tick(
         effective_books[sym] = book
 
     # Select broker based on fault config
-    broker: Broker
-    if fault.reject_all:
-        broker = RejectAllBroker()
-    else:
-        broker = NoopBroker()
+    broker: Broker = RejectAllBroker() if fault.reject_all else NoopBroker()
 
     executor = FlattenExecutor(broker, now_cb=lambda: now_ts)
 
