@@ -50,9 +50,9 @@ COV_THRESHOLD := 85
 # 如果用户在命令行传入 PY=xxx，则使用用户指定的
 # 否则使用下面按平台写死的 venv 路径
 ifeq ($(OS),Windows_NT)
-    # Windows: 写死 venv 路径
-    _PY_DEFAULT := .venv\Scripts\python.exe
-    _PIP_DEFAULT := .venv\Scripts\pip.exe
+    # Windows: 写死 venv 路径（用 / 避免反斜杠在命令拼接时出问题）
+    _PY_DEFAULT := .venv/Scripts/python.exe
+    _PIP_DEFAULT := .venv/Scripts/pip.exe
     RM := del /Q /F 2>nul || true
     RMDIR := rmdir /S /Q 2>nul || true
     MKDIR := mkdir
