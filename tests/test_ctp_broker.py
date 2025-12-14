@@ -154,9 +154,7 @@ class TestValidateCtpEnv:
         assert result.app_id == ""  # Optional, defaults to empty
         assert result.auth_code == ""  # Optional, defaults to empty
 
-    def test_live_mode_optional_vars_included(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_live_mode_optional_vars_included(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """LIVE mode includes optional vars when set."""
         monkeypatch.setenv("CTP_FRONT_ADDR", "tcp://180.168.146.187:10130")
         monkeypatch.setenv("CTP_BROKER_ID", "9999")
