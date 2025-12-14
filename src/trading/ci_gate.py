@@ -955,8 +955,8 @@ def check_command_whitelist(command: str) -> PolicyReport:
     """
     policy_report = PolicyReport()
 
-    # Whitelist: only make.ps1 targets
-    allowed_patterns = [
+    # Whitelist: only make.ps1 targets (used for future positive matching)
+    _allowed_patterns = [
         r"\.[\\/]scripts[\\/]make\.ps1",
         r"make\.ps1",
         r"git\s+(status|diff|log)",
