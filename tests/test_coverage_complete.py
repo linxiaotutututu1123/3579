@@ -20,7 +20,7 @@ from src.execution.flatten_executor import (
     _find_next_more_aggressive_close,
     _is_more_aggressive,
 )
-from src.execution.flatten_plan import FlattenPlan, Position
+from src.execution.flatten_plan import FlattenSpec, Position
 from src.execution.order_tracker import OrderExecutionTracker, OrderState
 from src.execution.order_types import Offset, OrderIntent, Side
 from src.main import main as main_func
