@@ -44,6 +44,12 @@ $TARGETS = [ordered]@{
     "test-fast"    = "Run tests (fast, no coverage)"
     "check"        = "Run all checks without modifying files"
     "ci"           = "Full CI pipeline (format-check + lint + type + test)"
+    "ci-json"      = "CI pipeline with JSON report (for Claude loop)"
+    # 回放/仿真
+    "replay"       = "Run replay validation"
+    "replay-json"  = "Replay with JSON report (for Claude loop)"
+    "sim"          = "Run simulation"
+    "sim-json"     = "Simulation with JSON report (for Claude loop)"
     # 上下文导出
     "context"      = "Export lite context"
     "context-dev"  = "Export dev context"
