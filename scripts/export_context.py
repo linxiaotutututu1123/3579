@@ -14,7 +14,7 @@ import argparse
 import fnmatch
 import json
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # =============================================================================
@@ -207,8 +207,10 @@ def get_audit_summary() -> str:
     # Read last 5 lines from most recent file
     try:
         recent_file = jsonl_files[0]
-        lines = recent_file.read_text(encoding="utf-8").splitlines()[-5:]
-        return f"Recent audit ({recent_file.name}):\n" + "\n".join(f"  {l[:100]}..." for l in lines)
+        audit_lines = recent_file.read_text(encoding="utf-8").splitlines()[-5:]
+        return f"Recent audit ({recent_file.name}):\n" + "\n".join(
+            f"  {line[:100]}..." for line in audit_lines
+        )
     except Exception:
         return "(audit read error)"
 
@@ -232,7 +234,7 @@ def main() -> None:
 
     # Build context
     lines: list[str] = []
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = datetime.now(UTC).isoformat()
     git_info = get_git_info()
 
     lines.append("# Project Context (for Claude/Copilot)\n")
