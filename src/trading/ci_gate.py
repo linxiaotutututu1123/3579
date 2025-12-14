@@ -16,6 +16,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -589,7 +590,7 @@ def run_ci_step(
     try:
         result = subprocess.run(
             command,
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=600,  # 10 minute timeout
         )
