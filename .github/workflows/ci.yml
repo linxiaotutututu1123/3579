@@ -104,7 +104,40 @@ jobs:
           .\.venv\Scripts\python.exe -m pip install -r requirements.txt
           .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 
-      # Windows 只跑测试（format/lint/type 已在 Ubuntu 验证）
+      # =========================================================================
+      # Windows Sanity Check：确保能 import 核心模块（捕获 Windows 专属问题）
+      # 不重复 lint/type，但验证：路径/编码/行尾/依赖 在 Windows 正常
+      # =========================================================================
+      - name: Windows sanity check
+        shell: pwsh
+        run: |
+          Write-Host "Checking tool versions..."
+          .\.venv\Scripts\python.exe -m ruff --version
+          .\.venv\Scripts\python.exe -m mypy --version
+          
+          Write-Host "Checking core imports..."
+          .\.venv\Scripts\python.exe -c @"
+          import sys
+          print(f'Python: {sys.version}')
+          
+          # Core modules
+          from src import config
+          from src.runner import Runner
+          from src.orchestrator import Orchestrator
+          from src.trading.live_guard import LiveModeGuard, TradeMode
+          from src.trading.ci_gate import CIGate, ExitCode, enable_check_mode
+          from src.risk.manager import RiskManager
+          from src.execution.broker import Broker
+          
+          print('All core imports OK')
+          
+          # Verify CHECK mode works
+          enable_check_mode()
+          print('CHECK mode enabled OK')
+          "@
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      # Windows 测试
       - name: Test on Windows
         shell: pwsh
         run: |

@@ -2,6 +2,11 @@
 # 3579 Trading System - Makefile
 # 单一入口，强一致性，CI 与本地完全对齐
 # 跨平台：Linux/Mac 用 make，Windows 用 make（需安装）或 .\scripts\make.ps1
+#
+# 用法:
+#   make ci                    # 使用默认 venv Python
+#   make ci PY=python          # 使用系统 Python
+#   make ci PY=.venv/bin/python  # 指定 Python 路径
 # =============================================================================
 
 .PHONY: all format lint type test check ci clean build context help
@@ -37,28 +42,30 @@ help:
 	@echo "  make install-dev      - Install dev dependencies"
 
 # -----------------------------------------------------------------------------
-# 变量（跨平台）
+# 变量（跨平台，支持覆盖）
 # -----------------------------------------------------------------------------
 COV_THRESHOLD := 85
 
-# 检测操作系统
+# Python 路径：可通过 make ci PY=/path/to/python 覆盖
+# 默认使用 venv，但 CI 可以传入具体路径
 ifeq ($(OS),Windows_NT)
-    # Windows
-    PYTHON := .venv\Scripts\python.exe
-    PIP := .venv\Scripts\pip.exe
+    # Windows 默认
+    PY ?= .venv\Scripts\python.exe
+    PIP ?= .venv\Scripts\pip.exe
     RM := del /Q /F 2>nul || true
     RMDIR := rmdir /S /Q 2>nul || true
     MKDIR := mkdir
-    SEP := \\
 else
-    # Linux/Mac
-    PYTHON := .venv/bin/python
-    PIP := .venv/bin/pip
+    # Linux/Mac 默认
+    PY ?= .venv/bin/python
+    PIP ?= .venv/bin/pip
     RM := rm -f
     RMDIR := rm -rf
     MKDIR := mkdir -p
-    SEP := /
 endif
+
+# 向后兼容：PYTHON 作为 PY 的别名
+PYTHON := $(PY)
 
 # -----------------------------------------------------------------------------
 # 安装
