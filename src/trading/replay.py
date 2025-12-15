@@ -99,13 +99,15 @@ def parse_test_output(output: str) -> tuple[int, int, list[str]]:
 
     for line in output.split("\n"):
         # Look for summary line like "10 passed" or "3 failed, 7 passed"
-        if "passed" in line.lower():
+        if "passed" in line.lower() or "failed" in line.lower():
+            # Strip punctuation for comparison (handles "failed," case)
             parts = line.split()
             for i, part in enumerate(parts):
-                if part == "passed" and i > 0:
+                clean_part = part.rstrip(",")
+                if clean_part == "passed" and i > 0:
                     with contextlib.suppress(ValueError):
                         passed = int(parts[i - 1])
-                if part == "failed" and i > 0:
+                if clean_part == "failed" and i > 0:
                     with contextlib.suppress(ValueError):
                         failed = int(parts[i - 1])
 
