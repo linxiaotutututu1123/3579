@@ -401,7 +401,7 @@ def validate_required_scenarios(
     result: ValidationResult,
 ) -> None:
     """Validate that all required scenarios were executed.
-    
+
     Military-Grade Rule:
     - required scenario 缺失/skip → POLICY_VIOLATION (exit 12)
     - required scenario FAIL → allowed (exit 8/9), but must have proper rule_id
