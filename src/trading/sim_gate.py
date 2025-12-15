@@ -128,12 +128,32 @@ def _compute_context_sha(context_path: Path) -> str:
         return hashlib.sha256(f.read()).hexdigest()
 
 
-# 固定路径约定 (D.1)
+# 军规级固定路径约定 (D.1) - 按 type 严格分目录
 FIXED_PATHS = {
+    # Replay 产物（独立目录）
+    "replay_report": Path("artifacts/replay/report.json"),
+    "replay_events_jsonl": Path("artifacts/replay/events.jsonl"),
+    # Sim 产物（独立目录）
     "sim_report": Path("artifacts/sim/report.json"),
-    "events_jsonl": Path("artifacts/sim/events.jsonl"),
+    "sim_events_jsonl": Path("artifacts/sim/events.jsonl"),
+    # 共享产物
     "context": Path("artifacts/context/context.md"),
 }
+
+
+def get_paths_for_type(report_type: str) -> dict[str, Path]:
+    """根据 type 返回正确的产物路径（军规级）."""
+    if report_type == "replay":
+        return {
+            "report": FIXED_PATHS["replay_report"],
+            "events_jsonl": FIXED_PATHS["replay_events_jsonl"],
+            "context": FIXED_PATHS["context"],
+        }
+    return {
+        "report": FIXED_PATHS["sim_report"],
+        "events_jsonl": FIXED_PATHS["sim_events_jsonl"],
+        "context": FIXED_PATHS["context"],
+    }
 
 
 @dataclass
