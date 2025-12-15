@@ -13,7 +13,7 @@
      │   ✅ 修复：1.1 军规表格格式损坏（M1/M3行断裂）
      │   ✅ 修复：1.2 门禁定义表格式损坏
      │   ✅ 修复：1.3 退出码表格式损坏
-     │   ✅ 修复：全文多余空格（__init__. py → __init__.py）
+     │   ✅ 修复：全文多余空格（__init__.py → __init__.py）
      │   🆕 新增：第21章 - 回滚策略
      │   🆕 新增：第22章 - 测试规范
      │   🆕 新增：第23章 - 脚本依赖验证
@@ -72,7 +72,7 @@
 | M2 | **场景驱动** | 先写 required scenario，再写实现 | PR 拒绝 |
  仅实现‘能通过必选场景的最小闭环’代码删除|
 |M4| **双轨分离** |A-Platform与B-Models不混PR|PR拒绝|
-| M5 | **锚点追溯** | 每次交付必须更新 context. md 锚点 | PR 拒绝 |
+| M5 | **锚点追溯** | 每次交付必须更新 context.md 锚点 | PR 拒绝 |
 | M6 | **单一真相** | 订单状态由 FSM 唯一维护，持仓由 PositionTracker 唯一维护 | 架构违规 |
 | M7 | **禁止空壳** | 新模块必须有 required scenario 驱动 | 代码删除 |
 | M8 | **审计完整** | 所有自动动作必须写入 audit JSONL | 功能拒收 |
@@ -81,7 +81,7 @@
 
 | 序号 | 命令 | 说明 | 失败退出码 |
 |------|------|------|-----------|
-| 1 | `.\scripts\make. ps1 ci-json` |
+| 1 | `.\scripts\make.ps1 ci-json` |
 | 2  ` |覆盖率门禁（核心代码覆盖率达到100%，整体覆盖率≥85%）|
 策略 门禁
 | 4 | `.\scripts\make.ps1 replay-json` |
@@ -126,12 +126,12 @@
 
 | 目录 | 文件 | 状态 | 说明 |
 |------|------|------|------|
-| `src/alerts/` | dingtalk. py | ✅ 完整 | 钉钉告警 |
+| `src/alerts/` | dingtalk.py | ✅ 完整 | 钉钉告警 |
 | `src/execution/` | broker.py, ctp_broker.py, broker_factory.py | ✅ 完整 | Broker 层 |
 | `src/execution/` | flatten_executor.py, flatten_plan.py | ✅ 完整 | 平仓执行 |
 | `src/execution/` | order_tracker.py, order_types.py, events.py | ✅ 完整 | 订单追踪 |
 | `src/replay/` | runner.py | ✅ 完整 | 回放运行器 |
-| `src/risk/` | manager.py, state. py, events.py | ✅ 完整 | 风控管理 |
+| `src/risk/` | manager.py, state.py, events.py | ✅ 完整 | 风控管理 |
 | `src/strategy/` | 5 个策略文件 | ✅ 完整 | 策略实现 |
 | `src/trading/` | live_guard.py, ci_gate.py, sim_gate.py | ✅ 完整 | 交易控制 |
 | `src/` | config.py, orchestrator.py, runner.py | ✅ 完整 | 核心模块 |
@@ -142,12 +142,12 @@
 |------|--------------|--------|--------|--------|
 | `src/market/` | 第 4 章 | 11 | P0 | 是 |
 | `src/execution/auto/` | 第 5 章 | 12 | P0 | 是 |
-| `src/execution/protection/` | 5. 7 | 4 | P0 | 是 |
+| `src/execution/protection/` | 5.7 | 4 | P0 | 是 |
 | `src/guardian/` | 第 6 章 | 10 | P0 | 是 |
 | `src/audit/` | 第 7 章 | 5 | P0 | 是 |
 | `src/execution/pair/` | 9.1 | 5 | P1 | 否 |
 | `src/cost/` | 隐含 | 4 | P1 | 否 |
-| `src/strategy/fallback. py` | 8.3 | 3 | P1 | 否 |
+| `src/strategy/fallback.py` | 8.3 | 3 | P1 | 否 |
 | `src/strategy/calendar_arb/` | 第 9 章 | 9 | P2 | 否 |
 | `src/replay/verifier.py` | 7.3 | 2 | P1 | 否 |
 
@@ -357,12 +357,12 @@ Phase 3, 4, 6 可与关键路径并行
 | 序号 | 文件路径 | component | V2 SPEC | 职责 |
 |------|----------|-----------|---------|------|
 | 1 | `src/market/__init__.py` | - | - | 模块导出 |
-| 2 | `src/market/instrument_cache.py` | `market.instrument_cache` | 4. 1 | 合约元数据缓存、原子化落盘 |
+| 2 | `src/market/instrument_cache.py` | `market.instrument_cache` | 4.1 | 合约元数据缓存、原子化落盘 |
 | 3 | `src/market/universe_selector.py` | `market.universe_selector` | 4.2 | 主力/次主力选择、切换冷却 |
 | 4 | `src/market/subscriber.py` | `market.subscriber` | 4.3 | 行情订阅管理、差分更新 |
 | 5 | `src/market/quote_cache.py` | `market.quote_cache` | 4.3 | L1 行情缓存、stale 检测 |
 | 6 | `src/market/bar_builder.py` | `market.bar_builder` | 4.4 | 连续主力 bars 聚合 |
-| 7 | `src/market/quality. py` | `market.quality` | 4.6 | 数据质量（outlier/gap/disorder） |
+| 7 | `src/market/quality.py` | `market.quality` | 4.6 | 数据质量（outlier/gap/disorder） |
 
 ### 5.3 Required Scenarios
 
@@ -459,7 +459,7 @@ Phase 3, 4, 6 可与关键路径并行
 
 ```powershell
 # Phase 0 完成标准
-.\scripts\make. ps1 ci-json # 通过
+.\scripts\make.ps1 ci-json # 通过
 python .\scripts\coverage_gate.py # 核心=100%，总体>=85%
 python .\scripts\validate_policy.py --all --strict-scenarios   # 11 条 scenarios PASS
 python -c "from src.market import InstrumentCache"             # 导入成功
@@ -503,8 +503,8 @@ python -c "from src.market import UniverseSelector"            # 导入成功
 
 | 序号 | 文件路径 | component | V2 SPEC | 职责 |
 |------|----------|-----------|---------|------|
-| 1 | `src/audit/__init__. py` | - | - | 模块导出 |
-| 2 | `src/audit/writer.py` | `audit. writer` | 7.1 | JSONL 事件写入 |
+| 1 | `src/audit/__init__.py` | - | - | 模块导出 |
+| 2 | `src/audit/writer.py` | `audit.writer` | 7.1 | JSONL 事件写入 |
 | 3 | `src/audit/decision_log.py` | `audit.decision_log` | 7.1 | DecisionEvent 定义 |
 | 4 | `src/audit/order_trail.py` | `audit.order_trail` | 7.1 | OrderStateEvent/ExecEvent/TradeEvent |
 | 5 | `src/audit/guardian_log.py` | `audit.guardian_log` | 7.1 | GuardianEvent 定义 |
@@ -653,8 +653,8 @@ python -c "from src.market import UniverseSelector"            # 导入成功
 # Phase 1 完成标准（累计）
 .\scripts\make.ps1 ci-json                                     # PASS
 python .\scripts\coverage_gate.py                              # core=100%, overall>=85%
-python .\scripts\validate_policy. py --all --strict-scenarios   # 40 条 scenarios PASS (11+29)
-python -c "from src. audit import AuditWriter"                  # 导入成功
+python .\scripts\validate_policy.py --all --strict-scenarios   # 40 条 scenarios PASS (11+29)
+python -c "from src.audit import AuditWriter"                  # 导入成功
 python -c "from src.cost import CostEstimator"                 # 导入成功
 python -c "from src.guardian import GuardianMonitor"           # 导入成功
 ```
@@ -692,7 +692,7 @@ python -c "from src.guardian import GuardianMonitor"           # 导入成功
 | 2 | `src/execution/auto/order_context.py` | `execution.order_context` | 5.1 | 订单标识映射 |
 | 3 | `src/execution/auto/state_machine.py` | `execution.fsm` | 5.3 | 订单 FSM |
 | 4 | `src/execution/auto/engine.py` | `execution.auto_order_engine` | 5.4 | 自动下单引擎 |
-| 5 | `src/execution/auto/timeout. py` | `execution.timeout` | 5.5 | 超时管理 |
+| 5 | `src/execution/auto/timeout.py` | `execution.timeout` | 5.5 | 超时管理 |
 | 6 | `src/execution/auto/retry.py` | `execution.retry` | 5.5 | 重试/追价 |
 | 7 | `src/execution/auto/exec_context.py` | `execution.exec_context` | 5.6 | 执行上下文 |
 | 8 | `src/execution/auto/position_tracker.py` | `execution.position_tracker` | 5.8 | 持仓追踪 |
@@ -702,7 +702,7 @@ python -c "from src.guardian import GuardianMonitor"           # 导入成功
 | 序号 | 文件路径 | component | V2 SPEC | 职责 |
 |------|----------|-----------|---------|------|
 | 9 | `src/execution/protection/__init__.py` | - | - | 模块导出 |
-| 10 | `src/execution/protection/liquidity. py` | `execution.protection.liquidity` | 5.7 | 流动性保护 |
+| 10 | `src/execution/protection/liquidity.py` | `execution.protection.liquidity` | 5.7 | 流动性保护 |
 | 11 | `src/execution/protection/fat_finger.py` | `execution.protection.fat_finger` | 5.7 | 乌龙指保护 |
 | 12 | `src/execution/protection/throttle.py` | `execution.protection.throttle` | 5.7 | 频率限制 |
 
@@ -711,7 +711,7 @@ python -c "from src.guardian import GuardianMonitor"           # 导入成功
 | 序号 | 文件路径 | component | V2 SPEC | 职责 |
 |------|----------|-----------|---------|------|
 | 13 | `src/execution/pair/__init__.py` | - | - | 模块导出 |
-| 14 | `src/execution/pair/pair_executor.py` | `execution.pair. pair_executor` | 9.1 | 双腿原子执行 |
+| 14 | `src/execution/pair/pair_executor.py` | `execution.pair.pair_executor` | 9.1 | 双腿原子执行 |
 | 15 | `src/execution/pair/leg_manager.py` | `execution.pair.leg_manager` | 9.1 | 腿不平衡管理 |
 
 ### 7.3 Required Scenarios
@@ -742,7 +742,7 @@ python -c "from src.guardian import GuardianMonitor"           # 导入成功
 
 | 序号 | rule_id | component | 描述 |
 |------|---------|-----------|------|
-| 13 | `EXEC.PROTECTION.LIQUIDITY` | execution.protection. liquidity | 流动性保护 |
+| 13 | `EXEC.PROTECTION.LIQUIDITY` | execution.protection.liquidity | 流动性保护 |
 | 14 | `EXEC.PROTECTION. FATFINGER` | execution.protection.fat_finger | 胖手指保护 |
 | 15 | `EXEC.PROTECTION.THROTTLE` | execution.protection.throttle | 节流保护 |
 | 16 | `EXEC.PROTECTION.AUDIT` | execution.protection | 保护拒单审计 |
@@ -761,7 +761,7 @@ python -c "from src.guardian import GuardianMonitor"           # 导入成功
 | 序号 | rule_id | component | 描述 |
 |------|---------|-----------|------|
 | 21 | `PAIR.EXECUTOR. ATOMIC` | execution.pair.pair_executor | 双腿原子性 |
-| 22 | `PAIR.ROLLBACK.ON_LEG_FAIL` | execution.pair. pair_executor | 单腿失败回滚 |
+| 22 | `PAIR.ROLLBACK.ON_LEG_FAIL` | execution.pair.pair_executor | 单腿失败回滚 |
 | 23 | `PAIR.AUTOHEDGE.DELTA_NEUTRAL` | execution.pair.pair_executor | 自动对冲 |
 | 24 | `PAIR.IMBALANCE.DETECT` | execution.pair.leg_manager | 腿不平衡检测 |
 | 25 | `PAIR.BREAKER.STOP_Z` | execution.pair.pair_executor | 止损熔断 |
@@ -824,13 +824,13 @@ python -c "from src.guardian import GuardianMonitor"           # 导入成功
 
 ```powershell
 # Phase 2 完成标准（累计）
-.\scripts\make. ps1 ci-json # 通过
+.\scripts\make.ps1 ci-json # 通过
 python .\scripts\coverage_gate.py # 核心=100%，总体>=85%
 python .\scripts\validate_policy.py --all --strict-scenarios   # 65 条 scenarios PASS (40+25)
 .\scripts\make.ps1 replay-json                                 # PASS
 python .\scripts\validate_policy.py --strict-scenarios         # replay 产物校验 PASS
-python -c "from src. execution.auto import AutoOrderEngine"     # 导入成功
-python -c "from src. execution.protection import LiquidityGate" # 导入成功
+python -c "from src.execution.auto import AutoOrderEngine"     # 导入成功
+python -c "from src.execution.protection import LiquidityGate" # 导入成功
 python -c "from src.execution.pair import PairExecutor"        # 导入成功
 ```
 
@@ -861,10 +861,10 @@ python -c "from src.execution.pair import PairExecutor"        # 导入成功
 
 | 序号 | 文件路径 | component | V2 SPEC | 职责 |
 |------|----------|-----------|---------|------|
-| 1 | `src/strategy/fallback.py` | `strategy. fallback` | 8.3 | 降级框架 |
+| 1 | `src/strategy/fallback.py` | `strategy.fallback` | 8.3 | 降级框架 |
 | 2 | `src/strategy/calendar_arb/__init__.py` | - | - | 模块导出 |
 | 3 | `src/strategy/calendar_arb/strategy.py` | `strategy.calendar_arb` | 9.2 | 套利主策略 |
-| 4 | `src/strategy/calendar_arb/kalman_beta. py` | `strategy.calendar_arb. kalman_beta` | 9.2 | Kalman 滤波 |
+| 4 | `src/strategy/calendar_arb/kalman_beta.py` | `strategy.calendar_arb. kalman_beta` | 9.2 | Kalman 滤波 |
 
 ### 8.3 Required Scenarios
 
@@ -917,7 +917,7 @@ python -c "from src.execution.pair import PairExecutor"        # 导入成功
 
 ```powershell
 # Phase 3 完成标准（累计）
-。\scripts\make. ps1 ci-json # 通过
+。\scripts\make.ps1 ci-json # 通过
 python .\scripts\coverage_gate.py                              # core=100%, overall>=85%
 python .\scripts\validate
 ## 9. Phase 4：回放验证
@@ -936,7 +936,7 @@ python .\scripts\validate
 
 | 序号 | 文件路径 | component | V2 SPEC | 职责 |
 |------|----------|-----------|---------|------|
-| 1 | `src/replay/verifier.py` | `replay. verifier` | 7.3 | 回放哈希验证、事件序列比对 |
+| 1 | `src/replay/verifier.py` | `replay.verifier` | 7.3 | 回放哈希验证、事件序列比对 |
 
 ### 9.3 Required Scenarios
 
@@ -967,8 +967,8 @@ python .\scripts\validate
 
 ```powershell
 # Phase 4 完成标准（累计）
-.\scripts\make. ps1 ci-json                                     # PASS
-python .\scripts\coverage_gate. py                              # core=100%, overall>=85%
+.\scripts\make.ps1 ci-json                                     # PASS
+python .\scripts\coverage_gate.py                              # core=100%, overall>=85%
 python .\scripts\validate_policy.py --all --strict-scenarios   # 79 条 scenarios PASS (77+2)
 .\scripts\make.ps1 replay-json                                 # PASS
 python .\scripts\validate_policy.py --strict-scenarios         # 回放一致性验证 PASS
@@ -1071,7 +1071,7 @@ python -c "from src.replay.verifier import ReplayVerifier"     # 导入成功
 
 ```powershell
 # Phase 5 完成标准
-.\scripts\make. ps1 ci-json                                     # PASS
+.\scripts\make.ps1 ci-json                                     # PASS
 .\scripts\make.ps1 replay-json                                 # PASS
 .\scripts\make.ps1 sim-json                                    # PASS
 python .\scripts\validate_policy.py --all --strict-scenarios   # 全部 scenarios PASS
@@ -1198,7 +1198,7 @@ default_fallback:  simple_ai
 # Phase 6 完成标准
 .\scripts\make.ps1 ci-json                                     # PASS
 python .\scripts\coverage_gate.py                              # core=100%, overall>=85%
-python .\scripts\validate_policy. py --all --strict-scenarios   # 全部 101 条 scenarios PASS
+python .\scripts\validate_policy.py --all --strict-scenarios   # 全部 101 条 scenarios PASS
 ```
 
 ### 11.6 交付物清单
@@ -1227,7 +1227,7 @@ python .\scripts\validate_policy. py --all --strict-scenarios   # 全部 101 条
 | Phase 2 | `src/execution/auto/` | 8 |
 | Phase 2 | `src/execution/protection/` | 4 |
 | Phase 2 | `src/execution/pair/` | 3 |
-| Phase 3 | `src/strategy/fallback. py` | 1 |
+| Phase 3 | `src/strategy/fallback.py` | 1 |
 | Phase 3 | `src/strategy/calendar_arb/` | 3 |
 | Phase 4 | `src/replay/verifier.py` | 1 |
 | **总计** | **10 个目录** | **42 个文件** |
@@ -1243,7 +1243,7 @@ src/
 │   ├── subscriber.py
 │   ├── quote_cache.py
 │   ├── bar_builder.py
-│   └── quality. py
+│   └── quality.py
 │
 ├── audit/                               # Phase 1: 7 files
 │   ├── __init__.py
@@ -1268,7 +1268,7 @@ src/
 │
 ├── execution/
 │   ├── auto/                            # Phase 2: 8 files
-│   │   ├── __init__. py
+│   │   ├── __init__.py
 │   │   ├── order_context.py
 │   │   ├── state_machine.py
 │   │   ├── engine.py
@@ -1279,7 +1279,7 @@ src/
 │   │
 │   ├── protection/                      # Phase 2: 4 files
 │   │   ├── __init__.py
-│   │   ├── liquidity. py
+│   │   ├── liquidity.py
 │   │   ├── fat_finger.py
 │   │   └── throttle.py
 │   │
@@ -1292,7 +1292,7 @@ src/
 │   ├── fallback.py                      # Phase 3: 1 file
 │   │
 │   └── calendar_arb/                    # Phase 3: 3 files
-│       ├── __init__. py
+│       ├── __init__.py
 │       ├── strategy.py
 │       └── kalman_beta.py
 │
@@ -1569,16 +1569,16 @@ b_models_scenarios:
 |------|------|----------|
 | 1 | `python -c "from src.market import InstrumentCache"` | 无报错 |
 | 2 | `python -c "from src.market import QuoteCache"` | 无报错 |
-| 3 | `python -c "from src. market import UniverseSelector"` | 无报错 |
+| 3 | `python -c "from src.market import UniverseSelector"` | 无报错 |
 | 4 | `python -c "from src.audit import AuditWriter"` | 无报错 |
 | 5 | `python -c "from src.cost import CostEstimator"` | 无报错 |
-| 6 | `python -c "from src. guardian import GuardianMonitor"` | 无报错 |
-| 7 | `python -c "from src.execution. auto import AutoOrderEngine"` | 无报错 |
-| 8 | `python -c "from src.execution. protection import LiquidityGate"` | 无报错 |
+| 6 | `python -c "from src.guardian import GuardianMonitor"` | 无报错 |
+| 7 | `python -c "from src.execution.auto import AutoOrderEngine"` | 无报错 |
+| 8 | `python -c "from src.execution.protection import LiquidityGate"` | 无报错 |
 | 9 | `python -c "from src.execution.pair import PairExecutor"` | 无报错 |
-| 10 | `python -c "from src. strategy.fallback import FallbackManager"` | 无报错 |
-| 11 | `python -c "from src.strategy. calendar_arb import CalendarArbStrategy"` | 无报错 |
-| 12 | `python -c "from src.replay. verifier import ReplayVerifier"` | 无报错 |
+| 10 | `python -c "from src.strategy.fallback import FallbackManager"` | 无报错 |
+| 11 | `python -c "from src.strategy.calendar_arb import CalendarArbStrategy"` | 无报错 |
+| 12 | `python -c "from src.replay.verifier import ReplayVerifier"` | 无报错 |
 
 ### 15.2 门禁检查
 
@@ -1603,7 +1603,7 @@ b_models_scenarios:
 | CI 通过 | make ci-json | exit 0 |
 | Replay 通过 | make replay-json | exit 0 |
 | Sim 通过 | make sim-json | exit 0 |
-| 锚点更新 | context. md | SHA 更新 |
+| 锚点更新 | context.md | SHA 更新 |
 | 文档完整 | 人工检查 | 无遗漏 |
 
 ---
@@ -1935,9 +1935,9 @@ artifacts/
 | V2_SPEC_EXPANDED_NOT_RUSHING_LAUNCH_Version2.md | V2 完整规格 |
 | v2_required_scenarios.yml | V2 场景矩阵 |
 | v3pro_required_scenarios.yml | V3PRO 场景矩阵 |
-| v3pro_strategies. yml | 策略配置 |
-| artifacts/context/context. md | 上下文锚点 |
-| scripts/make. ps1 | 门禁脚本 |
+| v3pro_strategies.yml | 策略配置 |
+| artifacts/context/context.md | 上下文锚点 |
+| scripts/make.ps1 | 门禁脚本 |
 | scripts/validate_policy.py | 场景验证脚本 |
 | scripts/coverage_gate.py | 覆盖率门禁脚本 |
 
