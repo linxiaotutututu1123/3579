@@ -265,7 +265,7 @@ platform_required:
     # -------------------------------------------------------------------------
     # A.5 成本模型统一库（全策略复用）
     # -------------------------------------------------------------------------
-    COST.MODEL.FEE_ESTIMATE:
+    COST.FEE.ESTIMATE:
       description: "手续费正确估计"
       component: "cost.estimator"
       category: unit
@@ -275,7 +275,7 @@ platform_required:
         - "fee_rate 从合约信息读取"
         - "平今优惠正确处理"
 
-    COST.MODEL.SLIPPAGE_ESTIMATE:
+    COST.SLIPPAGE.ESTIMATE:
       description: "滑点正确估计"
       component: "cost.estimator"
       category: unit
@@ -285,7 +285,7 @@ platform_required:
         - "大单滑点更高"
         - "流动性差时滑点估计保守"
 
-    COST.MODEL.IMPACT_ESTIMATE:
+    COST.IMPACT.ESTIMATE:
       description: "市场冲击正确估计"
       component: "cost.estimator"
       category: unit
@@ -294,7 +294,7 @@ platform_required:
         - "impact = order_size / ADV * impact_factor"
         - "冲击估计有保守因子"
 
-    COST.GATE.EDGE_CHECK:
+    COST.EDGE.GATE:
       description: "统一 edge gate 检查"
       component: "cost.estimator"
       category: unit
@@ -406,7 +406,7 @@ platform_required:
     # -------------------------------------------------------------------------
     # A.10 审计层（audit/）—— 全策略复用
     # -------------------------------------------------------------------------
-    AUDIT.EVENT.JSONL_FORMAT:
+    AUDIT.JSONL.FORMAT:
       description: "事件 JSONL 格式正确"
       component: "audit.writer"
       category: unit
@@ -415,7 +415,7 @@ platform_required:
         - "每行可独立解析"
         - "UTF-8 编码"
 
-    AUDIT.EVENT.FIELDS_COMPLETE:
+    AUDIT.EVENT.COMPLETE:
       description: "事件字段完整"
       component: "audit.writer"
       category: unit
@@ -424,7 +424,7 @@ platform_required:
         - "包含 ts, run_id, exec_id, event_type"
         - "包含 component, symbol"
 
-    AUDIT.REPLAY.HASH_MATCH:
+    AUDIT.REPLAY_HASH.MATCH:
       description: "重放验证哈希一致"
       component: "audit.replay_verifier"
       category: integration
@@ -859,11 +859,13 @@ coverage:
 stats:
   platform_universal_count: 22
   platform_capability_count: 16
+  platform_total: 38  # ~30 (A-Platform)
   strategy_specific:
     simple_ai: 3
     linear_ai: 3
     ensemble_moe: 5
     dl_torch: 6
     top_tier: 5
-    calendar_arb: 9
-  total_count: 69
+    calendar_arb: 9  # 原 ARB.* 迁移后
+  strategy_total: 31
+  total_count: 69  # ~60（含平台+策略）
