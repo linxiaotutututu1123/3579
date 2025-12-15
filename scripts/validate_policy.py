@@ -525,6 +525,16 @@ def main() -> int:
         help="Validate all reports in fixed paths",
     )
     parser.add_argument(
+        "--check-scenarios",
+        action="store_true",
+        help="Also validate required scenarios from v2/v3pro YAML files",
+    )
+    parser.add_argument(
+        "--strict-scenarios",
+        action="store_true",
+        help="Treat missing required scenarios as violations (default: grace period)",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=FIXED_PATHS["policy_violation"],
@@ -540,11 +550,15 @@ def main() -> int:
         validate_ci_report(FIXED_PATHS["ci_report"], result)
         validate_sim_report(FIXED_PATHS["sim_report"], result)
         validate_fixed_paths(result)
+        if args.check_scenarios:
+            validate_required_scenarios(FIXED_PATHS["sim_report"], result)
     else:
         if args.ci_report:
             validate_ci_report(args.ci_report, result)
         if args.sim_report:
             validate_sim_report(args.sim_report, result)
+            if args.check_scenarios:
+                validate_required_scenarios(args.sim_report, result)
 
     # Output results
     if result.passed:

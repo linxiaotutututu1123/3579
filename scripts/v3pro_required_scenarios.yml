@@ -1,0 +1,269 @@
+# V3PRO+ 套利必须验收场景清单
+# =============================================================================
+# 本文件是 V3PRO+ 跨期套利模块的可执行化矩阵
+# 所有场景必须通过，否则 replay/sim 返回 FAIL (exit 8/9)
+#
+# 核心模块：
+#   - PairExecutor（串行 + 裸腿窗口 + maker-first→taker escalation）
+#   - Kalman beta 估计
+#   - 成本门槛: expected_edge_bp >= fee + slippage + impact + safety
+#   - Pair-level protection（hard stale / depth / spread gate）
+#   - Audit JSONL + replay verifier hash
+# =============================================================================
+
+schema_version: 1
+spec_source: "V3PRO_ARBITRAGE_SPEC.md"
+generated_at: "2025-12-15"
+
+# =============================================================================
+# Phase A2: Arbitrage - PairExecutor
+# =============================================================================
+phases:
+  A2:
+    name: "PairExecutor 串行执行"
+    required: true
+    scenarios:
+      
+      # A2.1 串行执行管线
+      - rule_id: "ARB.PAIR.SERIAL_EXEC"
+        component: "arbitrage.pair_executor"
+        description: "PairExecutor 严格串行执行（先 L1 后 L2）"
+        category: integration
+        required: true
+        test_pattern: "test_pair_executor*serial*"
+        assertions:
+          - "L1 完成（FILLED 或 ERROR）后才发 L2"
+          - "L1 部分成交 → L2 数量跟随调整"
+          - "L1 超时撤单 → 不发 L2"
+          
+      - rule_id: "ARB.PAIR.NAKED_WINDOW"
+        component: "arbitrage.pair_executor"
+        description: "裸腿窗口不超过 NAKED_LEG_MAX_MS"
+        category: unit
+        required: true
+        test_pattern: "test_pair_executor*naked*window*"
+        assertions:
+          - "NAKED_LEG_MAX_MS 超时 → 紧急平仓 L1"
+          - "裸腿期间 spread 恶化超阈值 → 紧急平仓"
+          - "裸腿期间禁止新套利"
+          
+      - rule_id: "ARB.PAIR.MAKER_FIRST"
+        component: "arbitrage.pair_executor"
+        description: "Maker-first → Taker escalation"
+        category: unit
+        required: true
+        test_pattern: "test_pair_executor*maker*first*"
+        assertions:
+          - "L1 先挂 maker 价格"
+          - "超时未成交 → escalate to taker"
+          - "escalation 次数受 MAX_REPRICE 限制"
+          
+      - rule_id: "ARB.PAIR.LEG_MISMATCH"
+        component: "arbitrage.pair_executor"
+        description: "腿不平衡检测与恢复"
+        category: scenario
+        required: true
+        test_pattern: "test_pair_executor*leg*mismatch*"
+        assertions:
+          - "abs(L1_filled - L2_filled) > 0 → leg_mismatch_event"
+          - "mismatch 触发 reduce-only 模式"
+          - "mismatch 记入 audit log"
+
+  # =============================================================================
+  # Phase K: Kalman Beta Estimation
+  # =============================================================================
+  K:
+    name: "Kalman Beta 估计"
+    required: true
+    scenarios:
+      
+      - rule_id: "ARB.KALMAN.BETA_ESTIMATE"
+        component: "arbitrage.kalman_beta"
+        description: "Kalman 滤波正确估计 beta"
+        category: unit
+        required: true
+        test_pattern: "test_kalman_beta*estimate*"
+        assertions:
+          - "beta 初始化为历史 OLS"
+          - "每 tick 更新 Kalman state"
+          - "beta 平滑窗口 = KALMAN_SMOOTH_WINDOW"
+          
+      - rule_id: "ARB.KALMAN.RESIDUAL_ZSCORE"
+        component: "arbitrage.kalman_beta"
+        description: "残差 z-score 正确计算"
+        category: unit
+        required: true
+        test_pattern: "test_kalman*zscore*"
+        assertions:
+          - "z = (spread - spread_mean) / spread_std"
+          - "spread_std 使用 EMA 或 rolling"
+          - "|z| > ZSCORE_THRESHOLD → 信号"
+          
+      - rule_id: "ARB.KALMAN.BETA_BOUND"
+        component: "arbitrage.kalman_beta"
+        description: "beta 有效性边界检查"
+        category: unit
+        required: true
+        test_pattern: "test_kalman*beta*bound*"
+        assertions:
+          - "BETA_MIN <= beta <= BETA_MAX"
+          - "beta 超边界 → 使用边界值 + warning"
+          - "beta variance 过大 → 降低信号置信度"
+
+  # =============================================================================
+  # Phase C1: Cost Threshold Gate
+  # =============================================================================
+  C1:
+    name: "成本门槛检查"
+    required: true
+    scenarios:
+      
+      - rule_id: "ARB.COST.EDGE_GATE"
+        component: "arbitrage.cost_estimator"
+        description: "expected_edge_bp >= total_cost"
+        category: unit
+        required: true
+        test_pattern: "test_cost*edge*gate*"
+        assertions:
+          - "total_cost = fee + slippage + impact + safety_margin"
+          - "edge < total_cost → 拒绝交易"
+          - "cost 参数可配置"
+          
+      - rule_id: "ARB.COST.FEE_ESTIMATE"
+        component: "arbitrage.cost_estimator"
+        description: "手续费正确估计"
+        category: unit
+        required: true
+        test_pattern: "test_cost*fee*"
+        assertions:
+          - "fee = notional * fee_rate * 2 (双边)"
+          - "fee_rate 从合约信息读取"
+          - "平今优惠正确处理"
+          
+      - rule_id: "ARB.COST.SLIPPAGE_ESTIMATE"
+        component: "arbitrage.cost_estimator"
+        description: "滑点正确估计"
+        category: unit
+        required: true
+        test_pattern: "test_cost*slippage*"
+        assertions:
+          - "slippage = f(order_size, depth)"
+          - "大单滑点更高"
+          - "流动性差时滑点估计保守"
+          
+      - rule_id: "ARB.COST.IMPACT_ESTIMATE"
+        component: "arbitrage.cost_estimator"
+        description: "市场冲击正确估计"
+        category: unit
+        required: true
+        test_pattern: "test_cost*impact*"
+        assertions:
+          - "impact = order_size / ADV * impact_factor"
+          - "L2 使用 L1 成交后的预期盘口"
+          - "冲击估计有保守因子"
+
+  # =============================================================================
+  # Phase P: Pair-Level Protection
+  # =============================================================================
+  P:
+    name: "Pair 级保护"
+    required: true
+    scenarios:
+      
+      - rule_id: "ARB.PROT.HARD_STALE"
+        component: "arbitrage.pair_protection"
+        description: "行情过期保护"
+        category: unit
+        required: true
+        test_pattern: "test_pair_prot*stale*"
+        assertions:
+          - "quote_age > HARD_STALE_MS → 禁止开仓"
+          - "任一腿 stale → pair 禁止"
+          - "stale 恢复 → 解除禁止"
+          
+      - rule_id: "ARB.PROT.DEPTH_GATE"
+        component: "arbitrage.pair_protection"
+        description: "盘口深度保护"
+        category: unit
+        required: true
+        test_pattern: "test_pair_prot*depth*"
+        assertions:
+          - "depth < MIN_DEPTH → 拒绝交易"
+          - "depth 检查双腿"
+          - "depth 使用 bid1_vol + ask1_vol"
+          
+      - rule_id: "ARB.PROT.SPREAD_GATE"
+        component: "arbitrage.pair_protection"
+        description: "价差保护"
+        category: unit
+        required: true
+        test_pattern: "test_pair_prot*spread*"
+        assertions:
+          - "spread > MAX_SPREAD_BP → 拒绝交易"
+          - "spread = (ask - bid) / mid * 10000"
+          - "spread 检查双腿"
+          
+      - rule_id: "ARB.PROT.CORRELATION_BREAK"
+        component: "arbitrage.pair_protection"
+        description: "相关性崩溃保护"
+        category: scenario
+        required: true
+        test_pattern: "test_pair_prot*correlation*"
+        assertions:
+          - "rolling_corr < CORR_THRESHOLD → 暂停策略"
+          - "相关性恢复 → 自动恢复"
+          - "相关性崩溃记入 audit"
+
+  # =============================================================================
+  # Phase AU: Audit & Replay Verification
+  # =============================================================================
+  AU:
+    name: "审计与重放验证"
+    required: true
+    scenarios:
+      
+      - rule_id: "ARB.AUDIT.JSONL_LOG"
+        component: "audit.arb_logger"
+        description: "套利事件记入 JSONL"
+        category: unit
+        required: true
+        test_pattern: "test_arb_audit*jsonl*"
+        assertions:
+          - "每个 pair 交易产生 audit event"
+          - "event 包含 pair_id, L1_order_id, L2_order_id, edge_bp, cost_bp"
+          - "格式: artifacts/audit/arb_events.jsonl"
+          
+      - rule_id: "ARB.AUDIT.REPLAY_HASH"
+        component: "audit.replay_verifier"
+        description: "重放验证哈希"
+        category: integration
+        required: true
+        test_pattern: "test_arb_audit*replay*hash*"
+        assertions:
+          - "每个 replay session 生成 state_hash"
+          - "state_hash = hash(position_state, pnl, order_history)"
+          - "重放应产生相同 hash"
+          
+      - rule_id: "ARB.AUDIT.PNL_ATTRIBUTION"
+        component: "audit.pnl_attribution"
+        description: "盈亏归因"
+        category: unit
+        required: true
+        test_pattern: "test_arb_audit*pnl*"
+        assertions:
+          - "pnl 分解为: edge_pnl + slippage_cost + fee_cost"
+          - "每日 pnl 聚合报告"
+          - "异常 pnl (> 3σ) 触发 alert"
+
+# =============================================================================
+# Coverage Requirements
+# =============================================================================
+coverage:
+  # 套利核心模块必须 100% 覆盖
+  core_modules:
+    - "src/arbitrage/**"
+    - "src/audit/**"
+  core_threshold: 100
+  
+  # 整体阈值
+  overall_threshold: 85
