@@ -154,7 +154,7 @@ replay: venv-check
 
 # Replay with JSON report (exit code: 0=pass, 8=fail)
 replay-json: venv-check
-	$(PYTHON) -m src.trading.replay --python $(PYTHON) --output artifacts/sim/report.json
+	$(PYTHON) -m src.trading.replay --python $(PYTHON) --output artifacts/replay/report.json
 
 # Simulation (CHECK_MODE enabled)
 sim: venv-check

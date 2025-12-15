@@ -247,7 +247,7 @@ function Invoke-Replay {
 function Invoke-ReplayJson {
     Assert-VenvExists
     Write-Host "Running replay with JSON report (CHECK_MODE enabled)..." -ForegroundColor Cyan
-    & $PYTHON -m src.trading.replay --python $PYTHON --output artifacts/sim/report.json
+    & $PYTHON -m src.trading.replay --python $PYTHON --output artifacts/replay/report.json
     $code = $LASTEXITCODE
     if ($code -ne 0) {
         Write-Host "Replay JSON report saved to artifacts\sim\report.json" -ForegroundColor Yellow
