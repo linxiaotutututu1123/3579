@@ -45,14 +45,27 @@ EXIT_POLICY_VIOLATION = 12
 # =============================================================================
 PROJECT_ROOT = Path(__file__).parent.parent
 
+# 军规级路径：按 type 严格分目录
 FIXED_PATHS = {
+    # CI 产物
     "ci_report": PROJECT_ROOT / "artifacts/check/report.json",
+    # Replay 产物（独立目录）
+    "replay_report": PROJECT_ROOT / "artifacts/replay/report.json",
+    "replay_events_jsonl": PROJECT_ROOT / "artifacts/replay/events.jsonl",
+    # Sim 产物（独立目录）
     "sim_report": PROJECT_ROOT / "artifacts/sim/report.json",
-    "events_jsonl": PROJECT_ROOT / "artifacts/sim/events.jsonl",
+    "sim_events_jsonl": PROJECT_ROOT / "artifacts/sim/events.jsonl",
+    # 共享产物
     "context": PROJECT_ROOT / "artifacts/context/context.md",
     "commands_log": PROJECT_ROOT / "artifacts/claude/commands.log",
     "round_summary": PROJECT_ROOT / "artifacts/claude/round_summary.json",
     "policy_violation": PROJECT_ROOT / "artifacts/claude/policy_violation.json",
+}
+
+# 最低活动阈值（军规级）
+MIN_ACTIVITY_THRESHOLDS = {
+    "replay": {"total_ticks": 1, "events_lines": 1},
+    "sim": {"total_ticks": 0, "events_lines": 0},  # sim 可以是 smoke test
 }
 
 # Required scenarios YAML files (单一真相)
