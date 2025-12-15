@@ -310,22 +310,59 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
             {"type": report_type},
         )
 
-    # artifacts check (accept both relative and absolute paths)
+    # 军规级：type 和 artifacts 路径必须严格匹配
     artifacts = report.get("artifacts", {})
-    if isinstance(artifacts, dict):
+    if isinstance(artifacts, dict) and report_type in ("replay", "sim"):
         report_path = artifacts.get("report_path")
-        expected_path = FIXED_PATHS["sim_report"]
-        # Normalize: accept relative or absolute path that resolves to same location
+        events_path = artifacts.get("events_jsonl_path")
+
+        # 根据 type 选择期望路径
+        if report_type == "replay":
+            expected_report = FIXED_PATHS["replay_report"]
+            expected_events = FIXED_PATHS["replay_events_jsonl"]
+            expected_dir = "artifacts/replay/"
+        else:
+            expected_report = FIXED_PATHS["sim_report"]
+            expected_events = FIXED_PATHS["sim_events_jsonl"]
+            expected_dir = "artifacts/sim/"
+
+        # 验证 report_path
         if report_path:
             actual_resolved = (PROJECT_ROOT / report_path).resolve()
-            expected_resolved = expected_path.resolve()
+            expected_resolved = expected_report.resolve()
             if actual_resolved != expected_resolved:
                 result.add_violation(
-                    "POLICY.FIXED_PATH_MISMATCH",
-                    f"Sim report path must resolve to {expected_resolved}, got: {actual_resolved}",
+                    "POLICY.TYPE_PATH_MISMATCH",
+                    f"type={report_type} requires report_path in {expected_dir}, got: {report_path}",
                     str(path),
-                    {"expected": str(expected_resolved), "actual": str(actual_resolved)},
+                    {"type": report_type, "expected_dir": expected_dir, "actual": report_path},
                 )
+
+        # 验证 events_jsonl_path
+        if events_path:
+            actual_resolved = (PROJECT_ROOT / events_path).resolve()
+            expected_resolved = expected_events.resolve()
+            if actual_resolved != expected_resolved:
+                result.add_violation(
+                    "POLICY.TYPE_PATH_MISMATCH",
+                    f"type={report_type} requires events_jsonl in {expected_dir}, got: {events_path}",
+                    str(path),
+                    {"type": report_type, "expected_dir": expected_dir, "actual": events_path},
+                )
+
+    # 最低活动阈值检查（军规级）
+    if report_type in MIN_ACTIVITY_THRESHOLDS:
+        thresholds = MIN_ACTIVITY_THRESHOLDS[report_type]
+        metrics = report.get("metrics", {})
+        total_ticks = metrics.get("total_ticks", 0)
+
+        if total_ticks < thresholds["total_ticks"]:
+            result.add_violation(
+                "POLICY.SCENARIO.EMPTY",
+                f"type={report_type} requires total_ticks >= {thresholds['total_ticks']}, got: {total_ticks}",
+                str(path),
+                {"type": report_type, "threshold": thresholds["total_ticks"], "actual": total_ticks},
+            )
 
     # scenarios check
     scenarios = report.get("scenarios", {})
