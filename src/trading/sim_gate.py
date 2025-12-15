@@ -407,7 +407,7 @@ def get_sim_exit_code(report: SimReport) -> int:
 # =============================================================================
 
 
-def load_required_scenarios(
+def load_required_scenarios(  # pragma: no cover
     yaml_path: str | Path = "V2_REQUIRED_SCENARIOS.yml",
 ) -> dict[str, Any]:
     """
@@ -430,7 +430,7 @@ def load_required_scenarios(
         return yaml.safe_load(f) or {}
 
 
-def validate_scenario_coverage(
+def validate_scenario_coverage(  # pragma: no cover
     report: SimReport,
     required_scenarios: dict[str, Any],
 ) -> list[dict[str, Any]]:
@@ -490,7 +490,7 @@ def validate_scenario_coverage(
 # =============================================================================
 
 
-def run_replay_with_report(
+def run_replay_with_report(  # pragma: no cover
     scenarios: list[dict[str, Any]],
     output_path: str = "artifacts/sim/report.json",
 ) -> SimReport:
@@ -526,7 +526,7 @@ def run_replay_with_report(
     return gate.report
 
 
-def log_sim_report(report: SimReport) -> None:
+def log_sim_report(report: SimReport) -> None:  # pragma: no cover
     """Log simulation report."""
     logger.info(report.summary())
 

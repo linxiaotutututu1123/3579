@@ -1,64 +1,8 @@
 {
-  "timestamp": "2025-12-15T01:00:19.545565Z",
+  "timestamp": "2025-12-15T09:20:39.939495+08:00",
   "has_violations": true,
-  "violation_count": 19,
+  "violation_count": 12,
   "violations": [
-    {
-      "code": "SCHEMA.MISSING_FIELD",
-      "message": "Missing required field: schema_version",
-      "file": "artifacts\\check\\report.json",
-      "evidence": {
-        "field": "schema_version"
-      }
-    },
-    {
-      "code": "SCHEMA.MISSING_FIELD",
-      "message": "Missing required field: type",
-      "file": "artifacts\\check\\report.json",
-      "evidence": {
-        "field": "type"
-      }
-    },
-    {
-      "code": "SCHEMA.MISSING_FIELD",
-      "message": "Missing required field: check_mode",
-      "file": "artifacts\\check\\report.json",
-      "evidence": {
-        "field": "check_mode"
-      }
-    },
-    {
-      "code": "SCHEMA.MISSING_FIELD",
-      "message": "Missing required field: run_id",
-      "file": "artifacts\\check\\report.json",
-      "evidence": {
-        "field": "run_id"
-      }
-    },
-    {
-      "code": "SCHEMA.MISSING_FIELD",
-      "message": "Missing required field: exec_id",
-      "file": "artifacts\\check\\report.json",
-      "evidence": {
-        "field": "exec_id"
-      }
-    },
-    {
-      "code": "SCHEMA.MISSING_FIELD",
-      "message": "Missing required field: artifacts",
-      "file": "artifacts\\check\\report.json",
-      "evidence": {
-        "field": "artifacts"
-      }
-    },
-    {
-      "code": "SCHEMA.INVALID_TYPE",
-      "message": "CI report type must be 'ci', got: None",
-      "file": "artifacts\\check\\report.json",
-      "evidence": {
-        "type": null
-      }
-    },
     {
       "code": "SCHEMA.MISSING_FIELD",
       "message": "Missing required field: schema_version",
