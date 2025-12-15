@@ -289,7 +289,7 @@ guardian 只输出三类硬指令：
 
 ## 9. Audit（审计）V2 规范：结构化 JSONL 事件流
 
-统一写入 JSONL（建议按日期分文件），至少包括事件类型：
+统一写入 JSONL（按日期分文件），包括事件类型：
 - `DecisionEvent`（策略输出 target + 特征摘要/模型版本）
 - `ExecEvent`（执行计划开始/结束、exec_id）
 - `OrderStateEvent`（FSM 迁移）
