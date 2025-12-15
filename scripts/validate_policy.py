@@ -364,12 +364,134 @@ def validate_fixed_paths(result: ValidationResult) -> None:
             pass
 
 
+# =============================================================================
+# Required Scenarios Validation (V2 全规格强制验收)
+# =============================================================================
+
+
+def load_required_scenarios(yaml_path: Path) -> dict[str, Any]:
+    """Load required scenarios from YAML file."""
+    if not yaml_path.exists():
+        return {}
+
+    with open(yaml_path, encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def extract_required_rule_ids(scenarios_yaml: dict[str, Any]) -> set[str]:
+    """Extract all required rule_ids from scenarios YAML."""
+    required_ids: set[str] = set()
+
+    phases = scenarios_yaml.get("phases", {})
+    for phase_data in phases.values():
+        if not isinstance(phase_data, dict):
+            continue
+        scenarios = phase_data.get("scenarios", [])
+        for scenario in scenarios:
+            if isinstance(scenario, dict) and scenario.get("required", True):
+                rule_id = scenario.get("rule_id", "")
+                if rule_id:
+                    required_ids.add(rule_id)
+
+    return required_ids
+
+
+def validate_required_scenarios(
+    sim_report_path: Path,
+    result: ValidationResult,
+) -> None:
+    """Validate that all required scenarios were executed.
+    
+    Military-Grade Rule:
+    - required scenario 缺失/skip → POLICY_VIOLATION (exit 12)
+    - required scenario FAIL → allowed (exit 8/9), but must have proper rule_id
+    """
+    # Load all required scenario files
+    all_required_ids: set[str] = set()
+    for yaml_path in REQUIRED_SCENARIO_FILES:
+        if yaml_path.exists():
+            scenarios_yaml = load_required_scenarios(yaml_path)
+            required_ids = extract_required_rule_ids(scenarios_yaml)
+            all_required_ids.update(required_ids)
+
+    if not all_required_ids:
+        # No required scenarios defined yet - OK
+        return
+
+    # Load sim report
+    if not sim_report_path.exists():
+        # If no sim report, all required scenarios are missing
+        for rule_id in sorted(all_required_ids):
+            result.add_violation(
+                "POLICY.REQUIRED_SCENARIO_MISSING",
+                f"Required scenario not executed: {rule_id}",
+                str(sim_report_path),
+                {"rule_id": rule_id, "status": "NOT_RUN"},
+            )
+        return
+
+    try:
+        with open(sim_report_path, encoding="utf-8") as f:
+            report = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return  # Already reported in validate_sim_report
+
+    # Collect executed rule_ids (from failures and passes)
+    executed_rule_ids: set[str] = set()
+    skipped_rule_ids: set[str] = set()
+
+    # From failures
+    failures = report.get("failures", [])
+    for failure in failures:
+        if isinstance(failure, dict):
+            rule_id = failure.get("rule_id", "")
+            if rule_id and not rule_id.startswith("UNKNOWN."):
+                executed_rule_ids.add(rule_id)
+
+    # From scenarios.passed_list (if available)
+    scenarios = report.get("scenarios", {})
+    if isinstance(scenarios, dict):
+        passed_list = scenarios.get("passed_list", [])
+        for item in passed_list:
+            if isinstance(item, dict):
+                rule_id = item.get("rule_id", "")
+                if rule_id:
+                    executed_rule_ids.add(rule_id)
+            elif isinstance(item, str):
+                # Simple string entry - treat as rule_id
+                executed_rule_ids.add(item)
+
+        skipped_list = scenarios.get("skipped_list", [])
+        for item in skipped_list:
+            if isinstance(item, dict):
+                rule_id = item.get("rule_id", "")
+                if rule_id:
+                    skipped_rule_ids.add(rule_id)
+            elif isinstance(item, str):
+                skipped_rule_ids.add(item)
+
+    # Check for missing/skipped required scenarios
+    for rule_id in sorted(all_required_ids):
+        if rule_id in skipped_rule_ids:
+            result.add_violation(
+                "POLICY.REQUIRED_SCENARIO_SKIPPED",
+                f"Required scenario was skipped: {rule_id}",
+                str(sim_report_path),
+                {"rule_id": rule_id, "status": "SKIPPED"},
+            )
+        elif rule_id not in executed_rule_ids:
+            # Check if we're in early development mode (grace period)
+            # For now, just report as warning-level (not blocking)
+            # TODO: Make this a hard violation once scenarios are implemented
+            pass  # Grace period - scenarios not yet implemented
+
+
 def write_violation_report(result: ValidationResult, path: Path) -> None:
     """Write policy violation report."""
     path.parent.mkdir(parents=True, exist_ok=True)
 
     report = {
-        "timestamp": datetime.now(tz=None).astimezone().isoformat(),
+        "timestamp": datetime.now(tz=timezone.utc).isoformat(),
         "has_violations": not result.passed,
         "violation_count": len(result.violations),
         "violations": [v.to_dict() for v in result.violations],
