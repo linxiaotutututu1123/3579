@@ -225,7 +225,7 @@ tick(now)：
 engine mode（由 guardian 驱动）：
 - `RUNNING`：允许开仓
 - `REDUCE_ONLY`：禁止开仓，只允许减仓/平仓
-- `HALTED`：停止发新单 + 全撤（可选 flatten）
+- `HALTED`：停止发新单 + 全撤 flatten
 
 ### 5.6 ExecContext（执行组）（V2 必须纳入）
 一次调仓意图形成一个 `exec_id`，允许包含多个订单（追价/补单/重试）。  
