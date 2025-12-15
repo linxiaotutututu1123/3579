@@ -543,7 +543,7 @@ InstrumentInfo（建议最小）：
 可选字段（后续增强）：
 - max_order_volume
 - position_limit
-- margin_ratio（若可得）
+- margin_ratio
 
 #### 4.1.3 落盘规范
 路径：
