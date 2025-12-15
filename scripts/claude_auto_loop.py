@@ -10,10 +10,15 @@
 """
 
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
+
+# 确保 src 可导入
+sys.path.insert(0, str(Path(__file__).parent.parent))
+os.chdir(Path(__file__).parent.parent)
 
 EXIT_CODES = {
     "SUCCESS": 0,
