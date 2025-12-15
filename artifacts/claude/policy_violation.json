@@ -1,0 +1,159 @@
+{
+  "timestamp": "2025-12-15T01:00:19.545565Z",
+  "has_violations": true,
+  "violation_count": 19,
+  "violations": [
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: schema_version",
+      "file": "artifacts\\check\\report.json",
+      "evidence": {
+        "field": "schema_version"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: type",
+      "file": "artifacts\\check\\report.json",
+      "evidence": {
+        "field": "type"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: check_mode",
+      "file": "artifacts\\check\\report.json",
+      "evidence": {
+        "field": "check_mode"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: run_id",
+      "file": "artifacts\\check\\report.json",
+      "evidence": {
+        "field": "run_id"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: exec_id",
+      "file": "artifacts\\check\\report.json",
+      "evidence": {
+        "field": "exec_id"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: artifacts",
+      "file": "artifacts\\check\\report.json",
+      "evidence": {
+        "field": "artifacts"
+      }
+    },
+    {
+      "code": "SCHEMA.INVALID_TYPE",
+      "message": "CI report type must be 'ci', got: None",
+      "file": "artifacts\\check\\report.json",
+      "evidence": {
+        "type": null
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: schema_version",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "schema_version"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: exit_code",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "exit_code"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: check_mode",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "check_mode"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: run_id",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "run_id"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: exec_id",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "exec_id"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: artifacts",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "artifacts"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing required field: scenarios",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "scenarios"
+      }
+    },
+    {
+      "code": "POLICY.CHECK_MODE_DISABLED",
+      "message": "check_mode must be True for replay/sim reports",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "check_mode": null
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing scenarios.total",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "scenarios.total"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing scenarios.passed",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "scenarios.passed"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing scenarios.failed",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "scenarios.failed"
+      }
+    },
+    {
+      "code": "SCHEMA.MISSING_FIELD",
+      "message": "Missing scenarios.skipped",
+      "file": "artifacts\\sim\\report.json",
+      "evidence": {
+        "field": "scenarios.skipped"
+      }
+    }
+  ]
+}
