@@ -242,7 +242,7 @@ audit 必须以 exec_id 串起全链路。
 对账失败（默认更保守）：
 - 立即 `REDUCE_ONLY`
 - `cancel_all`
-- 若仍不一致：`HALT` 等待人工（可配置为 auto_flatten，但 V2 建议默认不自动 flatten）
+- 若仍不一致：`HALT` 配置为 auto_flatten
 
 ---
 
