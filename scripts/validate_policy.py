@@ -53,6 +53,12 @@ FIXED_PATHS = {
     "policy_violation": Path("artifacts/claude/policy_violation.json"),
 }
 
+# Required scenarios YAML files (单一真相)
+REQUIRED_SCENARIO_FILES = [
+    Path("scripts/v2_required_scenarios.yml"),
+    Path("scripts/v3pro_required_scenarios.yml"),  # V3PRO+ 套利场景
+]
+
 # =============================================================================
 # Schema Requirements
 # =============================================================================
