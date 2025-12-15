@@ -36,35 +36,38 @@ class SimStatus(str, Enum):
 class ScenarioFailure:
     """Single scenario failure detail (military-grade v3.0).
 
-    All fields are required for Claude to auto-fix:
+    All fields are required for Claude to auto-fix (文档 C.2):
+    - scenario: 场景名称
     - rule_id: unique scenario identifier
     - component: module under test
-    - tick: when the failure occurred
+    - event_id: 关联事件 ID（或 tick）
     - expected/actual: comparison values
     - error: human-readable description
-    - evidence: state snapshot for debugging
+    - evidence: state snapshot for debugging (dict，哪怕是空也必须存在)
     """
 
     scenario: str
     rule_id: str  # e.g., "UNIV.DOMINANT.BASIC"
     component: str  # e.g., "universe_selector"
-    tick: int
+    tick: int  # 也作为 event_id 使用
     expected: dict[str, Any]
     actual: dict[str, Any]
     error: str
     evidence: dict[str, Any] = field(default_factory=dict)
+    event_id: str = ""  # 可选：关联到 events.jsonl 中的 event_id
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary."""
+        """Convert to dictionary (Military-Grade v3.0)."""
         return {
             "scenario": self.scenario,
             "rule_id": self.rule_id,
             "component": self.component,
+            "event_id": self.event_id or str(self.tick),  # 如果没有 event_id 用 tick
             "tick": self.tick,
             "expected": self.expected,
             "actual": self.actual,
             "error": self.error,
-            "evidence": self.evidence,
+            "evidence": self.evidence,  # 必须存在，哪怕是空 dict
         }
 
 
@@ -225,14 +228,31 @@ class SimReport:
         logger.error("FAIL: %s [%s] at tick %d: %s", scenario, rule_id, tick, error)
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary for JSON serialization."""
+        """Convert to dictionary for JSON serialization (Military-Grade v3.0)."""
         return {
+            # 强制顶层字段（缺一不可）
             "schema_version": self.schema_version,
             "type": self.type,
-            "timestamp": self.timestamp,
-            "check_mode": self.check_mode,
             "overall": self.overall.value,
             "exit_code": self.exit_code,
+            "check_mode": self.check_mode,
+            "timestamp": self.timestamp,
+            "run_id": self.run_id,
+            "exec_id": self.exec_id,
+            "artifacts": {
+                "report_path": str(FIXED_PATHS["sim_report"]),
+                "events_jsonl_path": str(FIXED_PATHS["events_jsonl"]),
+                "context_path": str(FIXED_PATHS["context"]),
+            },
+            "context_manifest_sha": self.context_manifest_sha,
+            # 场景统计
+            "scenarios": {
+                "total": self.scenarios_total,
+                "passed": self.scenarios_passed,
+                "failed": self.scenarios_failed,
+                "skipped": 0,
+            },
+            # 兼容字段
             "scenarios_total": self.scenarios_total,
             "scenarios_passed": self.scenarios_passed,
             "scenarios_failed": self.scenarios_failed,

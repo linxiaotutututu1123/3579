@@ -152,8 +152,35 @@ function Write-PolicyViolation {
 function Write-RoundSummary {
     param([int]$Round, [hashtable]$Results)
     
+    # 计算 context_manifest_sha（军规级 G.4）
+    $contextSha = ""
+    if (Test-Path $CONTEXT_FILE) {
+        try {
+            $contextSha = (Get-FileHash -Path $CONTEXT_FILE -Algorithm SHA256).Hash.ToLower()
+        } catch {
+            $contextSha = "ERROR_COMPUTING_SHA"
+        }
+    } else {
+        $contextSha = "CONTEXT_FILE_MISSING"
+    }
+    
+    # 生成 run_id 和 exec_id（军规级 C.1）
+    $runId = [System.Guid]::NewGuid().ToString()
+    $commitSha = ""
+    try {
+        $commitSha = (git rev-parse HEAD 2>$null)
+        if (-not $commitSha) { $commitSha = "NO_GIT" }
+    } catch {
+        $commitSha = "NO_GIT"
+    }
+    $execId = "$commitSha-$(Get-Date -Format 'yyyyMMddHHmmss')"
+    
     $summary = @{
+        schema_version = 3
         timestamp = (Get-Date -Format 'o')
+        run_id = $runId
+        exec_id = $execId
+        context_manifest_sha = $contextSha
         round = $Round
         mode = $Mode
         results = $Results

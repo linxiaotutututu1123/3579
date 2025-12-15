@@ -46,6 +46,20 @@ jobs:
         id: test
         run: python -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=85 || exit 4
 
+      # =========================================================================
+      # Policy Check (Military-Grade v3.0) - 校验报告格式和固定路径
+      # Exit code 12 = POLICY_VIOLATION
+      # =========================================================================
+      - name: Policy check
+        id: policy
+        if: always()
+        run: |
+          # 安装 jsonschema
+          pip install jsonschema >/dev/null 2>&1 || true
+          
+          # 运行 validate_policy.py 校验所有报告
+          python scripts/validate_policy.py --ci-report artifacts/check/report.json || exit 12
+
       # Generate check report (JSON)
       - name: Generate check report
         if: always()
