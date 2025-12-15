@@ -4,14 +4,14 @@
   "overall": "PASS",
   "exit_code": 0,
   "check_mode": true,
-  "timestamp": "2025-12-15T02:08:07.799125+00:00",
-  "run_id": "865cdcc4-8280-4753-bdad-90c434722ad8",
-  "exec_id": "f81e5811_20251215020807",
+  "timestamp": "2025-12-15T02:08:39.771762+00:00",
+  "run_id": "370db7ea-c40a-4336-a846-6a280dd1723a",
+  "exec_id": "ad982bbe_20251215020839",
   "artifacts": {
     "report_path": "artifacts\\check\\report.json",
     "context_path": "artifacts\\context\\context.md"
   },
-  "context_manifest_sha": "9e9be8e859b2b8f1cb96df5e75cac905bb6ab610668636a49bf8b23692ff08ba",
+  "context_manifest_sha": "cddab7ce2bca68e7a26c53f13370f229db650288cd0b93a9df550a5441b59cbb",
   "all_passed": true,
   "failed_step": null,
   "steps": [
@@ -19,25 +19,25 @@
       "name": "format-check",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 61
+      "duration_ms": 54
     },
     {
       "name": "lint",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 57
+      "duration_ms": 55
     },
     {
       "name": "type",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 1521
+      "duration_ms": 1077
     },
     {
       "name": "test",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 4104
+      "duration_ms": 4374
     }
   ]
 }
