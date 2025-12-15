@@ -2,47 +2,49 @@
   "schema_version": 3,
   "type": "ci",
   "overall": "FAIL",
-  "exit_code": 4,
+  "exit_code": 2,
   "check_mode": true,
-  "timestamp": "2025-12-15T01:06:40.425988+00:00",
-  "run_id": "9678e959-f4fb-44ee-90dd-6e804e2b916f",
-  "exec_id": "32543519_20251215010640",
+  "timestamp": "2025-12-15T01:15:06.258811+00:00",
+  "run_id": "d6a55e27-350a-4914-8d4b-79d145c10143",
+  "exec_id": "aa00ce54_20251215011506",
   "artifacts": {
     "report_path": "artifacts\\check\\report.json",
     "context_path": "artifacts\\context\\context.md"
   },
   "context_manifest_sha": "6822da57c0e4bef6ff2d2f575aa2c9cdb4ec9353f2d65605ec244110773dc295",
   "all_passed": false,
-  "failed_step": "test",
+  "failed_step": "lint",
   "steps": [
     {
       "name": "format-check",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 62
+      "duration_ms": 68
     },
     {
       "name": "lint",
-      "status": "PASS",
-      "exit_code": 0,
-      "duration_ms": 53
+      "status": "FAIL",
+      "exit_code": 2,
+      "duration_ms": 56,
+      "summary": "F401 [*] `pytest` imported but unused\n --> tests\\test_ci_json_report.py:7:8\n  |\n5 | from pathlib import Path\n6 |\n7 | import pytest\n  |        ^^^^^^\n8 |\n9 | from src.trading.ci_gate import (\n  |\nhelp: Remove unused import: `pytest`\n\nF401 [*] `src.trading.ci_gate.ExitCode` imported but unused\n  --> tests\\test_ci_json_report.py:13:5\n   |\n11 |     CIStep,\n12 |     CIStepStatus,\n13 |     ExitCode,\n   |     ^^^^^^^^\n14 |     _compute_context_sha,\n15 |     _generate_exec_id,\n   |\nhelp: Remove unused import: `src.trading.ci_gate.ExitCode`\n\nF401 [*] `pytest` imported but unused\n --> tests\\test_sim_gate.py:7:8\n  |\n5 | from pathlib import Path\n6 |\n7 | import pytest\n  |        ^^^^^^\n8 |\n9 | from src.trading.sim_gate import (\n  |\nhelp: Remove unused import: `pytest`\n\nFound 3 errors.\n[*] 3 fixable with the `--fix` option.",
+      "hints": [
+        "Run: make lint-fix to auto-fix some issues",
+        "Check ruff docs for rule explanation"
+      ]
     },
     {
       "name": "type",
-      "status": "PASS",
-      "exit_code": 0,
-      "duration_ms": 15286
+      "status": "SKIP",
+      "exit_code": null,
+      "duration_ms": 0,
+      "reason": "previous step failed"
     },
     {
       "name": "test",
-      "status": "FAIL",
-      "exit_code": 4,
-      "duration_ms": 3421,
-      "summary": "........................................................................ [ 29%]\n........................................................................ [ 59%]\n........................................................................ [ 88%]\n...........................\nERROR: Coverage failure: total of 69 is less than fail-under=85\n                                                                         [100%]\n=============================== tests coverage ================================\n______________ coverage: platform win32, python 3.12.10-final-0 _______________\n\nName                                         Stmts   Miss Branch BrPart  Cover   Missing\n----------------------------------------------------------------------------------------\nsrc\\config.py                                   26      1      2      1    93%   33\nsrc\\execution\\broker_factory.py                 22      1      8      1    93%   79\nsrc\\execution\\ctp_broker.py                     88      9     18      3    89%   105, 130->exit, 159-165, 194, 223-224\nsrc\\execution\\flatten_executor.py               73      4     22      5    91%   39, 41, 43, 45, 116->123\nsrc\\execution\\flatten_plan.py                   57      0     22      1    99%   72->74\nsrc\\portfolio\\rebalancer.py                     34      0     20      1    98%   128->30\nsrc\\replay\\runner.py                            56      1     10      1    97%   132\nsrc\\risk\\manager.py                             85      2     22      3    95%   23->exit, 84, 195\nsrc\\risk\\state.py                               37      1      4      1    95%   32\nsrc\\runner.py                                   60      4      4      2    91%   56, 60, 104->108, 147-148\nsrc\\strategy\\dl\\features.py                     36      0     16      4    92%   40->39, 45->49, 50->54, 56->55\nsrc\\strategy\\dl\\policy.py                       13      0      2      1    93%   32->35\nsrc\\strategy\\ensemble_moe.py                   101      6     22      7    89%   101, 119, 178, 182, 188, 191->190, 194\nsrc\\strategy\\linear_ai.py                       81      3     28      4    94%   107->105, 114, 124, 138\nsrc\\strategy\\top_tier_trend_risk_parity.py      92      3     22      3    95%   100, 109, 113\nsrc\\trading\\ci_gate.py                         446    249    128      1    35%   227->exit, 269-287, 299-300, 306, 311, 324-327, 368-382, 387, 392-405, 410-413, 438-447, 452, 457-460, 465, 470-473, 477, 481, 504, 508-511, 516-534, 539-558, 563-575, 624-645, 666-719, 746-829, 878, 893-894, 899, 908-909, 913, 922, 926-929, 946-1021, 1036-1072, 1084-1098, 1124-1125, 1130, 1135-1138, 1143, 1148-1151, 1155, 1159, 1173, 1177-1180\nsrc\\trading\\live_guard.py                       54      0      8      1    98%   137->exit\nsrc\\trading\\orchestrator.py                     53      5      8      2    89%   100, 146-163\nsrc\\trading\\replay.py                           86     86     26      0     0%   12-239\nsrc\\trading\\serial_exec.py                      26      0      6      1    97%   66->71\nsrc\\trading\\sim.py                              86     86     26      0     0%   12-237\nsrc\\trading\\sim_gate.py                        188    188     44      0     0%   14-547\n----------------------------------------------------------------------------------------\nTOTAL                                         2386    649    558     43    69%\n\n34 files skipped due to complete coverage.\nFAIL Required test coverage of 85% not reached. Total coverage: 69.02%",
-      "hints": [
-        "Add tests for uncovered code paths",
-        "Current threshold: 85% - check coverage report for gaps"
-      ]
+      "status": "SKIP",
+      "exit_code": null,
+      "duration_ms": 0,
+      "reason": "previous step failed"
     }
   ]
 }
