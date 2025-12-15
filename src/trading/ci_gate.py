@@ -1082,16 +1082,17 @@ def check_artifact_paths() -> PolicyReport:
     """
     Check that artifact paths match the fixed convention.
 
-    D.1: 产物路径绝对不变
+    D.1: 产物路径绝对不变，按 type 严格分目录
 
     Returns:
         PolicyReport with any violations
     """
     policy_report = PolicyReport()
 
-    # D.1 convention: fixed paths (kept for documentation, actual validation at runtime)
+    # D.1 军规级约定: 按 type 严格分目录
     _expected_paths = {
         "ci_report": Path("artifacts/check/report.json"),
+        "replay_report": Path("artifacts/replay/report.json"),
         "sim_report": Path("artifacts/sim/report.json"),
         "context": Path("artifacts/context/context.md"),
         "commands_log": Path("artifacts/claude/commands.log"),
