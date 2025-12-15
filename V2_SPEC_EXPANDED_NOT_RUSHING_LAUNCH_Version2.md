@@ -197,7 +197,7 @@ OrderContext 必须包含：
 **必须补的边界：**
 - **撤单途中成交**：`CANCEL_SUBMITTING/CANCEL_PENDING + RTN_FILLED -> FILLED`
 - **OrderStatus='4'**：映射逻辑：
-  - 无成交：建议 `ERROR`（告警+降级）
+  - 无成交： `ERROR`（告警+降级）
   - 有成交：`PARTIAL_CANCELLED`
 
 ### 5.5 AutoOrderEngine 行为规范
