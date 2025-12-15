@@ -382,24 +382,69 @@ class CIStep:
         return result
 
 
+def _generate_run_id() -> str:
+    """Generate a unique run_id (UUID)."""
+    return str(uuid.uuid4())
+
+
+def _generate_exec_id() -> str:
+    """Generate exec_id from git commit + timestamp."""
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        commit = result.stdout.strip()[:8] if result.returncode == 0 else "unknown"
+    except Exception:
+        commit = "unknown"
+    ts = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
+    return f"{commit}_{ts}"
+
+
+def _compute_context_sha(context_path: Path) -> str:
+    """Compute SHA256 of context.md for audit."""
+    if not context_path.exists():
+        return ""
+    with open(context_path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
 @dataclass
 class CIJsonReport:
-    """Machine-readable CI report for Claude automated loop.
+    """Machine-readable CI report for Claude automated loop (Military-Grade v3.0).
 
-    Enhanced structure for stable Claude parsing:
-    - all_passed: boolean for quick check
-    - failed_step: first failed step name (or null)
-    - exit_code: mapped exit code
-    - steps: detailed per-step results with hints
+    Military-grade required fields:
+    - schema_version: must be >= 3
+    - type: "ci"
+    - run_id: UUID for traceability
+    - exec_id: commit_sha + timestamp
+    - artifacts: paths to generated files
+    - context_manifest_sha: SHA256 of context.md
     """
 
     steps: list[CIStep] = field(default_factory=list)
-    version: str = "2.0"
+    schema_version: int = 3
+    check_mode: bool = False
     timestamp: str = ""
+    run_id: str = ""
+    exec_id: str = ""
+    context_manifest_sha: str = ""
 
     def __post_init__(self) -> None:
         if not self.timestamp:
             self.timestamp = datetime.now(UTC).isoformat()
+        if not self.run_id:
+            self.run_id = _generate_run_id()
+        if not self.exec_id:
+            self.exec_id = _generate_exec_id()
+        # Compute context SHA if available
+        context_path = FIXED_PATHS["context"]
+        if not self.context_manifest_sha and context_path.exists():
+            self.context_manifest_sha = _compute_context_sha(context_path)
 
     @property
     def all_passed(self) -> bool:
