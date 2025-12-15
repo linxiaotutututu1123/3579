@@ -1,50 +1,43 @@
 {
   "schema_version": 3,
   "type": "ci",
-  "overall": "FAIL",
-  "exit_code": 2,
+  "overall": "PASS",
+  "exit_code": 0,
   "check_mode": true,
-  "timestamp": "2025-12-15T02:25:53.106662+00:00",
-  "run_id": "53b38553-733f-43c7-85cc-d4b5526eb8e0",
-  "exec_id": "761186bf_20251215022553",
+  "timestamp": "2025-12-15T02:29:46.649281+00:00",
+  "run_id": "abdd8cd3-f9a5-4bec-9900-c783cc1c3d6a",
+  "exec_id": "48bd41e7_20251215022946",
   "artifacts": {
     "report_path": "artifacts\\check\\report.json",
     "context_path": "artifacts\\context\\context.md"
   },
   "context_manifest_sha": "9fb1d157189889f50bdc5072e38da2b355bcda192bc16007c0b20d6541fa3378",
-  "all_passed": false,
-  "failed_step": "lint",
+  "all_passed": true,
+  "failed_step": null,
   "steps": [
     {
       "name": "format-check",
       "status": "PASS",
       "exit_code": 0,
-      "duration_ms": 72
+      "duration_ms": 61
     },
     {
       "name": "lint",
-      "status": "FAIL",
-      "exit_code": 2,
-      "duration_ms": 87,
-      "summary": "PLR0915 Too many statements (63 > 50)\n   --> scripts\\validate_policy.py:232:5\n    |\n232 | def validate_sim_report(path: Path, result: ValidationResult) -> None:\n    |     ^^^^^^^^^^^^^^^^^^^\n233 |     \"\"\"Validate sim/replay report against military-grade schema.\"\"\"\n234 |     if not path.exists():\n    |\n\nFound 1 error.",
-      "hints": [
-        "Run: make lint-fix to auto-fix some issues",
-        "Check ruff docs for rule explanation"
-      ]
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 58
     },
     {
       "name": "type",
-      "status": "SKIP",
-      "exit_code": null,
-      "duration_ms": 0,
-      "reason": "previous step failed"
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 1576
     },
     {
       "name": "test",
-      "status": "SKIP",
-      "exit_code": null,
-      "duration_ms": 0,
-      "reason": "previous step failed"
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 3977
     }
   ]
 }
