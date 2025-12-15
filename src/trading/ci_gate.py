@@ -29,12 +29,18 @@ logger = logging.getLogger(__name__)
 
 
 # =============================================================================
-# 固定路径约定 (D.1)
+# 军规级固定路径约定 (D.1) - 按 type 严格分目录
 # =============================================================================
 FIXED_PATHS = {
+    # CI 产物
     "ci_report": Path("artifacts/check/report.json"),
+    # Replay 产物（独立目录）
+    "replay_report": Path("artifacts/replay/report.json"),
+    "replay_events_jsonl": Path("artifacts/replay/events.jsonl"),
+    # Sim 产物（独立目录）
     "sim_report": Path("artifacts/sim/report.json"),
-    "events_jsonl": Path("artifacts/sim/events.jsonl"),
+    "sim_events_jsonl": Path("artifacts/sim/events.jsonl"),
+    # 共享产物
     "context": Path("artifacts/context/context.md"),
     "commands_log": Path("artifacts/claude/commands.log"),
     "round_summary": Path("artifacts/claude/round_summary.json"),
