@@ -624,7 +624,7 @@ V2 建议：先固定“直接切换”方案，同时审计切换点，后续�
 ### 4.5 Roll/Expiry/Liquidity gate（必须）
 - expiry gate：days_to_expiry < EXPIRY_BLOCK_DAYS → 永不成为 dominant/subdominant
 - liquidity gate：盘口消失/spread超阈值 → reduce-only
-- roll gate：切换期间进入 reduce-only 冷却（可选）
+- roll gate：切换期间进入 reduce-only 冷却
 
 ---
 
