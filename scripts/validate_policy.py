@@ -608,10 +608,18 @@ def main() -> int:
     # Validate based on arguments
     if args.all:
         validate_ci_report(FIXED_PATHS["ci_report"], result)
-        validate_sim_report(FIXED_PATHS["sim_report"], result)
+        # 军规级：优先检查 replay 目录，如果不存在则检查 sim 目录
+        replay_report = FIXED_PATHS["replay_report"]
+        sim_report = FIXED_PATHS["sim_report"]
+        if replay_report.exists():
+            validate_sim_report(replay_report, result)
+            if args.check_scenarios:
+                validate_required_scenarios(replay_report, result)
+        elif sim_report.exists():
+            validate_sim_report(sim_report, result)
+            if args.check_scenarios:
+                validate_required_scenarios(sim_report, result)
         validate_fixed_paths(result)
-        if args.check_scenarios:
-            validate_required_scenarios(FIXED_PATHS["sim_report"], result)
     else:
         if args.ci_report:
             validate_ci_report(args.ci_report, result)
