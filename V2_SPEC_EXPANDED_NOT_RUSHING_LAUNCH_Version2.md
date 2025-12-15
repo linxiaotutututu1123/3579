@@ -305,14 +305,14 @@ guardian 只输出三类硬指令：
 - `state_from`, `state_to`, `event`
 - `reason` / `error_code` / `error_msg`
 
-> V2 强调“可查询”而不是“漂亮 UI”。dashboard 属于 V3+。
+> V2强调dashboard 
 
 ---
 
 ## 10. 跨期套利（Arbitrage）V2：先工程闭环，后模型升级
 
-### 10.1 V2 策略最小实现
-- `spread_calendar_arb`：z-score +（可选）half-life filter
+### 10.1 V2 
+- `spread_calendar_arb`：z-score +half-life filter
 - legs 由 `dominant/subdominant` 或显式配置决定
 
 ### 10.2 V2 必须先做的执行门槛
@@ -320,7 +320,7 @@ guardian 只输出三类硬指令：
   - 错单/拒单/超时 → rollback/auto-hedge
 - `leg_imbalance` 检测优先级最高
 
-### 10.3 V3 才做（模型增强）
+### 10.3 
 - cointegration residual（OLS/Kalman）
 - ECM 信号
 - regime 识别
@@ -328,7 +328,7 @@ guardian 只输出三类硬指令：
 
 ---
 
-## 11. 配置（V2 建议统一）
+## 11. 配置（V2 必须统一）
 核心配置建议：
 
 - `AUTO_MODE = OFF|ASSISTED|LIVE|DEGRADED`
@@ -353,7 +353,7 @@ guardian 只输出三类硬指令：
 
 ### Phase A：接口冻结 + Replay-first
 - types/protocols 定稿
-- replay_feed/sim_feed 驱动 market + execution(不真实下单)
+- replay_feed/sim_feed 驱动 market + execution(必须可以真实下单)
 - audit 事件全链路打通
 
 ### Phase B：执行可靠性
