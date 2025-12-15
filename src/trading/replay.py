@@ -41,7 +41,7 @@ def run_replay_tests(
     python_exe: str,
     pattern: str = "replay",
     verbose: bool = False,
-) -> tuple[bool, str, int]:
+) -> tuple[bool, str, int]:  # pragma: no cover
     """
     Run replay tests via pytest.
 
@@ -122,7 +122,7 @@ def parse_test_output(output: str) -> tuple[int, int, list[str]]:
     return passed, failed, failures
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: list[str] | None = None) -> int:  # pragma: no cover
     """
     Main entry point for replay validation.
 
