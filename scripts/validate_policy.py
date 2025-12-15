@@ -43,14 +43,16 @@ EXIT_POLICY_VIOLATION = 12
 # =============================================================================
 # Fixed Paths (D.1 - 路径绝对不变)
 # =============================================================================
+PROJECT_ROOT = Path(__file__).parent.parent
+
 FIXED_PATHS = {
-    "ci_report": Path("artifacts/check/report.json"),
-    "sim_report": Path("artifacts/sim/report.json"),
-    "events_jsonl": Path("artifacts/sim/events.jsonl"),
-    "context": Path("artifacts/context/context.md"),
-    "commands_log": Path("artifacts/claude/commands.log"),
-    "round_summary": Path("artifacts/claude/round_summary.json"),
-    "policy_violation": Path("artifacts/claude/policy_violation.json"),
+    "ci_report": PROJECT_ROOT / "artifacts/check/report.json",
+    "sim_report": PROJECT_ROOT / "artifacts/sim/report.json",
+    "events_jsonl": PROJECT_ROOT / "artifacts/sim/events.jsonl",
+    "context": PROJECT_ROOT / "artifacts/context/context.md",
+    "commands_log": PROJECT_ROOT / "artifacts/claude/commands.log",
+    "round_summary": PROJECT_ROOT / "artifacts/claude/round_summary.json",
+    "policy_violation": PROJECT_ROOT / "artifacts/claude/policy_violation.json",
 }
 
 # Required scenarios YAML files (单一真相)
