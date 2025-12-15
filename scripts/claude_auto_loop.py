@@ -45,8 +45,13 @@ def log(msg: str, level: str = "INFO") -> None:
     print(f"[{ts}] {prefix} [{level}] {msg}")
 
 
+# 项目根目录
+PROJECT_ROOT = Path(__file__).parent.parent
+PYTHON_EXE = str(PROJECT_ROOT / ".venv" / "Scripts" / "python.exe")
+
+
 def run_cmd(cmd: str) -> tuple[int, str, str]:
-    r = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    r = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=PROJECT_ROOT)
     return r.returncode, r.stdout, r.stderr
 
 
@@ -56,12 +61,12 @@ def phase1_ci_green() -> int:
 
     # 1.1 Format
     log("Running ruff format...")
-    code, out, err = run_cmd(".venv/Scripts/python.exe -m ruff format scripts/ src/ tests/")
+    code, out, err = run_cmd(f"{PYTHON_EXE} -m ruff format scripts/ src/ tests/")
     log(f"Format done: {out.strip() if out.strip() else 'OK'}")
 
     # 1.2 Lint with autofix
     log("Running ruff check --fix...")
-    code, out, err = run_cmd(".venv/Scripts/python.exe -m ruff check scripts/ src/ tests/ --fix")
+    code, out, err = run_cmd(f"{PYTHON_EXE} -m ruff check scripts/ src/ tests/ --fix")
     if code != 0 and "error" in (out + err).lower():
         log(f"Lint errors remain: {out}{err}", "ERROR")
         return EXIT_CODES["FORMAT_LINT"]
