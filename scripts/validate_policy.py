@@ -331,11 +331,12 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
             actual_resolved = (PROJECT_ROOT / report_path).resolve()
             expected_resolved = expected_report.resolve()
             if actual_resolved != expected_resolved:
+                msg = f"type={report_type} requires report_path in {expected_dir}"
                 result.add_violation(
                     "POLICY.TYPE_PATH_MISMATCH",
-                    f"type={report_type} requires report_path in {expected_dir}, got: {report_path}",
+                    f"{msg}, got: {report_path}",
                     str(path),
-                    {"type": report_type, "expected_dir": expected_dir, "actual": report_path},
+                    {"type": report_type, "expected": expected_dir, "actual": report_path},
                 )
 
         # 验证 events_jsonl_path
@@ -343,11 +344,12 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
             actual_resolved = (PROJECT_ROOT / events_path).resolve()
             expected_resolved = expected_events.resolve()
             if actual_resolved != expected_resolved:
+                msg = f"type={report_type} requires events_jsonl in {expected_dir}"
                 result.add_violation(
                     "POLICY.TYPE_PATH_MISMATCH",
-                    f"type={report_type} requires events_jsonl in {expected_dir}, got: {events_path}",
+                    f"{msg}, got: {events_path}",
                     str(path),
-                    {"type": report_type, "expected_dir": expected_dir, "actual": events_path},
+                    {"type": report_type, "expected": expected_dir, "actual": events_path},
                 )
 
     # 最低活动阈值检查（军规级）
@@ -357,15 +359,12 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
         total_ticks = metrics.get("total_ticks", 0)
 
         if total_ticks < thresholds["total_ticks"]:
+            min_ticks = thresholds["total_ticks"]
             result.add_violation(
                 "POLICY.SCENARIO.EMPTY",
-                f"type={report_type} requires total_ticks >= {thresholds['total_ticks']}, got: {total_ticks}",
+                f"type={report_type} requires total_ticks >= {min_ticks}, got: {total_ticks}",
                 str(path),
-                {
-                    "type": report_type,
-                    "threshold": thresholds["total_ticks"],
-                    "actual": total_ticks,
-                },
+                {"type": report_type, "threshold": min_ticks, "actual": total_ticks},
             )
 
     # scenarios check
