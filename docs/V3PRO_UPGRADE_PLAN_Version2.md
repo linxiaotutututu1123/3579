@@ -68,43 +68,122 @@
 
 | 编号 | 原则 | 说明 | 违反后果 |
 |------|------|------|----------|
-** 每个阶段必须通过全部门禁才能进入下一个阶段任务失败，回滚
+| M1 | **阶段门禁** | 每个阶段必须通过全部门禁才能进入下一个阶段 | 任务失败，回滚 |
 | M2 | **场景驱动** | 先写 required scenario，再写实现 | PR 拒绝 |
- 仅实现‘能通过必选场景的最小闭环’代码删除|
-|M4| **双轨分离** |A-Platform与B-Models不混PR|PR拒绝|
+| M3 | **最小实现** | 仅实现「能通过必选场景的最小闭环」 | 代码删除 |
+| M4 | **双轨分离** | A-Platform 与 B-Models 不混 PR | PR 拒绝 |
 | M5 | **锚点追溯** | 每次交付必须更新 context.md 锚点 | PR 拒绝 |
 | M6 | **单一真相** | 订单状态由 FSM 唯一维护，持仓由 PositionTracker 唯一维护 | 架构违规 |
 | M7 | **禁止空壳** | 新模块必须有 required scenario 驱动 | 代码删除 |
 | M8 | **审计完整** | 所有自动动作必须写入 audit JSONL | 功能拒收 |
+| M9 | **回滚就绪** | 每个 Phase 必须有明确回滚命令 | 无法紧急恢复 |
+| M10 | **脚本验证** | 引用脚本必须在 CI 前确认存在 | 门禁失败 |
+| M11 | **配置集中** | 所有配置项必须在 config.py 注册 | 配置混乱 |
 
 ### 1.2 门禁定义
 
 | 序号 | 命令 | 说明 | 失败退出码 |
 |------|------|------|-----------|
-| 1 | `.\scripts\make.ps1 ci-json` |
-| 2  ` |覆盖率门禁（核心代码覆盖率达到100%，整体覆盖率≥85%）|
-策略 门禁
-| 4 | `.\scripts\make.ps1 replay-json` |
-| 5  ` |回放策略门禁| 12 |
-| 6 | `.\scripts\make.ps1 sim-json` |模拟门禁|
-| 7 | `python .\scripts alidate_policy.py --strict-scenarios|模拟策略 门禁 12 
+| 1 | `.\scripts\make.ps1 ci-json` | CI 门禁（lint + type + test） | 2/3/4 |
+| 2 | `python .\scripts\coverage_gate.py` | 覆盖率门禁（核心=100%，总体85%） | 5 |
+| 3 | `python .\scripts\validate_policy.py --all --strict-scenarios` | 场景策略门禁 | 12 |
+| 4 | `.\scripts\make.ps1 replay-json` | 回放门禁 | 8 |
+| 5 | `python .\scripts\validate_policy.py --strict-scenarios` | 回放策略门禁 | 12 |
+| 6 | `.\scripts\make.ps1 sim-json` | 模拟门禁 | 9 |
+| 7 | `python .\scripts\sim_gate.py --strict` | 模拟策略门禁 | 12 |
 
 ### 1.3 退出码语义
 
 | 退出码 | 含义 | 动作 |
 |--------|------|------|
- 0 | 成功 | 继续 |
-| 2 |格式/语法检查失败|修复代码风格|
-| 3 |类型检查失败|修复类型标注|
-| 4 |测试失败|修复测试|
+| 0 | 成功 | 继续 |
+| 2 | 格式/语法检查失败 | 修复代码风格 |
+| 3 | 类型检查失败 | 修复类型标注 |
+| 4 | 测试失败 | 修复测试 |
+| 5 | 覆盖率不足 | 补充测试 |
+| 8 | 回放失败 | 修复回放逻辑 |
+| 9 | 仿真失败 | 修复仿真逻辑 |
+| 12 | 策略违规 | 修复场景/模式 |
+| 14 | ANCHOR_DRIFT | 更新锚点 |
 
- 8 回放失败修复回放逻辑
-| 9 |仿真失败|修复仿真逻辑|
-| 12 |策略违规|修复场景/模式|
+### 1.4 本章修复补丁
+
+> **补丁文件**: `scripts/fix_upgrade_plan.ps1`
+
+```powershell
+# Fix V3PRO_UPGRADE_PLAN_Version2.md - Chapter 1 format issues
+$filePath = "c:\Users\1\2468\3579\docs\V3PRO_UPGRADE_PLAN_Version2.md"
+$content = [System.IO.File]::ReadAllText($filePath)
+
+# New Chapter 1 content (fixed format)
+$newChapter1 = @'
+## 1. 执行原则
+
+<!-- 
+      [REVIEW-NOTE] 第1章审查
+      检查：发现 1.1/1.2/1.3 三个表格格式严重损坏
+      风险：表格解析失败导致军规不可读，执行时产生歧义
+      修改：完全重写三个表格，恢复正确 Markdown 格式
+      总结：本章为执行核心，格式必须零容错
+ -->
+
+### 1.1 不可违背的军规
+
+<!--  [FIX] 原表格 M1/M3 行格式断裂，已修复为标准 Markdown 表格 -->
+
+| 编号 | 原则 | 说明 | 违反后果 |
+|------|------|------|----------|
+| M1 | **阶段门禁** | 每个阶段必须通过全部门禁才能进入下一个阶段 | 任务失败，回滚 |
+| M2 | **场景驱动** | 先写 required scenario，再写实现 | PR 拒绝 |
+| M3 | **最小实现** | 仅实现「能通过必选场景的最小闭环」 | 代码删除 |
+| M4 | **双轨分离** | A-Platform 与 B-Models 不混 PR | PR 拒绝 |
+| M5 | **锚点追溯** | 每次交付必须更新 context.md 锚点 | PR 拒绝 |
+| M6 | **单一真相** | 订单状态由 FSM 唯一维护，持仓由 PositionTracker 唯一维护 | 架构违规 |
+| M7 | **禁止空壳** | 新模块必须有 required scenario 驱动 | 代码删除 |
+| M8 | **审计完整** | 所有自动动作必须写入 audit JSONL | 功能拒收 |
+
+<!--  [UPGRADE] 建议新增军规 M9-M11 -->
+
+| 编号 | 原则 | 说明 | 违反后果 |
+|------|------|------|----------|
+| M9 | **回滚就绪** | 每个 Phase 必须有明确回滚命令 | 无法紧急恢复 |
+| M10 | **脚本验证** | 引用脚本必须在 CI 前确认存在 | 门禁失败 |
+| M11 | **配置集中** | 所有配置项必须在 config.py 注册 | 配置混乱 |
+
+### 1.2 门禁定义
+
+<!--  [FIX] 原表格格式完全损坏，已修复为标准 Markdown 表格 -->
+<!--  [RISK] 发现 sim_gate.py 脚本不存在，需在第23章标注待创建 -->
+
+| 序号 | 命令 | 说明 | 失败退出码 |
+|------|------|------|-----------|
+| 1 | `.\scripts\make.ps1 ci-json` | CI 门禁（lint + type + test） | 2/3/4 |
+| 2 | `python .\scripts\coverage_gate.py` | 覆盖率门禁（核心=100%，总体85%） | 5 |
+| 3 | `python .\scripts\validate_policy.py --all --strict-scenarios` | 场景策略门禁 | 12 |
+| 4 | `.\scripts\make.ps1 replay-json` | 回放门禁 | 8 |
+| 5 | `python .\scripts\validate_policy.py --strict-scenarios` | 回放策略门禁 | 12 |
+| 6 | `.\scripts\make.ps1 sim-json` | 模拟门禁 | 9 |
+| 7 | `python .\scripts\sim_gate.py --strict` | 模拟策略门禁 | 12 |
+
+<!--  [CRITICAL] sim_gate.py 不存在！需在 Phase 5 前创建，详见第23章 -->
+
+### 1.3 退出码语义
+
+<!--  [FIX] 原表格格式损坏（缺少 | 分隔符），已修复 -->
+
+| 退出码 | 含义 | 动作 |
+|--------|------|------|
+| 0 | 成功 | 继续 |
+| 2 | 格式/语法检查失败 | 修复代码风格 |
+| 3 | 类型检查失败 | 修复类型标注 |
+| 4 | 测试失败 | 修复测试 |
+| 5 | 覆盖率不足 | 补充测试 |
+| 8 | 回放失败 | 修复回放逻辑 |
+| 9 | 仿真失败 | 修复仿真逻辑 |
+| 12 | 策略违规 | 修复场景/模式 |
 | 14 | ANCHOR_DRIFT | 更新锚点 |
 
 ---
-
 ## 2. 当前状态与锚点
 
 ### 2.1 不可抵赖锚点
