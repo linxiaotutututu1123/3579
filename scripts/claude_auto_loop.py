@@ -41,8 +41,8 @@ OVERALL_THRESHOLD = 85
 
 def log(msg: str, level: str = "INFO") -> None:
     ts = datetime.now(tz=UTC).strftime("%H:%M:%S")
-    prefix = {"INFO": "[i]", "WARN": "[!]", "ERROR": "[X]", "SUCCESS": "[V]"}.get(level, "*")
-    print(f"[{ts}] {prefix} [{level}] {msg}")
+    prefix = {"INFO": "(i)", "WARN": "(!)", "ERROR": "(X)", "SUCCESS": "(V)"}.get(level, "*")
+    print(f"({ts}) {prefix} ({level}) {msg}")
 
 
 # 项目根目录
