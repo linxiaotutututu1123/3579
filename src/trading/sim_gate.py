@@ -249,6 +249,9 @@ class SimReport:
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization (Military-Grade v3.0)."""
+        # 根据 type 获取正确的产物路径
+        paths = get_paths_for_type(self.type)
+
         return {
             # 强制顶层字段（缺一不可）
             "schema_version": self.schema_version,
@@ -259,23 +262,24 @@ class SimReport:
             "timestamp": self.timestamp,
             "run_id": self.run_id,
             "exec_id": self.exec_id,
+            # 军规级：artifacts 路径必须与 type 匹配
             "artifacts": {
-                "report_path": str(FIXED_PATHS["sim_report"]),
-                "events_jsonl_path": str(FIXED_PATHS["events_jsonl"]),
-                "context_path": str(FIXED_PATHS["context"]),
+                "report_path": str(paths["report"]),
+                "events_jsonl_path": str(paths["events_jsonl"]),
+                "context_path": str(paths["context"]),
             },
             "context_manifest_sha": self.context_manifest_sha,
-            # 场景统计
+            # 场景统计（单一字段，无重复）
             "scenarios": {
                 "total": self.scenarios_total,
                 "passed": self.scenarios_passed,
                 "failed": self.scenarios_failed,
                 "skipped": 0,
             },
-            # 兼容字段
-            "scenarios_total": self.scenarios_total,
-            "scenarios_passed": self.scenarios_passed,
-            "scenarios_failed": self.scenarios_failed,
+            # 军规级扩展字段
+            "required_scenarios_checked": False,  # 待 validate_policy 填充
+            "required_scenarios_profile": "v2",  # 默认 v2
+            # 详情
             "failures": [f.to_dict() for f in self.failures],
             "metrics": self.metrics.to_dict(),
         }
@@ -512,7 +516,7 @@ def validate_scenario_coverage(  # pragma: no cover
 
 def run_replay_with_report(  # pragma: no cover
     scenarios: list[dict[str, Any]],
-    output_path: str = "artifacts/sim/report.json",
+    output_path: str | None = None,
 ) -> SimReport:
     """
     Run replay scenarios and generate report.
@@ -522,12 +526,16 @@ def run_replay_with_report(  # pragma: no cover
 
     Args:
         scenarios: List of scenario configs to run
-        output_path: Output path for JSON report
+        output_path: Output path for JSON report (defaults to correct path for type)
 
     Returns:
         SimReport with all results
     """
     gate = SimGate(sim_type="replay")
+
+    # 军规级：默认使用正确的 type 路径
+    if output_path is None:
+        output_path = str(FIXED_PATHS["replay_report"])
 
     # TODO: Integrate with actual replay runner
     # For now, this is a placeholder that should be connected to
