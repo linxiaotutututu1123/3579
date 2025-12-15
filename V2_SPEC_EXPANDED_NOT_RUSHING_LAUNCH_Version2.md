@@ -735,11 +735,10 @@ OrderStatus 关键值：
 - backoff：min( base * 2^k , max_backoff )
 - max_retry：到达后进入 ERROR + 降级
 
-#### 5.5.3 Reprice 模式（可配置）
+#### 5.5.3 Reprice 模式
 - to_best：对手价（买→ask，卖→bid）
 - to_best_plus_tick：对手价±1 tick
 - to_cross：允许穿透（成本高，成交快）
-V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 
 ---
 
