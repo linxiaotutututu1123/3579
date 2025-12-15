@@ -477,14 +477,25 @@ class CIJsonReport:
         self.steps.append(step)
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary."""
+        """Convert to dictionary (Military-Grade v3.0 schema)."""
         return {
-            "version": self.version,
-            "timestamp": self.timestamp,
-            "all_passed": self.all_passed,
-            "failed_step": self.failed_step,
+            # 强制顶层字段（缺一不可）
+            "schema_version": self.schema_version,
+            "type": "ci",
             "overall": self.overall,
             "exit_code": self.exit_code,
+            "check_mode": self.check_mode,
+            "timestamp": self.timestamp,
+            "run_id": self.run_id,
+            "exec_id": self.exec_id,
+            "artifacts": {
+                "report_path": str(FIXED_PATHS["ci_report"]),
+                "context_path": str(FIXED_PATHS["context"]),
+            },
+            "context_manifest_sha": self.context_manifest_sha,
+            # 兼容字段
+            "all_passed": self.all_passed,
+            "failed_step": self.failed_step,
             "steps": [s.to_dict() for s in self.steps],
         }
 
