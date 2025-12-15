@@ -361,7 +361,11 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
                 "POLICY.SCENARIO.EMPTY",
                 f"type={report_type} requires total_ticks >= {thresholds['total_ticks']}, got: {total_ticks}",
                 str(path),
-                {"type": report_type, "threshold": thresholds["total_ticks"], "actual": total_ticks},
+                {
+                    "type": report_type,
+                    "threshold": thresholds["total_ticks"],
+                    "actual": total_ticks,
+                },
             )
 
     # scenarios check
