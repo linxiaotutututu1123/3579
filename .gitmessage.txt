@@ -66,67 +66,6 @@ replay/sim 里 check_mode=false
 产物路径不对（你 D.1 “绝对不变”）
 你提到“未读取 context.md”无法完全自动检测。做法：要求 context-dev 生成 context_manifest_sha，并强制 claude_loop 在每轮写入 round_summary.json 携带该 sha。没有 sha → 12。这样至少确保“刷新过 context，并且有可审计指纹”。
 
-V2 的 tests 必须同步升级到“军规级”，否则你只是在“用军规 CI 跑一套不军规的测试”，最后 Claude 依然可能把功能做成“表面 CI 绿、但 spec 漏实现/边界没覆盖/回放不稳”。
-
-但要注意：军规测试不是“把测试写多”，而是把测试变成可强制执行的验收契约，并且让 Claude 能靠 JSON/场景失败信息自动修复。
-
-下面给你一套 V2 测试军规化的落地标准 如果不如现在的就不用改 如果比现在的严格 就必须改（你可以直接写进 V2 规则里）。
-
-1) 覆盖率：V2 核心域必须 100%（测试必须配合）
-src/trading/**
-src/execution/**
-src/risk/**
-src/market/**（Universe Selector / 连续性）
-=> 对应地，tests 里必须补齐：
-
-正常路径
-失败路径（异常/拒单/断线/超时）
-关键状态机转移（FSM）
-守护逻辑（CHECK_MODE、live_guard、risk gate）
-否则 100% 覆盖根本达不到。
-
-2) 测试分层：Unit / Integration / Scenario（全部军规化）
-A. Unit Tests（最严格：纯函数/类）
-要求：
-
-断言必须具体（ expected/actual 结构化 ）
-禁止时间/随机不稳定：必须可 seed、可固定 clock
-对关键逻辑使用参数化测试覆盖边界（阈值、换月、冷却期）
-适用：Universe Selector、Risk rules、PositionTracker reconcile 等。
-
-B. Integration Tests（契约级）
-要求：
-
-通过“接口契约”测试模块协作：runner ↔ orchestrator ↔ risk ↔ broker(adaptor)
-使用 fake broker / simulated exchange（永不触达真实 broker）
-必测：断线重连、拒单恢复、超时撤单/追价、回滚/对冲
-C. Scenario Tests（系统级军规：replay/sim）
-这就是你的 sim_gate.py / replay-json。 要求：
-
-scenarios 列表必须来自 V2_REQUIRED_SCENARIOS.yml
-缺失/skip 直接失败（POLICY.SCENARIO.MISSING）
-failure 必须带 rule_id/component/evidence/event_id（Claude 才能自动修）
-3) “军规测试”必须增加 5 条硬规则（建议写进开发契约）
-禁止 flaky：同一 seed（或 replay 数据）重复跑结果必须一致
-禁止 Live side-effect：任何触发交易 side-effect 的路径必须有 assert_not_check_mode() 覆盖，并有测试证明它会拦截
-禁止弱断言：不允许只断言 “不抛异常 / 返回非空”，必须断言状态机/持仓/订单/事件流关键字段
-失败必须可定位：测试失败信息必须包含 rule_id 或至少包含 scenario 名称 + 组件名称
-回归必须自动：修复 replay/sim 后必须再跑 ci-json（你契约里已有，tests 也要遵守）
-4) V2 里 tests 要不要“改代码结构”？通常要
-想做到军规测试，通常需要把 V2 核心逻辑变成更可测的形态：
-
-抽象 clock（可注入 FakeClock）
-抽象随机源（可 seed）
-broker/exchange 全部接口化（fake/sim 实现）
-事件流用 JSONL 记录（你 spec 7.1/7.2），测试能断言事件序列
-这不是“为了测试而测试”，而是为了让 Claude 能自动修复时有“稳定复现环境”。
-
-5) 最关键：把 V2 spec 的每条功能点都落到 tests + scenarios
-你问“V2 的 TEST 是不是也要改”，答案是：
-
-要：单测/集成测试是覆盖率与静态正确性的基础
-更要：scenario（replay/sim）是 spec 验收的强门槛
-两者缺一不可。
 G. 把 7.1/7.2 也纳入军规：JSONL 事件流 + run_id/exec_id
 你贴的 spec（7.1/7.2）非常适合做“自动调试闭环”的上限增强：
 
