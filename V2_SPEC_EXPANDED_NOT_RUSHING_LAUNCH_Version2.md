@@ -770,13 +770,12 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 #### 5.8.1 双来源策略
 - 启动 query：同步真实仓位
 - 运行 trade-driven：按 TradeReport 更新本地账本
-- 周期 reconcile：每 30~60s（可配）
+- 周期 reconcile：每 30~60s
 
-#### 5.8.2 对账失败动作（不赶上线更保守）
+#### 5.8.2 对账失败动作
 - 立即 set_mode(REDUCE_ONLY)
 - cancel_all
-- 若仍不一致：HALTED 等待人工
-（auto_flatten 作为可配置项，不建议默认）
+
 
 ---
 

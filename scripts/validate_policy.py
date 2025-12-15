@@ -418,18 +418,17 @@ def main() -> int:
     if result.passed:
         print("✅ Policy validation PASSED")
         return EXIT_SUCCESS
-    else:
-        print(f"❌ Policy validation FAILED with {len(result.violations)} violation(s):")
-        for v in result.violations:
-            print(f"  [{v.code}] {v.message}")
-            if v.file:
-                print(f"    File: {v.file}")
+    print(f"❌ Policy validation FAILED with {len(result.violations)} violation(s):")
+    for v in result.violations:
+        print(f"  [{v.code}] {v.message}")
+        if v.file:
+            print(f"    File: {v.file}")
 
-        # Write violation report
-        write_violation_report(result, args.output)
-        print(f"\nViolation report written to: {args.output}")
+    # Write violation report
+    write_violation_report(result, args.output)
+    print(f"\nViolation report written to: {args.output}")
 
-        return EXIT_POLICY_VIOLATION
+    return EXIT_POLICY_VIOLATION
 
 
 if __name__ == "__main__":
