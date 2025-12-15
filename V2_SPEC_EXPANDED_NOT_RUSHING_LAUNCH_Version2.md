@@ -1,7 +1,7 @@
 # V2 规格（不赶上线版）：合约化 + 跨期套利 + 无人值守 + 全自动下单 + CTP 订单状态机
 
 > 目标：在“不急着上线实盘”的前提下，优先把系统做成 **可验证（Replay-first）**、**可恢复（Crash-safe）**、**可审计（Traceable）**、**可演进（Interface-frozen）** 的平台化架构。  
-> 策略层（TopTier / MoE / DL Torch / LinearAI / SimpleAI）保持可选、不强制改公式；升级集中在 market/execution/guardian/audit 底座。
+> 策略层（TopTier / MoE / DL Torch / LinearAI / SimpleAI）保持可选，公式需先进；升级集中在 market/execution/guardian/audit 底座。
 
 ---
 
