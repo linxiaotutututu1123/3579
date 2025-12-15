@@ -97,9 +97,9 @@ InstrumentInfo 最少字段：
 - `symbol`, `product`, `exchange`
 - `expire_date`
 - `tick_size`, `multiplier`
-- （可选）`max_order_volume`, `position_limit`
+- `max_order_volume`, `position_limit`
 
-#### Level 2：Universe Selector（强烈建议）
+#### Level 2：Universe Selector
 - 刷新频率：30~120 秒
 - 输入：instrument cache + 最新 tick stats（oi/vol/spread/liquidity）
 - 输出：
