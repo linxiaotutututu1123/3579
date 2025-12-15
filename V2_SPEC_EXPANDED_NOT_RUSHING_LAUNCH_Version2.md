@@ -776,7 +776,7 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 - 立即 set_mode(REDUCE_ONLY)
 - cancel_all
 - 若仍不一致：HALTED 等待人工
-（是否 auto_flatten 作为可配置项，不建议默认）
+（auto_flatten 作为可配置项，不建议默认）
 
 ---
 
