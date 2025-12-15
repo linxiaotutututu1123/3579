@@ -1,6 +1,6 @@
 # V2 验收矩阵 (Acceptance Matrix)
 
-> **本文档是 V2_SPEC_EXPANDED_NOT_RUSHING_LAUNCH_Version2.md 的人类可读验收总表**
+> **本文档是 V2_SPEC_EXPANDED_NOT_RUSHING_LAUNCH_Version2.md 的可读验收总表**
 > **所有场景必须通过，否则系统不可上线**
 
 ---
