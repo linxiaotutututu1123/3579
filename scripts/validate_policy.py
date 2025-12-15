@@ -7,15 +7,17 @@ Validates that all reports conform to military-grade schema requirements:
 - exec_id (commit_sha + timestamp)
 - artifacts with fixed paths
 - check_mode = True for replay/sim
+- ALL required scenarios from v2_required_scenarios.yml must be executed
 
 Exit codes:
 - 0: All validations passed
-- 12: POLICY_VIOLATION (schema mismatch, missing fields, etc.)
+- 12: POLICY_VIOLATION (schema mismatch, missing fields, required scenario skip/missing)
 
 Usage:
     python scripts/validate_policy.py --ci-report artifacts/check/report.json
     python scripts/validate_policy.py --sim-report artifacts/sim/report.json
     python scripts/validate_policy.py --all
+    python scripts/validate_policy.py --check-scenarios  # Validate required scenarios
 """
 
 from __future__ import annotations
@@ -25,9 +27,11 @@ import json
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+import yaml
 
 
 # =============================================================================
