@@ -368,7 +368,7 @@ Phase 3, 4, 6 可与关键路径并行
 
 | 序号 | rule_id | component | 描述 | category |
 |------|---------|-----------|------|----------|
-| 1 | `INST. CACHE.LOAD` | market.instrument_cache | 能正确加载合约信息 | unit |
+| 1 | `INST.CACHE.LOAD` | market.instrument_cache | 能正确加载合约信息 | unit |
 | 2 | `INST.CACHE. PERSIST` | market.instrument_cache | 能原子化落盘（tmp→rename） | unit |
 | 3 | `UNIV.DOMINANT. BASIC` | market.universe_selector | 能正确选择主力合约 | unit |
 | 4 | `UNIV.SUBDOMINANT.PAIRING` | market.universe_selector | 能正确选择次主力合约 | unit |
@@ -378,7 +378,7 @@ Phase 3, 4, 6 可与关键路径并行
 | 8 | `MKT.STALE.SOFT` | market.quote_cache | 软 stale 检测 | unit |
 | 9 | `MKT.STALE. HARD` | market.quote_cache | 硬 stale 检测 | unit |
 | 10 | `MKT.CONTINUITY.BARS` | market.bar_builder | 连续主力 bars 聚合 | unit |
-| 11 | `MKT. QUALITY.OUTLIER` | market.quality | 异常值检测 | unit |
+| 11 | `MKT.QUALITY.OUTLIER` | market.quality | 异常值检测 | unit |
 
 ### 5.4 接口定义
 
@@ -494,7 +494,7 @@ python -c "from src.market import UniverseSelector"            # 导入成功
 | **新增目录** | `src/audit/`, `src/cost/`, `src/guardian/` |
 | **新增文件** | 15 个 |
 | **Required Scenarios** | 29 条 |
-| **预计工时** | 骨架 2. 5h / 最小实现 18h / 全量实现 44h |
+| **预计工时** | 骨架 2.5h / 最小实现 18h / 全量实现 44h |
 | **阻塞** | Phase 2, 3, 4, 5 |
 
 ### 6.2 文件清单
@@ -535,7 +535,7 @@ python -c "from src.market import UniverseSelector"            # 导入成功
 
 | 序号 | rule_id | component | 描述 |
 |------|---------|-----------|------|
-| 1 | `GUARD. FSM.TRANSITIONS` | guardian.state_machine | 状态机转移覆盖 |
+| 1 | `GUARD.FSM.TRANSITIONS` | guardian.state_machine | 状态机转移覆盖 |
 | 2 | `GUARD.DETECT.QUOTE_STALE` | guardian.detector | 行情 stale 检测 |
 | 3 | `GUARD.DETECT.ORDER_STUCK` | guardian.detector | 订单卡住检测 |
 | 4 | `GUARD.DETECT.POSITION_DRIFT` | guardian.detector | 持仓漂移检测 |
@@ -551,7 +551,7 @@ python -c "from src.market import UniverseSelector"            # 导入成功
 | 序号 | rule_id | component | 描述 |
 |------|---------|-----------|------|
 | 11 | `AUDIT.EVENT.STRUCTURE` | audit.writer | 事件结构完整 |
-| 12 | `AUDIT. JSONL.FORMAT` | audit.writer | JSONL 格式正确 |
+| 12 | `AUDIT.JSONL.FORMAT` | audit.writer | JSONL 格式正确 |
 | 13 | `AUDIT.CORRELATION.RUN_EXEC` | audit.writer | run_id/exec_id 关联 |
 | 14 | `REPLAY.DETERMINISTIC. DECISION` | audit.replay_verifier | 决策确定性 |
 | 15 | `REPLAY.DETERMINISTIC.GUARDIAN` | audit.replay_verifier | Guardian 确定性 |
@@ -563,7 +563,7 @@ python -c "from src.market import UniverseSelector"            # 导入成功
 | 16 | `COST.MODEL.FEE_ESTIMATE` | cost.estimator | 手续费估计 |
 | 17 | `COST.MODEL.SLIPPAGE_ESTIMATE` | cost.estimator | 滑点估计 |
 | 18 | `COST.MODEL. IMPACT_ESTIMATE` | cost.estimator | 市场冲击估计 |
-| 19 | `COST. GATE.EDGE_CHECK` | cost.estimator | edge gate 检查 |
+| 19 | `COST.GATE.EDGE_CHECK` | cost.estimator | edge gate 检查 |
 
 #### Platform Universal Scenarios（10 条，来自 v3pro）
 
@@ -571,9 +571,9 @@ python -c "from src.market import UniverseSelector"            # 导入成功
 |------|---------|-----------|------|
 | 20 | `STRAT.AUDIT.DECISION_EVENT_PRESENT` | audit.decision_log | DecisionEvent 存在 |
 | 21 | `STRAT.AUDIT.DECISION_HAS_RUN_ID` | audit.decision_log | 包含 run_id |
-| 22 | `STRAT.AUDIT. DECISION_HAS_EXEC_ID` | audit.decision_log | 包含 exec_id |
-| 23 | `STRAT.AUDIT. DECISION_HAS_STRATEGY_ID` | audit.decision_log | 包含 strategy_id |
-| 24 | `STRAT. AUDIT.DECISION_HAS_VERSION` | audit.decision_log | 包含 version |
+| 22 | `STRAT.AUDIT.DECISION_HAS_EXEC_ID` | audit.decision_log | 包含 exec_id |
+| 23 | `STRAT.AUDIT.DECISION_HAS_STRATEGY_ID` | audit.decision_log | 包含 strategy_id |
+| 24 | `STRAT.AUDIT.DECISION_HAS_VERSION` | audit.decision_log | 包含 version |
 | 25 | `STRAT.AUDIT.DECISION_HAS_FEATURE_HASH` | audit.decision_log | 包含 feature_hash |
 | 26 | `STRAT.DEGRADE.REDUCE_ONLY_NO_OPEN` | guardian.monitor | REDUCE_ONLY 禁开仓 |
 | 27 | `STRAT.DEGRADE.HALTED_OUTPUT_ZERO` | guardian.monitor | HALTED 输出零 |
@@ -731,7 +731,7 @@ python -c "from src.guardian import GuardianMonitor"           # 导入成功
 | 序号 | rule_id | component | 描述 |
 |------|---------|-----------|------|
 | 6 | `EXEC.ENGINE.PIPELINE` | execution.auto_order_engine | 订单提交管线 |
-| 7 | `EXEC. TIMEOUT.ACK` | execution.auto_order_engine | Ack 超时处理 |
+| 7 | `EXEC.TIMEOUT.ACK` | execution.auto_order_engine | Ack 超时处理 |
 | 8 | `EXEC.TIMEOUT.FILL` | execution.auto_order_engine | Fill 超时处理 |
 | 9 | `EXEC.CANCEL_REPRICE. TIMEOUT` | execution.auto_order_engine | 追价超时撤单 |
 | 10 | `EXEC.PARTIAL. REPRICE` | execution.auto_order_engine | 部分成交追价 |
@@ -864,7 +864,7 @@ python -c "from src.execution.pair import PairExecutor"        # 导入成功
 | 1 | `src/strategy/fallback.py` | `strategy.fallback` | 8.3 | 降级框架 |
 | 2 | `src/strategy/calendar_arb/__init__.py` | - | - | 模块导出 |
 | 3 | `src/strategy/calendar_arb/strategy.py` | `strategy.calendar_arb` | 9.2 | 套利主策略 |
-| 4 | `src/strategy/calendar_arb/kalman_beta.py` | `strategy.calendar_arb. kalman_beta` | 9.2 | Kalman 滤波 |
+| 4 | `src/strategy/calendar_arb/kalman_beta.py` | `strategy.calendar_arb.kalman_beta` | 9.2 | Kalman 滤波 |
 
 ### 8.3 Required Scenarios
 
@@ -882,7 +882,7 @@ python -c "from src.execution.pair import PairExecutor"        # 导入成功
 |------|---------|-----------|------|
 | 4 | `ARB.LEGS.FIXED_NEAR_FAR` | strategy.calendar_arb | 近/远月腿固定 |
 | 5 | `ARB.KALMAN.BETA_ESTIMATE` | strategy.calendar_arb.kalman_beta | Kalman 估计 beta |
-| 6 | `ARB.KALMAN. RESIDUAL_ZSCORE` | strategy.calendar_arb. kalman_beta | 残差 z-score |
+| 6 | `ARB.KALMAN. RESIDUAL_ZSCORE` | strategy.calendar_arb.kalman_beta | 残差 z-score |
 | 7 | `ARB.KALMAN. BETA_BOUND` | strategy.calendar_arb.kalman_beta | beta 边界检查 |
 | 8 | `ARB.SIGNAL.HALF_LIFE_GATE` | strategy.calendar_arb | 半衰期过滤 |
 | 9 | `ARB.SIGNAL.STOP_Z_BREAKER` | strategy.calendar_arb | z-score 止损 |
@@ -942,7 +942,7 @@ python .\scripts\validate
 
 | 序号 | rule_id | component | 描述 | category |
 |------|---------|-----------|------|----------|
-| 1 | `REPLAY. DETERMINISTIC. DECISION` | replay.verifier | 同一输入产生相同 DecisionEvent 序列 | replay |
+| 1 | `REPLAY.DETERMINISTIC. DECISION` | replay.verifier | 同一输入产生相同 DecisionEvent 序列 | replay |
 | 2 | `REPLAY.DETERMINISTIC. GUARDIAN` | replay.verifier | 同一输入产生相同 GuardianEvent 序列 | replay |
 
 ### 9.4 接口定义
@@ -1119,7 +1119,7 @@ python .\scripts\validate_policy.py --all --strict-scenarios   # 全部 scenario
 
 | 序号 | rule_id | 描述 |
 |------|---------|------|
-| 1 | `SIMPLE. OUTPUT. BOUNDED` | 输出信号有界 [-1, 1] |
+| 1 | `SIMPLE.OUTPUT. BOUNDED` | 输出信号有界 [-1, 1] |
 | 2 | `SIMPLE.INPUT.NEVER_CRASH` | 任意输入不崩溃 |
 | 3 | `BASELINE.STABLE.STALE_INPUT` | stale 输入返回稳定值 |
 
@@ -1136,7 +1136,7 @@ python .\scripts\validate_policy.py --all --strict-scenarios   # 全部 scenario
 | 序号 | rule_id | 描述 |
 |------|---------|------|
 | 7 | `MOE.OUTPUT. SMOOTHING` | 输出平滑（EWMA） |
-| 8 | `MOE. EXPERT.CONFLICT_CONTROL` | 专家冲突抑制 |
+| 8 | `MOE.EXPERT.CONFLICT_CONTROL` | 专家冲突抑制 |
 | 9 | `MOE.GATING.WEIGHT_VALID` | 门控权重有效 [0,1] 且 sum=1 |
 | 10 | `MOE.EXPERT.VERSION_AUDIT` | 专家版本审计 |
 | 11 | `MOE.REGIME.DETECTION` | 市场状态检测 |
@@ -1156,10 +1156,10 @@ python .\scripts\validate_policy.py --all --strict-scenarios   # 全部 scenario
 
 | 序号 | rule_id | 描述 |
 |------|---------|------|
-| 18 | `TOPTIER.COST. GATE` | 成本门槛检查 |
-| 19 | `TOPTIER. TURNOVER.LIMIT` | 换手限制 |
-| 20 | `TOPTIER. JITTER.SUPPRESSION` | 抖动抑制 |
-| 21 | `TOPTIER. RISK.PARITY_VALID` | 风险平价有效 |
+| 18 | `TOPTIER.COST.GATE` | 成本门槛检查 |
+| 19 | `TOPTIER.TURNOVER.LIMIT` | 换手限制 |
+| 20 | `TOPTIER.JITTER.SUPPRESSION` | 抖动抑制 |
+| 21 | `TOPTIER.RISK.PARITY_VALID` | 风险平价有效 |
 | 22 | `TOPTIER.TREND.SIGNAL_AUDIT` | 趋势信号审计 |
 
 ### 11.4 降级链配置
@@ -1346,7 +1346,7 @@ src/
 # A 轨场景（67 条）
 a_platform_scenarios:
   # Phase 0: market (11)
-  - INST. CACHE.LOAD
+  - INST.CACHE.LOAD
   - INST.CACHE. PERSIST
   - UNIV.DOMINANT.BASIC
   - UNIV.SUBDOMINANT.PAIRING
@@ -1355,41 +1355,41 @@ a_platform_scenarios:
   - MKT.SUBSCRIBER.DIFF_UPDATE
   - MKT.STALE.SOFT
   - MKT.STALE. HARD
-  - MKT. CONTINUITY.BARS
+  - MKT.CONTINUITY.BARS
   - MKT.QUALITY.OUTLIER
   
   # Phase 1: guardian (10)
   - GUARD.FSM.TRANSITIONS
-  - GUARD. DETECT.QUOTE_STALE
+  - GUARD.DETECT.QUOTE_STALE
   - GUARD.DETECT. ORDER_STUCK
   - GUARD.DETECT. POSITION_DRIFT
   - GUARD.DETECT.LEG_IMBALANCE
   - GUARD.ACTION.SET_MODE
   - GUARD.ACTION.CANCEL_ALL
   - GUARD.ACTION.FLATTEN_ALL
-  - GUARD. RECOVERY.COLD_START
+  - GUARD.RECOVERY.COLD_START
   - GUARD.MODE.REDUCE_ONLY_EFFECT
   
   # Phase 1: audit (5)
   - AUDIT.EVENT.STRUCTURE
-  - AUDIT. JSONL.FORMAT
+  - AUDIT.JSONL.FORMAT
   - AUDIT.CORRELATION.RUN_EXEC
   - REPLAY.DETERMINISTIC.DECISION
-  - REPLAY. DETERMINISTIC. GUARDIAN
+  - REPLAY.DETERMINISTIC. GUARDIAN
   
   # Phase 1: cost (4)
   - COST.MODEL.FEE_ESTIMATE
   - COST.MODEL.SLIPPAGE_ESTIMATE
   - COST.MODEL. IMPACT_ESTIMATE
-  - COST. GATE.EDGE_CHECK
+  - COST.GATE.EDGE_CHECK
   
   # Phase 1: platform_universal (10)
   - STRAT.AUDIT.DECISION_EVENT_PRESENT
-  - STRAT.AUDIT. DECISION_HAS_RUN_ID
-  - STRAT.AUDIT. DECISION_HAS_EXEC_ID
-  - STRAT. AUDIT.DECISION_HAS_STRATEGY_ID
-  - STRAT. AUDIT.DECISION_HAS_VERSION
-  - STRAT.AUDIT. DECISION_HAS_FEATURE_HASH
+  - STRAT.AUDIT.DECISION_HAS_RUN_ID
+  - STRAT.AUDIT.DECISION_HAS_EXEC_ID
+  - STRAT.AUDIT.DECISION_HAS_STRATEGY_ID
+  - STRAT.AUDIT.DECISION_HAS_VERSION
+  - STRAT.AUDIT.DECISION_HAS_FEATURE_HASH
   - STRAT.DEGRADE.REDUCE_ONLY_NO_OPEN
   - STRAT.DEGRADE. HALTED_OUTPUT_ZERO
   - STRAT.DEGRADE.MODE_TRANSITION_AUDIT
@@ -1399,21 +1399,21 @@ a_platform_scenarios:
   - EXEC.ID.MAPPING
   - FSM.STRICT. TRANSITIONS
   - FSM.TOLERANT.IDEMPOTENT
-  - FSM. CANCEL_WHILE_FILL
+  - FSM.CANCEL_WHILE_FILL
   - FSM.STATUS_4_MAPPING
   
   # Phase 2: engine (7)
   - EXEC.ENGINE.PIPELINE
-  - EXEC. TIMEOUT.ACK
+  - EXEC.TIMEOUT.ACK
   - EXEC.TIMEOUT. FILL
   - EXEC.CANCEL_REPRICE. TIMEOUT
   - EXEC.PARTIAL. REPRICE
-  - EXEC. RETRY.BACKOFF
+  - EXEC.RETRY.BACKOFF
   - EXEC.CONTEXT.TRACKING
   
   # Phase 2: protection (4)
-  - EXEC. PROTECTION.LIQUIDITY
-  - EXEC. PROTECTION. FATFINGER
+  - EXEC.PROTECTION.LIQUIDITY
+  - EXEC.PROTECTION. FATFINGER
   - EXEC.PROTECTION. THROTTLE
   - EXEC.PROTECTION.AUDIT
   
@@ -1437,7 +1437,7 @@ b_models_scenarios:
   # Phase 3: fallback (3)
   - STRAT.FALLBACK.ON_EXCEPTION
   - STRAT.FALLBACK.ON_TIMEOUT
-  - STRAT. FALLBACK. CHAIN_DEFINED
+  - STRAT.FALLBACK. CHAIN_DEFINED
   
   # Phase 3: calendar_arb (9)
   - ARB.LEGS.FIXED_NEAR_FAR
@@ -1447,7 +1447,7 @@ b_models_scenarios:
   - ARB.SIGNAL.HALF_LIFE_GATE
   - ARB.SIGNAL. STOP_Z_BREAKER
   - ARB.SIGNAL. EXPIRY_GATE
-  - ARB. SIGNAL.CORRELATION_BREAK
+  - ARB.SIGNAL.CORRELATION_BREAK
   - ARB.COST.ENTRY_GATE
   
   # Phase 6: simple_ai (3)
@@ -1456,13 +1456,13 @@ b_models_scenarios:
   - BASELINE.STABLE. STALE_INPUT
   
   # Phase 6: linear_ai (3)
-  - LINEAR. FACTOR.WEIGHT_STABLE
+  - LINEAR.FACTOR.WEIGHT_STABLE
   - LINEAR.FACTOR. EXPOSURE_LIMIT
   - BASELINE.STABLE. STALE_INPUT  # 与 simple_ai 共享
   
   # Phase 6: ensemble_moe (5)
   - MOE.OUTPUT. SMOOTHING
-  - MOE. EXPERT.CONFLICT_CONTROL
+  - MOE.EXPERT.CONFLICT_CONTROL
   - MOE.GATING.WEIGHT_VALID
   - MOE.EXPERT.VERSION_AUDIT
   - MOE.REGIME. DETECTION
@@ -1470,17 +1470,17 @@ b_models_scenarios:
   # Phase 6: dl_torch (6)
   - DL.INFERENCE. FAIL_FALLBACK
   - DL.MODEL.VERSION_AUDIT
-  - DL. SEED.DETERMINISTIC
+  - DL.SEED.DETERMINISTIC
   - DL.INPUT.NORMALIZE
   - DL.OUTPUT.CLAMP
   - DL.MEMORY. CLEANUP
   
   # Phase 6: top_tier (5)
-  - TOPTIER. COST.GATE
+  - TOPTIER.COST.GATE
   - TOPTIER.TURNOVER.LIMIT
   - TOPTIER.JITTER.SUPPRESSION
   - TOPTIER.RISK. PARITY_VALID
-  - TOPTIER. TREND.SIGNAL_AUDIT
+  - TOPTIER.TREND.SIGNAL_AUDIT
 ```
 
 ---
@@ -1492,13 +1492,13 @@ b_models_scenarios:
 | Phase | 骨架 | 最小实现 | 全量实现 | 建议模式 |
 |-------|------|----------|----------|----------|
 | Phase 0 | 3h | 16h | 34h | 最小实现 |
-| Phase 1 | 2. 5h | 18h | 44h | 最小实现 |
+| Phase 1 | 2.5h | 18h | 44h | 最小实现 |
 | Phase 2 | 2.5h | 32h | 80h | 最小实现 |
 | Phase 3 | 1h | 14h | 36h | 最小实现 |
 | Phase 4 | 0.5h | 4h | 8h | 最小实现 |
 | Phase 5 | - | 24h | 24h | 全量 |
 | Phase 6 | - | 36h | 36h | 最小实现 |
-| **总计** | **9. 5h** | **144h** | **262h** | - |
+| **总计** | **9.5h** | **144h** | **262h** | - |
 
 ### 14.2 里程碑时间表
 
