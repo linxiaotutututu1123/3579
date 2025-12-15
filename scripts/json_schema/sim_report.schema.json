@@ -1,0 +1,170 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://3579.dev/schemas/sim_report.schema.json",
+  "title": "Sim/Replay Report Schema (Military-Grade v3.0)",
+  "description": "强制 schema 校验 - 缺任何必填字段即 POLICY_VIOLATION (exit 12)",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "type",
+    "overall",
+    "exit_code",
+    "check_mode",
+    "timestamp",
+    "run_id",
+    "exec_id",
+    "artifacts",
+    "scenarios",
+    "failures"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 3,
+      "description": "Schema 版本号，必须 >= 3"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["replay", "sim"],
+      "description": "报告类型"
+    },
+    "overall": {
+      "type": "string",
+      "enum": ["PASS", "FAIL"],
+      "description": "总体结果"
+    },
+    "exit_code": {
+      "type": "integer",
+      "enum": [0, 8, 9, 12],
+      "description": "退出码: 0=PASS, 8=REPLAY_FAIL, 9=SIM_FAIL, 12=POLICY"
+    },
+    "check_mode": {
+      "type": "boolean",
+      "const": true,
+      "description": "必须为 true，否则 POLICY_VIOLATION"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 时间戳"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+      "description": "运行唯一标识 (UUID)"
+    },
+    "exec_id": {
+      "type": "string",
+      "description": "执行标识 (commit_sha + timestamp)"
+    },
+    "artifacts": {
+      "type": "object",
+      "required": ["report_path", "events_jsonl_path"],
+      "properties": {
+        "report_path": {
+          "type": "string",
+          "const": "artifacts/sim/report.json"
+        },
+        "events_jsonl_path": {
+          "type": "string",
+          "const": "artifacts/sim/events.jsonl"
+        },
+        "context_path": {
+          "type": "string"
+        }
+      },
+      "description": "产物路径清单"
+    },
+    "scenarios": {
+      "type": "object",
+      "required": ["total", "passed", "failed", "skipped"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "required_missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "缺失的必须场景 rule_id 列表"
+        }
+      },
+      "description": "场景统计"
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ScenarioFailure"
+      },
+      "description": "失败场景列表"
+    },
+    "context_manifest_sha": {
+      "type": "string",
+      "description": "context.md 的 SHA256 指纹（用于审计）"
+    }
+  },
+  "definitions": {
+    "ScenarioFailure": {
+      "type": "object",
+      "required": [
+        "scenario",
+        "rule_id",
+        "component",
+        "event_id",
+        "expected",
+        "actual",
+        "error",
+        "evidence"
+      ],
+      "properties": {
+        "scenario": {
+          "type": "string",
+          "description": "场景名称"
+        },
+        "rule_id": {
+          "type": "string",
+          "pattern": "^[A-Z]+\\.[A-Z_]+\\.[A-Z_]+$",
+          "description": "场景唯一标识，格式: DOMAIN.CATEGORY.NAME"
+        },
+        "component": {
+          "type": "string",
+          "description": "所属模块"
+        },
+        "event_id": {
+          "type": ["string", "integer"],
+          "description": "关联事件 ID 或 tick 号"
+        },
+        "expected": {
+          "description": "期望值"
+        },
+        "actual": {
+          "description": "实际值"
+        },
+        "error": {
+          "type": "string",
+          "description": "人类可读错误描述"
+        },
+        "evidence": {
+          "type": "object",
+          "description": "调试证据（状态快照）"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

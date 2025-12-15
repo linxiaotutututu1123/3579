@@ -2,14 +2,22 @@
 
 Provides pre-deployment checks that must pass before LIVE trading.
 Also provides machine-readable JSON report generation for Claude automated loop.
+
+Military-Grade v3.0:
+- Strict JSON schema validation
+- run_id / exec_id for traceability
+- context_manifest_sha for audit
+- POLICY_VIOLATION (exit 12) enforcement
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import subprocess
 import time
+import uuid
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -18,6 +26,20 @@ from typing import Any
 
 
 logger = logging.getLogger(__name__)
+
+
+# =============================================================================
+# 固定路径约定 (D.1)
+# =============================================================================
+FIXED_PATHS = {
+    "ci_report": Path("artifacts/check/report.json"),
+    "sim_report": Path("artifacts/sim/report.json"),
+    "events_jsonl": Path("artifacts/sim/events.jsonl"),
+    "context": Path("artifacts/context/context.md"),
+    "commands_log": Path("artifacts/claude/commands.log"),
+    "round_summary": Path("artifacts/claude/round_summary.json"),
+    "policy_violation": Path("artifacts/claude/policy_violation.json"),
+}
 
 
 class GateCheckStatus(str, Enum):
