@@ -27,7 +27,7 @@ import json
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -491,7 +491,7 @@ def write_violation_report(result: ValidationResult, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
     report = {
-        "timestamp": datetime.now(tz=timezone.utc).isoformat(),
+        "timestamp": datetime.now(tz=UTC).isoformat(),
         "has_violations": not result.passed,
         "violation_count": len(result.violations),
         "violations": [v.to_dict() for v in result.violations],
