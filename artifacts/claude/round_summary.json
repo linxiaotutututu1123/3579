@@ -1,22 +1,22 @@
 ﻿{
     "results":  {
                     "ci":  {
-                               "exit_code":  0,
-                               "status":  "PASS"
+                               "status":  "SKIP"
                            },
                     "round":  1,
                     "sim":  {
                                 "status":  "SKIP"
                             },
                     "replay":  {
-                                   "status":  "SKIP"
+                                   "exit_code":  0,
+                                   "status":  "PASS"
                                }
                 },
-    "timestamp":  "2025-12-15T10:00:57.7104604+08:00",
-    "run_id":  "8ae567e4-3cf8-444b-9467-158b3b6d94f4",
+    "timestamp":  "2025-12-15T10:01:18.3284429+08:00",
+    "run_id":  "85ef5db4-d999-4014-bb72-981546d88b5a",
     "schema_version":  3,
-    "exec_id":  "88854697e1e0e302c4cc38fc3e892e98812a0891-20251215100057",
-    "mode":  "ci",
-    "context_manifest_sha":  "77bc1bdd28d6c63299f60ad8ef0be0a310039f9d241cf4ad5a0ba207c1f62da2",
+    "exec_id":  "6534df9b09ef08be3c2632d66f44ea9f9518a139-20251215100118",
+    "mode":  "replay",
+    "context_manifest_sha":  "3bf93519de6caea0c3edc7f7aab8bf0b3b5949de8799f9d2db7ec7118aa91629",
     "round":  1
 }
