@@ -564,9 +564,9 @@ def main() -> int:
 
     # Output results
     if result.passed:
-        print("✅ Policy validation PASSED")
+        print("[PASS] Policy validation PASSED")
         return EXIT_SUCCESS
-    print(f"❌ Policy validation FAILED with {len(result.violations)} violation(s):")
+    print(f"[FAIL] Policy validation FAILED with {len(result.violations)} violation(s):")
     for v in result.violations:
         print(f"  [{v.code}] {v.message}")
         if v.file:
