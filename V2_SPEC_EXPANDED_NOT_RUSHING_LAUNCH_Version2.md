@@ -459,9 +459,9 @@ guardian 只输出三类硬指令：
 8) **不要追求 100% 自动预测**：先把“出错时不炸”做对。
 
 ### 0.2 非目标（V2 不做 / 不强制）
-- WAL / chaos / disaster drill 全套平台（可 V3）  
-- dashboard/websocket/Prometheus exporter（可 V3）  
-- 多交易所、多券商网关抽象（可 V3）  
+- WAL / chaos / disaster drill 全套平台
+- dashboard/websocket/Prometheus exporter（
+- 多交易所、多券商网关抽象
 - 在 V2 直接上 cointegration/ECM/Kalman 全家桶模型（先做执行门槛）
 
 ---
