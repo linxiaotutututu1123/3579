@@ -742,7 +742,8 @@ def run_ci_with_json_report(
     Returns:
         CIJsonReport with all results
     """
-    report = CIJsonReport()
+    # Military-Grade v3.0: check_mode MUST be True for CI
+    report = CIJsonReport(check_mode=True)
 
     # Step 1: Format check
     step = run_ci_step(

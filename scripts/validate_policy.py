@@ -361,7 +361,7 @@ def write_violation_report(result: ValidationResult, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
     report = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(tz=None).astimezone().isoformat(),
         "has_violations": not result.passed,
         "violation_count": len(result.violations),
         "violations": [v.to_dict() for v in result.violations],
