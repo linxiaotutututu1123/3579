@@ -5,7 +5,7 @@ Usage:
 
 This module provides a unified entry point for replay validation that:
 - Automatically enables CHECK_MODE (blocks broker operations)
-- Outputs JSON report to artifacts/sim/report.json
+- Outputs JSON report to artifacts/replay/report.json (军规级分目录)
 - Returns fixed exit codes (0=pass, 8=fail)
 """
 
@@ -24,7 +24,8 @@ from src.trading.sim_gate import SimExitCode, SimGate
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_OUTPUT = "artifacts/sim/report.json"
+# 军规级：replay 产物写入独立目录 artifacts/replay/
+DEFAULT_OUTPUT = "artifacts/replay/report.json"
 
 
 def setup_logging(verbose: bool = False) -> None:
