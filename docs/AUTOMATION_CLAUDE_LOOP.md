@@ -58,7 +58,7 @@
 
 ### 流程图（军规级）
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                    Claude 自动编码闭环（军规级 v3.0）                        │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -250,7 +250,7 @@ Get-Content artifacts\sim\report.json | ConvertFrom-Json
 
 ### D.1 固定产物路径（绝对不变）
 
-```
+```text
 artifacts/
 ├── check/
 │   └── report.json          # CI 报告
@@ -266,7 +266,7 @@ artifacts/
 
 ### D.2 命令审计日志格式
 
-```
+```text
 ========== Session Start: 2025-01-15 10:30:00 ==========
 Mode: full, MaxRounds: 5, Strict: True
 [2025-01-15 10:30:01] CMD: make.ps1 context-dev | EXIT: 0 | RESULT: 

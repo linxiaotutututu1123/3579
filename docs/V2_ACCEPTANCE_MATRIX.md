@@ -155,7 +155,7 @@ Get-Content artifacts\sim\report.json | ConvertFrom-Json
 
 ## Rule ID 命名规范
 
-```
+```text
 {DOMAIN}.{CATEGORY}.{NAME}
 
 DOMAIN:
