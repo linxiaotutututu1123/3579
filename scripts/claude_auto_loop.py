@@ -150,7 +150,7 @@ def phase4_required_scenarios() -> int:
     log("=== PHASE 4: REQUIRED SCENARIOS ===")
 
     # Policy validation
-    _code, out, _err = run_cmd(".venv/Scripts/python.exe scripts/validate_policy.py --all")
+    _code, out, _err = run_cmd(f"{PYTHON_EXE} scripts/validate_policy.py --all")
     if "PASSED" not in out:
         log(f"Policy validation FAIL: {out}", "ERROR")
         return EXIT_CODES["POLICY_VIOLATION"]
@@ -186,10 +186,10 @@ def phase5_core_coverage() -> int:
 
     # Run coverage
     _code, _out, _err = run_cmd(
-        ".venv/Scripts/python.exe -m pytest tests/ -q --cov=src --cov-report=json --tb=no"
+        f"{PYTHON_EXE} -m pytest tests/ -q --cov=src --cov-report=json --tb=no"
     )
 
-    cov_json = Path("coverage.json")
+    cov_json = PROJECT_ROOT / "coverage.json"
     if cov_json.exists():
         with open(cov_json) as f:
             cov = json.load(f)
