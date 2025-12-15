@@ -825,7 +825,7 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 - symbol
 - order_local_id, order_ref, order_sys_id
 - state_from/state_to/event
-- reason/error_code/error_msg（如有）
+- reason/error_code/error_msg
 
 ### 7.2 关联规则
 - run_id：一次运行唯一
@@ -835,7 +835,7 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 
 ### 7.3 回放一致性定义（V2）
 同一 inputs（ticks+instruments+config）下：
-- DecisionEvent 序列一致（允许 ts 有微差）
+- DecisionEvent 序列一致
 - ExecEvent 结构一致
 - protection 拒单原因一致
 - guardian 状态迁移一致
