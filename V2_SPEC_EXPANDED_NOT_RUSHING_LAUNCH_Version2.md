@@ -305,7 +305,7 @@ guardian 只输出三类硬指令：
 - `state_from`, `state_to`, `event`
 - `reason` / `error_code` / `error_msg`
 
-> V2强调dashboard 
+> V2强调dashboard和漂亮和调查 
 
 ---
 
