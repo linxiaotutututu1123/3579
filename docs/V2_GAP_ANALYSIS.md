@@ -37,11 +37,13 @@
 | `product_mapper.py` | 品种→合约映射 | ❌ 缺失 |
 
 **当前实现**：
+
 - 无 `src/market/` 目录
 - 策略层直接使用品种级 MarketState（AO/SA/LC）
 - 无合约级行情支持，无法做跨期套利
 
 **差距影响**：
+
 - ❌ 无法获取合约级行情（AO2501 vs AO2505）
 - ❌ 无法做跨期套利
 - ❌ 无主力切换逻辑
@@ -62,9 +64,11 @@
 | `leg_imbalance.py` | 套利裸腿检测 → auto_hedge | ❌ 缺失 |
 
 **当前实现**：
+
 - 有 `src/trading/live_guard.py`（需检查是否符合 V2）
 
 **差距影响**：
+
 - ❌ 无系统级状态机（RUNNING/REDUCE_ONLY/HALTED）
 - ❌ 无四件必做事的自动化守护
 
@@ -83,10 +87,12 @@
 | `GuardianEvent` | state_from, state_to, trigger | ❌ 缺失 |
 
 **当前实现**：
+
 - `sim_gate.py` 有 events.jsonl 输出
 - 无统一的 Audit 模块
 
 **差距影响**：
+
 - ❌ 无法完整回放审计
 - ❌ 无法追踪订单全生命周期
 
@@ -125,6 +131,7 @@ class OrderState(str, Enum):
 ```
 
 **差距**：
+
 - ❌ 缺少 `CANCEL_SUBMITTING`、`CANCEL_PENDING` 状态
 - ❌ 缺少 `WAITING`（等待 CTP Ack）
 - ❌ 缺少 `ERROR` 状态
@@ -148,6 +155,7 @@ class OrderState(str, Enum):
 | `position_tracker.py` | 本地+柜台同步 | ❌ 缺失 |
 
 **当前实现**：
+
 - `order_tracker.py` 仅提供基础跟踪
 - 无超时/重试/追价逻辑
 - 无 PositionTracker
@@ -165,6 +173,7 @@ class OrderState(str, Enum):
 | `throttle.py` | 频率限制 | 每分钟订单数、最小间隔 | ❌ 缺失 |
 
 **当前实现**：
+
 - `src/risk/` 目录下可能有部分实现
 - 无统一的 protection 子模块
 
@@ -199,6 +208,7 @@ class OrderIntent:
 ```
 
 **差距**：
+
 - ❌ 无 `local_id`
 - ❌ 无 `order_ref`
 - ❌ 无 `order_sys_id`
