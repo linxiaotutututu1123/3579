@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Claude 自动闭环驱动器（军规级 v3.0）
     运行 CI + Replay + Sim 直到全部通过或达到最大轮数
