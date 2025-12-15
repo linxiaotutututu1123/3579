@@ -50,12 +50,12 @@ FAILED tests/test_sim.py::test_backtest_scenario
         assert failed == 2
         assert "test_backtest_scenario" in failures
 
-    def test_multiple_failures(self) -> None:
-        """Parse multiple failures."""
+    def test_multiple_failures_with_passed(self) -> None:
+        """Parse multiple failures when passed is also present."""
         output = """
 FAILED tests/test_sim.py::test_one
 FAILED tests/test_sim.py::test_two
-2 failed in 1.0s
+2 failed, 0 passed in 1.0s
 """
         passed, failed, failures = parse_test_output(output)
         assert failed == 2
@@ -67,7 +67,7 @@ FAILED tests/test_sim.py::test_two
         """Handle failure line without ::."""
         output = """
 FAILED tests/test_sim.py
-1 failed in 1.0s
+1 failed, 0 passed in 1.0s
 """
         passed, failed, failures = parse_test_output(output)
         assert failed == 1

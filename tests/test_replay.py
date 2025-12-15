@@ -50,13 +50,13 @@ FAILED tests/test_replay.py::test_deterministic_replay
         assert failed == 3
         assert "test_deterministic_replay" in failures
 
-    def test_multiple_failures(self) -> None:
-        """Parse multiple failures."""
+    def test_multiple_failures_with_passed(self) -> None:
+        """Parse multiple failures when passed is also present."""
         output = """
 FAILED tests/test_replay.py::test_one
 FAILED tests/test_replay.py::test_two
 FAILED tests/test_replay.py::test_three
-3 failed in 1.0s
+3 failed, 0 passed in 1.0s
 """
         passed, failed, failures = parse_test_output(output)
         assert failed == 3
@@ -69,7 +69,7 @@ FAILED tests/test_replay.py::test_three
         """Handle failure line without ::."""
         output = """
 FAILED tests/test_replay.py
-1 failed in 1.0s
+1 failed, 0 passed in 1.0s
 """
         passed, failed, failures = parse_test_output(output)
         assert failed == 1
