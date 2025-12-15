@@ -4,13 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from src.trading.ci_gate import (
     CIJsonReport,
     CIStep,
     CIStepStatus,
-    ExitCode,
     _compute_context_sha,
     _generate_exec_id,
     _generate_run_id,
