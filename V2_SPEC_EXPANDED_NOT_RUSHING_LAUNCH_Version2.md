@@ -686,7 +686,7 @@ OrderStatus 关键值：
 - 乱序但可解释：缓存/补全
 - 无法解释：进入 ERROR + guardian 降级
 
-#### 5.3.3 必须补齐的边界（你已确认）
+#### 5.3.3 必须补齐的边界
 - 撤单途中成交：
   - CANCEL_SUBMITTING + RTN_FILLED → FILLED
   - CANCEL_PENDING + RTN_FILLED → FILLED
