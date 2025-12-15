@@ -77,6 +77,9 @@ ignore = [
     "T201",     # 脚本允许 print
 ]
 
+[tool.ruff.lint.pylint]
+max-statements = 80  # 默认50，军规级验证函数需要更多语句
+
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
 force-single-line = false
