@@ -161,17 +161,17 @@ def phase4_required_scenarios() -> int:
         import yaml
 
         scenario_files = [
-            "scripts/v2_required_scenarios.yml",
-            "scripts/v3pro_required_scenarios.yml",
+            PROJECT_ROOT / "scripts/v2_required_scenarios.yml",
+            PROJECT_ROOT / "scripts/v3pro_required_scenarios.yml",
         ]
         total_required = 0
         for sf in scenario_files:
-            if Path(sf).exists():
-                with open(sf) as f:
+            if sf.exists():
+                with open(sf, encoding="utf-8") as f:
                     data = yaml.safe_load(f)
                 scenarios = data.get("scenarios", [])
                 total_required += len(scenarios)
-                log(f"  {sf}: {len(scenarios)} required scenarios")
+                log(f"  {sf.name}: {len(scenarios)} required scenarios")
 
         log(f"Total required scenarios: {total_required}")
     except ImportError:
