@@ -173,8 +173,8 @@ Examples:
     enable_check_mode()
     logger.info("CHECK_MODE enabled: %s", is_check_mode())
 
-    # Initialize gate
-    gate = SimGate(sim_type="replay")
+    # Initialize gate - Military-Grade v3.0: check_mode MUST be True
+    gate = SimGate(sim_type="replay", check_mode=True)
 
     # Run replay tests
     logger.info("Running replay tests (pattern: %s)...", args.pattern)
