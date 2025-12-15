@@ -85,15 +85,65 @@ class SimMetrics:
         return asdict(self)
 
 
+# =============================================================================
+# 辅助函数：生成 run_id / exec_id
+# =============================================================================
+
+
+def _generate_run_id() -> str:
+    """Generate a unique run_id (UUID)."""
+    import uuid
+
+    return str(uuid.uuid4())
+
+
+def _generate_exec_id() -> str:
+    """Generate exec_id from git commit + timestamp."""
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        commit = result.stdout.strip()[:8] if result.returncode == 0 else "unknown"
+    except Exception:
+        commit = "unknown"
+    ts = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
+    return f"{commit}_{ts}"
+
+
+def _compute_context_sha(context_path: Path) -> str:
+    """Compute SHA256 of context.md for audit."""
+    import hashlib
+
+    if not context_path.exists():
+        return ""
+    with open(context_path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+# 固定路径约定 (D.1)
+FIXED_PATHS = {
+    "sim_report": Path("artifacts/sim/report.json"),
+    "events_jsonl": Path("artifacts/sim/events.jsonl"),
+    "context": Path("artifacts/context/context.md"),
+}
+
+
 @dataclass
 class SimReport:
     """Full simulation/replay report (military-grade v3.0).
 
-    Military-grade enhancements:
+    Military-grade required fields:
     - schema_version: integer, must be >= 3
     - type: "replay" or "sim"
     - check_mode: must be True
-    - exit_code: 0/8/9
+    - run_id: UUID for traceability
+    - exec_id: commit_sha + timestamp
+    - artifacts: paths to generated files
     - failures with rule_id/component/evidence
     """
 
@@ -106,10 +156,21 @@ class SimReport:
     schema_version: int = 3
     check_mode: bool = False
     timestamp: str = ""
+    run_id: str = ""
+    exec_id: str = ""
+    context_manifest_sha: str = ""
 
     def __post_init__(self) -> None:
         if not self.timestamp:
             self.timestamp = datetime.now(UTC).isoformat()
+        if not self.run_id:
+            self.run_id = _generate_run_id()
+        if not self.exec_id:
+            self.exec_id = _generate_exec_id()
+        # Compute context SHA if available
+        context_path = FIXED_PATHS["context"]
+        if not self.context_manifest_sha and context_path.exists():
+            self.context_manifest_sha = _compute_context_sha(context_path)
 
     @property
     def overall(self) -> SimStatus:
