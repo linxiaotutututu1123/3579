@@ -16,11 +16,13 @@ This document describes the development environment setup, quality gates, and tr
 **FORBIDDEN**: Running tools directly (e.g., `ruff .`, `mypy .`, `pytest`)
 
 **Exception**: Direct tool invocation is allowed for:
+
 - Debugging a specific file: `ruff check src/foo.py --select E501`
 - IDE integration (VS Code, PyCharm auto-format)
 - One-off exploration (not for CI/commit validation)
 
 **WHY**: Entry point ensures:
+
 - Correct venv Python is used
 - Consistent exit codes
 - CHECK_MODE properly set in CI
@@ -67,6 +69,7 @@ class Broker:
 ```
 
 **Protected APIs**:
+
 - `place_order()` - Order placement
 - `cancel_order()` - Order cancellation  
 - `flatten_all()` / `flatten_position()` - Position flattening
@@ -231,7 +234,7 @@ $env:PY='python'; .\scripts\make.ps1 ci; Remove-Item Env:PY
 
 If venv doesn't exist, you'll see a friendly error:
 
-```
+```text
 ERROR: Python not found at .venv\Scripts\python.exe
 Run: python -m venv .venv
 Or override: $env:PY='python' .\scripts\make.ps1 ci
@@ -307,6 +310,7 @@ Prepare project context for AI assistants (Claude, Copilot, etc.):
 ### Security Filtering
 
 Context export automatically filters sensitive files:
+
 - `.env` / `.env.*`
 - `**/secrets/**`
 - `**/credentials/**`
@@ -367,6 +371,7 @@ pip install -r requirements-dev.txt
 **Cause**: New code lacks tests
 
 **Solution**:
+
 1. Run `pytest --cov=src --cov-report=html` to generate coverage report
 2. Open `htmlcov/index.html` to see uncovered lines
 3. Add test cases
