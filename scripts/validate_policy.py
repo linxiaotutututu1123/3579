@@ -198,18 +198,22 @@ def validate_ci_report(path: Path, result: ValidationResult) -> None:
             {"type": report_type},
         )
 
-    # artifacts.report_path check
+    # artifacts.report_path check (accept both relative and absolute paths)
     artifacts = report.get("artifacts", {})
     if isinstance(artifacts, dict):
         report_path = artifacts.get("report_path")
-        expected_path = str(FIXED_PATHS["ci_report"])
-        if report_path and report_path != expected_path:
-            result.add_violation(
-                "POLICY.FIXED_PATH_MISMATCH",
-                f"CI report path must be {expected_path}, got: {report_path}",
-                str(path),
-                {"expected": expected_path, "actual": report_path},
-            )
+        expected_path = FIXED_PATHS["ci_report"]
+        # Normalize: accept relative or absolute path that resolves to same location
+        if report_path:
+            actual_resolved = (PROJECT_ROOT / report_path).resolve()
+            expected_resolved = expected_path.resolve()
+            if actual_resolved != expected_resolved:
+                result.add_violation(
+                    "POLICY.FIXED_PATH_MISMATCH",
+                    f"CI report path must resolve to {expected_resolved}, got: {actual_resolved}",
+                    str(path),
+                    {"expected": str(expected_resolved), "actual": str(actual_resolved)},
+                )
 
 
 def validate_sim_report(path: Path, result: ValidationResult) -> None:
