@@ -56,7 +56,7 @@
 - `unsubscribe(symbols: set[str])`
 
 ### 2.2 Execution 侧核心协议
-**Broker Protocol**（已有，需明确返回值与标识映射）：
+**Broker Protocol**（需明确返回值与标识映射）：
 - `place_order(intent) -> Ack`
 - `cancel_order(cancel_key) -> None`
 - 回调/事件：
