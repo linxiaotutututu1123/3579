@@ -9,12 +9,15 @@
 - 任何越规用退出码拒绝继续
 """
 
+from __future__ import annotations
+
 import json
 import os
 import subprocess
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
+
 
 # 确保 src 可导入
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -37,8 +40,8 @@ OVERALL_THRESHOLD = 85
 
 
 def log(msg: str, level: str = "INFO") -> None:
-    ts = datetime.now().strftime("%H:%M:%S")
-    prefix = {"INFO": "ℹ️", "WARN": "⚠️", "ERROR": "❌", "SUCCESS": "✅"}.get(level, "•")
+    ts = datetime.now(tz=UTC).strftime("%H:%M:%S")
+    prefix = {"INFO": "[i]", "WARN": "[!]", "ERROR": "[X]", "SUCCESS": "[V]"}.get(level, "*")
     print(f"[{ts}] {prefix} [{level}] {msg}")
 
 
@@ -142,7 +145,7 @@ def phase4_required_scenarios() -> int:
     log("=== PHASE 4: REQUIRED SCENARIOS ===")
 
     # Policy validation
-    code, out, err = run_cmd(".venv/Scripts/python.exe scripts/validate_policy.py --all")
+    _code, out, _err = run_cmd(".venv/Scripts/python.exe scripts/validate_policy.py --all")
     if "PASSED" not in out:
         log(f"Policy validation FAIL: {out}", "ERROR")
         return EXIT_CODES["POLICY_VIOLATION"]
@@ -177,7 +180,7 @@ def phase5_core_coverage() -> int:
     log("=== PHASE 5: CORE DOMAIN COVERAGE ===")
 
     # Run coverage
-    code, out, err = run_cmd(
+    _code, _out, _err = run_cmd(
         ".venv/Scripts/python.exe -m pytest tests/ -q --cov=src --cov-report=json --tb=no"
     )
 
