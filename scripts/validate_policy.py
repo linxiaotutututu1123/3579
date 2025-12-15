@@ -53,9 +53,7 @@ FIXED_PATHS = {
 # Schema Requirements
 # =============================================================================
 REQUIRED_SCHEMA_VERSION = 3
-UUID_PATTERN = re.compile(
-    r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
-)
+UUID_PATTERN = re.compile(r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$")
 
 
 @dataclass

@@ -811,7 +811,7 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 ## 7. Audit（审计与回放一致性）
 
 ### 7.1 JSONL 事件流规范
-事件至少：
+
 - DecisionEvent
 - ExecEvent
 - OrderStateEvent
