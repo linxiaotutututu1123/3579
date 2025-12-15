@@ -948,7 +948,7 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 
 ### Phase A：接口冻结 + Replay-first
 - 冻结 types/protocols
-- replay_feed/sim_broker 打通 market→strategy→execution（可不真实下单）
+- replay_feed/sim_broker 打通 market→strategy→execution（必须可以真实下单）
 - audit 事件流全链路
 
 ### Phase B：执行可靠性
