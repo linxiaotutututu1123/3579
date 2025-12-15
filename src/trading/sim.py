@@ -172,8 +172,8 @@ Examples:
     enable_check_mode()
     logger.info("CHECK_MODE enabled: %s", is_check_mode())
 
-    # Initialize gate
-    gate = SimGate(sim_type="sim")
+    # Initialize gate - Military-Grade v3.0: check_mode MUST be True
+    gate = SimGate(sim_type="sim", check_mode=True)
 
     # Run sim tests
     logger.info("Running simulation tests (pattern: %s)...", args.pattern)

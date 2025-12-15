@@ -929,7 +929,7 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 - 幂等：重复事件/终态事件
 
 ### 12.2 回放测试（Replay-first）
-- 同 ticks 回放 → DecisionEvent/GuardianEvent 可复现
+- 同 ticks 回放 → DecisionEvent/GuardianEvent 
 - roll 切换点与 bars 拼接一致
 - protection 拒单一致
 
@@ -953,7 +953,7 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 
 ### Phase B：执行可靠性
 - FSM tolerant 幂等乱序
-- 超时撤单/追价（可配置）
+- 超时撤单/追价
 - PositionTracker reconcile
 - protection 生效
 
@@ -982,6 +982,6 @@ V2 仅推荐默认 `to_best` 或 `to_best_plus_tick`。
 
 ## 附录：你目前已有组件如何被这套吸收（不推翻）
 - `CtpBroker`：仍负责发送/撤单 + 回报适配为 OrderReport/TradeReport
-- `OrderTracker`：建议融合进 FSM/OrderContext，避免双真相
+- `OrderTracker`：融合进 FSM/OrderContext，避免双真相
 - `close-then-open`：保留，作为 ExecutionPlanBuilder 生成 intents
 - `FlattenExecutor`：保留，作为 guardian 最终动作（极少触发）
