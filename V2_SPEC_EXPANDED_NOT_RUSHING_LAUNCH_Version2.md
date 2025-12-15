@@ -617,7 +617,7 @@ MarketService 应输出：
 roll 发生时 bars 如何处理必须固定并审计：
 - 方案1：直接切换（会有跳变）
 - 方案2：基于价差做 back-adjust（更一致但复杂）
-V2 建议：先固定“直接切换”方案，同时审计切换点，后续可升级 back-adjust。
+V2 建议：先固定“直接切换”方案，同时审计切换点，升级 back-adjust。
 
 ---
 
@@ -632,8 +632,6 @@ V2 建议：先固定“直接切换”方案，同时审计切换点，后续�
 - outlier：价格跳变（多倍 tick_size）→ 标记异常 + 可拒绝进入策略
 - gap：长时间无 tick → stale
 - time disorder：时间倒退 → drop 并记审计
-
-> 不做“大而全 quality/”，先做最小门卫即可。
 
 ---
 
