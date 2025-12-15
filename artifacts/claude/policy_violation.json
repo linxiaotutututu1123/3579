@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-12-15T02:03:46.079116+00:00",
+  "has_violations": true,
+  "violation_count": 2,
+  "violations": [
+    {
+      "code": "POLICY.FIXED_PATH_MISMATCH",
+      "message": "CI report path must be C:\\Users\\1\\2468\\3579\\artifacts\\check\\report.json, got: artifacts\\check\\report.json",
+      "file": "C:\\Users\\1\\2468\\3579\\artifacts\\check\\report.json",
+      "evidence": {
+        "expected": "C:\\Users\\1\\2468\\3579\\artifacts\\check\\report.json",
+        "actual": "artifacts\\check\\report.json"
+      }
+    },
+    {
+      "code": "POLICY.FIXED_PATH_MISMATCH",
+      "message": "Sim report path must be C:\\Users\\1\\2468\\3579\\artifacts\\sim\\report.json, got: artifacts\\sim\\report.json",
+      "file": "C:\\Users\\1\\2468\\3579\\artifacts\\sim\\report.json",
+      "evidence": {
+        "expected": "C:\\Users\\1\\2468\\3579\\artifacts\\sim\\report.json",
+        "actual": "artifacts\\sim\\report.json"
+      }
+    }
+  ]
+}
