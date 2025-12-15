@@ -170,15 +170,16 @@ branch = true
 omit = [
     "*/tests/*",
     "*/__pycache__/*",
-    # CI/Replay/Sim 工具模块（非核心交易逻辑）
-    "src/trading/ci_gate.py",
-    "src/trading/sim_gate.py",
-    "src/trading/replay.py",
-    "src/trading/sim.py",
-    # 入口脚本
+    # 入口脚本（CLI glue，非核心逻辑）
     "src/app/live_entry.py",
     "src/app/paper_entry.py",
 ]
+# 军规级：核心域必须 100% 覆盖
+# - src/trading/**（包括 ci_gate.py, sim_gate.py）
+# - src/execution/**
+# - src/risk/**
+# - src/market/**
+# 不允许排除核心模块！测试必须补齐
 
 [tool.coverage.report]
 # 核心域覆盖率阈值
