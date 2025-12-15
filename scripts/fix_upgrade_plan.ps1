@@ -1,6 +1,6 @@
 # Fix V3PRO_UPGRADE_PLAN_Version2.md - Chapter 1 format issues
 $filePath = "c:\Users\1\2468\3579\docs\V3PRO_UPGRADE_PLAN_Version2.md"
-$content = Get-Content $filePath -Raw -Encoding UTF8
+$content = [System.IO.File]::ReadAllText($filePath)
 
 # New Chapter 1 content (fixed format)
 $newChapter1 = @'
@@ -74,19 +74,24 @@ $newChapter1 = @'
 
 '@
 
-# Find chapter boundaries
-$ch1Start = $content.IndexOf("## 1. 执行原则")
-$ch2Start = $content.IndexOf("## 2. 当前状态与锚点")
+# Find chapter boundaries using simple markers
+$marker1 = "## 1. "
+$marker2 = "## 2. "
+$ch1Start = $content.IndexOf($marker1)
+$ch2Start = $content.IndexOf($marker2)
+
+Write-Host "DEBUG: marker1='$marker1' at $ch1Start"
+Write-Host "DEBUG: marker2='$marker2' at $ch2Start"
+Write-Host "DEBUG: content length = $($content.Length)"
 
 if ($ch1Start -ge 0 -and $ch2Start -gt $ch1Start) {
     $before = $content.Substring(0, $ch1Start)
     $after = $content.Substring($ch2Start)
     $newContent = $before + $newChapter1 + $after
-    Set-Content -Path $filePath -Value $newContent -Encoding UTF8 -NoNewline
+    [System.IO.File]::WriteAllText($filePath, $newContent)
     Write-Host "SUCCESS: Chapter 1 fixed!"
     Write-Host "Before length: $($content.Length)"
     Write-Host "After length: $($newContent.Length)"
 } else {
     Write-Host "ERROR: Could not find chapter boundaries"
-    Write-Host "Ch1 at: $ch1Start, Ch2 at: $ch2Start"
 }
