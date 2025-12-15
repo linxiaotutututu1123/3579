@@ -4,15 +4,15 @@
   "overall": "PASS",
   "exit_code": 0,
   "check_mode": true,
-  "timestamp": "2025-12-15T02:01:16.283564+00:00",
-  "run_id": "ce3d3ff3-bceb-4aec-a2b4-0a549b305ca8",
-  "exec_id": "6534df9b_20251215020116",
+  "timestamp": "2025-12-15T02:07:43.570622+00:00",
+  "run_id": "d1d35b59-291b-4ea3-b7ad-3a159484918e",
+  "exec_id": "8e1529e0_20251215020743",
   "artifacts": {
     "report_path": "artifacts\\sim\\report.json",
     "events_jsonl_path": "artifacts\\sim\\events.jsonl",
     "context_path": "artifacts\\context\\context.md"
   },
-  "context_manifest_sha": "3bf93519de6caea0c3edc7f7aab8bf0b3b5949de8799f9d2db7ec7118aa91629",
+  "context_manifest_sha": "9e9be8e859b2b8f1cb96df5e75cac905bb6ab610668636a49bf8b23692ff08ba",
   "scenarios": {
     "total": 1,
     "passed": 1,
@@ -25,7 +25,7 @@
   "failures": [],
   "metrics": {
     "total_ticks": 0,
-    "avg_tick_duration_ms": 1977.0,
+    "avg_tick_duration_ms": 2058.0,
     "max_drawdown_pct": 0.0,
     "orders_placed": 0,
     "orders_rejected": 0,

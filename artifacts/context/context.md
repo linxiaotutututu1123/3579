@@ -1,8 +1,8 @@
 # Project Context (for Claude/Copilot)
 
-Generated: 2025-12-15T02:01:16.171908+00:00
+Generated: 2025-12-15T02:07:38.260109+00:00
 Level: dev
-Git: feat/mode2-trading-pipeline@6534df9b09ef
+Git: feat/mode2-trading-pipeline@8e1529e01949
 
 ## Quality Gate
 
