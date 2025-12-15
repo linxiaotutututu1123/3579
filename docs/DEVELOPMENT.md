@@ -352,6 +352,7 @@ Output: `dist/3579-paper.exe` and `dist/3579-live.exe`
 **Cause**: Dev dependencies not installed
 
 **Solution**:
+
 ```bash
 pip install -r requirements-dev.txt
 ```
@@ -361,6 +362,7 @@ pip install -r requirements-dev.txt
 **Cause**: mypy scanning packaged files in `dist/`
 
 **Solution**: Already configured in `pyproject.toml`. If still occurs:
+
 ```bash
 .\scripts\make.ps1 clean
 .\scripts\make.ps1 check
@@ -381,11 +383,13 @@ pip install -r requirements-dev.txt
 **Cause**: Windows doesn't include GNU Make by default
 
 **Solution**: Use PowerShell script instead
+
 ```powershell
 .\scripts\make.ps1 ci
 ```
 
 Or install Make:
+
 ```powershell
 # Using Chocolatey
 choco install make
@@ -399,6 +403,7 @@ scoop install make
 **Cause**: PATH not set correctly
 
 **Solution**:
+
 ```powershell
 # Check current Python
 Get-Command python
@@ -441,7 +446,8 @@ CI config: `.github/workflows/ci.yml`
 5. Push and create PR
 
 Commit format examples:
-```
+
+```text
 feat(strategy): add momentum factor
 fix(broker): handle timeout error
 refactor(risk): simplify margin calculation
@@ -453,7 +459,7 @@ docs(readme): update installation guide
 
 ## Directory Structure
 
-```
+```text
 3579/
 ├── .github/workflows/    # CI configuration
 ├── artifacts/            # Build artifacts and context

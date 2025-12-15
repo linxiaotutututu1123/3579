@@ -8,7 +8,7 @@
 
 ## 〇、架构总览
 
-```
+```text
 V3PRO+ 完整架构
 ┌─────────────────────────────────────────────────────────────────┐
 │  A-Platform（V2 升级到 V3PRO+ 标准）                            │
@@ -180,7 +180,7 @@ class GuardianState(Enum):
 
 ### 3.3 状态转移图
 
-```
+```text
 INIT → RUNNING ↔ REDUCE_ONLY → HALTED → MANUAL
          ↑                        ↓
          └──── COOLDOWN ──────────┘
@@ -285,7 +285,7 @@ INIT → RUNNING ↔ REDUCE_ONLY → HALTED → MANUAL
 
 ### 7.2 已存在的文件 (不动)
 
-```
+```text
 src/strategy/
 ├── base.py            ✅ 已存在
 ├── factory.py         ✅ 已存在
@@ -322,7 +322,7 @@ src/strategy/
 
 ## 九、执行顺序
 
-```
+```text
 Phase 1: src/market/         (依赖: 无)
     ↓
 Phase 2.1: src/execution/auto/  (依赖: 无)
