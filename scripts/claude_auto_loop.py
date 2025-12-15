@@ -38,9 +38,7 @@ OVERALL_THRESHOLD = 85
 
 def log(msg: str, level: str = "INFO") -> None:
     ts = datetime.now().strftime("%H:%M:%S")
-    prefix = {"INFO": "ℹ️", "WARN": "⚠️", "ERROR": "❌", "SUCCESS": "✅"}.get(
-        level, "•"
-    )
+    prefix = {"INFO": "ℹ️", "WARN": "⚠️", "ERROR": "❌", "SUCCESS": "✅"}.get(level, "•")
     print(f"[{ts}] {prefix} [{level}] {msg}")
 
 
@@ -55,16 +53,12 @@ def phase1_ci_green() -> int:
 
     # 1.1 Format
     log("Running ruff format...")
-    code, out, err = run_cmd(
-        ".venv/Scripts/python.exe -m ruff format scripts/ src/ tests/"
-    )
+    code, out, err = run_cmd(".venv/Scripts/python.exe -m ruff format scripts/ src/ tests/")
     log(f"Format done: {out.strip() if out.strip() else 'OK'}")
 
     # 1.2 Lint with autofix
     log("Running ruff check --fix...")
-    code, out, err = run_cmd(
-        ".venv/Scripts/python.exe -m ruff check scripts/ src/ tests/ --fix"
-    )
+    code, out, err = run_cmd(".venv/Scripts/python.exe -m ruff check scripts/ src/ tests/ --fix")
     if code != 0 and "error" in (out + err).lower():
         log(f"Lint errors remain: {out}{err}", "ERROR")
         return EXIT_CODES["FORMAT_LINT"]
@@ -148,9 +142,7 @@ def phase4_required_scenarios() -> int:
     log("=== PHASE 4: REQUIRED SCENARIOS ===")
 
     # Policy validation
-    code, out, err = run_cmd(
-        ".venv/Scripts/python.exe scripts/validate_policy.py --all"
-    )
+    code, out, err = run_cmd(".venv/Scripts/python.exe scripts/validate_policy.py --all")
     if "PASSED" not in out:
         log(f"Policy validation FAIL: {out}", "ERROR")
         return EXIT_CODES["POLICY_VIOLATION"]
