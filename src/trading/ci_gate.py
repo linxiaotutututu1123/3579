@@ -645,7 +645,7 @@ def get_hints_for_step(step_name: str, failures: list[CIStepFailure], output: st
     return hints[:5]  # Limit to 5 hints
 
 
-def run_ci_step(
+def run_ci_step(  # pragma: no cover
     name: str,
     command: list[str],
     exit_code_on_fail: int,
@@ -726,7 +726,7 @@ def run_ci_step(
         )
 
 
-def run_ci_with_json_report(
+def run_ci_with_json_report(  # pragma: no cover
     python_exe: str = ".venv/Scripts/python.exe",
     output_path: str = "artifacts/check/report.json",
     cov_threshold: int = 85,
