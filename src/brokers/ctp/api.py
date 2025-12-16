@@ -308,7 +308,7 @@ class CtpApi:
 
         except Exception as e:
             self._status = ConnectionStatus.ERROR
-            logger.exception("CTP连接失败: %s", e)
+            logger.exception("CTP连接失败")
             raise CtpConnectionError(f"连接失败: {e}") from e
 
     def disconnect(self) -> None:
@@ -591,7 +591,9 @@ class CtpApi:
             "is_authenticated": self.is_authenticated,
             "is_ready": self.is_ready,
             "connected_at": self._connected_at.isoformat() if self._connected_at else None,
-            "authenticated_at": self._authenticated_at.isoformat() if self._authenticated_at else None,
+            "authenticated_at": (
+                self._authenticated_at.isoformat() if self._authenticated_at else None
+            ),
             "subscribed_symbols": self.subscribed_symbols,
             "subscription_count": len(self._subscriptions),
             "front_addr": self._config.front_addr,

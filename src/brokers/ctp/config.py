@@ -416,7 +416,7 @@ def check_environment_isolation(
         front_addr_lower = config.front_addr.lower()
         if any(kw in front_addr_lower for kw in sim_keywords):
             logger.error(
-                "LIVE模式检测到仿真前置地址: %s，拒绝加载",
+                "LIVE模式检测到仿真前置地址: %s, 拒绝加载",
                 config.front_addr,
             )
             return False
@@ -437,5 +437,5 @@ def get_current_environment() -> TradeEnvironment:
     try:
         return TradeEnvironment(mode)
     except ValueError:
-        logger.warning("无效的TRADE_MODE: %s，默认使用PAPER", mode)
+        logger.warning("无效的TRADE_MODE: %s, 默认使用PAPER", mode)
         return TradeEnvironment.PAPER
