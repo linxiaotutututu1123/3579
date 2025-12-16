@@ -123,7 +123,8 @@ def load_report(report_path: Path) -> dict[str, Any] | None:
         return None
 
     with report_path.open("r", encoding="utf-8") as f:
-        return json.load(f)
+        data: dict[str, Any] = json.load(f)
+        return data
 
 
 def main() -> int:
