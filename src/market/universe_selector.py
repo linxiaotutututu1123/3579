@@ -16,7 +16,7 @@ V2 Scenarios: UNIV.DOMINANT.BASIC, UNIV.SUBDOMINANT.PAIRING,
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date
 from typing import TYPE_CHECKING
 
 
@@ -185,14 +185,18 @@ class UniverseSelector:
             return instruments
 
         try:
-            today = datetime.strptime(trading_day, "%Y%m%d").date()
-        except ValueError:
+            # Parse YYYYMMDD format directly to date (avoids DTZ007)
+            today = date(
+                int(trading_day[:4]), int(trading_day[4:6]), int(trading_day[6:8])
+            )
+        except (ValueError, IndexError):
             return instruments
 
         valid = []
         for inst in instruments:
             try:
-                expiry = datetime.strptime(inst.expire_date, "%Y%m%d").date()
+                exp = inst.expire_date
+                expiry = date(int(exp[:4]), int(exp[4:6]), int(exp[6:8]))
                 days_to_expiry = (expiry - today).days
                 if days_to_expiry >= self._expiry_block_days:
                     valid.append(inst)
