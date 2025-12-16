@@ -221,14 +221,17 @@ class TestSubscriberExtended:
         assert len(subscriber) == 3
 
     def test_unsubscribe_clears_callbacks(self) -> None:
-        """取消订阅时清除回调."""
-        subscriber = Subscriber()
+        """取消订阅时清除回调（需要提供 on_unsubscribe）."""
         received: list[str] = []
 
+        def on_unsub(symbols: set[str]) -> None:
+            pass  # Required to trigger callback cleanup
+
+        subscriber = Subscriber(on_unsubscribe=on_unsub)
         subscriber.register_callback("rb2501", lambda s, d: received.append(s))
         subscriber.update({"rb2501"})
 
-        # Unsubscribe should clear callback
+        # Unsubscribe should clear callback (only when on_unsubscribe is set)
         subscriber.update(set())
         subscriber.dispatch("rb2501", {})
 
