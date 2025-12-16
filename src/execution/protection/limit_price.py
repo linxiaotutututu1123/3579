@@ -46,20 +46,20 @@ from typing import Any
 class LimitPriceCheckResult(Enum):
     """涨跌停检查结果枚举."""
 
-    PASS = "PASS"                      # 通过检查
+    PASS = "PASS"  # 通过检查
     ABOVE_LIMIT_UP = "ABOVE_LIMIT_UP"  # 超过涨停价
     BELOW_LIMIT_DOWN = "BELOW_LIMIT_DOWN"  # 低于跌停价
-    INVALID_PRICE = "INVALID_PRICE"    # 无效价格
+    INVALID_PRICE = "INVALID_PRICE"  # 无效价格
     INVALID_SETTLE = "INVALID_SETTLE"  # 无效结算价
-    AT_LIMIT_UP = "AT_LIMIT_UP"        # 处于涨停价
-    AT_LIMIT_DOWN = "AT_LIMIT_DOWN"    # 处于跌停价
+    AT_LIMIT_UP = "AT_LIMIT_UP"  # 处于涨停价
+    AT_LIMIT_DOWN = "AT_LIMIT_DOWN"  # 处于跌停价
 
 
 class LimitStatus(Enum):
     """涨跌停状态枚举."""
 
-    NORMAL = "NORMAL"          # 正常交易
-    AT_LIMIT_UP = "AT_LIMIT_UP"    # 涨停
+    NORMAL = "NORMAL"  # 正常交易
+    AT_LIMIT_UP = "AT_LIMIT_UP"  # 涨停
     AT_LIMIT_DOWN = "AT_LIMIT_DOWN"  # 跌停
     NEAR_LIMIT_UP = "NEAR_LIMIT_UP"  # 接近涨停 (<1%距离)
     NEAR_LIMIT_DOWN = "NEAR_LIMIT_DOWN"  # 接近跌停 (<1%距离)
@@ -109,8 +109,8 @@ PRODUCT_LIMIT_PCT: dict[str, float] = {
     "rb": 0.04,
     "hc": 0.04,
     "ss": 0.04,  # 不锈钢
-    "i": 0.04,   # 铁矿石
-    "j": 0.04,   # 焦炭
+    "i": 0.04,  # 铁矿石
+    "j": 0.04,  # 焦炭
     "jm": 0.04,  # 焦煤
     # 能源化工 (SHFE/DCE/CZCE/INE) - 5%
     "bu": 0.05,
@@ -120,8 +120,8 @@ PRODUCT_LIMIT_PCT: dict[str, float] = {
     "sc": 0.05,  # 原油
     "lu": 0.05,  # 低硫燃料油
     "fu": 0.05,  # 燃料油
-    "l": 0.05,   # 塑料
-    "v": 0.05,   # PVC
+    "l": 0.05,  # 塑料
+    "v": 0.05,  # PVC
     "pp": 0.05,
     "eg": 0.05,  # 乙二醇
     "eb": 0.05,  # 苯乙烯
@@ -132,13 +132,13 @@ PRODUCT_LIMIT_PCT: dict[str, float] = {
     "ur": 0.05,  # 尿素
     "pf": 0.05,  # 涤纶短纤
     # 农产品 (DCE/CZCE) - 4%
-    "c": 0.04,   # 玉米
+    "c": 0.04,  # 玉米
     "cs": 0.04,  # 淀粉
-    "a": 0.04,   # 豆一
-    "b": 0.04,   # 豆二
-    "m": 0.04,   # 豆粕
-    "y": 0.04,   # 豆油
-    "p": 0.04,   # 棕榈油
+    "a": 0.04,  # 豆一
+    "b": 0.04,  # 豆二
+    "m": 0.04,  # 豆粕
+    "y": 0.04,  # 豆油
+    "p": 0.04,  # 棕榈油
     "jd": 0.04,  # 鸡蛋
     "lh": 0.04,  # 生猪
     "rr": 0.04,  # 粳米
@@ -612,6 +612,7 @@ class LimitPriceGuard:
         if tick_size <= 0:
             return price
         import math
+
         return math.ceil(price / tick_size) * tick_size
 
 
