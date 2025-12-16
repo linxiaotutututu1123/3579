@@ -135,6 +135,19 @@ class InstrumentCache:
                 os.remove(tmp_path)
             raise
 
+    def add(self, info: InstrumentInfo) -> None:
+        """添加合约信息.
+
+        Args:
+            info: 合约元数据
+        """
+        self._cache[info.symbol] = info
+        if info.product not in self._by_product:
+            self._by_product[info.product] = []
+        # Avoid duplicates
+        if info not in self._by_product[info.product]:
+            self._by_product[info.product].append(info)
+
     def get(self, symbol: str) -> InstrumentInfo | None:
         """获取合约信息.
 
