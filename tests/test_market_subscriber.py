@@ -145,9 +145,9 @@ class TestSubscriberExtended:
     def test_register_callback_new_symbol(self) -> None:
         """注册新合约的回调."""
         subscriber = Subscriber()
-        received: list[tuple[str, dict]] = []
+        received: list[tuple[str, dict[str, Any]]] = []
 
-        def callback(symbol: str, data: dict) -> None:
+        def callback(symbol: str, data: dict[str, Any]) -> None:
             received.append((symbol, data))
 
         subscriber.register_callback("rb2501", callback)
