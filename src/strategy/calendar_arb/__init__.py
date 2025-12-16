@@ -1,53 +1,49 @@
-"""Calendar Arbitrage Module (Military-Grade v3.0).
+"""
+日历套利模块 (军规级 v4.0).
 
-This module implements calendar spread arbitrage between near and far
-month contracts as specified in V2 SPEC Chapter 9.
+V4PRO Platform Component - Phase 3 + Phase 7 中国期货特化
+V4 SPEC: §8 Phase 3, §12 Phase 7
 
-Components:
-- CalendarArbStrategy: Main strategy class
-- KalmanBetaEstimator: Kalman filter for beta estimation
-- ArbConfig: Strategy configuration
-- KalmanConfig: Kalman filter configuration
+功能特性:
+- 日历价差套利策略 (CalendarArbStrategy)
+- Kalman滤波动态Beta估计 (KalmanBetaEstimator)
+- 交割感知移仓换月 (DeliveryAwareCalendarArb)
+- 主力合约切换检测 (MainContractDetector)
 
-Required Scenarios (12 total):
-- Fallback (3): ON_EXCEPTION, ON_TIMEOUT, CHAIN_DEFINED (in fallback.py)
+军规覆盖:
+- M6: 熔断保护
+- M15: 夜盘跨日处理
+
+Scenarios (18 total):
+- Fallback (3): ON_EXCEPTION, ON_TIMEOUT, CHAIN_DEFINED
 - Kalman (3): BETA_ESTIMATE, RESIDUAL_ZSCORE, BETA_BOUND
 - Strategy (6): LEGS_FIXED, HALF_LIFE_GATE, STOP_Z_BREAKER,
                 EXPIRY_GATE, CORRELATION_BREAK, COST_ENTRY_GATE
+- Delivery (2): DELIVERY_AWARE, POSITION_TRANSFER
 
-Example:
-    from src.strategy.calendar_arb import (
-        CalendarArbStrategy,
-        ArbConfig,
-        KalmanBetaEstimator,
-        KalmanConfig,
-    )
-
-    # Configure strategy
-    config = ArbConfig(
-        entry_z=2.5,
-        exit_z=0.5,
-        stop_z=5.0,
-        max_half_life_days=20,
-    )
-
-    # Create strategy
-    strategy = CalendarArbStrategy(config, product="AO")
-
-    # Set leg pair
-    strategy.set_leg_pair(
-        near_symbol="AO2501",
-        far_symbol="AO2505",
-        near_expiry="20250115",
-        far_expiry="20250515",
-    )
-
-    # Process tick
-    portfolio = strategy.on_tick(market_state)
+示例:
+    >>> from src.strategy.calendar_arb import (
+    ...     CalendarArbStrategy,
+    ...     DeliveryAwareCalendarArb,
+    ...     DeliveryConfig,
+    ... )
 """
 
 from __future__ import annotations
 
+from src.strategy.calendar_arb.delivery_aware import (
+    ContractInfo,
+    DeliveryAwareCalendarArb,
+    DeliveryConfig,
+    DeliverySnapshot,
+    DeliveryStatus,
+    MainContractDetector,
+    RollPlan,
+    RollSignal,
+    check_contract_delivery,
+    create_delivery_aware_strategy,
+    get_default_delivery_config,
+)
 from src.strategy.calendar_arb.kalman_beta import (
     KalmanBetaEstimator,
     KalmanConfig,
@@ -69,8 +65,19 @@ __all__ = [
     "ArbSnapshot",
     "ArbState",
     "CalendarArbStrategy",
+    "ContractInfo",
+    "DeliveryAwareCalendarArb",
+    "DeliveryConfig",
+    "DeliverySnapshot",
+    "DeliveryStatus",
     "KalmanBetaEstimator",
     "KalmanConfig",
     "KalmanResult",
     "LegPair",
+    "MainContractDetector",
+    "RollPlan",
+    "RollSignal",
+    "check_contract_delivery",
+    "create_delivery_aware_strategy",
+    "get_default_delivery_config",
 ]
