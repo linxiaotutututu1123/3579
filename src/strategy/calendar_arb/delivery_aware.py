@@ -462,7 +462,7 @@ class DeliveryAwareCalendarArb:
         next_contract: ContractInfo | None = None
         min_days_diff = float("inf")
 
-        for sym, info in self._contracts.items():
+        for info in self._contracts.values():
             if info.product != product:
                 continue
             if info.delivery_date <= current_delivery:
