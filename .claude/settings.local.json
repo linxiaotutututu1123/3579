@@ -11,7 +11,8 @@
       "Bash(.venv/Scripts/python.exe -m mypy:*)",
       "Bash(.venv/Scripts/python.exe -m pytest:*)",
       "Bash(echo:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(.venv/Scripts/python.exe scripts/validate_policy.py:*)"
     ]
   }
 }
