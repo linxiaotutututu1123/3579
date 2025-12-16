@@ -245,7 +245,6 @@ class OrderFSM:
         if event == OrderEvent.STATUS_4 and self._filled_qty > 0:
             target = OrderState.PARTIAL_CANCELLED
 
-        old_state = self._state
         self._state = target
         self._transition_count += 1
 

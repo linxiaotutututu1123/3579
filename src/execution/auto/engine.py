@@ -238,7 +238,6 @@ class AutoOrderEngine:
             return
 
         # 执行转移
-        old_state = fsm.state
         fsm.transition(event, filled_qty)
         self._emit_event(local_id, fsm.state, event)
 
