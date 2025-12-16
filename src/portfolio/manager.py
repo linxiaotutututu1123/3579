@@ -23,16 +23,16 @@ from typing import Any
 
 @dataclass
 class PositionEntry:
-    """Single position entry.
+    """单个持仓条目.
 
-    Attributes:
-        symbol: Contract symbol
-        quantity: Position quantity (positive=long, negative=short)
-        strategy: Strategy that owns this position
-        avg_price: Average entry price
-        realized_pnl: Realized P&L
-        unrealized_pnl: Unrealized P&L
-        updated_at: Last update timestamp
+    属性:
+        symbol: 合约代码
+        quantity: 持仓数量 (正数=多头, 负数=空头)
+        strategy: 持有该持仓的策略
+        avg_price: 平均入场价格
+        realized_pnl: 已实现盈亏
+        unrealized_pnl: 未实现盈亏
+        updated_at: 最后更新时间戳
     """
 
     symbol: str
