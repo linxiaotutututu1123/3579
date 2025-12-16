@@ -1,7 +1,7 @@
 """
 src/market/ - 合约化行情层
 
-V3PRO+ Platform Component - Phase 0
+V4PRO Platform Component - Phase 0/7
 V2 SPEC: 第 4 章
 
 模块职责：
@@ -11,8 +11,10 @@ V2 SPEC: 第 4 章
 - L1 行情缓存 + stale 检测 (QuoteCache)
 - 连续主力 bars 聚合 (BarBuilder)
 - 数据质量检测 (Quality)
+- 六大交易所配置 (ExchangeConfig) - Phase 7 新增
+- 夜盘交易日历 (TradingCalendar) - Phase 7 新增
 
-Required Scenarios (11 条):
+Required Scenarios (13+ 条):
 - INST.CACHE.LOAD
 - INST.CACHE.PERSIST
 - UNIV.DOMINANT.BASIC
@@ -24,6 +26,8 @@ Required Scenarios (11 条):
 - MKT.STALE.HARD
 - MKT.CONTINUITY.BARS
 - MKT.QUALITY.OUTLIER
+- CHINA.EXCHANGE.CONFIG_LOAD (Phase 7)
+- CHINA.EXCHANGE.PRODUCT_MAP (Phase 7)
 """
 
 from __future__ import annotations
