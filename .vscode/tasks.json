@@ -2,26 +2,30 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-					"type": "cmake",
-					"label": "CMake: 安装",
-					"command": "install",
-					"problemMatcher": [561],
-					"detail": "CMake 模板 安装 任务"
-				},
+			"type": "cmake",
+			"label": "CMake: 安装",
+			"command": "install",
+			"problemMatcher": [
+				561
+			],
+			"detail": "CMake 模板 安装 任务"
+		},
 		{
-					"type": "cmake",
-					"label": "CMake: 包",
-					"command": "build",
-					"problemMatcher": [1],
-					"detail": "CMake 模板 包 任务"
-				},
+			"type": "cmake",
+			"label": "CMake: 包",
+			"command": "build",
+			"problemMatcher": [
+				1
+			],
+			"detail": "CMake 模板 包 任务"
+		},
 		{
-					"type": "cmake",
-					"label": "CMake: 工作流",
-					"command": "build",
-					"problemMatcher": [],
-					"detail": "CMake 模板 工作流 任务"
-				},
+			"type": "cmake",
+			"label": "CMake: 工作流",
+			"command": "build",
+			"problemMatcher": [],
+			"detail": "CMake 模板 工作流 任务"
+		},
 		{
 			"type": "cmake",
 			"label": "CMake: 测试",
@@ -53,6 +57,19 @@
 			"group": "build",
 			"problemMatcher": [],
 			"detail": "CMake 模板 清理重新生成 任务"
+		},
+		{
+			"type": "go",
+			"label": "go: build workspace",
+			"command": "build",
+			"args": [
+				"./..."
+			],
+			"problemMatcher": [
+				"$go"
+			],
+			"group": "build",
+			"detail": "cd c:\\Users\\1\\2468\\3579; go build ./..."
 		}
 	]
 }
