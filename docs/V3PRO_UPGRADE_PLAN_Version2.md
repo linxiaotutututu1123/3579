@@ -590,7 +590,7 @@ python -c "from src.market import UniverseSelector"            # 导入成功
 | **新增目录** | `src/audit/`, `src/cost/`, `src/guardian/` |
 | **新增文件** | 15 个 |
 | **Required Scenarios** | 29 条 |
-| **预计工时** | 骨架 2.5h / 最小实现 18h / 全量实现 44h |
+| **预计工时** | 骨架 2.5h  / 全量实现 44h |
 | **阻塞** | Phase 2, 3, 4, 5 |
 
 ### 6.2 文件清单
