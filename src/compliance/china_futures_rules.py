@@ -116,8 +116,7 @@ class ComplianceCheckResult:
     def has_blocking_violations(self) -> bool:
         """是否有阻断性违规 (FATAL或SEVERE)."""
         return any(
-            v.severity in (SeverityLevel.FATAL, SeverityLevel.SEVERE)
-            for v in self.violations
+            v.severity in (SeverityLevel.FATAL, SeverityLevel.SEVERE) for v in self.violations
         )
 
 
@@ -342,8 +341,7 @@ class ChinaFuturesComplianceChecker:
                     violation_type=ViolationType.VOLUME_EXCEEDS_LIMIT,
                     severity=SeverityLevel.SEVERE,
                     message=(
-                        f"订单数量 {order.volume} 超过单笔限制 "
-                        f"{self._config.max_order_volume}"
+                        f"订单数量 {order.volume} 超过单笔限制 {self._config.max_order_volume}"
                     ),
                     rule_id="CHINA.COMPLIANCE.VOLUME_LIMIT",
                     military_rule="M12",
@@ -576,9 +574,7 @@ class ChinaFuturesComplianceChecker:
             "check_count": self._check_count,
             "violation_count": self._violation_count,
             "violation_rate": (
-                self._violation_count / self._check_count
-                if self._check_count > 0
-                else 0.0
+                self._violation_count / self._check_count if self._check_count > 0 else 0.0
             ),
             "checker_version": self.VERSION,
         }
