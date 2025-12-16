@@ -1,13 +1,13 @@
-"""Monitoring Module (Military-Grade v3.0).
+"""监控模块 (军规级 v3.0).
 
-This module provides system monitoring and health check functionality
-as specified in V3PRO_UPGRADE_PLAN extension modules (Chapter 24).
+本模块提供系统监控和健康检查功能，
+参照 V3PRO_UPGRADE_PLAN 扩展模块规划 (第24章)。
 
-Components:
-- HealthChecker: System health monitoring
-- MetricsCollector: Metrics collection and export
+组件:
+- HealthChecker: 系统健康监控
+- MetricsCollector: 指标收集和导出
 
-Example:
+示例:
     from src.monitoring import HealthChecker, MetricsCollector
 
     health = HealthChecker()
