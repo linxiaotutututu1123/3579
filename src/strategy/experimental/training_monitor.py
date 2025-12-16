@@ -209,7 +209,6 @@ class TrainingProgress:
     def _big_progress_bar(self, pct: float, width: int = 40) -> str:
         """大进度条."""
         filled = int(pct * width)
-        empty = width - filled
 
         # 80%位置的标记
         threshold_pos = int(0.80 * width)
@@ -231,7 +230,6 @@ class TrainingProgress:
     def _mini_progress_bar(self, pct: float, width: int = 15) -> str:
         """小进度条."""
         filled = int(pct * width)
-        empty = width - filled
         return "█" * filled + "░" * empty
 
 
