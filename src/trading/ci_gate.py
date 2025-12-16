@@ -495,8 +495,9 @@ class CIJsonReport:
             "run_id": self.run_id,
             "exec_id": self.exec_id,
             "artifacts": {
-                "report_path": str(FIXED_PATHS["ci_report"]),
-                "context_path": str(FIXED_PATHS["context"]),
+                # 军规级: 使用 POSIX 格式确保跨平台一致性 (Windows \ → /)
+                "report_path": FIXED_PATHS["ci_report"].as_posix(),
+                "context_path": FIXED_PATHS["context"].as_posix(),
             },
             "context_manifest_sha": self.context_manifest_sha,
             # 兼容字段
