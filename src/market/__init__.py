@@ -53,6 +53,15 @@ from src.market.instrument_cache import InstrumentCache, InstrumentInfo
 from src.market.quality import QualityChecker
 from src.market.quote_cache import BookTop, QuoteCache
 from src.market.subscriber import Subscriber
+from src.market.trading_calendar import (
+    ChinaTradingCalendar,
+    TradingDayInfo,
+    TradingPeriod,
+    get_default_calendar,
+    get_trading_day,
+    is_trading_day,
+    is_trading_time,
+)
 from src.market.universe_selector import UniverseSelector, UniverseSnapshot
 
 
