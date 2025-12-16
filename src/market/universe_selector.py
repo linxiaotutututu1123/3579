@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from src.market.instrument_cache import InstrumentCache
+    from src.market.instrument_cache import InstrumentCache, InstrumentInfo
 
 # 配置常量（来自 V3PRO_UPGRADE_PLAN 第 18 章）
 EXPIRY_BLOCK_DAYS: int = 5
