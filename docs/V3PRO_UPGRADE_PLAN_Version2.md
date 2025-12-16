@@ -1795,7 +1795,7 @@ Step 2: 职责分离
 Step 3: 迁移调用方
 - 替换所有 import order_tracker
 
-Step 4: 废弃 order_tracker.py（可选）
+Step 4: 废弃 order_tracker.py
 - 或保留为 thin wrapper
 ```
 
