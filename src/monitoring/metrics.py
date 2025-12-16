@@ -123,9 +123,7 @@ class MetricsCollector:
         if labels:
             self._labels[full_name] = labels
 
-    def set(
-        self, name: str, value: float, labels: dict[str, str] | None = None
-    ) -> None:
+    def set(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
         """Set a gauge metric value.
 
         Args:

@@ -123,9 +123,7 @@ class PositionAggregator:
 
         return snapshot
 
-    def _aggregate_positions(
-        self, portfolio_data: dict[str, Any]
-    ) -> list[AggregatedPosition]:
+    def _aggregate_positions(self, portfolio_data: dict[str, Any]) -> list[AggregatedPosition]:
         """Aggregate positions by symbol.
 
         Args:
@@ -152,15 +150,12 @@ class PositionAggregator:
             strategies = list({p.get("strategy", "") for p in pos_list})
 
             # Weighted average price
-            total_value = sum(
-                abs(p.get("quantity", 0)) * p.get("avg_price", 0.0) for p in pos_list
-            )
+            total_value = sum(abs(p.get("quantity", 0)) * p.get("avg_price", 0.0) for p in pos_list)
             avg_price = total_value / gross_qty if gross_qty > 0 else 0.0
 
             # Total P&L
             total_pnl = sum(
-                p.get("realized_pnl", 0.0) + p.get("unrealized_pnl", 0.0)
-                for p in pos_list
+                p.get("realized_pnl", 0.0) + p.get("unrealized_pnl", 0.0) for p in pos_list
             )
 
             aggregated.append(

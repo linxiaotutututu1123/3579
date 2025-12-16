@@ -142,9 +142,7 @@ class PortfolioManager:
 
         return True
 
-    def _calculate_new_net(
-        self, symbol: str, quantity: int, strategy: str
-    ) -> int:
+    def _calculate_new_net(self, symbol: str, quantity: int, strategy: str) -> int:
         """Calculate new net position if update is applied.
 
         Args:
@@ -213,11 +211,7 @@ class PortfolioManager:
         Returns:
             List of positions
         """
-        return [
-            entry
-            for key, entry in self._positions.items()
-            if key[1] == strategy
-        ]
+        return [entry for key, entry in self._positions.items() if key[1] == strategy]
 
     def get_positions_by_symbol(self, symbol: str) -> list[PositionEntry]:
         """Get all positions for a symbol.
@@ -228,11 +222,7 @@ class PortfolioManager:
         Returns:
             List of positions
         """
-        return [
-            entry
-            for key, entry in self._positions.items()
-            if key[0] == symbol
-        ]
+        return [entry for key, entry in self._positions.items() if key[0] == symbol]
 
     def clear_position(self, symbol: str, strategy: str) -> None:
         """Clear position for a symbol and strategy.

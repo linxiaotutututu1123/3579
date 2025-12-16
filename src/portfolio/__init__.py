@@ -24,6 +24,7 @@ from src.portfolio.aggregator import PositionAggregator
 from src.portfolio.analytics import PortfolioAnalytics
 from src.portfolio.manager import PortfolioManager
 
+
 __all__ = [
     "PortfolioAnalytics",
     "PortfolioManager",

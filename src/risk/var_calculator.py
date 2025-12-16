@@ -68,9 +68,7 @@ class VaRCalculator:
         """
         self._default_confidence = default_confidence
 
-    def historical_var(
-        self, returns: list[float], confidence: float | None = None
-    ) -> VaRResult:
+    def historical_var(self, returns: list[float], confidence: float | None = None) -> VaRResult:
         """Calculate historical VaR.
 
         Uses empirical distribution of returns to estimate VaR.
@@ -113,9 +111,7 @@ class VaRCalculator:
             sample_size=n,
         )
 
-    def parametric_var(
-        self, returns: list[float], confidence: float | None = None
-    ) -> VaRResult:
+    def parametric_var(self, returns: list[float], confidence: float | None = None) -> VaRResult:
         """Calculate parametric (variance-covariance) VaR.
 
         Assumes normal distribution of returns.
@@ -232,9 +228,7 @@ class VaRCalculator:
             metadata={"simulations": simulations, "horizon": horizon},
         )
 
-    def expected_shortfall(
-        self, returns: list[float], confidence: float | None = None
-    ) -> float:
+    def expected_shortfall(self, returns: list[float], confidence: float | None = None) -> float:
         """Calculate Expected Shortfall (CVaR).
 
         Average of losses beyond VaR.
@@ -249,9 +243,7 @@ class VaRCalculator:
         result = self.historical_var(returns, confidence)
         return result.expected_shortfall
 
-    def _calculate_expected_shortfall(
-        self, sorted_returns: list[float], var_index: int
-    ) -> float:
+    def _calculate_expected_shortfall(self, sorted_returns: list[float], var_index: int) -> float:
         """Calculate expected shortfall from sorted returns.
 
         Args:
@@ -325,20 +317,21 @@ class VaRCalculator:
 
         if p < p_low:
             q = math.sqrt(-2 * math.log(p))
-            return (
-                ((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]
-            ) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
-        elif p <= p_high:
+            return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / (
+                (((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1
+            )
+        if p <= p_high:
             q = p - 0.5
             r = q * q
             return (
-                ((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]
-            ) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1)
-        else:
-            q = math.sqrt(-2 * math.log(1 - p))
-            return -(
-                ((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]
-            ) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
+                (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5])
+                * q
+                / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1)
+            )
+        q = math.sqrt(-2 * math.log(1 - p))
+        return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / (
+            (((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1
+        )
 
     def _norm_pdf(self, x: float) -> float:
         """Normal distribution probability density function.

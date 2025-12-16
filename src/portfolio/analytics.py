@@ -19,6 +19,7 @@ import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
+
 if TYPE_CHECKING:
     from src.portfolio.manager import PortfolioManager
 
@@ -98,9 +99,7 @@ class PortfolioAnalytics:
         """
         self._manager = manager
 
-    def compute_risk_metrics(
-        self, prices: dict[str, float] | None = None
-    ) -> RiskMetrics:
+    def compute_risk_metrics(self, prices: dict[str, float] | None = None) -> RiskMetrics:
         """Compute portfolio risk metrics.
 
         Args:
@@ -159,9 +158,7 @@ class PortfolioAnalytics:
             num_strategies=len(self._manager.strategies),
         )
 
-    def _calculate_hhi(
-        self, position_values: list[float], total: float
-    ) -> float:
+    def _calculate_hhi(self, position_values: list[float], total: float) -> float:
         """Calculate Herfindahl-Hirschman Index.
 
         Args:
@@ -203,9 +200,7 @@ class PortfolioAnalytics:
             by_symbol[pos.symbol] = by_symbol.get(pos.symbol, 0.0) + total_pnl
 
             # By strategy
-            by_strategy[pos.strategy] = (
-                by_strategy.get(pos.strategy, 0.0) + total_pnl
-            )
+            by_strategy[pos.strategy] = by_strategy.get(pos.strategy, 0.0) + total_pnl
 
         return PnLAttribution(
             by_symbol=by_symbol,
@@ -214,9 +209,7 @@ class PortfolioAnalytics:
             total_unrealized=total_unrealized,
         )
 
-    def compute_sharpe_ratio(
-        self, returns: list[float], risk_free_rate: float = 0.0
-    ) -> float:
+    def compute_sharpe_ratio(self, returns: list[float], risk_free_rate: float = 0.0) -> float:
         """Compute Sharpe ratio from returns.
 
         Args:
@@ -258,8 +251,7 @@ class PortfolioAnalytics:
         peak = equity_curve[0]
 
         for value in equity_curve:
-            if value > peak:
-                peak = value
+            peak = max(peak, value)
             if peak > 0:
                 dd = (peak - value) / peak
                 max_dd = max(max_dd, dd)
