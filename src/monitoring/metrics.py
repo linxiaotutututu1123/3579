@@ -1,14 +1,14 @@
-"""Metrics Collector (Military-Grade v3.0).
+"""指标收集器 (军规级 v3.0).
 
-Provides metrics collection and export functionality.
+提供指标收集和导出功能。
 
-Features:
-- Counter, Gauge, Histogram metrics
-- Labels support
-- Prometheus-compatible export
-- Time series storage
+功能特性:
+- 计数器、仪表盘、直方图指标
+- 标签支持
+- Prometheus 兼容导出
+- 时间序列存储
 
-Example:
+示例:
     collector = MetricsCollector()
     collector.increment("orders_total")
     collector.set("active_positions", 5)
