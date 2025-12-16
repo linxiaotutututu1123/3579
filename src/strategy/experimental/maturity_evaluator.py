@@ -756,7 +756,11 @@ class MaturityEvaluator:
         mean_s = sum(signals) / n
         mean_r = sum(returns) / n
 
-        cov = sum((s - mean_s) * (r - mean_r) for s, r in zip(signals, returns)) / n
+        cov_sum = sum(
+            (s - mean_s) * (r - mean_r)
+            for s, r in zip(signals, returns, strict=True)
+        )
+        cov = cov_sum / n
         std_s = math.sqrt(sum((s - mean_s) ** 2 for s in signals) / n)
         std_r = math.sqrt(sum((r - mean_r) ** 2 for r in returns) / n)
 
