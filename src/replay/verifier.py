@@ -99,7 +99,6 @@ class ReplayVerifier:
 
     def __init__(self) -> None:
         """Initialize replay verifier."""
-        pass
 
     def verify_decision_sequence(
         self,
@@ -164,10 +163,11 @@ class ReplayVerifier:
             et = event.get("event_type", "")
             # Match prefix (e.g., "decision" matches "decision", "decision_start")
             # or exact type for guardian events
-            if et.startswith(event_type) or et == event_type:
-                filtered.append(event)
-            # Also match guardian_* patterns
-            elif event_type == "guardian" and "guardian" in et:
+            if (
+                et.startswith(event_type)
+                or et == event_type
+                or (event_type == "guardian" and "guardian" in et)
+            ):
                 filtered.append(event)
         return filtered
 
@@ -338,11 +338,10 @@ class ReplayVerifier:
 
         if event_type == "decision":
             return self.verify_decision_sequence(events_a, events_b)
-        elif event_type == "guardian":
+        if event_type == "guardian":
             return self.verify_guardian_sequence(events_a, events_b)
-        else:
-            # Verify all events
-            return self._verify_sequences(events_a, events_b)
+        # Verify all events
+        return self._verify_sequences(events_a, events_b)
 
 
 def verify_replay_determinism(
@@ -363,11 +362,7 @@ def verify_replay_determinism(
     original_events = verifier.load_events_from_jsonl(original_path)
     replay_events = verifier.load_events_from_jsonl(replay_path)
 
-    decision_result = verifier.verify_decision_sequence(
-        original_events, replay_events
-    )
-    guardian_result = verifier.verify_guardian_sequence(
-        original_events, replay_events
-    )
+    decision_result = verifier.verify_decision_sequence(original_events, replay_events)
+    guardian_result = verifier.verify_guardian_sequence(original_events, replay_events)
 
     return decision_result, guardian_result

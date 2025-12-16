@@ -32,7 +32,7 @@ Example:
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -339,9 +339,7 @@ class KalmanBetaEstimator:
             "beta": self._beta,
             "variance": self._variance,
             "sample_count": self._sample_count,
-            "residual_mean": self._residual_sum / len(self._residuals)
-            if self._residuals
-            else 0.0,
+            "residual_mean": self._residual_sum / len(self._residuals) if self._residuals else 0.0,
         }
 
     def set_state(self, state: dict[str, Any]) -> None:

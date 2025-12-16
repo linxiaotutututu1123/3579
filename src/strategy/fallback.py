@@ -29,10 +29,12 @@ from __future__ import annotations
 import logging
 import time
 from collections.abc import Callable, Mapping, Sequence
-from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FuturesTimeoutError
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any
+
 
 if TYPE_CHECKING:
     from src.strategy.base import Strategy
@@ -271,9 +273,7 @@ class FallbackManager:
 
             # Try to execute with timeout and exception handling
             try:
-                portfolio = self._execute_with_timeout(
-                    strategy, state, current_strategy
-                )
+                portfolio = self._execute_with_timeout(strategy, state, current_strategy)
                 strategy_used = current_strategy
                 break  # Success, exit loop
 
@@ -292,9 +292,7 @@ class FallbackManager:
                     fallback_events.append(event)
                     self._emit_event(event)
                     self._increment_fallback_count(current_strategy)
-                    logger.warning(
-                        "Strategy %s timed out, trying fallback", current_strategy
-                    )
+                    logger.warning("Strategy %s timed out, trying fallback", current_strategy)
 
             except Exception as e:
                 # STRAT.FALLBACK.ON_EXCEPTION
@@ -368,9 +366,7 @@ class FallbackManager:
 
     def _increment_fallback_count(self, strategy_name: str) -> None:
         """Increment fallback count for a strategy."""
-        self._fallback_counts[strategy_name] = (
-            self._fallback_counts.get(strategy_name, 0) + 1
-        )
+        self._fallback_counts[strategy_name] = self._fallback_counts.get(strategy_name, 0) + 1
 
     def get_fallback_counts(self) -> dict[str, int]:
         """Get fallback counts by strategy.

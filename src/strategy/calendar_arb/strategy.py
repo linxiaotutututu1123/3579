@@ -498,9 +498,7 @@ class CalendarArbStrategy(Strategy):
 
         return half_life_days > self._config.max_half_life_days
 
-    def _check_cost_gate(
-        self, z_score: float, near_price: float, far_price: float
-    ) -> bool:
+    def _check_cost_gate(self, z_score: float, near_price: float, far_price: float) -> bool:
         """Check if entry cost exceeds edge.
 
         Scenario: ARB.COST.ENTRY_GATE
@@ -554,7 +552,7 @@ class CalendarArbStrategy(Strategy):
             if z_score > self._config.entry_z:
                 # Spread too wide -> short spread (sell near, buy far)
                 return ArbSignal.SHORT_SPREAD
-            elif z_score < -self._config.entry_z:
+            if z_score < -self._config.entry_z:
                 # Spread too narrow -> long spread (buy near, sell far)
                 return ArbSignal.LONG_SPREAD
 
@@ -571,10 +569,9 @@ class CalendarArbStrategy(Strategy):
         """
         if snapshot.signal == ArbSignal.LONG_SPREAD:
             return self._config.max_position_per_leg
-        elif snapshot.signal == ArbSignal.SHORT_SPREAD:
+        if snapshot.signal == ArbSignal.SHORT_SPREAD:
             return -self._config.max_position_per_leg
-        else:
-            return 0
+        return 0
 
     def _compute_target_far(self, snapshot: ArbSnapshot, beta: float) -> int:
         """Compute target far leg position (beta-weighted).
@@ -594,9 +591,7 @@ class CalendarArbStrategy(Strategy):
         far_target = -int(round(near_target * beta))
         return far_target
 
-    def _update_correlation_tracking(
-        self, near_price: float, far_price: float
-    ) -> None:
+    def _update_correlation_tracking(self, near_price: float, far_price: float) -> None:
         """Update correlation tracking buffers.
 
         Args:

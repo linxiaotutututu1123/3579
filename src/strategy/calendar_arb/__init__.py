@@ -62,6 +62,7 @@ from src.strategy.calendar_arb.strategy import (
     LegPair,
 )
 
+
 __all__ = [
     # Strategy
     "CalendarArbStrategy",
