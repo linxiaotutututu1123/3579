@@ -48,6 +48,7 @@ from src.execution.protection.throttle import ThrottleConfig, ThrottleGate
 
 
 __all__ = [
+    "PRODUCT_LIMIT_PCT",
     "FatFingerConfig",
     "FatFingerGate",
     "LimitPriceCheckOutput",
@@ -65,7 +66,6 @@ __all__ = [
     "MarginSnapshot",
     "MarginStatus",
     "OpenPositionCheckResult",
-    "PRODUCT_LIMIT_PCT",
     "ThrottleConfig",
     "ThrottleGate",
     "can_open",
