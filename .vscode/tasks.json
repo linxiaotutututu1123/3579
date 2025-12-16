@@ -42,6 +42,17 @@
 			"command": "clean",
 			"problemMatcher": [],
 			"detail": "CMake 模板 清理 任务"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: 清理重新生成",
+			"command": "cleanRebuild",
+			"targets": [
+				""
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "CMake 模板 清理重新生成 任务"
 		}
 	]
 }
