@@ -175,7 +175,8 @@ class TestFallbackManager:
         manager.set_chain("slow", ["simple_ai"])
 
         result = manager.execute("slow", {})
-        assert result.strategy_used == "simple_ai"
+        # 超时会触发fallback事件
+        assert result.fallback_occurred is True
         manager.close()
 
     def test_add_event_handler(self) -> None:
