@@ -342,7 +342,7 @@ class CtpApi:
         返回:
             是否重连成功
         """
-        logger.info("开始CTP重连，最大重试次数: %d", max_retries)
+        logger.info("开始CTP重连, 最大重试次数: %d", max_retries)
 
         self.disconnect()
 
@@ -353,10 +353,10 @@ class CtpApi:
                     return True
             except CtpConnectionError:
                 if attempt < max_retries:
-                    logger.warning("重连失败，%s秒后重试", retry_interval)
+                    logger.warning("重连失败, %s秒后重试", retry_interval)
                     time.sleep(retry_interval)
 
-        logger.error("CTP重连失败，已达到最大重试次数")
+        logger.error("CTP重连失败, 已达到最大重试次数")
         return False
 
     # =========================================================================
@@ -376,10 +376,10 @@ class CtpApi:
             CtpAuthError: 认证失败
         """
         if not self.is_connected:
-            raise CtpAuthError("未连接，无法认证")
+            raise CtpAuthError("未连接, 无法认证")
 
         if self.is_authenticated:
-            logger.warning("CTP已认证，跳过重复认证")
+            logger.warning("CTP已认证, 跳过重复认证")
             return True
 
         self._status = ConnectionStatus.AUTHENTICATING
@@ -412,7 +412,7 @@ class CtpApi:
             raise
         except Exception as e:
             self._status = ConnectionStatus.ERROR
-            logger.exception("CTP认证异常: %s", e)
+            logger.exception("CTP认证异常")
             raise CtpAuthError(f"认证失败: {e}") from e
 
     def login(self, timeout: float = 10.0) -> bool:
