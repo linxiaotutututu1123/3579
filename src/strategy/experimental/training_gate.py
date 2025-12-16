@@ -67,7 +67,7 @@ class ActivationDecision:
     reasons: list[str]
     report: MaturityReport | None
     requires_manual_approval: bool
-    timestamp: datetime = field(default_factory=datetime.now)
+    timestamp: datetime = field(default_factory=datetime.now)  # noqa: DTZ005
 
     def to_display(self) -> str:
         """生成显示文本.
