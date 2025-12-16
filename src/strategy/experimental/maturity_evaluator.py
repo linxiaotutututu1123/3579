@@ -675,7 +675,7 @@ class MaturityEvaluator:
 
         # 按状态分组计算平均收益
         regime_returns: dict[str, list[float]] = {}
-        for ret, regime in zip(daily_returns, market_regimes):
+        for ret, regime in zip(daily_returns, market_regimes, strict=True):
             if regime not in regime_returns:
                 regime_returns[regime] = []
             regime_returns[regime].append(ret)
