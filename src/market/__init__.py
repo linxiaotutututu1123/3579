@@ -57,6 +57,7 @@ from src.market.universe_selector import UniverseSelector, UniverseSnapshot
 
 
 __all__ = [
+    # 原有模块
     "BarBuilder",
     "BookTop",
     "InstrumentCache",
@@ -66,4 +67,19 @@ __all__ = [
     "Subscriber",
     "UniverseSelector",
     "UniverseSnapshot",
+    # Phase 7 新增: 六大交易所配置
+    "Exchange",
+    "ExchangeConfig",
+    "NightSessionEnd",
+    "TradingSession",
+    "get_all_exchanges",
+    "get_exchange_by_code",
+    "get_exchange_config",
+    "get_exchange_for_product",
+    "get_night_session_end",
+    "get_night_session_end_for_product",
+    "get_products_by_category",
+    "get_products_by_exchange",
+    "get_trading_sessions",
+    "has_night_session",
 ]
