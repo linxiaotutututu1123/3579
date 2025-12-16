@@ -235,7 +235,7 @@ class TrainingGate:
         返回:
             是否成功
         """
-        self._approval_records[strategy_id] = datetime.now()
+        self._approval_records[strategy_id] = datetime.now()  # noqa: DTZ005
         self._log_approval(strategy_id, approver)
         return True
 
@@ -304,7 +304,7 @@ class TrainingGate:
         self._activation_log.append({
             "type": "check",
             "strategy_id": strategy_id,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
             "allowed": decision.allowed,
             "maturity_pct": decision.maturity_pct,
             "status": decision.status.value,
@@ -320,7 +320,7 @@ class TrainingGate:
         self._activation_log.append({
             "type": "approval",
             "strategy_id": strategy_id,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
             "approver": approver,
         })
 
@@ -335,7 +335,7 @@ class TrainingGate:
         self._activation_log.append({
             "type": "rejection",
             "strategy_id": strategy_id,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
             "rejector": rejector,
             "reason": reason,
         })
@@ -351,7 +351,7 @@ class TrainingGate:
         self._activation_log.append({
             "type": "revocation",
             "strategy_id": strategy_id,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
             "revoker": revoker,
             "reason": reason,
         })
