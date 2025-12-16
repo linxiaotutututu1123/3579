@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from enum import Enum
-from typing import ClassVar
+from typing import Any, ClassVar
 
 
 class OrderState(Enum):
@@ -274,7 +274,7 @@ class OrderFSM:
         self._transition_count = 0
         self._filled_qty = 0
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """转换为字典."""
         return {
             "state": self._state.value,
