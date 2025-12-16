@@ -18,8 +18,6 @@ from __future__ import annotations
 
 from datetime import date, datetime, timedelta
 
-import pytest
-
 from src.guardian.triggers import TriggerManager, TriggerResult
 from src.guardian.triggers_china import (
     DeliveryApproachingTrigger,
