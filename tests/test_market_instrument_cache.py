@@ -230,3 +230,122 @@ class TestInstCachePersist:
             hc = cache2.get("hc2501")
             assert hc is not None
             assert hc.tick_size == 2.0
+
+
+class TestInstrumentCacheExtended:
+    """InstrumentCache 扩展测试 - 100% 覆盖率补充."""
+
+    def test_add_instrument(self) -> None:
+        """直接添加合约信息."""
+        from src.market.instrument_cache import InstrumentInfo
+
+        cache = InstrumentCache()
+        info = InstrumentInfo(
+            symbol="rb2501",
+            product="rb",
+            exchange="SHFE",
+            expire_date="20250115",
+            tick_size=1.0,
+            multiplier=10,
+        )
+        cache.add(info)
+
+        assert len(cache) == 1
+        assert cache.get("rb2501") is not None
+
+    def test_add_duplicate_does_not_duplicate_in_product(self) -> None:
+        """添加重复合约不会在品种列表中重复."""
+        from src.market.instrument_cache import InstrumentInfo
+
+        cache = InstrumentCache()
+        info = InstrumentInfo(
+            symbol="rb2501",
+            product="rb",
+            exchange="SHFE",
+            expire_date="20250115",
+            tick_size=1.0,
+            multiplier=10,
+        )
+        cache.add(info)
+        cache.add(info)  # Add again
+
+        rb_contracts = cache.get_by_product("rb")
+        assert len(rb_contracts) == 1, "Should not duplicate in product list"
+
+    def test_get_returns_none_for_missing(self) -> None:
+        """获取不存在的合约返回 None."""
+        cache = InstrumentCache()
+        assert cache.get("nonexistent") is None
+
+    def test_get_by_product_returns_empty_for_missing(self) -> None:
+        """获取不存在的品种返回空列表."""
+        cache = InstrumentCache()
+        assert cache.get_by_product("nonexistent") == []
+
+    def test_all_symbols(self) -> None:
+        """获取所有合约代码."""
+        from src.market.instrument_cache import InstrumentInfo
+
+        cache = InstrumentCache()
+        cache.add(InstrumentInfo(
+            symbol="rb2501", product="rb", exchange="SHFE",
+            expire_date="20250115", tick_size=1.0, multiplier=10,
+        ))
+        cache.add(InstrumentInfo(
+            symbol="hc2501", product="hc", exchange="SHFE",
+            expire_date="20250115", tick_size=2.0, multiplier=10,
+        ))
+
+        symbols = cache.all_symbols()
+        assert set(symbols) == {"rb2501", "hc2501"}
+
+    def test_all_products(self) -> None:
+        """获取所有品种代码."""
+        from src.market.instrument_cache import InstrumentInfo
+
+        cache = InstrumentCache()
+        cache.add(InstrumentInfo(
+            symbol="rb2501", product="rb", exchange="SHFE",
+            expire_date="20250115", tick_size=1.0, multiplier=10,
+        ))
+        cache.add(InstrumentInfo(
+            symbol="hc2501", product="hc", exchange="SHFE",
+            expire_date="20250115", tick_size=2.0, multiplier=10,
+        ))
+
+        products = cache.all_products()
+        assert set(products) == {"rb", "hc"}
+
+    def test_load_from_dict_format(self) -> None:
+        """从带 instruments 键的字典格式加载."""
+        import json
+        import tempfile
+        from pathlib import Path
+
+        data = {
+            "trading_day": "20250115",
+            "instruments": [
+                {
+                    "symbol": "rb2501",
+                    "product": "rb",
+                    "exchange": "SHFE",
+                    "expire_date": "20250115",
+                    "tick_size": 1.0,
+                    "multiplier": 10,
+                },
+            ],
+        }
+
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
+            json.dump(data, f)
+            filepath = Path(f.name)
+
+        try:
+            cache = InstrumentCache()
+            cache.load_from_file(filepath)
+            assert len(cache) == 1
+            assert cache.get("rb2501") is not None
+        finally:
+            filepath.unlink()
