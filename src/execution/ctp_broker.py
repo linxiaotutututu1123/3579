@@ -100,7 +100,7 @@ def validate_ctp_env(trade_mode: TradeMode) -> CtpConfig | None:
 def _lazy_import_ctp() -> Any:
     """Lazy import CTP SDK. Returns None if not available."""
     try:
-        import ctp  # noqa: F401
+        import ctp
 
         return ctp
     except ImportError:
