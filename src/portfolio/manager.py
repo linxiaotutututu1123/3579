@@ -74,27 +74,26 @@ class PortfolioConfig:
 
 
 class PortfolioManager:
-    """Portfolio-level position manager.
+    """投资组合级持仓管理器.
 
-    Manages positions across multiple strategies and symbols,
-    providing aggregation and limit enforcement.
+    管理多策略、多合约的持仓，提供聚合和限额控制功能。
     """
 
     def __init__(self, config: PortfolioConfig | None = None) -> None:
-        """Initialize portfolio manager.
+        """初始化投资组合管理器.
 
-        Args:
-            config: Portfolio configuration
+        参数:
+            config: 投资组合配置
         """
         self._config = config or PortfolioConfig()
 
-        # Positions by (symbol, strategy)
+        # 按 (合约, 策略) 索引的持仓
         self._positions: dict[tuple[str, str], PositionEntry] = {}
 
-        # Net positions by symbol
+        # 按合约索引的净持仓
         self._net_positions: dict[str, int] = {}
 
-        # P&L tracking
+        # 盈亏追踪
         self._total_realized_pnl: float = 0.0
         self._total_unrealized_pnl: float = 0.0
 
@@ -105,18 +104,18 @@ class PortfolioManager:
         strategy: str,
         avg_price: float = 0.0,
     ) -> bool:
-        """Update position for a symbol and strategy.
+        """更新持仓.
 
-        Args:
-            symbol: Contract symbol
-            quantity: New position quantity
-            strategy: Strategy name
-            avg_price: Average entry price
+        参数:
+            symbol: 合约代码
+            quantity: 新持仓数量
+            strategy: 策略名称
+            avg_price: 平均入场价格
 
-        Returns:
-            True if update successful, False if limit exceeded
+        返回:
+            更新成功返回 True，超过限额返回 False
         """
-        # Check position limits
+        # 检查持仓限额
         if self._config.enable_position_limits:
             new_net = self._calculate_new_net(symbol, quantity, strategy)
             if abs(new_net) > self._config.max_position_per_symbol:
