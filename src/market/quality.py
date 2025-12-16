@@ -46,7 +46,7 @@ class QualityEvent:
     issue: QualityIssue
     symbol: str
     ts: float
-    details: dict
+    details: dict[str, Any]
 
 
 class QualityChecker:
