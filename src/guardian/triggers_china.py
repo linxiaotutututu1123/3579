@@ -185,9 +185,7 @@ class LimitPriceTrigger(BaseTrigger):
                 continue
 
             # 计算涨跌停状态
-            status, distance_pct = self._calculate_status(
-                current, limit_up, limit_down
-            )
+            status, distance_pct = self._calculate_status(current, limit_up, limit_down)
 
             if status in (LimitPriceStatus.AT_LIMIT_UP, LimitPriceStatus.AT_LIMIT_DOWN):
                 at_limit_symbols.append(symbol)
@@ -560,9 +558,7 @@ class DeliveryApproachingTrigger(BaseTrigger):
                 continue
             if isinstance(delivery_date, str):
                 try:
-                    delivery_date = datetime.strptime(
-                        delivery_date, "%Y-%m-%d"
-                    ).date()
+                    delivery_date = datetime.strptime(delivery_date, "%Y-%m-%d").date()
                 except ValueError:
                     continue
             elif isinstance(delivery_date, datetime):
