@@ -200,7 +200,7 @@ class UniverseSelector:
                 days_to_expiry = (expiry - today).days
                 if days_to_expiry >= self._expiry_block_days:
                     valid.append(inst)
-            except ValueError:
+            except (ValueError, IndexError):
                 valid.append(inst)
         return valid
 
