@@ -168,9 +168,7 @@ class TestComplianceThrottle:
     def test_record_order(self, throttle: ComplianceThrottle) -> None:
         """测试记录订单."""
         now = datetime.now()
-        status = throttle.record_order(
-            OrderAction.SUBMIT, "rb2501", "order_001", now
-        )
+        status = throttle.record_order(OrderAction.SUBMIT, "rb2501", "order_001", now)
         assert status.count_5s == 1
         assert status.count_daily == 1
         assert status.level == ThrottleLevel.NORMAL
@@ -306,9 +304,7 @@ class TestProgrammaticTradingCompliance:
         """创建合规管理器实例."""
         return ProgrammaticTradingCompliance()
 
-    def test_initialization(
-        self, compliance: ProgrammaticTradingCompliance
-    ) -> None:
+    def test_initialization(self, compliance: ProgrammaticTradingCompliance) -> None:
         """测试初始化."""
         assert compliance.throttle is not None
 
@@ -317,14 +313,10 @@ class TestProgrammaticTradingCompliance:
         can, msg = compliance.can_submit("rb2501")
         assert can is True
 
-    def test_record_order(
-        self, compliance: ProgrammaticTradingCompliance
-    ) -> None:
+    def test_record_order(self, compliance: ProgrammaticTradingCompliance) -> None:
         """测试记录订单."""
         now = datetime.now()
-        status = compliance.record_order(
-            OrderAction.SUBMIT, "rb2501", "order_001", now
-        )
+        status = compliance.record_order(OrderAction.SUBMIT, "rb2501", "order_001", now)
         assert status.count_5s == 1
 
     def test_get_status(self, compliance: ProgrammaticTradingCompliance) -> None:
@@ -333,9 +325,7 @@ class TestProgrammaticTradingCompliance:
         assert isinstance(status, ThrottleStatus)
         assert status.level == ThrottleLevel.NORMAL
 
-    def test_generate_report(
-        self, compliance: ProgrammaticTradingCompliance
-    ) -> None:
+    def test_generate_report(self, compliance: ProgrammaticTradingCompliance) -> None:
         """测试生成报告."""
         now = datetime.now()
         compliance.record_order(OrderAction.SUBMIT, "rb2501", "order_001", now)
@@ -346,9 +336,7 @@ class TestProgrammaticTradingCompliance:
         assert report.total_orders == 1
         assert report.total_cancels == 1
 
-    def test_reset_daily(
-        self, compliance: ProgrammaticTradingCompliance
-    ) -> None:
+    def test_reset_daily(self, compliance: ProgrammaticTradingCompliance) -> None:
         """测试日重置."""
         now = datetime.now()
         compliance.record_order(OrderAction.SUBMIT, "rb2501", "order_001", now)

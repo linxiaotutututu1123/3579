@@ -388,9 +388,7 @@ class ComplianceThrottle:
         # 计算使用率
         usage_5s_pct = count_5s / self._config.limit_5s if self._config.limit_5s > 0 else 0
         usage_daily_pct = (
-            self._daily_count / self._config.limit_daily
-            if self._config.limit_daily > 0
-            else 0
+            self._daily_count / self._config.limit_daily if self._config.limit_daily > 0 else 0
         )
 
         # 判断高频

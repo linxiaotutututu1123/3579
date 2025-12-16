@@ -202,18 +202,14 @@ class TestDeliveryAwareCalendarArb:
         assert strategy.get_contract("rb2501") is not None
         assert strategy.get_main_contract("rb") == "rb2501"
 
-    def test_check_delivery_safe(
-        self, registered_strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_check_delivery_safe(self, registered_strategy: DeliveryAwareCalendarArb) -> None:
         """测试安全期检查."""
         # 距离交割50天
         current = date(2024, 11, 26)
         plan = registered_strategy.check_delivery("rb2501", current)
         assert plan is None  # 安全期无需移仓
 
-    def test_check_delivery_warning(
-        self, registered_strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_check_delivery_warning(self, registered_strategy: DeliveryAwareCalendarArb) -> None:
         """测试预警期检查."""
         # 距离交割8天
         current = date(2025, 1, 7)
@@ -222,9 +218,7 @@ class TestDeliveryAwareCalendarArb:
         assert plan.signal == RollSignal.PREPARE
         assert plan.status == DeliveryStatus.WARNING
 
-    def test_check_delivery_critical(
-        self, registered_strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_check_delivery_critical(self, registered_strategy: DeliveryAwareCalendarArb) -> None:
         """测试危险期检查."""
         # 距离交割3天
         current = date(2025, 1, 12)
@@ -243,9 +237,7 @@ class TestDeliveryAwareCalendarArb:
         assert plan is not None
         assert plan.signal == RollSignal.FORCE_CLOSE
 
-    def test_check_delivery_expired(
-        self, registered_strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_check_delivery_expired(self, registered_strategy: DeliveryAwareCalendarArb) -> None:
         """测试过期合约检查."""
         # 已过交割日
         current = date(2025, 1, 20)
@@ -254,9 +246,7 @@ class TestDeliveryAwareCalendarArb:
         assert plan.signal == RollSignal.FORCE_CLOSE
         assert plan.status == DeliveryStatus.EXPIRED
 
-    def test_check_delivery_unknown_contract(
-        self, strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_check_delivery_unknown_contract(self, strategy: DeliveryAwareCalendarArb) -> None:
         """测试未知合约检查."""
         plan = strategy.check_delivery("unknown")
         assert plan is None
@@ -307,16 +297,12 @@ class TestPositionTransfer:
         current = date(2024, 11, 1)  # 远期
         assert strategy.should_roll("rb2501", current) is False
 
-    def test_should_force_close_true(
-        self, strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_should_force_close_true(self, strategy: DeliveryAwareCalendarArb) -> None:
         """测试需要强制平仓."""
         current = date(2025, 1, 14)  # 1天
         assert strategy.should_force_close("rb2501", current) is True
 
-    def test_should_force_close_false(
-        self, strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_should_force_close_false(self, strategy: DeliveryAwareCalendarArb) -> None:
         """测试不需要强制平仓."""
         current = date(2025, 1, 7)  # 8天
         assert strategy.should_force_close("rb2501", current) is False
@@ -326,9 +312,7 @@ class TestPositionTransfer:
         target = strategy.get_roll_target("rb2501")
         assert target == "rb2505"
 
-    def test_get_roll_target_not_found(
-        self, strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_get_roll_target_not_found(self, strategy: DeliveryAwareCalendarArb) -> None:
         """测试获取移仓目标未找到."""
         target = strategy.get_roll_target("unknown")
         assert target is None
@@ -343,9 +327,7 @@ class TestPositionTransfer:
         assert len(snapshot.roll_plans) == 1
         assert snapshot.roll_plans[0].signal == RollSignal.PREPARE
 
-    def test_check_all_positions_with_warnings(
-        self, strategy: DeliveryAwareCalendarArb
-    ) -> None:
+    def test_check_all_positions_with_warnings(self, strategy: DeliveryAwareCalendarArb) -> None:
         """测试检查带预警的持仓."""
         current = date(2025, 1, 12)  # 3天
         snapshot = strategy.check_all_positions(["rb2501"], current)

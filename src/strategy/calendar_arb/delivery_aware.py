@@ -572,9 +572,7 @@ class MainContractDetector:
         """
         # 获取该品种所有合约
         contracts = [
-            (sym, data)
-            for sym, data in self._contract_data.items()
-            if data["product"] == product
+            (sym, data) for sym, data in self._contract_data.items() if data["product"] == product
         ]
 
         if not contracts:
