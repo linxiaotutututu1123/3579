@@ -415,17 +415,17 @@ class TestMarginTrigger:
     def test_level_changed(self) -> None:
         """测试等级变化检测."""
         trigger = MarginTrigger()
-        # 第一次检查
+        # 第一次检查 - 初始状态也是SAFE，所以等级没变
         state1 = {"equity": 100000.0, "margin_used": 40000.0}
         result1 = trigger.check(state1)
-        assert result1.details["level_changed"] is True  # 从初始SAFE变化
+        assert result1.details["level_changed"] is False  # 初始SAFE -> SAFE，无变化
 
-        # 等级变化
+        # 等级变化 SAFE -> WARNING
         state2 = {"equity": 100000.0, "margin_used": 75000.0}
         result2 = trigger.check(state2)
         assert result2.details["level_changed"] is True  # SAFE -> WARNING
 
-        # 等级不变
+        # 等级不变 WARNING -> WARNING
         state3 = {"equity": 100000.0, "margin_used": 80000.0}
         result3 = trigger.check(state3)
         assert result3.details["level_changed"] is False  # 还是WARNING
