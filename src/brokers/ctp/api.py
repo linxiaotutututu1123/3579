@@ -428,10 +428,10 @@ class CtpApi:
             CtpAuthError: 登录失败
         """
         if not self.is_authenticated:
-            raise CtpAuthError("未认证，无法登录")
+            raise CtpAuthError("未认证, 无法登录")
 
         if self.is_ready:
-            logger.warning("CTP已登录，跳过重复登录")
+            logger.warning("CTP已登录, 跳过重复登录")
             return True
 
         self._status = ConnectionStatus.LOGGING_IN
@@ -447,7 +447,7 @@ class CtpApi:
 
         except Exception as e:
             self._status = ConnectionStatus.ERROR
-            logger.exception("CTP登录异常: %s", e)
+            logger.exception("CTP登录异常")
             raise CtpAuthError(f"登录失败: {e}") from e
 
     # =========================================================================
@@ -467,7 +467,7 @@ class CtpApi:
             CtpSubscribeError: 订阅失败
         """
         if not self.is_connected:
-            raise CtpSubscribeError("未连接，无法订阅")
+            raise CtpSubscribeError("未连接, 无法订阅")
 
         results: dict[str, bool] = {}
         logger.info("正在订阅行情: %s", symbols)
