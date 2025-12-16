@@ -422,7 +422,8 @@ def check_environment_isolation(
             return False
         return True
 
-    return True
+    # 其他环境默认通过
+    return True  # pragma: no cover
 
 
 def get_current_environment() -> TradeEnvironment:
