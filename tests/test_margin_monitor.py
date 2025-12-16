@@ -14,7 +14,7 @@ V4 SPEC: §19 保证金制度
 - CHINA.MARGIN.WARNING_LEVEL: 保证金预警等级
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
 
@@ -152,7 +152,7 @@ class TestMarginConfig:
     def test_config_frozen(self) -> None:
         """测试配置不可变."""
         config = MarginConfig()
-        with pytest.raises(Exception):  # FrozenInstanceError
+        with pytest.raises(AttributeError):  # frozen dataclass raises AttributeError
             config.safe_threshold = 0.60  # type: ignore[misc]
 
 
@@ -268,7 +268,7 @@ class TestOpenPositionCheckResult:
         """测试可开仓结果."""
         result = OpenPositionCheckResult(
             can_open=True,
-            reason="保证金充足，可以开仓",
+            reason="保证金充足, 可以开仓",
             current_level=MarginLevel.SAFE,
             usage_ratio=0.30,
             available_margin=700_000.0,
@@ -282,7 +282,7 @@ class TestOpenPositionCheckResult:
         """测试不可开仓结果."""
         result = OpenPositionCheckResult(
             can_open=False,
-            reason="保证金处于危险等级，禁止开仓",
+            reason="保证金处于危险等级, 禁止开仓",
             current_level=MarginLevel.DANGER,
             usage_ratio=0.90,
             available_margin=100_000.0,
