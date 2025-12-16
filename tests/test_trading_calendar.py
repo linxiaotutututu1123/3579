@@ -9,7 +9,7 @@
 - M15: 夜盘跨日处理
 """
 
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime
 
 import pytest
 
@@ -166,10 +166,9 @@ class TestNightSessionRules:
 
     def test_has_night_session_before_holiday(self, calendar: ChinaTradingCalendar) -> None:
         """测试节假日前一天没有夜盘."""
-        # 2024-12-31 是元旦前一天（假设是工作日）
-        # 2025-01-27 是春节前最后一个交易日
-        # 这个测试需要根据实际数据调整
-        pass
+        # 2024-12-31 是周二，下一天2025-01-01是元旦假期
+        # 所以2024-12-31没有夜盘
+        assert calendar.has_night_session_on_day(date(2024, 12, 31)) is False
 
     def test_has_night_session_non_trading_day(self, calendar: ChinaTradingCalendar) -> None:
         """测试非交易日没有夜盘."""

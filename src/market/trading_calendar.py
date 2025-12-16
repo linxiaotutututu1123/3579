@@ -460,9 +460,7 @@ class ChinaTradingCalendar:
             # 09:30-11:30, 13:00-15:00
             if time(9, 30) <= t < time(11, 30):
                 return True
-            if time(13, 0) <= t < time(15, 0):
-                return True
-            return False
+            return time(13, 0) <= t < time(15, 0)
 
         # 标准日盘时段
         # 09:00-10:15
@@ -472,10 +470,7 @@ class ChinaTradingCalendar:
         if self.MORNING_BREAK_END <= t < self.LUNCH_START:
             return True
         # 13:30-15:00
-        if self.LUNCH_END <= t < self.DAY_SESSION_END:
-            return True
-
-        return False
+        return self.LUNCH_END <= t < self.DAY_SESSION_END
 
     def get_trading_period(
         self,
