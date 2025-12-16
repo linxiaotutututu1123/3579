@@ -35,6 +35,13 @@
 			"command": "configure",
 			"problemMatcher": [],
 			"detail": "CMake 模板 配置 任务"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: 清理",
+			"command": "clean",
+			"problemMatcher": [],
+			"detail": "CMake 模板 清理 任务"
 		}
 	]
 }
