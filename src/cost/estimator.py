@@ -21,6 +21,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from src.market.instrument_cache import InstrumentCache
 
@@ -176,7 +177,7 @@ class CostEstimator:
 
         # 冲击 = coefficient * sqrt(qty/adv) * tick_size * multiplier * qty
         participation = qty / adv
-        impact_ticks = self.IMPACT_COEFFICIENT * (participation ** 0.5) * 100  # 放大为 tick 数
+        impact_ticks = self.IMPACT_COEFFICIENT * (participation**0.5) * 100  # 放大为 tick 数
         impact = impact_ticks * tick_size * multiplier * qty
 
         return impact

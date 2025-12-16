@@ -80,7 +80,7 @@ class GuardianEvent:
         mode_to: str,
         trigger: str,
         details: dict[str, Any] | None = None,
-    ) -> "GuardianEvent":
+    ) -> GuardianEvent:
         """创建模式切换事件.
 
         V2 Scenario: STRAT.DEGRADE.MODE_TRANSITION_AUDIT
@@ -116,7 +116,7 @@ class GuardianEvent:
         exec_id: str,
         trigger: str,
         details: dict[str, Any] | None = None,
-    ) -> "GuardianEvent":
+    ) -> GuardianEvent:
         """创建触发器检测事件.
 
         Args:
@@ -146,7 +146,7 @@ class GuardianEvent:
         exec_id: str,
         action: str,
         details: dict[str, Any] | None = None,
-    ) -> "GuardianEvent":
+    ) -> GuardianEvent:
         """创建动作执行事件.
 
         Args:

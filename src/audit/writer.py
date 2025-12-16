@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import json
 import os
-import tempfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -176,7 +175,7 @@ class AuditWriter:
         """关闭写入器."""
         self._closed = True
 
-    def __enter__(self) -> "AuditWriter":
+    def __enter__(self) -> AuditWriter:
         """上下文管理器入口."""
         return self
 

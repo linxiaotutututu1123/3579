@@ -85,7 +85,7 @@ class DecisionEvent:
         confidence: float | None = None,
         signals: dict[str, Any] | None = None,
         metadata: dict[str, Any] | None = None,
-    ) -> "DecisionEvent":
+    ) -> DecisionEvent:
         """创建决策事件.
 
         自动计算 feature_hash。

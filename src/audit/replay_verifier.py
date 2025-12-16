@@ -16,7 +16,6 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 
@@ -59,7 +58,6 @@ class ReplayVerifier:
 
     def __init__(self) -> None:
         """初始化验证器."""
-        pass
 
     def compute_hash(self, data: Any) -> str:
         """计算数据哈希.
@@ -198,6 +196,7 @@ class ReplayVerifier:
         Returns:
             验证结果
         """
+
         # 提取决策关键字段
         def extract_decision_key(d: dict[str, Any]) -> dict[str, Any]:
             return {
@@ -232,6 +231,7 @@ class ReplayVerifier:
         Returns:
             验证结果
         """
+
         # 提取 Guardian 关键字段
         def extract_guardian_key(e: dict[str, Any]) -> dict[str, Any]:
             return {
