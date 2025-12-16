@@ -22,19 +22,16 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from pathlib import Path
 from typing import ClassVar
 
 from src.strategy.experimental.maturity_evaluator import (
     MaturityEvaluator,
-    MaturityLevel,
     MaturityReport,
     TrainingHistory,
 )
@@ -146,7 +143,7 @@ class TrainingProgress:
         # 时间信息
         lines.append("  📅 时间统计:")
         lines.append(f"     已训练: {self.days_elapsed} 天")
-        lines.append(f"     最低要求: 90 天")
+        lines.append("     最低要求: 90 天")
 
         if self.days_remaining > 0:
             lines.append(f"     预估剩余: {self.days_remaining} 天")

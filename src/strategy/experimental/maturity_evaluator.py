@@ -24,11 +24,10 @@ CLAUDE上校的成熟度评估算法:
 
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
 from typing import ClassVar
 
