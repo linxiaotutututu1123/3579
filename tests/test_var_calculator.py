@@ -1,6 +1,5 @@
 """VaR计算器测试 (军规级 v4.0)."""
 
-import pytest
 
 from src.risk.var_calculator import VaRCalculator, VaRResult
 

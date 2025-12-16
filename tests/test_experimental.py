@@ -9,7 +9,6 @@ import pytest
 from src.strategy.experimental.maturity_evaluator import (
     MaturityEvaluator,
     MaturityLevel,
-    MaturityReport,
     MaturityScore,
     TrainingHistory,
     TrainingRecord,
@@ -372,17 +371,9 @@ class TestExperimentalModuleImports:
     def test_import_from_experimental(self) -> None:
         """测试从experimental模块导入."""
         from src.strategy.experimental import (
-            ActivationDecision,
             MaturityEvaluator,
-            MaturityLevel,
-            MaturityReport,
-            MaturityScore,
             TrainingGate,
-            TrainingGateConfig,
             TrainingMonitor,
-            TrainingProgress,
-            TrainingSession,
-            TrainingStatus,
         )
 
         assert MaturityEvaluator is not None

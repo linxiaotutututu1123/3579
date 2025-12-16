@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.monitoring import HealthChecker, HealthStatus, MetricValue, MetricsCollector
+from src.monitoring import HealthChecker, HealthStatus, MetricsCollector, MetricValue
 from src.monitoring.health import HealthState
 from src.monitoring.metrics import MetricType
 
