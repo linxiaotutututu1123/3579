@@ -92,10 +92,10 @@ class ReplayVerifier:
     """
 
     # Fields to exclude from comparison (timestamps may vary slightly)
-    EXCLUDE_FIELDS = {"ts", "timestamp", "received_at"}
+    EXCLUDE_FIELDS: ClassVar[set[str]] = {"ts", "timestamp", "received_at"}
 
     # Maximum timestamp difference allowed (ms)
-    MAX_TS_DIFF_MS = 1.0
+    MAX_TS_DIFF_MS: ClassVar[float] = 1.0
 
     def __init__(self) -> None:
         """Initialize replay verifier."""
