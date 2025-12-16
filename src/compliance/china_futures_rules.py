@@ -359,7 +359,7 @@ class ChinaFuturesComplianceChecker:
                         severity=SeverityLevel.SEVERE,
                         message=(
                             f"开仓后持仓 {new_position} 超过限额 {max_allowed} "
-                            f"(交易所限额 {context.position_limit} × "
+                            f"(交易所限额 {context.position_limit} x "
                             f"{self._config.position_limit_ratio:.0%})"
                         ),
                         rule_id="CHINA.COMPLIANCE.POSITION_LIMIT",

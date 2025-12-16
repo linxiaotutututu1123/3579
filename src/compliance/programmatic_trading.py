@@ -324,9 +324,7 @@ class ComplianceThrottle:
         per_sec = self.get_count_per_sec(timestamp)
         if per_sec >= self._config.high_freq_per_sec:
             return True
-        if self._daily_count >= self._config.limit_daily:
-            return True
-        return False
+        return self._daily_count >= self._config.limit_daily
 
     def reset(self) -> None:
         """重置节流器."""
@@ -476,11 +474,13 @@ class ComplianceThrottle:
         返回:
             状态消息
         """
+        lim_5s = self._config.limit_5s
+        lim_d = self._config.limit_daily
         messages = {
-            ThrottleLevel.NORMAL: f"正常, 5秒:{count_5s}/{self._config.limit_5s}, 日:{count_daily}/{self._config.limit_daily}",
-            ThrottleLevel.WARNING: f"预警! 5秒:{count_5s}/{self._config.limit_5s}, 日:{count_daily}/{self._config.limit_daily}",
-            ThrottleLevel.CRITICAL: f"临界! 5秒:{count_5s}/{self._config.limit_5s}, 日:{count_daily}/{self._config.limit_daily}",
-            ThrottleLevel.EXCEEDED: f"超限! 5秒:{count_5s}/{self._config.limit_5s}, 日:{count_daily}/{self._config.limit_daily}",
+            ThrottleLevel.NORMAL: f"正常, 5秒:{count_5s}/{lim_5s}, 日:{count_daily}/{lim_d}",
+            ThrottleLevel.WARNING: f"预警! 5秒:{count_5s}/{lim_5s}, 日:{count_daily}/{lim_d}",
+            ThrottleLevel.CRITICAL: f"临界! 5秒:{count_5s}/{lim_5s}, 日:{count_daily}/{lim_d}",
+            ThrottleLevel.EXCEEDED: f"超限! 5秒:{count_5s}/{lim_5s}, 日:{count_daily}/{lim_d}",
         }
         return messages.get(level, "未知状态")
 
