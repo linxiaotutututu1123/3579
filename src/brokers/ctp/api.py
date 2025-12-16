@@ -25,7 +25,8 @@ import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 from src.brokers.ctp.config import CtpConnectionConfig, load_ctp_config
 
@@ -276,7 +277,7 @@ class CtpApi:
             CtpConnectionError: 连接失败
         """
         if self.is_connected:
-            logger.warning("CTP已连接，跳过重复连接")
+            logger.warning("CTP已连接, 跳过重复连接")
             return True
 
         self._status = ConnectionStatus.CONNECTING
@@ -288,7 +289,7 @@ class CtpApi:
 
             if self._ctp_sdk is None:
                 # SDK不可用，模拟连接成功
-                logger.warning("CTP SDK不可用，使用模拟模式")
+                logger.warning("CTP SDK不可用, 使用模拟模式")
                 self._status = ConnectionStatus.CONNECTED
                 self._connected_at = datetime.now(UTC)
                 return True
@@ -313,7 +314,7 @@ class CtpApi:
     def disconnect(self) -> None:
         """断开CTP连接."""
         if not self.is_connected:
-            logger.warning("CTP未连接，跳过断开操作")
+            logger.warning("CTP未连接, 跳过断开操作")
             return
 
         logger.info("正在断开CTP连接")

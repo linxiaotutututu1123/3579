@@ -323,7 +323,7 @@ def load_app_config(
         try:
             environment = Environment(env_str)
         except ValueError:
-            logger.warning("无效的V4PRO_ENV: %s，默认使用DEV", env_str)
+            logger.warning("无效的V4PRO_ENV: %s, 默认使用DEV", env_str)
             environment = Environment.DEV
     elif isinstance(environment, str):
         environment = Environment(environment.upper())
