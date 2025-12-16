@@ -156,6 +156,9 @@ class UniverseSelector:
                 else:
                     # 切换主力，更新冷却时间
                     self._last_roll_ts[product] = now_ts
+            elif current_dominant is None:
+                # 首次设置主力，初始化冷却时间戳（防止快速切换）
+                self._last_roll_ts[product] = now_ts
 
             dominant[product] = candidate_dominant
             subscribe_set.add(candidate_dominant)
