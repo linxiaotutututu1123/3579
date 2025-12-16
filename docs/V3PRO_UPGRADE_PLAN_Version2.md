@@ -2582,6 +2582,102 @@ class VaRConfig:
 
 ---
 
+## 28. CI/CD 集成说明 <!-- 🆕 NEW 2025-12-16 -->
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ✅ [NEW] 第28章新增
+     ├─ 目的：说明 GitHub Actions CI/CD 配置
+     ├─ 内容：工作流程、触发条件、门禁检查
+     └─ 状态：2025-12-16 新增
+═══════════════════════════════════════════════════════════════════════════ -->
+
+### 28.1 GitHub Actions 工作流
+
+**配置文件**: `.github/workflows/ci.yml`
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main, feat/*]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install ruff
+      - run: ruff check .
+      - run: ruff format --check .
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e ".[dev]"
+      - run: mypy .
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e ".[dev]"
+      - run: pytest tests/ --cov=src --cov-report=xml
+      - uses: codecov/codecov-action@v4
+
+  policy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e ".[dev]"
+      - run: python scripts/validate_policy.py --all
+```
+
+### 28.2 门禁检查顺序
+
+| 步骤 | 检查项 | 退出码 | 说明 |
+|------|--------|--------|------|
+| 1 | Lint (ruff check) | 2 | 代码风格 |
+| 2 | Format (ruff format) | 2 | 代码格式 |
+| 3 | Type Check (mypy) | 3 | 类型检查 |
+| 4 | Test (pytest) | 4 | 单元测试 |
+| 5 | Coverage | 5 | 覆盖率 |
+| 6 | Policy | 12 | 场景验证 |
+
+### 28.3 本地执行命令
+
+```powershell
+# Windows PowerShell
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m ruff format --check .
+.venv/Scripts/python.exe -m mypy .
+.venv/Scripts/python.exe -m pytest tests/ -q
+.venv/Scripts/python.exe scripts/validate_policy.py --all
+```
+
+### 28.4 CI 状态徽章
+
+```markdown
+[![CI](https://github.com/linxiaotutututu1123/3579/actions/workflows/ci.yml/badge.svg)](https://github.com/linxiaotutututu1123/3579/actions/workflows/ci.yml)
+```
+
+---
+
 ## 附录 D：配置规范补充
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
