@@ -58,13 +58,13 @@ class PositionEntry:
 
 @dataclass
 class PortfolioConfig:
-    """Portfolio configuration.
+    """投资组合配置.
 
-    Attributes:
-        max_position_per_symbol: Maximum position per symbol
-        max_total_position: Maximum total portfolio position
-        max_strategies: Maximum number of strategies
-        enable_position_limits: Enable position limit enforcement
+    属性:
+        max_position_per_symbol: 每个合约最大持仓
+        max_total_position: 总持仓最大值
+        max_strategies: 最大策略数量
+        enable_position_limits: 是否启用持仓限额控制
     """
 
     max_position_per_symbol: int = 100
