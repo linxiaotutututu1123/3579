@@ -33,6 +33,22 @@ Required Scenarios (13+ 条):
 from __future__ import annotations
 
 from src.market.bar_builder import BarBuilder
+from src.market.exchange_config import (
+    Exchange,
+    ExchangeConfig,
+    NightSessionEnd,
+    TradingSession,
+    get_all_exchanges,
+    get_exchange_by_code,
+    get_exchange_config,
+    get_exchange_for_product,
+    get_night_session_end,
+    get_night_session_end_for_product,
+    get_products_by_category,
+    get_products_by_exchange,
+    get_trading_sessions,
+    has_night_session,
+)
 from src.market.instrument_cache import InstrumentCache, InstrumentInfo
 from src.market.quality import QualityChecker
 from src.market.quote_cache import BookTop, QuoteCache
