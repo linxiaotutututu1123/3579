@@ -91,4 +91,12 @@ __all__ = [
     "get_products_by_exchange",
     "get_trading_sessions",
     "has_night_session",
+    # Phase 7 新增: 夜盘交易日历
+    "ChinaTradingCalendar",
+    "TradingDayInfo",
+    "TradingPeriod",
+    "get_default_calendar",
+    "get_trading_day",
+    "is_trading_day",
+    "is_trading_time",
 ]
