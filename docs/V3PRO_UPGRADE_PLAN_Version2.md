@@ -13,7 +13,7 @@
 
 > **版本**：v1.1
 > **日期**：2025-12-16
-> **状态**：执行中 (Phase 0-4 ✅ 完成, P0+P1+P2 升级建议 ✅ 完成)
+> **状态**：执行中 (Phase 0-4 ✅ 完成, P0+P1+P2 升级建议 ✅ 完成, 中国期货市场改进报告 ✅ 完成)
 > **基线分支**：`feat/mode2-trading-pipeline`
 > **基线 Commit**：`942efb289984244065279427f537d699e0d2904a`
 > **规格来源**：`V2_SPEC_EXPANDED_NOT_RUSHING_LAUNCH_Version2.md`
@@ -29,6 +29,21 @@
      ├─ 中文注释合规: ✅ 全部模块 docstring 已转换为中文
      ├─ 门禁检查: ✅ Ruff + Mypy + Pytest 全部通过
      └─ 源文件数: 113 files, 765+ tests
+
+     ✅ [2025-12-16] 中国期货市场军规级改进报告完成
+     ├─ 报告文件: docs/CHINA_FUTURES_UPGRADE_REPORT.md
+     ├─ VaR 模块改进设计:
+     │   ├─ 极值理论 (EVT) POT 方法
+     │   ├─ 半参数模型 (核密度+GPD)
+     │   ├─ 涨跌停板截断效应修正
+     │   └─ 流动性调整 VaR (LVaR)
+     ├─ 全项目模块改进清单: 6 模块, 18 新场景
+     ├─ 中国期货市场特化:
+     │   ├─ 涨跌停板字段 (upper_limit_pct/lower_limit_pct)
+     │   ├─ 交易所差异化费率 (SHFE/CZCE/DCE/CFFEX/GFEX/INE)
+     │   ├─ 交易时段字段 (日盘/夜盘)
+     │   └─ 保证金率字段 (margin_rate/spec_margin_rate)
+     └─ 预计工时: 40h (P0-P4 五阶段)
 ═══════════════════════════════════════════════════════════════════════════ -->
 
 ---
