@@ -135,3 +135,101 @@ class TestMktSubscriberDiffUpdate:
         assert diff.add == set()
         assert diff.remove == {"rb2505", "hc2501"}
         assert subscriber.current_subscriptions == {"rb2501"}
+
+
+class TestSubscriberExtended:
+    """Subscriber 扩展测试 - 100% 覆盖率补充."""
+
+    def test_register_callback_new_symbol(self) -> None:
+        """注册新合约的回调."""
+        subscriber = Subscriber()
+        received: list[tuple[str, dict]] = []
+
+        def callback(symbol: str, data: dict) -> None:
+            received.append((symbol, data))
+
+        subscriber.register_callback("rb2501", callback)
+        subscriber.dispatch("rb2501", {"price": 4000})
+
+        assert len(received) == 1
+        assert received[0] == ("rb2501", {"price": 4000})
+
+    def test_register_multiple_callbacks(self) -> None:
+        """同一合约注册多个回调."""
+        subscriber = Subscriber()
+        received1: list[str] = []
+        received2: list[str] = []
+
+        subscriber.register_callback("rb2501", lambda s, d: received1.append(s))
+        subscriber.register_callback("rb2501", lambda s, d: received2.append(s))
+
+        subscriber.dispatch("rb2501", {})
+
+        assert len(received1) == 1
+        assert len(received2) == 1
+
+    def test_dispatch_no_callbacks(self) -> None:
+        """分发到无回调的合约."""
+        subscriber = Subscriber()
+        # Should not raise
+        subscriber.dispatch("rb2501", {"price": 4000})
+
+    def test_clear_with_unsubscribe_callback(self) -> None:
+        """清空时调用取消订阅回调."""
+        removed: set[str] = set()
+
+        def on_unsubscribe(symbols: set[str]) -> None:
+            removed.update(symbols)
+
+        subscriber = Subscriber(on_unsubscribe=on_unsubscribe)
+        subscriber.update({"rb2501", "rb2505"})
+        subscriber.clear()
+
+        assert removed == {"rb2501", "rb2505"}
+        assert len(subscriber) == 0
+
+    def test_clear_without_callback(self) -> None:
+        """清空时无回调."""
+        subscriber = Subscriber()
+        subscriber.update({"rb2501", "rb2505"})
+        subscriber.clear()
+
+        assert len(subscriber) == 0
+
+    def test_clear_empty(self) -> None:
+        """清空空订阅."""
+        removed: set[str] = set()
+
+        def on_unsubscribe(symbols: set[str]) -> None:
+            removed.update(symbols)
+
+        subscriber = Subscriber(on_unsubscribe=on_unsubscribe)
+        subscriber.clear()
+
+        # Should not call callback when empty
+        assert removed == set()
+
+    def test_len(self) -> None:
+        """返回订阅数量."""
+        subscriber = Subscriber()
+        assert len(subscriber) == 0
+
+        subscriber.update({"rb2501"})
+        assert len(subscriber) == 1
+
+        subscriber.update({"rb2501", "rb2505", "hc2501"})
+        assert len(subscriber) == 3
+
+    def test_unsubscribe_clears_callbacks(self) -> None:
+        """取消订阅时清除回调."""
+        subscriber = Subscriber()
+        received: list[str] = []
+
+        subscriber.register_callback("rb2501", lambda s, d: received.append(s))
+        subscriber.update({"rb2501"})
+
+        # Unsubscribe should clear callback
+        subscriber.update(set())
+        subscriber.dispatch("rb2501", {})
+
+        assert len(received) == 0, "Callback should be cleared after unsubscribe"
