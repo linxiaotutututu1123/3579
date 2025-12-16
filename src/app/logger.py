@@ -33,9 +33,7 @@ from typing import Any, TextIO
 # =============================================================================
 
 # 默认日志格式
-DEFAULT_LOG_FORMAT = (
-    "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
-)
+DEFAULT_LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
 
 # 详细日志格式 (包含文件和行号)
 VERBOSE_LOG_FORMAT = (
@@ -87,9 +85,9 @@ class LogLevel(str, Enum):
 class LogFormat(str, Enum):
     """日志格式枚举."""
 
-    SIMPLE = "simple"     # 简单格式
-    VERBOSE = "verbose"   # 详细格式
-    JSON = "json"         # JSON格式
+    SIMPLE = "simple"  # 简单格式
+    VERBOSE = "verbose"  # 详细格式
+    JSON = "json"  # JSON格式
 
 
 # =============================================================================
@@ -186,11 +184,28 @@ class JsonFormatter(logging.Formatter):
         extra: dict[str, Any] = {}
         for key in dir(record):
             if not key.startswith("_") and key not in (
-                "args", "created", "exc_info", "exc_text", "filename",
-                "funcName", "levelname", "levelno", "lineno", "message",
-                "module", "msecs", "msg", "name", "pathname", "process",
-                "processName", "relativeCreated", "stack_info", "thread",
-                "threadName", "getMessage",
+                "args",
+                "created",
+                "exc_info",
+                "exc_text",
+                "filename",
+                "funcName",
+                "levelname",
+                "levelno",
+                "lineno",
+                "message",
+                "module",
+                "msecs",
+                "msg",
+                "name",
+                "pathname",
+                "process",
+                "processName",
+                "relativeCreated",
+                "stack_info",
+                "thread",
+                "threadName",
+                "getMessage",
             ):
                 value = getattr(record, key)
                 if not callable(value):
@@ -208,6 +223,7 @@ class JsonFormatter(logging.Formatter):
 
         # 构建JSON
         import json
+
         extra_str = json.dumps(extra, ensure_ascii=False, default=str)
 
         return JSON_LOG_TEMPLATE.format(

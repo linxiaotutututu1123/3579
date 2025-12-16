@@ -22,13 +22,14 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 from src.brokers.ctp.config import CtpConnectionConfig, load_ctp_config
+
 
 if TYPE_CHECKING:
     pass
