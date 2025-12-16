@@ -14,7 +14,8 @@
       "Bash(ls:*)",
       "Bash(.venv/Scripts/python.exe scripts/validate_policy.py:*)",
       "Bash(.venv/Scripts/python.exe:*)",
-      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -m pytest:*)"
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -m pytest:*)",
+      "Bash(cat:*)"
     ]
   }
 }
