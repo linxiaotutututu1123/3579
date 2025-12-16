@@ -287,14 +287,26 @@ class TestInstrumentCacheExtended:
         from src.market.instrument_cache import InstrumentInfo
 
         cache = InstrumentCache()
-        cache.add(InstrumentInfo(
-            symbol="rb2501", product="rb", exchange="SHFE",
-            expire_date="20250115", tick_size=1.0, multiplier=10,
-        ))
-        cache.add(InstrumentInfo(
-            symbol="hc2501", product="hc", exchange="SHFE",
-            expire_date="20250115", tick_size=2.0, multiplier=10,
-        ))
+        cache.add(
+            InstrumentInfo(
+                symbol="rb2501",
+                product="rb",
+                exchange="SHFE",
+                expire_date="20250115",
+                tick_size=1.0,
+                multiplier=10,
+            )
+        )
+        cache.add(
+            InstrumentInfo(
+                symbol="hc2501",
+                product="hc",
+                exchange="SHFE",
+                expire_date="20250115",
+                tick_size=2.0,
+                multiplier=10,
+            )
+        )
 
         symbols = cache.all_symbols()
         assert set(symbols) == {"rb2501", "hc2501"}
@@ -304,14 +316,26 @@ class TestInstrumentCacheExtended:
         from src.market.instrument_cache import InstrumentInfo
 
         cache = InstrumentCache()
-        cache.add(InstrumentInfo(
-            symbol="rb2501", product="rb", exchange="SHFE",
-            expire_date="20250115", tick_size=1.0, multiplier=10,
-        ))
-        cache.add(InstrumentInfo(
-            symbol="hc2501", product="hc", exchange="SHFE",
-            expire_date="20250115", tick_size=2.0, multiplier=10,
-        ))
+        cache.add(
+            InstrumentInfo(
+                symbol="rb2501",
+                product="rb",
+                exchange="SHFE",
+                expire_date="20250115",
+                tick_size=1.0,
+                multiplier=10,
+            )
+        )
+        cache.add(
+            InstrumentInfo(
+                symbol="hc2501",
+                product="hc",
+                exchange="SHFE",
+                expire_date="20250115",
+                tick_size=2.0,
+                multiplier=10,
+            )
+        )
 
         products = cache.all_products()
         assert set(products) == {"rb", "hc"}

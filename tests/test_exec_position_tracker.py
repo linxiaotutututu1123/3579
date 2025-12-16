@@ -9,7 +9,6 @@ V2 Scenarios:
 - POS.RECONCILE.FAIL_ACTION
 """
 
-
 from src.execution.auto.position_tracker import (
     Position,
     PositionTracker,

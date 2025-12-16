@@ -10,7 +10,6 @@ V2 Scenarios:
 - PAIR.BREAKER.STOP_Z
 """
 
-
 from src.execution.pair.leg_manager import (
     Leg,
     LegManager,
@@ -115,9 +114,7 @@ class TestLegManager:
     def test_update_leg(self) -> None:
         """Test updating leg fill."""
         mgr = LegManager()
-        near_leg, far_leg = mgr.create_pair(
-            "pair1", "IF2401", "IF2402", "BUY", "SELL", 10
-        )
+        near_leg, far_leg = mgr.create_pair("pair1", "IF2401", "IF2402", "BUY", "SELL", 10)
 
         assert mgr.update_leg(near_leg.leg_id, qty=5, price=4000.0)
         updated = mgr.get_leg(near_leg.leg_id)
@@ -130,9 +127,7 @@ class TestLegManagerImbalance:
     def test_check_imbalance_balanced(self) -> None:
         """Test imbalance detection when balanced."""
         mgr = LegManager(imbalance_threshold=10)
-        near_leg, far_leg = mgr.create_pair(
-            "pair1", "IF2401", "IF2402", "BUY", "SELL", 20
-        )
+        near_leg, far_leg = mgr.create_pair("pair1", "IF2401", "IF2402", "BUY", "SELL", 20)
 
         # Both legs filled equally
         mgr.update_leg(near_leg.leg_id, qty=10, price=4000.0)
@@ -146,9 +141,7 @@ class TestLegManagerImbalance:
     def test_check_imbalance_detected(self) -> None:
         """Test imbalance detection when imbalanced."""
         mgr = LegManager(imbalance_threshold=5)
-        near_leg, far_leg = mgr.create_pair(
-            "pair1", "IF2401", "IF2402", "BUY", "SELL", 20
-        )
+        near_leg, far_leg = mgr.create_pair("pair1", "IF2401", "IF2402", "BUY", "SELL", 20)
 
         # Near leg filled more
         mgr.update_leg(near_leg.leg_id, qty=15, price=4000.0)
@@ -166,9 +159,7 @@ class TestLegManagerAutoHedge:
     def test_get_hedge_order_no_imbalance(self) -> None:
         """Test no hedge order when balanced."""
         mgr = LegManager(imbalance_threshold=10)
-        near_leg, far_leg = mgr.create_pair(
-            "pair1", "IF2401", "IF2402", "BUY", "SELL", 20
-        )
+        near_leg, far_leg = mgr.create_pair("pair1", "IF2401", "IF2402", "BUY", "SELL", 20)
 
         mgr.update_leg(near_leg.leg_id, qty=10, price=4000.0)
         mgr.update_leg(far_leg.leg_id, qty=10, price=4100.0)
@@ -179,9 +170,7 @@ class TestLegManagerAutoHedge:
     def test_get_hedge_order_near_leg_ahead(self) -> None:
         """Test hedge order when near leg is ahead."""
         mgr = LegManager(imbalance_threshold=5)
-        near_leg, far_leg = mgr.create_pair(
-            "pair1", "IF2401", "IF2402", "BUY", "SELL", 20
-        )
+        near_leg, far_leg = mgr.create_pair("pair1", "IF2401", "IF2402", "BUY", "SELL", 20)
 
         # Near leg filled more
         mgr.update_leg(near_leg.leg_id, qty=15, price=4000.0)
@@ -196,9 +185,7 @@ class TestLegManagerAutoHedge:
     def test_get_hedge_order_far_leg_ahead(self) -> None:
         """Test hedge order when far leg is ahead."""
         mgr = LegManager(imbalance_threshold=5)
-        near_leg, far_leg = mgr.create_pair(
-            "pair1", "IF2401", "IF2402", "BUY", "SELL", 20
-        )
+        near_leg, far_leg = mgr.create_pair("pair1", "IF2401", "IF2402", "BUY", "SELL", 20)
 
         # Far leg filled more
         mgr.update_leg(near_leg.leg_id, qty=5, price=4000.0)

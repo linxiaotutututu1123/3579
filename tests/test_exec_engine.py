@@ -8,7 +8,6 @@ V2 Scenarios:
 - EXEC.PARTIAL.REPRICE
 """
 
-
 from src.execution.auto.engine import AutoOrderEngine, EngineConfig, OrderResult
 from src.execution.auto.order_context import OrderContext
 from src.execution.auto.state_machine import OrderEvent, OrderState

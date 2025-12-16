@@ -38,9 +38,7 @@ class TestCostEstimator:
         estimator = CostEstimator()
 
         fee_normal = estimator.fee_estimate("AO2501", notional=100000.0)
-        fee_close_today = estimator.fee_estimate(
-            "AO2501", notional=100000.0, is_close_today=True
-        )
+        fee_close_today = estimator.fee_estimate("AO2501", notional=100000.0, is_close_today=True)
 
         # 平今加收 3 倍
         assert fee_close_today == fee_normal * CostEstimator.CLOSE_TODAY_MULTIPLIER
@@ -156,9 +154,7 @@ class TestCostEstimator:
 
         cost = CostBreakdown(fee=10.0, slippage=20.0, impact=20.0, total=50.0)
 
-        passed, net_edge = estimator.edge_gate_with_breakdown(
-            signal_edge=100.0, cost=cost
-        )
+        passed, net_edge = estimator.edge_gate_with_breakdown(signal_edge=100.0, cost=cost)
 
         assert passed is True
         assert net_edge == 50.0
@@ -169,9 +165,7 @@ class TestCostEstimator:
 
         cost = CostBreakdown(fee=10.0, slippage=20.0, impact=20.0, total=50.0)
 
-        passed, net_edge = estimator.edge_gate_with_breakdown(
-            signal_edge=30.0, cost=cost
-        )
+        passed, net_edge = estimator.edge_gate_with_breakdown(signal_edge=30.0, cost=cost)
 
         assert passed is False
         assert net_edge == -20.0

@@ -5,7 +5,6 @@ V3PRO+ Platform - Phase 2
 V2 Scenario: EXEC.CONTEXT.TRACKING
 """
 
-
 from src.execution.auto.exec_context import (
     ExecContext,
     ExecContextManager,

@@ -299,15 +299,9 @@ class TestPnLAttribution:
         """AUDIT.PNL.ATTRIBUTION: 获取所有记录."""
         attribution = PnLAttribution(run_id="run-001", exec_id="exec-001")
 
-        attribution.update_realized(
-            ts=1.0, strategy_id="s1", symbol="AO2501", realized_pnl=100.0
-        )
-        attribution.update_realized(
-            ts=2.0, strategy_id="s2", symbol="SA2501", realized_pnl=200.0
-        )
-        attribution.update_realized(
-            ts=3.0, strategy_id="s1", symbol="SA2501", realized_pnl=300.0
-        )
+        attribution.update_realized(ts=1.0, strategy_id="s1", symbol="AO2501", realized_pnl=100.0)
+        attribution.update_realized(ts=2.0, strategy_id="s2", symbol="SA2501", realized_pnl=200.0)
+        attribution.update_realized(ts=3.0, strategy_id="s1", symbol="SA2501", realized_pnl=300.0)
 
         records = attribution.get_all_records()
         assert len(records) == 3
@@ -316,9 +310,7 @@ class TestPnLAttribution:
         """AUDIT.PNL.ATTRIBUTION: 清空记录."""
         attribution = PnLAttribution(run_id="run-001", exec_id="exec-001")
 
-        attribution.update_realized(
-            ts=1.0, strategy_id="s1", symbol="AO2501", realized_pnl=100.0
-        )
+        attribution.update_realized(ts=1.0, strategy_id="s1", symbol="AO2501", realized_pnl=100.0)
 
         assert len(attribution.get_all_records()) == 1
 
@@ -344,12 +336,8 @@ class TestPnLAttribution:
         """测试时间戳更新."""
         attribution = PnLAttribution(run_id="run-001", exec_id="exec-001")
 
-        attribution.update_realized(
-            ts=1.0, strategy_id="s1", symbol="AO2501", realized_pnl=100.0
-        )
-        attribution.update_realized(
-            ts=5.0, strategy_id="s1", symbol="AO2501", realized_pnl=200.0
-        )
+        attribution.update_realized(ts=1.0, strategy_id="s1", symbol="AO2501", realized_pnl=100.0)
+        attribution.update_realized(ts=5.0, strategy_id="s1", symbol="AO2501", realized_pnl=200.0)
 
         record = attribution.get_record("s1", "AO2501")
         assert record is not None
