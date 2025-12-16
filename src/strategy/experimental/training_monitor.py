@@ -590,6 +590,10 @@ class TrainingMonitor:
         if not progress:
             return None
 
+        maturity_dict = None
+        if progress.maturity_report:
+            maturity_dict = progress.maturity_report.to_dict()
+
         report = {
             "session": progress.session.to_dict(),
             "progress": {
@@ -599,9 +603,9 @@ class TrainingMonitor:
                 "eta": progress.eta.isoformat() if progress.eta else None,
                 "trend": progress.trend,
             },
-            "maturity_report": progress.maturity_report.to_dict() if progress.maturity_report else None,
+            "maturity_report": maturity_dict,
             "alerts": progress.alerts,
-            "generated_at": datetime.now()  # noqa: DTZ005.isoformat(),
+            "generated_at": datetime.now().isoformat(),  # noqa: DTZ005
         }
 
         return json.dumps(report, ensure_ascii=False, indent=2)
