@@ -173,7 +173,7 @@ class TrainingGate:
         self._evaluator = evaluator
         self._config = config or TrainingGateConfig()
         self._approval_records: dict[str, datetime] = {}  # 人工审批记录
-        self._activation_log: list[dict] = []
+        self._activation_log: list[dict[str, object]] = []
 
     def check_activation(self, history: TrainingHistory) -> ActivationDecision:
         """检查是否可以启用.
@@ -365,7 +365,7 @@ class TrainingGate:
         )
 
     @property
-    def activation_log(self) -> list[dict]:
+    def activation_log(self) -> list[dict[str, object]]:
         """获取启用日志."""
         return list(self._activation_log)
 

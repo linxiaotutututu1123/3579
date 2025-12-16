@@ -74,7 +74,7 @@ class TrainingSession:
     last_update: datetime | None = None
     notes: list[str] = field(default_factory=list)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, object]:
         """转换为字典."""
         return {
             "session_id": self.session_id,

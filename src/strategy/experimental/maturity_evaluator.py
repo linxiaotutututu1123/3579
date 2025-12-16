@@ -99,7 +99,7 @@ class MaturityReport:
     can_activate: bool
     blocking_reasons: list[str]
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, object]:
         """转换为字典."""
         return {
             "strategy_id": self.strategy_id,
