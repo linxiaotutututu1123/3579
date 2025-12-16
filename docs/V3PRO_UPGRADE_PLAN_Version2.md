@@ -2241,7 +2241,7 @@ def pytest_configure(config):
 | `scripts/make.ps1` | ✅ 存在 | 1.2 门禁定义 | 已验证 |
 | `scripts/validate_policy.py` | ✅ 存在 | 1.2 门禁定义 | 已验证 |
 | `scripts/coverage_gate.py` | ✅ 存在 | 1.2 门禁定义 | 已验证 |
-| `scripts/sim_gate.py` | ❌ **不存在** | 1.2 门禁定义 | **需创建** |
+| `scripts/sim_gate.py` | ✅ 存在 | 1.2 门禁定义 | 2025-12-16 创建 |
 | `scripts/replay_tick.py` | ✅ 存在 | 回放相关 | 已验证 |
 | `scripts/export_context.py` | ✅ 存在 | 上下文导出 | 已验证 |
 | `scripts/claude_loop.ps1` | ✅ 存在 | 自动化 | 已验证 |
