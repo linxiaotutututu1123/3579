@@ -21,7 +21,8 @@
       "Bash(.venv\\Scripts\\python.exe -m pytest:*)",
       "Bash(C:/Users/1/2468/3579/.venv/Scripts/python.exe -m pytest:*)",
       "Bash(C:/Users/1/2468/3579/.venv/Scripts/python.exe -m ruff check:*)",
-      "Bash(C:/Users/1/2468/3579/.venv/Scripts/python.exe -m ruff format --check:*)"
+      "Bash(C:/Users/1/2468/3579/.venv/Scripts/python.exe -m ruff format --check:*)",
+      "Bash(C:/Users/1/2468/3579/.venv/Scripts/python.exe -m mypy:*)"
     ]
   }
 }
