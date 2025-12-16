@@ -48,16 +48,17 @@ class TestMktContinuityBars:
             completed_bars.append(bar)
 
         builder = BarBuilder(bar_interval_s=60, on_bar_complete=on_bar_complete)
-        builder.update_dominant("rb", "rb2501", ts=1700000000.0)
+        # Use ts=60 as clean minute boundary (60 // 60 * 60 = 60)
+        builder.update_dominant("rb", "rb2501", ts=60.0)
 
-        # Send ticks within same minute (1700000000 = minute boundary)
-        builder.on_tick("rb", make_book("rb2501", ts=1700000000.0, last=4000.0, volume=100))
-        builder.on_tick("rb", make_book("rb2501", ts=1700000010.0, last=4010.0, volume=200))
-        builder.on_tick("rb", make_book("rb2501", ts=1700000030.0, last=3990.0, volume=300))
-        builder.on_tick("rb", make_book("rb2501", ts=1700000050.0, last=4005.0, volume=400))
+        # Send ticks within same minute [60, 120)
+        builder.on_tick("rb", make_book("rb2501", ts=60.0, last=4000.0, volume=100))
+        builder.on_tick("rb", make_book("rb2501", ts=70.0, last=4010.0, volume=200))
+        builder.on_tick("rb", make_book("rb2501", ts=90.0, last=3990.0, volume=300))
+        builder.on_tick("rb", make_book("rb2501", ts=110.0, last=4005.0, volume=400))
 
-        # Send tick in next minute to complete previous bar
-        builder.on_tick("rb", make_book("rb2501", ts=1700000060.0, last=4020.0, volume=500))
+        # Send tick in next minute [120, 180) to complete previous bar
+        builder.on_tick("rb", make_book("rb2501", ts=120.0, last=4020.0, volume=500))
 
         # Assert - Evidence
         assert len(completed_bars) == 1, f"[{self.RULE_ID}] Should have 1 completed bar"
