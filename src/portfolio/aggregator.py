@@ -1,14 +1,14 @@
-"""Position Aggregator (Military-Grade v3.0).
+"""持仓聚合器 (军规级 v3.0).
 
-Provides multi-strategy position aggregation functionality.
+提供多策略持仓聚合功能。
 
-Features:
-- Strategy-level aggregation
-- Symbol-level aggregation
-- Time-series aggregation
-- Snapshot creation
+功能特性:
+- 策略级聚合
+- 合约级聚合
+- 时间序列聚合
+- 快照创建
 
-Example:
+示例:
     aggregator = PositionAggregator()
     aggregator.add_snapshot(portfolio_manager.get_snapshot())
     history = aggregator.get_history()
