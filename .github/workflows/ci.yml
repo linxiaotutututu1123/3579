@@ -136,24 +136,23 @@ jobs:
         run: |
           Write-Host "Checking tool versions..."
           .\.venv\Scripts\python.exe -m ruff --version
-          .\.venv\Scripts\python.exe -m mypy --version
-          
+
           Write-Host "Checking core imports..."
           .\.venv\Scripts\python.exe -c @"
           import sys
           print(f'Python: {sys.version}')
-          
-          # Core modules
+
+          # Core modules (军规级：使用实际存在的导出)
           from src import config
-          from src.runner import Runner
-          from src.orchestrator import Orchestrator
+          from src.runner import run_f21, init_components, Components
+          from src.orchestrator import handle_risk_update, OrchestratorResult
           from src.trading.live_guard import LiveModeGuard, TradeMode
           from src.trading.ci_gate import CIGate, ExitCode, enable_check_mode
           from src.risk.manager import RiskManager
           from src.execution.broker import Broker
-          
+
           print('All core imports OK')
-          
+
           # Verify CHECK mode works
           enable_check_mode()
           print('CHECK mode enabled OK')
