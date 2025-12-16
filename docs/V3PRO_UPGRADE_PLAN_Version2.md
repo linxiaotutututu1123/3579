@@ -206,9 +206,10 @@ $newChapter1 = @'
 | **last_replay_run_id** | `a930fe50-87ec-439e-9737-cc613e1825d5` |
 | **last_replay_exec_id** | `ace22687_20251215020932` |
 | **context_manifest_sha** | `9fb1d157189889f50bdc5072e38da2b355bcda192bc16007c0b20d6541fa3378` |
-| **测试数** | 314 tests |
+| **测试数** | 765 tests |
 | **覆盖率** | 85%+ |
 | **门禁状态** | CI PASS |
+| **Phase 0-2 完成日期** | 2025-12-16 |
 
 ### 2.2 已存在的模块
 
@@ -223,21 +224,28 @@ $newChapter1 = @'
 | `src/strategy/` | 5 个策略文件 | ✅ 完整 | 策略实现 |
 | `src/trading/` | live_guard.py, ci_gate.py, sim_gate.py | ✅ 完整 | 交易控制 |
 | `src/` | config.py, orchestrator.py, runner.py | ✅ 完整 | 核心模块 |
+| `src/market/` | 7 个文件 | ✅ Phase 0 完成 | 行情层 (11 场景) |
+| `src/audit/` | 7 个文件 | ✅ Phase 1 完成 | 审计层 (15 场景) |
+| `src/cost/` | 2 个文件 | ✅ Phase 1 完成 | 成本模型 (4 场景) |
+| `src/guardian/` | 6 个文件 | ✅ Phase 1 完成 | 守护层 (10 场景) |
+| `src/execution/auto/` | 8 个文件 | ✅ Phase 2 完成 | 自动执行 (13 场景) |
+| `src/execution/protection/` | 4 个文件 | ✅ Phase 2 完成 | 保护层 (4 场景) |
+| `src/execution/pair/` | 3 个文件 | ✅ Phase 2 完成 | 配对执行 (5 场景) |
 
 ### 2.3 缺失的模块（V2 SPEC 要求）
 
-| 模块 | V2 SPEC 章节 | 场景数 | 优先级 | 阻塞性 |
-|------|--------------|--------|--------|--------|
-| `src/market/` | 第 4 章 | 11 | P0 | 是 |
-| `src/execution/auto/` | 第 5 章 | 12 | P0 | 是 |
-| `src/execution/protection/` | 5.7 | 4 | P0 | 是 |
-| `src/guardian/` | 第 6 章 | 10 | P0 | 是 |
-| `src/audit/` | 第 7 章 | 5 | P0 | 是 |
-| `src/execution/pair/` | 9.1 | 5 | P1 | 否 |
-| `src/cost/` | 隐含 | 4 | P1 | 否 |
-| `src/strategy/fallback.py` | 8.3 | 3 | P1 | 否 |
-| `src/strategy/calendar_arb/` | 第 9 章 | 9 | P2 | 否 |
-| `src/replay/verifier.py` | 7.3 | 2 | P1 | 否 |
+| 模块 | V2 SPEC 章节 | 场景数 | 优先级 | 阻塞性 | 状态 |
+|------|--------------|--------|--------|--------|------|
+| `src/market/` | 第 4 章 | 11 | P0 | 是 | ✅ Phase 0 完成 |
+| `src/execution/auto/` | 第 5 章 | 13 | P0 | 是 | ✅ Phase 2 完成 |
+| `src/execution/protection/` | 5.7 | 4 | P0 | 是 | ✅ Phase 2 完成 |
+| `src/guardian/` | 第 6 章 | 10 | P0 | 是 | ✅ Phase 1 完成 |
+| `src/audit/` | 第 7 章 | 15 | P0 | 是 | ✅ Phase 1 完成 |
+| `src/execution/pair/` | 9.1 | 5 | P1 | 否 | ✅ Phase 2 完成 |
+| `src/cost/` | 隐含 | 4 | P1 | 否 | ✅ Phase 1 完成 |
+| `src/strategy/fallback.py` | 8.3 | 3 | P1 | 否 | ⏳ Phase 3 待实现 |
+| `src/strategy/calendar_arb/` | 第 9 章 | 9 | P2 | 否 | ⏳ Phase 3 待实现 |
+| `src/replay/verifier.py` | 7.3 | 2 | P1 | 否 | ⏳ Phase 4 待实现 |
 
 ---
 
