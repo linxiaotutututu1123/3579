@@ -243,9 +243,9 @@ $newChapter1 = @'
 | `src/audit/` | 第 7 章 | 15 | P0 | 是 | ✅ Phase 1 完成 |
 | `src/execution/pair/` | 9.1 | 5 | P1 | 否 | ✅ Phase 2 完成 |
 | `src/cost/` | 隐含 | 4 | P1 | 否 | ✅ Phase 1 完成 |
-| `src/strategy/fallback.py` | 8.3 | 3 | P1 | 否 | ⏳ Phase 3 待实现 |
-| `src/strategy/calendar_arb/` | 第 9 章 | 9 | P2 | 否 | ⏳ Phase 3 待实现 |
-| `src/replay/verifier.py` | 7.3 | 2 | P1 | 否 | ⏳ Phase 4 待实现 |
+| `src/strategy/fallback.py` | 8.3 | 3 | P1 | 否 | ✅ Phase 3 完成 |
+| `src/strategy/calendar_arb/` | 第 9 章 | 9 | P2 | 否 | ✅ Phase 3 完成 |
+| `src/replay/verifier.py` | 7.3 | 2 | P1 | 否 | ✅ Phase 4 完成 |
 
 ---
 
