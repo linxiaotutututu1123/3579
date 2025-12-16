@@ -65,8 +65,8 @@ class BaseTrigger(ABC):
         """
         ...
 
-    def reset(self) -> None:
-        """重置触发器状态."""
+    def reset(self) -> None:  # noqa: B027
+        """重置触发器状态（可选覆盖）."""
 
 
 class QuoteStaleTrigger(BaseTrigger):
