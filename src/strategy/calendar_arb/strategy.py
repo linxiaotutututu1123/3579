@@ -454,14 +454,17 @@ class CalendarArbStrategy(Strategy):
         try:
             # Parse expiry date (YYYYMMDD)
             expiry_str = self._leg_pair.near_expiry
-            import datetime
+            from datetime import date
 
-            expiry_date = datetime.datetime.strptime(expiry_str, "%Y%m%d").date()
-            today = datetime.date.today()
+            year = int(expiry_str[:4])
+            month = int(expiry_str[4:6])
+            day = int(expiry_str[6:8])
+            expiry_date = date(year, month, day)
+            today = date.today()  # noqa: DTZ011
             days_to_expiry = (expiry_date - today).days
 
             return days_to_expiry <= self._config.expiry_block_days
-        except (ValueError, AttributeError):
+        except (ValueError, AttributeError, IndexError):
             return False
 
     def _check_correlation_break(self, correlation: float) -> bool:
