@@ -185,14 +185,14 @@ class UniverseSelector:
             return instruments
 
         try:
-            today = datetime.strptime(trading_day, "%Y%m%d")
+            today = datetime.strptime(trading_day, "%Y%m%d").date()
         except ValueError:
             return instruments
 
         valid = []
         for inst in instruments:
             try:
-                expiry = datetime.strptime(inst.expire_date, "%Y%m%d")
+                expiry = datetime.strptime(inst.expire_date, "%Y%m%d").date()
                 days_to_expiry = (expiry - today).days
                 if days_to_expiry >= self._expiry_block_days:
                     valid.append(inst)
