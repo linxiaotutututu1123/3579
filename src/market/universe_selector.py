@@ -186,9 +186,7 @@ class UniverseSelector:
 
         try:
             # Parse YYYYMMDD format directly to date (avoids DTZ007)
-            today = date(
-                int(trading_day[:4]), int(trading_day[4:6]), int(trading_day[6:8])
-            )
+            today = date(int(trading_day[:4]), int(trading_day[4:6]), int(trading_day[6:8]))
         except (ValueError, IndexError):
             return instruments
 
