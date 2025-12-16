@@ -443,6 +443,6 @@ class TestMilitaryRuleM15:
 
     def test_holiday_eve_no_night_session(self, calendar: ChinaTradingCalendar) -> None:
         """测试节假日前一天没有夜盘."""
-        # 元旦前一天（2024-12-31，假设是工作日）没有夜盘
-        # 这个需要根据实际日期调整
-        pass
+        # 2024-12-31 是周二，下一天2025-01-01是元旦假期
+        # 所以2024-12-31没有夜盘
+        assert calendar.has_night_session_on_day(date(2024, 12, 31)) is False
