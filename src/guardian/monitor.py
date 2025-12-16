@@ -282,8 +282,6 @@ class GuardianMonitor:
         Returns:
             是否成功
         """
-        current = self._fsm.mode
-
         # 确定事件名
         event_map = {
             GuardianMode.HALTED: "manual_halt",
