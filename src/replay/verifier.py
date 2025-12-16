@@ -307,10 +307,10 @@ class ReplayVerifier:
 
         with open(path, encoding="utf-8") as f:
             for line in f:
-                line = line.strip()
-                if line:
+                stripped_line = line.strip()
+                if stripped_line:
                     try:
-                        event = json.loads(line)
+                        event = json.loads(stripped_line)
                         events.append(event)
                     except json.JSONDecodeError:
                         continue
