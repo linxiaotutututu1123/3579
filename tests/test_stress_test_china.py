@@ -807,13 +807,13 @@ class TestEdgeCases:
             affected_products=("IF",),
         )
 
-        # 空头持仓
+        # 空头持仓 (value为绝对值，position为负表示空头)
         positions = [
             PositionExposure(
                 symbol="IF2501",
                 product="IF",
                 position=-10,  # 空头
-                value=-1000000.0,
+                value=1000000.0,  # 绝对值
                 margin=120000.0,
             )
         ]
