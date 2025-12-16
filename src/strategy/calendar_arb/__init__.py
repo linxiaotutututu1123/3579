@@ -64,15 +64,13 @@ from src.strategy.calendar_arb.strategy import (
 
 
 __all__ = [
-    # Strategy
-    "CalendarArbStrategy",
     "ArbConfig",
     "ArbSignal",
-    "ArbState",
     "ArbSnapshot",
-    "LegPair",
-    # Kalman
+    "ArbState",
+    "CalendarArbStrategy",
     "KalmanBetaEstimator",
     "KalmanConfig",
     "KalmanResult",
+    "LegPair",
 ]
