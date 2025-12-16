@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from enum import Enum
+from typing import ClassVar
 
 
 class OrderState(Enum):
@@ -117,7 +118,7 @@ class OrderFSM:
     """
 
     # 状态转移表: (当前状态, 事件) -> 目标状态
-    TRANSITIONS: dict[tuple[OrderState, OrderEvent], OrderState] = {
+    TRANSITIONS: ClassVar[dict[tuple[OrderState, OrderEvent], OrderState]] = {
         # CREATED 状态
         (OrderState.CREATED, OrderEvent.SUBMIT): OrderState.SUBMITTING,
         # SUBMITTING 状态
