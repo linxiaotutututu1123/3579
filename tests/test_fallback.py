@@ -249,6 +249,7 @@ class TestFallbackManagerEdgeCases:
 
         result = manager.execute("a", {})
         # 只能尝试前2个策略
+        assert result is not None
 
     def test_event_handler_exception(self) -> None:
         """测试事件处理器异常."""
