@@ -1,14 +1,14 @@
-"""Portfolio Analytics (Military-Grade v3.0).
+"""投资组合分析器 (军规级 v3.0).
 
-Provides risk metrics and analytics for portfolio management.
+提供投资组合管理的风险指标和分析功能。
 
-Features:
-- Exposure calculation
-- Concentration metrics
-- P&L attribution
-- Risk metrics
+功能特性:
+- 敞口计算
+- 集中度指标
+- 盈亏归因
+- 风险指标
 
-Example:
+示例:
     analytics = PortfolioAnalytics(portfolio_manager)
     metrics = analytics.compute_risk_metrics()
 """
