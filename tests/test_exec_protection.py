@@ -178,7 +178,7 @@ class TestFatFingerGate:
         """Test fat finger check passes."""
         config = FatFingerConfig(
             max_qty=100,
-            max_notional=10_000_000.0,
+            max_notional=15_000_000.0,  # 15M to allow 12M order
             max_price_deviation=0.05,
         )
         gate = FatFingerGate(config=config)
@@ -188,7 +188,7 @@ class TestFatFingerGate:
             direction="BUY",
             qty=10,
             price=4000.0,
-            multiplier=300.0,  # notional = 12M but within limit
+            multiplier=300.0,  # notional = 12M
             reference_price=4000.0,
         )
 
@@ -314,7 +314,8 @@ class TestThrottleGate:
 
         result = gate.check_and_record(now=1000.0)
         assert result.passed()
-        assert result.orders_in_window == 1  # Recorded
+        # After check_and_record, verify order was recorded
+        assert gate.get_remaining_capacity(now=1000.0) == config.max_orders_per_minute - 1
 
     def test_throttle_remaining_capacity(self) -> None:
         """Test remaining capacity calculation."""

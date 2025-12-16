@@ -242,7 +242,9 @@ class TestEngineRtnTrade:
 
     def test_on_rtn_trade_partial_fill(self) -> None:
         """Test processing partial trade fill."""
-        engine = AutoOrderEngine()
+        # Disable reprice to test pure partial fill state
+        config = EngineConfig(enable_reprice=False)
+        engine = AutoOrderEngine(config=config)
 
         ctx = OrderContext(
             symbol="IF2401",
