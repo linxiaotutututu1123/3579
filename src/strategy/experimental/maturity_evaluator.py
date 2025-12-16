@@ -276,7 +276,7 @@ class MaturityEvaluator:
 
         return MaturityReport(
             strategy_id=history.strategy_id,
-            evaluated_at=datetime.now(),
+            evaluated_at=datetime.now(),  # noqa: DTZ005
             dimension_scores=scores,
             total_score=total_score,
             level=level,
@@ -308,17 +308,20 @@ class MaturityEvaluator:
         if sharpe >= self.SHARPE_EXCELLENT:
             sharpe_score = 1.0
         elif sharpe >= self.SHARPE_GOOD:
-            sharpe_score = 0.8 + (sharpe - self.SHARPE_GOOD) / (self.SHARPE_EXCELLENT - self.SHARPE_GOOD) * 0.2
+            delta = (sharpe - self.SHARPE_GOOD) / (self.SHARPE_EXCELLENT - self.SHARPE_GOOD)
+            sharpe_score = 0.8 + delta * 0.2
         elif sharpe >= self.SHARPE_PASS:
-            sharpe_score = 0.6 + (sharpe - self.SHARPE_PASS) / (self.SHARPE_GOOD - self.SHARPE_PASS) * 0.2
+            delta = (sharpe - self.SHARPE_PASS) / (self.SHARPE_GOOD - self.SHARPE_PASS)
+            sharpe_score = 0.6 + delta * 0.2
         else:
             sharpe_score = max(0, sharpe / self.SHARPE_PASS * 0.6)
         details["sharpe_score"] = sharpe_score
 
         # 2. 收益率稳定性 (30%)
         if history.daily_returns:
-            mean_return = sum(history.daily_returns) / len(history.daily_returns)
-            variance = sum((r - mean_return) ** 2 for r in history.daily_returns) / len(history.daily_returns)
+            n = len(history.daily_returns)
+            mean_return = sum(history.daily_returns) / n
+            variance = sum((r - mean_return) ** 2 for r in history.daily_returns) / n
             std_return = math.sqrt(variance) if variance > 0 else 0
 
             # 变异系数（越小越好）
@@ -374,9 +377,11 @@ class MaturityEvaluator:
         if max_dd <= self.MAX_DD_EXCELLENT:
             dd_score = 1.0
         elif max_dd <= self.MAX_DD_GOOD:
-            dd_score = 0.8 + (self.MAX_DD_GOOD - max_dd) / (self.MAX_DD_GOOD - self.MAX_DD_EXCELLENT) * 0.2
+            delta = (self.MAX_DD_GOOD - max_dd) / (self.MAX_DD_GOOD - self.MAX_DD_EXCELLENT)
+            dd_score = 0.8 + delta * 0.2
         elif max_dd <= self.MAX_DD_PASS:
-            dd_score = 0.6 + (self.MAX_DD_PASS - max_dd) / (self.MAX_DD_PASS - self.MAX_DD_GOOD) * 0.2
+            delta = (self.MAX_DD_PASS - max_dd) / (self.MAX_DD_PASS - self.MAX_DD_GOOD)
+            dd_score = 0.6 + delta * 0.2
         else:
             dd_score = max(0, (0.30 - max_dd) / 0.10 * 0.6)  # 30%以上为0
         details["dd_score"] = dd_score
