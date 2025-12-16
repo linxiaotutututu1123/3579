@@ -361,8 +361,8 @@ class FallbackManager:
         for handler in self._event_handlers:
             try:
                 handler(event)
-            except Exception as e:
-                logger.error("Event handler error: %s", e)
+            except Exception:
+                logger.exception("Event handler error")
 
     def _increment_fallback_count(self, strategy_name: str) -> None:
         """Increment fallback count for a strategy."""
