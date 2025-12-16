@@ -99,6 +99,17 @@ class PolicyViolation:
         }
 
 
+def normalize_path_for_comparison(path: Path) -> str:
+    """Normalize path for cross-platform comparison.
+
+    Converts to POSIX format (forward slashes) to ensure
+    Windows-generated paths compare correctly on Linux CI.
+
+    军规级：保持验证强度，只统一路径分隔符格式。
+    """
+    return path.resolve().as_posix()
+
+
 @dataclass
 class ValidationResult:
     """Policy validation result."""
