@@ -403,9 +403,13 @@ class MaturityEvaluator:
         if win_rate >= self.WIN_RATE_EXCELLENT:
             wr_score = 1.0
         elif win_rate >= self.WIN_RATE_GOOD:
-            wr_score = 0.8 + (win_rate - self.WIN_RATE_GOOD) / (self.WIN_RATE_EXCELLENT - self.WIN_RATE_GOOD) * 0.2
+            delta = (win_rate - self.WIN_RATE_GOOD)
+            delta /= (self.WIN_RATE_EXCELLENT - self.WIN_RATE_GOOD)
+            wr_score = 0.8 + delta * 0.2
         elif win_rate >= self.WIN_RATE_PASS:
-            wr_score = 0.6 + (win_rate - self.WIN_RATE_PASS) / (self.WIN_RATE_GOOD - self.WIN_RATE_PASS) * 0.2
+            delta = (win_rate - self.WIN_RATE_PASS)
+            delta /= (self.WIN_RATE_GOOD - self.WIN_RATE_PASS)
+            wr_score = 0.6 + delta * 0.2
         else:
             wr_score = max(0, win_rate / self.WIN_RATE_PASS * 0.6)
         details["win_rate_score"] = wr_score
