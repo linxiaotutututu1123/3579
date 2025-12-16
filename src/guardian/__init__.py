@@ -1,17 +1,22 @@
 """
-守护模块.
+守护模块 (军规级 v4.0).
 
-V3PRO+ Platform Component - Phase 1
-V2 SPEC: 第 6 章 Guardian
+V4PRO Platform Component - Phase 1 + Phase 7 中国期货特化
+V4 SPEC: §6 Guardian, §12 Phase 7
 
-Exports:
-    GuardianMonitor: 守护主循环
-    GuardianFSM: 状态机
-    GuardianMode: 状态枚举
-    GuardianActions: 动作执行器
-    ColdStartRecovery: 冷启动恢复
-    TriggerManager: 触发器管理器
-    各类触发器
+功能特性:
+- 守护主循环 (GuardianMonitor)
+- 状态机 (GuardianFSM)
+- 动作执行器 (GuardianActions)
+- 冷启动恢复 (ColdStartRecovery)
+- 触发器管理器 (TriggerManager)
+- 中国期货触发器 (LimitPrice/Margin/Delivery)
+
+军规覆盖:
+- M6: 熔断保护
+- M13: 涨跌停感知
+- M15: 夜盘跨日处理
+- M16: 保证金实时监控
 """
 
 from src.guardian.actions import (
@@ -37,21 +42,40 @@ from src.guardian.triggers import (
     TriggerManager,
     TriggerResult,
 )
+from src.guardian.triggers_china import (
+    DeliveryApproachingTrigger,
+    DeliveryInfo,
+    LimitPriceInfo,
+    LimitPriceStatus,
+    LimitPriceTrigger,
+    MarginInfo,
+    MarginLevel,
+    MarginTrigger,
+    create_default_china_triggers,
+    register_china_triggers,
+)
 
 
 __all__ = [
-    "VALID_TRANSITIONS",
     "ActionResult",
     "ActionStatus",
     "ActionType",
     "BaseTrigger",
     "ColdStartRecovery",
+    "DeliveryApproachingTrigger",
+    "DeliveryInfo",
     "GuardianActions",
     "GuardianCheckResult",
     "GuardianFSM",
     "GuardianMode",
     "GuardianMonitor",
     "LegImbalanceTrigger",
+    "LimitPriceInfo",
+    "LimitPriceStatus",
+    "LimitPriceTrigger",
+    "MarginInfo",
+    "MarginLevel",
+    "MarginTrigger",
     "OrderStuckTrigger",
     "PositionDriftTrigger",
     "QuoteStaleTrigger",
@@ -60,4 +84,7 @@ __all__ = [
     "TransitionError",
     "TriggerManager",
     "TriggerResult",
+    "VALID_TRANSITIONS",
+    "create_default_china_triggers",
+    "register_china_triggers",
 ]
