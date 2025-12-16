@@ -45,7 +45,7 @@ class GuardianEvent:
         mode_from: 原模式
         mode_to: 目标模式
         trigger: 触发原因
-        action: 执行的动作（可选）
+        action: 执行的动作
         details: 详细信息
     """
 
