@@ -10,7 +10,8 @@
       "Bash(.venv/Scripts/python.exe -m ruff format:*)",
       "Bash(.venv/Scripts/python.exe -m mypy:*)",
       "Bash(.venv/Scripts/python.exe -m pytest:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(ls:*)"
     ]
   }
 }
