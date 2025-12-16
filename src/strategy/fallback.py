@@ -240,7 +240,7 @@ class FallbackManager:
         fallback_events: list[FallbackEvent] = []
 
         # Build execution order: original + fallback chain
-        execution_order = [strategy_name] + self.get_chain(strategy_name)
+        execution_order = [strategy_name, *self.get_chain(strategy_name)]
 
         # Ensure final fallback is in the list
         if self._final_fallback not in execution_order:
