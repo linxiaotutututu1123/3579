@@ -554,7 +554,7 @@ def get_current_environment() -> Environment:
     try:
         return Environment(env_str)
     except ValueError:
-        logger.warning("无效的V4PRO_ENV: %s，默认使用DEV", env_str)
+        logger.warning("无效的V4PRO_ENV: %s, 默认使用DEV", env_str)
         return Environment.DEV
 
 
