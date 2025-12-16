@@ -291,9 +291,7 @@ class MarginMonitor:
     def __post_init__(self) -> None:
         """初始化历史记录."""
         # 使用object.__setattr__绕过frozen检查
-        object.__setattr__(
-            self, "_history", deque(maxlen=self.config.history_max_size)
-        )
+        object.__setattr__(self, "_history", deque(maxlen=self.config.history_max_size))
         object.__setattr__(self, "_alerts", deque(maxlen=100))
 
     # ========== 属性 ==========
@@ -602,9 +600,7 @@ class MarginMonitor:
             "update_count": self._update_count,
             "history_size": len(self._history),
             "alert_count": len(self._alerts),
-            "last_update": (
-                self._last_update.isoformat() if self._last_update else None
-            ),
+            "last_update": (self._last_update.isoformat() if self._last_update else None),
         }
 
     # ========== 私有方法 ==========
