@@ -507,8 +507,8 @@ class TestCanOpenPosition:
         monitor = MarginMonitor()
         monitor.update(equity=100000.0, margin_used=40000.0)
 
-        # 开仓后使用率70%~85%
-        result = monitor.can_open_position(required_margin=25000.0)
+        # 开仓后使用率70%~85%: 40000 + 35000 = 75000, 75%
+        result = monitor.can_open_position(required_margin=35000.0)
         assert result.can_open is True
         assert "警告" in result.reason
         assert result.projected_level == MarginLevel.WARNING
@@ -792,9 +792,9 @@ class TestEdgeCases:
     def test_very_small_equity(self) -> None:
         """测试极小权益."""
         monitor = MarginMonitor()
-        level = monitor.update(equity=0.01, margin_used=0.005)
+        level = monitor.update(equity=0.01, margin_used=0.004)
         assert level == MarginLevel.SAFE
-        assert monitor.usage_ratio == 0.5  # NORMAL边界
+        assert monitor.usage_ratio == pytest.approx(0.4)  # 40% 安全
 
     def test_very_large_values(self) -> None:
         """测试极大值."""
