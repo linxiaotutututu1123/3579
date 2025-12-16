@@ -176,7 +176,9 @@ class UniverseSelector:
         self._current = snapshot
         return snapshot
 
-    def _filter_expiry(self, instruments: list, trading_day: str | None) -> list:
+    def _filter_expiry(
+        self, instruments: list[InstrumentInfo], trading_day: str | None
+    ) -> list[InstrumentInfo]:
         """过滤临期合约.
 
         V2 Scenario: UNIV.EXPIRY.GATE
