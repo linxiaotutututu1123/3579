@@ -161,7 +161,7 @@ class AutoOrderEngine:
         # 实际提交（如果有 broker）
         if self._broker:
             try:
-                order_ref = self._broker.place_order(
+                order_ref = self._broker.place_order(  # type: ignore[call-arg]
                     symbol=ctx.symbol,
                     direction=ctx.direction,
                     offset=ctx.offset,
@@ -169,7 +169,8 @@ class AutoOrderEngine:
                     price=ctx.price,
                 )
                 if order_ref:
-                    self._registry.update_order_ref(local_id, order_ref)
+                    order_id = getattr(order_ref, "order_id", str(order_ref))
+                    self._registry.update_order_ref(local_id, order_id)
             except Exception as e:
                 self._handle_submit_error(local_id, str(e))
 
