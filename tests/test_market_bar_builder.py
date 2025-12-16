@@ -186,3 +186,72 @@ class TestMktContinuityBars:
             assert bars[i].ts_start < bars[i + 1].ts_start, (
                 f"[{self.RULE_ID}] Bars should be in time order"
             )
+
+
+class TestBarBuilderExtended:
+    """BarBuilder 扩展测试 - 100% 覆盖率补充."""
+
+    def test_get_bars_with_count_limit(self) -> None:
+        """获取指定数量的 bars."""
+        completed_bars: list[Bar] = []
+
+        def on_bar_complete(bar: Bar) -> None:
+            completed_bars.append(bar)
+
+        builder = BarBuilder(bar_interval_s=60, on_bar_complete=on_bar_complete)
+        builder.update_dominant("rb", "rb2501", ts=1700000000.0)
+
+        # Create 5 bars
+        for i in range(6):
+            ts = 1700000000.0 + i * 60
+            builder.on_tick("rb", make_book("rb2501", ts=ts, last=4000.0 + i))
+
+        # Get last 2 bars
+        bars = builder.get_bars("rb", count=2)
+        assert len(bars) == 2, "Should return exactly 2 bars"
+
+        # Get all bars (count=0)
+        all_bars = builder.get_bars("rb", count=0)
+        assert len(all_bars) == 5, "Should return all 5 bars"
+
+    def test_get_bars_for_unknown_product(self) -> None:
+        """获取未知品种的 bars 返回空列表."""
+        builder = BarBuilder(bar_interval_s=60)
+        bars = builder.get_bars("unknown")
+        assert bars == []
+
+    def test_clear_specific_product(self) -> None:
+        """清空指定品种的 bars."""
+        builder = BarBuilder(bar_interval_s=60)
+        builder.update_dominant("rb", "rb2501", ts=1700000000.0)
+        builder.update_dominant("hc", "hc2501", ts=1700000000.0)
+
+        builder.on_tick("rb", make_book("rb2501", ts=1700000000.0, last=4000.0))
+        builder.on_tick("hc", make_book("hc2501", ts=1700000000.0, last=3500.0))
+
+        # Clear only rb
+        builder.clear("rb")
+
+        # rb should be empty, hc should still have state
+        builder.on_tick("rb", make_book("rb2501", ts=1700000060.0, last=4010.0))
+        rb_bars = builder.get_bars("rb")
+        assert len(rb_bars) == 0, "rb should have no completed bars after clear"
+
+    def test_clear_all_products(self) -> None:
+        """清空所有品种的 bars."""
+        builder = BarBuilder(bar_interval_s=60)
+        builder.update_dominant("rb", "rb2501", ts=1700000000.0)
+        builder.update_dominant("hc", "hc2501", ts=1700000000.0)
+
+        builder.on_tick("rb", make_book("rb2501", ts=1700000000.0, last=4000.0))
+        builder.on_tick("rb", make_book("rb2501", ts=1700000060.0, last=4010.0))
+        builder.on_tick("hc", make_book("hc2501", ts=1700000000.0, last=3500.0))
+        builder.on_tick("hc", make_book("hc2501", ts=1700000060.0, last=3510.0))
+
+        # Clear all
+        builder.clear()
+
+        rb_bars = builder.get_bars("rb")
+        hc_bars = builder.get_bars("hc")
+        assert len(rb_bars) == 0
+        assert len(hc_bars) == 0
