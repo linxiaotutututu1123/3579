@@ -49,16 +49,13 @@ from src.strategy.experimental.training_monitor import (
 
 
 __all__ = [
-    # 成熟度评估
+    "ActivationDecision",
     "MaturityEvaluator",
     "MaturityLevel",
     "MaturityReport",
     "MaturityScore",
-    # 训练门禁
-    "ActivationDecision",
     "TrainingGate",
     "TrainingGateConfig",
-    # 训练监控
     "TrainingMonitor",
     "TrainingProgress",
     "TrainingSession",
