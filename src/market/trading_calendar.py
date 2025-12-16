@@ -348,10 +348,8 @@ class ChinaTradingCalendar:
             return False  # 23:00结束，00:00后不算夜盘
         if night_end == NightSessionEnd.T_01_00:
             return t < self.NIGHT_SESSION_END_01
-        if night_end == NightSessionEnd.T_02_30:
-            return t < self.NIGHT_SESSION_END_02
-
-        return False
+        # T_02_30
+        return t < self.NIGHT_SESSION_END_02
 
     def _get_next_trading_day(self, d: date) -> date:
         """获取下一个交易日.
