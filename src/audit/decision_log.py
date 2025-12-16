@@ -45,9 +45,9 @@ class DecisionEvent:
         strategy_version: 策略版本（semver 或 commit hash）
         feature_hash: 输入特征哈希（用于回放确定性验证）
         target_portfolio: 目标仓位 {symbol: qty}
-        confidence: 置信度（可选）
-        signals: 信号详情（可选）
-        metadata: 额外元数据（可选）
+        confidence: 置信度
+        signals: 信号详情
+        metadata: 额外元数据
     """
 
     ts: float
