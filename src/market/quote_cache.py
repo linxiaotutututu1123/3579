@@ -136,11 +136,7 @@ class QuoteCache:
             return True
 
         # 自动检测单位（如果 now_ts > 1e12，认为是毫秒）
-        if now_ts > 1e12:
-            age_ms = now_ts - book.ts
-        else:
-            age_ms = (now_ts - book.ts) * 1000
-
+        age_ms = now_ts - book.ts if now_ts > 1e12 else (now_ts - book.ts) * 1000
         return age_ms > self._stale_ms
 
     def is_hard_stale(self, symbol: str, now_ts: float) -> bool:
@@ -160,11 +156,7 @@ class QuoteCache:
             return True
 
         # 自动检测单位
-        if now_ts > 1e12:
-            age_ms = now_ts - book.ts
-        else:
-            age_ms = (now_ts - book.ts) * 1000
-
+        age_ms = now_ts - book.ts if now_ts > 1e12 else (now_ts - book.ts) * 1000
         return age_ms > self._hard_stale_ms
 
     def get_stale_age_ms(self, symbol: str, now_ts: float) -> float:
