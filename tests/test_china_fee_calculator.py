@@ -179,9 +179,7 @@ class TestByVolumeCalc:
         result = calculator.calculate("al2501", 20000, 10, "close")
         assert result.fee == 30.0  # 10手 × 3元
 
-    def test_calc_fixed_fee_close_today_zero(
-        self, calculator: ChinaFeeCalculator
-    ) -> None:
+    def test_calc_fixed_fee_close_today_zero(self, calculator: ChinaFeeCalculator) -> None:
         """测试按手收费平今免费."""
         # 铝平今免费
         result = calculator.calculate("al2501", 20000, 10, "close_today")
@@ -310,9 +308,7 @@ class TestParseDirection:
         assert calculator._parse_direction("close") == TradeDirection.CLOSE
         assert calculator._parse_direction("平仓") == TradeDirection.CLOSE
 
-    def test_parse_direction_close_today(
-        self, calculator: ChinaFeeCalculator
-    ) -> None:
+    def test_parse_direction_close_today(self, calculator: ChinaFeeCalculator) -> None:
         """测试解析平今."""
         assert calculator._parse_direction("close_today") == TradeDirection.CLOSE_TODAY
         assert calculator._parse_direction("平今") == TradeDirection.CLOSE_TODAY
@@ -341,17 +337,11 @@ class TestRoundTrip:
         cost = calculator.estimate_round_trip("rb2501", 3500, 10, is_intraday=False)
         assert cost == 70.0
 
-    def test_round_trip_cffex_intraday_expensive(
-        self, calculator: ChinaFeeCalculator
-    ) -> None:
+    def test_round_trip_cffex_intraday_expensive(self, calculator: ChinaFeeCalculator) -> None:
         """测试中金所日内交易成本极高."""
         # IF 开仓27.6 + 平今414 = 441.6
-        intraday_cost = calculator.estimate_round_trip(
-            "IF2501", 4000, 1, is_intraday=True
-        )
-        overnight_cost = calculator.estimate_round_trip(
-            "IF2501", 4000, 1, is_intraday=False
-        )
+        intraday_cost = calculator.estimate_round_trip("IF2501", 4000, 1, is_intraday=True)
+        overnight_cost = calculator.estimate_round_trip("IF2501", 4000, 1, is_intraday=False)
         # 日内成本远高于隔夜
         assert intraday_cost > overnight_cost * 5
 
@@ -435,9 +425,7 @@ class TestMilitaryRuleM14:
         """创建测试用计算器实例."""
         return ChinaFeeCalculator()
 
-    def test_close_today_different_from_close(
-        self, calculator: ChinaFeeCalculator
-    ) -> None:
+    def test_close_today_different_from_close(self, calculator: ChinaFeeCalculator) -> None:
         """测试平今与平昨费率区分."""
         # CFFEX平今费率是平昨的15倍
         close_result = calculator.calculate("IF2501", 4000, 1, "close")
@@ -447,9 +435,7 @@ class TestMilitaryRuleM14:
         assert close_result.direction == TradeDirection.CLOSE
         assert close_today_result.fee != close_result.fee
 
-    def test_direction_correctly_recorded(
-        self, calculator: ChinaFeeCalculator
-    ) -> None:
+    def test_direction_correctly_recorded(self, calculator: ChinaFeeCalculator) -> None:
         """测试交易方向正确记录."""
         open_result = calculator.calculate("rb2501", 3500, 10, "open")
         close_result = calculator.calculate("rb2501", 3500, 10, "close")

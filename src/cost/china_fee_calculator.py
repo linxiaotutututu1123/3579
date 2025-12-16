@@ -122,50 +122,65 @@ class FeeResult:
 SHFE_FEE_CONFIGS: dict[str, FeeConfig] = {
     # 有色金属 - 按金额收费
     "cu": FeeConfig(FeeType.RATIO, 0.00005, 0.00005, 0.00005, multiplier=5),
-    "al": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=5),
-    "zn": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=5),
-    "pb": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=5),
-    "ni": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=3.0, multiplier=1),
-    "sn": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=1),
+    "al": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=5
+    ),
+    "zn": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=5
+    ),
+    "pb": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=5
+    ),
+    "ni": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=3.0, multiplier=1
+    ),
+    "sn": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=1
+    ),
     # 贵金属 - 按金额收费
     "au": FeeConfig(FeeType.RATIO, 0.00002, 0.00002, 0.00002, multiplier=1000),
     "ag": FeeConfig(FeeType.RATIO, 0.00005, 0.00005, 0.00005, multiplier=15),
     # 黑色系 - 按手收费
     "rb": FeeConfig(FeeType.RATIO, 0.0001, 0.0001, 0.0001, multiplier=10),
     "hc": FeeConfig(FeeType.RATIO, 0.0001, 0.0001, 0.0001, multiplier=10),
-    "ss": FeeConfig(FeeType.FIXED, open_fixed=2.0, close_fixed=2.0,
-                   close_today_fixed=0.0, multiplier=5),
+    "ss": FeeConfig(
+        FeeType.FIXED, open_fixed=2.0, close_fixed=2.0, close_today_fixed=0.0, multiplier=5
+    ),
     # 能源化工
     "bu": FeeConfig(FeeType.RATIO, 0.0001, 0.0001, 0.0001, multiplier=10),
-    "ru": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=10),
-    "sp": FeeConfig(FeeType.FIXED, open_fixed=0.5, close_fixed=0.5,
-                   close_today_fixed=0.0, multiplier=10),
+    "ru": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=10
+    ),
+    "sp": FeeConfig(
+        FeeType.FIXED, open_fixed=0.5, close_fixed=0.5, close_today_fixed=0.0, multiplier=10
+    ),
     "fu": FeeConfig(FeeType.RATIO, 0.00005, 0.00005, 0.00005, multiplier=10),
 }
 
 # 大商所品种费率配置
 DCE_FEE_CONFIGS: dict[str, FeeConfig] = {
     # 农产品
-    "c": FeeConfig(FeeType.FIXED, open_fixed=1.2, close_fixed=1.2,
-                  close_today_fixed=1.2, multiplier=10),
-    "cs": FeeConfig(FeeType.FIXED, open_fixed=1.5, close_fixed=1.5,
-                   close_today_fixed=1.5, multiplier=10),
-    "a": FeeConfig(FeeType.FIXED, open_fixed=2.0, close_fixed=2.0,
-                  close_today_fixed=2.0, multiplier=10),
-    "b": FeeConfig(FeeType.FIXED, open_fixed=1.0, close_fixed=1.0,
-                  close_today_fixed=1.0, multiplier=10),
-    "m": FeeConfig(FeeType.FIXED, open_fixed=1.5, close_fixed=1.5,
-                  close_today_fixed=1.5, multiplier=10),
-    "y": FeeConfig(FeeType.FIXED, open_fixed=2.5, close_fixed=2.5,
-                  close_today_fixed=2.5, multiplier=10),
-    "p": FeeConfig(FeeType.FIXED, open_fixed=2.5, close_fixed=2.5,
-                  close_today_fixed=2.5, multiplier=10),
+    "c": FeeConfig(
+        FeeType.FIXED, open_fixed=1.2, close_fixed=1.2, close_today_fixed=1.2, multiplier=10
+    ),
+    "cs": FeeConfig(
+        FeeType.FIXED, open_fixed=1.5, close_fixed=1.5, close_today_fixed=1.5, multiplier=10
+    ),
+    "a": FeeConfig(
+        FeeType.FIXED, open_fixed=2.0, close_fixed=2.0, close_today_fixed=2.0, multiplier=10
+    ),
+    "b": FeeConfig(
+        FeeType.FIXED, open_fixed=1.0, close_fixed=1.0, close_today_fixed=1.0, multiplier=10
+    ),
+    "m": FeeConfig(
+        FeeType.FIXED, open_fixed=1.5, close_fixed=1.5, close_today_fixed=1.5, multiplier=10
+    ),
+    "y": FeeConfig(
+        FeeType.FIXED, open_fixed=2.5, close_fixed=2.5, close_today_fixed=2.5, multiplier=10
+    ),
+    "p": FeeConfig(
+        FeeType.FIXED, open_fixed=2.5, close_fixed=2.5, close_today_fixed=2.5, multiplier=10
+    ),
     "jd": FeeConfig(FeeType.RATIO, 0.00015, 0.00015, 0.00015, multiplier=10),
     "lh": FeeConfig(FeeType.RATIO, 0.0002, 0.0002, 0.0002, multiplier=16),
     # 黑色系
@@ -173,53 +188,73 @@ DCE_FEE_CONFIGS: dict[str, FeeConfig] = {
     "j": FeeConfig(FeeType.RATIO, 0.0001, 0.0001, 0.00014, multiplier=100),
     "jm": FeeConfig(FeeType.RATIO, 0.0001, 0.0001, 0.00014, multiplier=60),
     # 化工
-    "l": FeeConfig(FeeType.FIXED, open_fixed=1.0, close_fixed=1.0,
-                  close_today_fixed=1.0, multiplier=5),
-    "v": FeeConfig(FeeType.FIXED, open_fixed=1.0, close_fixed=1.0,
-                  close_today_fixed=1.0, multiplier=5),
-    "pp": FeeConfig(FeeType.FIXED, open_fixed=1.0, close_fixed=1.0,
-                   close_today_fixed=1.0, multiplier=5),
-    "eg": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=3.0, multiplier=10),
-    "eb": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=3.0, multiplier=5),
-    "pg": FeeConfig(FeeType.FIXED, open_fixed=6.0, close_fixed=6.0,
-                   close_today_fixed=6.0, multiplier=20),
+    "l": FeeConfig(
+        FeeType.FIXED, open_fixed=1.0, close_fixed=1.0, close_today_fixed=1.0, multiplier=5
+    ),
+    "v": FeeConfig(
+        FeeType.FIXED, open_fixed=1.0, close_fixed=1.0, close_today_fixed=1.0, multiplier=5
+    ),
+    "pp": FeeConfig(
+        FeeType.FIXED, open_fixed=1.0, close_fixed=1.0, close_today_fixed=1.0, multiplier=5
+    ),
+    "eg": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=3.0, multiplier=10
+    ),
+    "eb": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=3.0, multiplier=5
+    ),
+    "pg": FeeConfig(
+        FeeType.FIXED, open_fixed=6.0, close_fixed=6.0, close_today_fixed=6.0, multiplier=20
+    ),
 }
 
 # 郑商所品种费率配置
 CZCE_FEE_CONFIGS: dict[str, FeeConfig] = {
     # 农产品
-    "CF": FeeConfig(FeeType.FIXED, open_fixed=4.3, close_fixed=4.3,
-                   close_today_fixed=0.0, multiplier=5),
-    "SR": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=10),
-    "OI": FeeConfig(FeeType.FIXED, open_fixed=2.0, close_fixed=2.0,
-                   close_today_fixed=0.0, multiplier=10),
-    "RM": FeeConfig(FeeType.FIXED, open_fixed=1.5, close_fixed=1.5,
-                   close_today_fixed=1.5, multiplier=10),
-    "AP": FeeConfig(FeeType.FIXED, open_fixed=5.0, close_fixed=5.0,
-                   close_today_fixed=20.0, multiplier=10),
-    "CJ": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=3.0, multiplier=5),
-    "PK": FeeConfig(FeeType.FIXED, open_fixed=4.0, close_fixed=4.0,
-                   close_today_fixed=4.0, multiplier=5),
+    "CF": FeeConfig(
+        FeeType.FIXED, open_fixed=4.3, close_fixed=4.3, close_today_fixed=0.0, multiplier=5
+    ),
+    "SR": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=10
+    ),
+    "OI": FeeConfig(
+        FeeType.FIXED, open_fixed=2.0, close_fixed=2.0, close_today_fixed=0.0, multiplier=10
+    ),
+    "RM": FeeConfig(
+        FeeType.FIXED, open_fixed=1.5, close_fixed=1.5, close_today_fixed=1.5, multiplier=10
+    ),
+    "AP": FeeConfig(
+        FeeType.FIXED, open_fixed=5.0, close_fixed=5.0, close_today_fixed=20.0, multiplier=10
+    ),
+    "CJ": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=3.0, multiplier=5
+    ),
+    "PK": FeeConfig(
+        FeeType.FIXED, open_fixed=4.0, close_fixed=4.0, close_today_fixed=4.0, multiplier=5
+    ),
     # 化工
-    "MA": FeeConfig(FeeType.FIXED, open_fixed=2.0, close_fixed=2.0,
-                   close_today_fixed=6.0, multiplier=10),
-    "TA": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=5),
-    "SA": FeeConfig(FeeType.FIXED, open_fixed=3.5, close_fixed=3.5,
-                   close_today_fixed=3.5, multiplier=20),
-    "UR": FeeConfig(FeeType.FIXED, open_fixed=5.0, close_fixed=5.0,
-                   close_today_fixed=5.0, multiplier=20),
-    "FG": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=6.0, multiplier=20),
+    "MA": FeeConfig(
+        FeeType.FIXED, open_fixed=2.0, close_fixed=2.0, close_today_fixed=6.0, multiplier=10
+    ),
+    "TA": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=5
+    ),
+    "SA": FeeConfig(
+        FeeType.FIXED, open_fixed=3.5, close_fixed=3.5, close_today_fixed=3.5, multiplier=20
+    ),
+    "UR": FeeConfig(
+        FeeType.FIXED, open_fixed=5.0, close_fixed=5.0, close_today_fixed=5.0, multiplier=20
+    ),
+    "FG": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=6.0, multiplier=20
+    ),
     # 其他
-    "SM": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=3.0, multiplier=5),
-    "SF": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=3.0, multiplier=5),
+    "SM": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=3.0, multiplier=5
+    ),
+    "SF": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=3.0, multiplier=5
+    ),
 }
 
 # 中金所品种费率配置（平今费率极高！）
@@ -230,32 +265,40 @@ CFFEX_FEE_CONFIGS: dict[str, FeeConfig] = {
     "IC": FeeConfig(FeeType.RATIO, 0.000023, 0.000023, 0.000345, multiplier=200),
     "IM": FeeConfig(FeeType.RATIO, 0.000023, 0.000023, 0.000345, multiplier=200),
     # 国债期货 - 按手收费
-    "T": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                  close_today_fixed=0.0, multiplier=10000),
-    "TF": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=10000),
-    "TS": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=20000),
-    "TL": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=10000),
+    "T": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=10000
+    ),
+    "TF": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=10000
+    ),
+    "TS": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=20000
+    ),
+    "TL": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=10000
+    ),
 }
 
 # 广期所品种费率配置
 GFEX_FEE_CONFIGS: dict[str, FeeConfig] = {
     "lc": FeeConfig(FeeType.RATIO, 0.00004, 0.00004, 0.00008, multiplier=1),
-    "si": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=3.0, multiplier=5),
+    "si": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=3.0, multiplier=5
+    ),
 }
 
 # 能源中心品种费率配置
 INE_FEE_CONFIGS: dict[str, FeeConfig] = {
-    "sc": FeeConfig(FeeType.FIXED, open_fixed=20.0, close_fixed=20.0,
-                   close_today_fixed=0.0, multiplier=1000),
-    "lu": FeeConfig(FeeType.FIXED, open_fixed=1.0, close_fixed=1.0,
-                   close_today_fixed=0.0, multiplier=10),
+    "sc": FeeConfig(
+        FeeType.FIXED, open_fixed=20.0, close_fixed=20.0, close_today_fixed=0.0, multiplier=1000
+    ),
+    "lu": FeeConfig(
+        FeeType.FIXED, open_fixed=1.0, close_fixed=1.0, close_today_fixed=0.0, multiplier=10
+    ),
     "bc": FeeConfig(FeeType.RATIO, 0.00005, 0.00005, 0.00005, multiplier=5),
-    "nr": FeeConfig(FeeType.FIXED, open_fixed=3.0, close_fixed=3.0,
-                   close_today_fixed=0.0, multiplier=10),
+    "nr": FeeConfig(
+        FeeType.FIXED, open_fixed=3.0, close_fixed=3.0, close_today_fixed=0.0, multiplier=10
+    ),
 }
 
 
@@ -289,7 +332,7 @@ class ChinaFeeCalculator:
 
     configs: dict[str, FeeConfig] = field(default_factory=lambda: ALL_FEE_CONFIGS.copy())
     default_ratio: float = 0.0001  # 默认万分之一
-    default_fixed: float = 10.0   # 默认10元/手
+    default_fixed: float = 10.0  # 默认10元/手
 
     # 默认合约乘数
     DEFAULT_MULTIPLIER: ClassVar[int] = 10
@@ -367,9 +410,8 @@ class ChinaFeeCalculator:
             fee = self._calc_by_fixed(config, volume, direction)
             fee_type = FeeType.FIXED
         else:  # MIXED
-            fee = (
-                self._calc_by_ratio(config, value, direction) +
-                self._calc_by_fixed(config, volume, direction)
+            fee = self._calc_by_ratio(config, value, direction) + self._calc_by_fixed(
+                config, volume, direction
             )
             fee_type = FeeType.MIXED
 
@@ -512,9 +554,7 @@ class ChinaFeeCalculator:
         """
         open_result = self.calculate(instrument, price, volume, "open", multiplier)
         close_direction = "close_today" if is_intraday else "close"
-        close_result = self.calculate(
-            instrument, price, volume, close_direction, multiplier
-        )
+        close_result = self.calculate(instrument, price, volume, close_direction, multiplier)
         return open_result.fee + close_result.fee
 
     def get_fee_rate_info(self, product: str) -> dict[str, object]:
@@ -541,13 +581,9 @@ class ChinaFeeCalculator:
             "product": product,
             "fee_type": config.fee_type.value,
             "open_rate": config.open_ratio if config.open_ratio else config.open_fixed,
-            "close_rate": (
-                config.close_ratio if config.close_ratio else config.close_fixed
-            ),
+            "close_rate": (config.close_ratio if config.close_ratio else config.close_fixed),
             "close_today_rate": (
-                config.close_today_ratio
-                if config.close_today_ratio
-                else config.close_today_fixed
+                config.close_today_ratio if config.close_today_ratio else config.close_today_fixed
             ),
             "multiplier": config.multiplier,
         }
@@ -590,9 +626,7 @@ def calculate_fee(
     返回:
         手续费金额
     """
-    result = get_default_calculator().calculate(
-        instrument, price, volume, direction, multiplier
-    )
+    result = get_default_calculator().calculate(instrument, price, volume, direction, multiplier)
     return result.fee
 
 
