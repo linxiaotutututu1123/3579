@@ -21,6 +21,13 @@
 			"command": "workflow",
 			"problemMatcher": [],
 			"detail": "CMake 模板 工作流 任务"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: 测试",
+			"command": "test",
+			"problemMatcher": [],
+			"detail": "CMake 模板 测试 任务"
 		}
 	]
 }
