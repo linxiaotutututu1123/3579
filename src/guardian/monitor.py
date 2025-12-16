@@ -26,6 +26,7 @@ from src.guardian.recovery import ColdStartRecovery
 from src.guardian.state_machine import GuardianFSM, GuardianMode
 from src.guardian.triggers import BaseTrigger, TriggerManager, TriggerResult
 
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -71,10 +72,10 @@ class GuardianMonitor:
         """初始化守护监控器.
 
         Args:
-            fsm: 状态机（可选，默认创建新的）
-            trigger_manager: 触发器管理器（可选）
-            actions: 动作执行器（可选）
-            recovery: 恢复器（可选）
+            fsm: 状态机（默认创建新的）
+            trigger_manager: 触发器管理器
+            actions: 动作执行器
+            recovery: 恢复器
             on_mode_change: 模式变更回调 (from, to, trigger)
         """
         self._on_mode_change = on_mode_change
@@ -182,13 +183,11 @@ class GuardianMonitor:
                 elif current_qty > 0:
                     # 多头：只允许减仓（target <= current）
                     filtered[symbol] = min(target_qty, current_qty)
-                    if filtered[symbol] < 0:
-                        filtered[symbol] = 0  # 不允许翻空
+                    filtered[symbol] = max(filtered[symbol], 0)  # 不允许翻空
                 else:
                     # 空头：只允许减仓（target >= current）
                     filtered[symbol] = max(target_qty, current_qty)
-                    if filtered[symbol] > 0:
-                        filtered[symbol] = 0  # 不允许翻多
+                    filtered[symbol] = min(filtered[symbol], 0)  # 不允许翻多
 
             return filtered
 
@@ -263,10 +262,8 @@ class GuardianMonitor:
                 if state.status.value == "completed":
                     self._fsm.transition("init_success")
                     return True
-                else:
-                    self._fsm.transition("init_failed")
-                    return False
-
+                self._fsm.transition("init_failed")
+                return False
             # 无恢复器，直接进入 RUNNING
             self._fsm.transition("init_success")
             return True

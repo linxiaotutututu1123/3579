@@ -22,6 +22,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
+
 if TYPE_CHECKING:
     pass
 
@@ -66,7 +67,6 @@ class BaseTrigger(ABC):
 
     def reset(self) -> None:
         """重置触发器状态."""
-        pass
 
 
 class QuoteStaleTrigger(BaseTrigger):
@@ -240,12 +240,14 @@ class PositionDriftTrigger(BaseTrigger):
             diff = abs(local_qty - broker_qty)
 
             if diff > self._tolerance:
-                drifted_symbols.append({
-                    "symbol": symbol,
-                    "local": local_qty,
-                    "broker": broker_qty,
-                    "diff": diff,
-                })
+                drifted_symbols.append(
+                    {
+                        "symbol": symbol,
+                        "local": local_qty,
+                        "broker": broker_qty,
+                        "diff": diff,
+                    }
+                )
 
         triggered = len(drifted_symbols) > 0
 
@@ -302,13 +304,15 @@ class LegImbalanceTrigger(BaseTrigger):
             imbalance = abs(near_qty) - abs(far_qty)
 
             if abs(imbalance) > self._threshold:
-                imbalanced_pairs.append({
-                    "near_symbol": pair.get("near_symbol"),
-                    "far_symbol": pair.get("far_symbol"),
-                    "near_qty": near_qty,
-                    "far_qty": far_qty,
-                    "imbalance": imbalance,
-                })
+                imbalanced_pairs.append(
+                    {
+                        "near_symbol": pair.get("near_symbol"),
+                        "far_symbol": pair.get("far_symbol"),
+                        "near_qty": near_qty,
+                        "far_qty": far_qty,
+                        "imbalance": imbalance,
+                    }
+                )
 
         triggered = len(imbalanced_pairs) > 0
 

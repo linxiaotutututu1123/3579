@@ -16,6 +16,7 @@ from __future__ import annotations
 from enum import IntEnum
 from typing import TYPE_CHECKING, Any
 
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -66,8 +67,6 @@ VALID_TRANSITIONS: dict[tuple[GuardianMode, str], GuardianMode] = {
 
 class TransitionError(Exception):
     """状态转移错误."""
-
-    pass
 
 
 class GuardianFSM:
@@ -141,9 +140,7 @@ class GuardianFSM:
         """
         key = (self._mode, event)
         if key not in VALID_TRANSITIONS:
-            raise TransitionError(
-                f"Invalid transition: {self._mode.name} + {event}"
-            )
+            raise TransitionError(f"Invalid transition: {self._mode.name} + {event}")
 
         from_mode = self._mode
         to_mode = VALID_TRANSITIONS[key]

@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol
 
+
 if TYPE_CHECKING:
     from src.guardian.state_machine import GuardianMode
 
