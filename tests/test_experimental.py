@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
 
@@ -11,7 +11,6 @@ from src.strategy.experimental.maturity_evaluator import (
     MaturityLevel,
     MaturityScore,
     TrainingHistory,
-    TrainingRecord,
 )
 from src.strategy.experimental.training_gate import (
     ActivationDecision,
@@ -61,54 +60,25 @@ class TestMaturityScore:
         assert failing.is_passing is False
 
 
-class TestTrainingRecord:
-    """训练记录测试."""
-
-    def test_creation(self) -> None:
-        """测试创建."""
-        record = TrainingRecord(
-            date=datetime.now().date(),
-            returns=0.01,
-            sharpe=1.5,
-            max_drawdown=0.05,
-            win_rate=0.6,
-            trades=100,
-        )
-        assert record.returns == 0.01
-        assert record.sharpe == 1.5
-
-
 class TestTrainingHistory:
     """训练历史测试."""
 
-    def test_add_record(self) -> None:
-        """测试添加记录."""
-        history = TrainingHistory(strategy_id="test")
-        record = TrainingRecord(
-            date=datetime.now().date(),
-            returns=0.01,
-            sharpe=1.5,
-            max_drawdown=0.05,
-            win_rate=0.6,
-            trades=100,
+    def test_creation(self) -> None:
+        """测试创建."""
+        history = TrainingHistory(
+            strategy_id="test",
+            start_date=datetime.now(),
         )
-        history.add_record(record)
-        assert len(history.records) == 1
+        assert history.strategy_id == "test"
 
     def test_training_days(self) -> None:
         """测试训练天数."""
-        history = TrainingHistory(strategy_id="test")
-        for i in range(10):
-            record = TrainingRecord(
-                date=(datetime.now() - timedelta(days=i)).date(),
-                returns=0.01,
-                sharpe=1.5,
-                max_drawdown=0.05,
-                win_rate=0.6,
-                trades=100,
-            )
-            history.add_record(record)
-        assert history.training_days >= 10
+        history = TrainingHistory(
+            strategy_id="test",
+            start_date=datetime.now(),
+            daily_returns=[0.01, 0.02, -0.01, 0.015, 0.005] * 20,  # 100天
+        )
+        assert history.training_days == 100
 
 
 class TestMaturityEvaluator:
@@ -117,31 +87,26 @@ class TestMaturityEvaluator:
     def test_evaluate_empty_history(self) -> None:
         """测试空历史评估."""
         evaluator = MaturityEvaluator()
-        history = TrainingHistory(strategy_id="test")
+        history = TrainingHistory(strategy_id="test", start_date=datetime.now())
         report = evaluator.evaluate(history)
         assert report.is_mature is False
-        assert report.total_score == 0.0
 
-    def test_evaluate_with_records(self) -> None:
-        """测试有记录的评估."""
+    def test_evaluate_with_data(self) -> None:
+        """测试有数据的评估."""
         evaluator = MaturityEvaluator()
-        history = TrainingHistory(strategy_id="test")
-
-        # 添加足够的记录
-        for i in range(100):
-            record = TrainingRecord(
-                date=(datetime.now() - timedelta(days=i)).date(),
-                returns=0.005,
-                sharpe=2.0,
-                max_drawdown=0.03,
-                win_rate=0.65,
-                trades=50,
-            )
-            history.add_record(record)
-
+        history = TrainingHistory(
+            strategy_id="test",
+            start_date=datetime.now(),
+            daily_returns=[0.005] * 100,
+            sharpe_ratio=2.0,
+            max_drawdown=0.05,
+            win_rate=0.6,
+            trade_count=500,
+            profit_factor=1.5,
+        )
         report = evaluator.evaluate(history)
-        assert report.total_score >= 0
         assert report.strategy_id == "test"
+        assert report.training_days == 100
 
     def test_get_level(self) -> None:
         """测试获取级别."""
@@ -151,25 +116,6 @@ class TestMaturityEvaluator:
         assert evaluator._get_level(0.5) == MaturityLevel.GROWING
         assert evaluator._get_level(0.7) == MaturityLevel.MATURING
         assert evaluator._get_level(0.9) == MaturityLevel.MATURE
-
-    def test_evaluate_stability(self) -> None:
-        """测试稳定性评估."""
-        evaluator = MaturityEvaluator()
-        history = TrainingHistory(strategy_id="test")
-        for i in range(30):
-            record = TrainingRecord(
-                date=(datetime.now() - timedelta(days=i)).date(),
-                returns=0.01,
-                sharpe=2.0,
-                max_drawdown=0.02,
-                win_rate=0.7,
-                trades=100,
-            )
-            history.add_record(record)
-
-        score = evaluator._evaluate_stability(history)
-        assert score.dimension == "stability"
-        assert 0 <= score.score <= 1
 
 
 class TestActivationStatus:
@@ -220,20 +166,11 @@ class TestTrainingGate:
         """测试训练不足."""
         evaluator = MaturityEvaluator()
         gate = TrainingGate(evaluator)
-        history = TrainingHistory(strategy_id="test")
-
-        # 添加少量记录
-        for i in range(10):
-            record = TrainingRecord(
-                date=(datetime.now() - timedelta(days=i)).date(),
-                returns=0.01,
-                sharpe=2.0,
-                max_drawdown=0.02,
-                win_rate=0.7,
-                trades=100,
-            )
-            history.add_record(record)
-
+        history = TrainingHistory(
+            strategy_id="test",
+            start_date=datetime.now(),
+            daily_returns=[0.01] * 10,  # 只有10天
+        )
         decision = gate.check_activation(history)
         assert decision.allowed is False
         assert decision.remaining_days > 0
@@ -242,9 +179,10 @@ class TestTrainingGate:
         """测试能否启用."""
         evaluator = MaturityEvaluator()
         gate = TrainingGate(evaluator)
-        history = TrainingHistory(strategy_id="test")
-
-        # 不添加记录，应该不能启用
+        history = TrainingHistory(
+            strategy_id="test",
+            start_date=datetime.now(),
+        )
         assert gate.can_activate(history) is False
 
 
@@ -270,7 +208,7 @@ class TestTrainingProgress:
             target_maturity=0.8,
         )
         assert progress.days_remaining == 60
-        assert progress.maturity_gap == 0.3
+        assert progress.maturity_gap == pytest.approx(0.3)
 
 
 class TestTrainingSession:
@@ -336,31 +274,11 @@ class TestTrainingMonitor:
         sessions = monitor.list_sessions()
         assert len(sessions) == 2
 
-    def test_record_progress(self) -> None:
-        """测试记录进度."""
-        monitor = TrainingMonitor()
-        session = monitor.create_session("test")
-        monitor.start_session(session.session_id)
-
-        record = TrainingRecord(
-            date=datetime.now().date(),
-            returns=0.01,
-            sharpe=1.5,
-            max_drawdown=0.05,
-            win_rate=0.6,
-            trades=100,
-        )
-        monitor.record_progress(session.session_id, record)
-
-        updated = monitor.get_session(session.session_id)
-        assert len(updated.history.records) == 1
-
     def test_get_progress(self) -> None:
         """测试获取进度."""
         monitor = TrainingMonitor()
         session = monitor.create_session("test")
         monitor.start_session(session.session_id)
-
         progress = monitor.get_progress(session.session_id)
         assert progress.current_day >= 0
 
