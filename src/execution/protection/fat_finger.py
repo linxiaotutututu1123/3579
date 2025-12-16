@@ -202,7 +202,7 @@ class FatFingerGate:
                 qty=qty,
                 notional=notional,
                 price_deviation=price_deviation,
-                message=f"Price deviation {abs_deviation:.2%} > {self._config.max_price_deviation:.2%}",
+                message=f"Price deviation {abs_deviation:.2%} > max {self._config.max_price_deviation:.2%}",
             )
 
         # 通过

@@ -263,10 +263,9 @@ class TestExecContextManager:
         mgr = ExecContextManager()
 
         ctx1 = mgr.create("run1", "strat1", {}, {})
-        ctx2 = mgr.create("run2", "strat1", {}, {})
+        mgr.create("run2", "strat1", {}, {})  # ctx2 - not started
 
         ctx1.start()  # Running
-        # ctx2 is still pending
 
         active = mgr.get_active()
         assert len(active) == 1

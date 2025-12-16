@@ -149,7 +149,7 @@ class ThrottleGate:
                 orders_in_window=orders_in_window,
                 time_since_last=time_since_last,
                 wait_time_s=max(0, wait_time),
-                message=f"Rate limit: {orders_in_window} >= {self._config.max_orders_per_minute}/min",
+                message=f"Rate limit: {orders_in_window} >= {self._config.max_orders_per_minute}",
             )
 
         # 检查最小间隔
