@@ -10,10 +10,12 @@ Exports:
 - FatFingerGate: 胖手指检查
 - ThrottleGate: 节流控制
 - LimitPriceGuard: 涨跌停保护 (Phase 7 新增)
+- MarginMonitor: 保证金监控 (Phase 7 新增)
 
 军规覆盖:
 - M6: 熔断保护
 - M13: 涨跌停感知
+- M16: 保证金实时监控
 """
 
 from src.execution.protection.fat_finger import FatFingerConfig, FatFingerGate
@@ -30,11 +32,22 @@ from src.execution.protection.limit_price import (
     get_limit_prices,
 )
 from src.execution.protection.liquidity import LiquidityConfig, LiquidityGate
+from src.execution.protection.margin_monitor import (
+    MarginAlert,
+    MarginConfig,
+    MarginLevel,
+    MarginMonitor,
+    MarginSnapshot,
+    MarginStatus,
+    OpenPositionCheckResult,
+    can_open,
+    check_margin,
+    get_default_monitor,
+)
 from src.execution.protection.throttle import ThrottleConfig, ThrottleGate
 
 
 __all__ = [
-    "PRODUCT_LIMIT_PCT",
     "FatFingerConfig",
     "FatFingerGate",
     "LimitPriceCheckOutput",
@@ -45,9 +58,20 @@ __all__ = [
     "LimitStatus",
     "LiquidityConfig",
     "LiquidityGate",
+    "MarginAlert",
+    "MarginConfig",
+    "MarginLevel",
+    "MarginMonitor",
+    "MarginSnapshot",
+    "MarginStatus",
+    "OpenPositionCheckResult",
+    "PRODUCT_LIMIT_PCT",
     "ThrottleConfig",
     "ThrottleGate",
+    "can_open",
     "check_limit_price",
+    "check_margin",
     "get_default_guard",
+    "get_default_monitor",
     "get_limit_prices",
 ]
