@@ -153,7 +153,7 @@ class TestAuditWriter:
                     return {"ts": 1.0}
 
             with pytest.raises(ValueError, match="event_type"):
-                writer.write(BadEvent())  # type: ignore[arg-type]
+                writer.write(BadEvent())
 
             writer.close()
 
