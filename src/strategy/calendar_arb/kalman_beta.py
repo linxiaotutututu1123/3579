@@ -178,7 +178,6 @@ class KalmanBetaEstimator:
 
         # Innovation (measurement residual)
         predicted_spread = near_price - predicted_beta * far_price
-        observed_spread = near_price - self._beta * far_price  # Using current beta
         innovation = predicted_spread  # Simplification: we observe spread directly
 
         # Innovation variance
