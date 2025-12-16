@@ -18,7 +18,6 @@ from src.strategy.experimental.training_gate import (
 )
 from src.strategy.experimental.training_monitor import (
     TrainingMonitor,
-    TrainingProgress,
     TrainingSession,
     TrainingStatus,
 )

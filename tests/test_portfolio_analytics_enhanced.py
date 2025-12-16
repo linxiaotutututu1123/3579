@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from src.portfolio.aggregator import AggregatedPosition, PositionAggregator, PositionSnapshot
 from src.portfolio.analytics import PnLAttribution, PortfolioAnalytics, RiskMetrics
-from src.portfolio.manager import PortfolioConfig, PortfolioManager
+from src.portfolio.manager import PortfolioManager
 
 
 class TestRiskMetricsDataclass:
