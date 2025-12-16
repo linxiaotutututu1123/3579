@@ -111,9 +111,8 @@ class TestCtpConfigLoad:
 
     def test_load_require_complete_checks_all(self) -> None:
         """测试require_complete检查所有变量."""
-        with patch.dict("os.environ", {}, clear=True):
-            with pytest.raises(CtpConfigMissingError):
-                load_ctp_config(TradeEnvironment.PAPER, require_complete=True)
+        with patch.dict("os.environ", {}, clear=True), pytest.raises(CtpConfigMissingError):
+            load_ctp_config(TradeEnvironment.PAPER, require_complete=True)
 
 
 # =============================================================================

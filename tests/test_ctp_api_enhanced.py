@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -24,13 +24,12 @@ from src.brokers.ctp.api import (
     ConnectionStatus,
     CtpApi,
     CtpAuthError,
-    CtpConnectionError,
     CtpSubscribeError,
     SubscriptionStatus,
     TickData,
     create_ctp_api,
 )
-from src.brokers.ctp.config import CtpConnectionConfig, TradeEnvironment
+from src.brokers.ctp.config import CtpConnectionConfig
 
 
 # =============================================================================
