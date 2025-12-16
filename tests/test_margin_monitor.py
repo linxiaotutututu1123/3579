@@ -8,7 +8,7 @@ V4 Scenarios: CHINA.MARGIN.RATIO_CHECK, CHINA.MARGIN.USAGE_MONITOR, CHINA.MARGIN
 军规 M16: 保证金实时监控测试覆盖
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
 
@@ -19,7 +19,6 @@ from src.execution.protection.margin_monitor import (
     MarginMonitor,
     MarginSnapshot,
     MarginStatus,
-    OpenPositionCheckResult,
     can_open,
     check_margin,
     get_default_monitor,

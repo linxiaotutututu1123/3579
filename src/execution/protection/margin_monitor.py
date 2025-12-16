@@ -36,7 +36,7 @@ V4 Scenarios: CHINA.MARGIN.RATIO_CHECK, CHINA.MARGIN.USAGE_MONITOR, CHINA.MARGIN
 from __future__ import annotations
 
 from collections import deque
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import ClassVar
@@ -232,9 +232,7 @@ class MarginMonitor:
         self._level: MarginLevel = MarginLevel.SAFE
         self._status: MarginStatus = MarginStatus.HEALTHY
         self._previous_level: MarginLevel = MarginLevel.SAFE
-        self._snapshots: deque[MarginSnapshot] = deque(
-            maxlen=self.config.max_snapshot_history
-        )
+        self._snapshots: deque[MarginSnapshot] = deque(maxlen=self.config.max_snapshot_history)
         self._alerts: deque[MarginAlert] = deque(maxlen=100)
         self._last_update: datetime | None = None
 
@@ -460,9 +458,7 @@ class MarginMonitor:
 
         # 计算开仓后的保证金使用率
         projected_margin_used = self._margin_used + required_margin
-        projected_usage_ratio = (
-            projected_margin_used / self._equity if self._equity > 0 else 1.0
-        )
+        projected_usage_ratio = projected_margin_used / self._equity if self._equity > 0 else 1.0
 
         # 计算开仓后的等级
         projected_level = self._calculate_projected_level(projected_usage_ratio)
@@ -581,9 +577,7 @@ class MarginMonitor:
             "level": self._level.value,
             "status": self._status.value,
             "action_required": self.LEVEL_ACTIONS[self._level],
-            "last_update": (
-                self._last_update.isoformat() if self._last_update else None
-            ),
+            "last_update": (self._last_update.isoformat() if self._last_update else None),
             "alert_count": len(self._alerts),
         }
 
