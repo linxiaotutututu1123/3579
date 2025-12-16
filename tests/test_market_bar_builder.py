@@ -147,20 +147,21 @@ class TestMktContinuityBars:
     def test_bar_interval_boundary(self) -> None:
         """Bar 边界正确对齐."""
         builder = BarBuilder(bar_interval_s=60)
-        builder.update_dominant("rb", "rb2501", ts=1700000000.0)
+        # Use ts=60 as clean minute boundary
+        builder.update_dominant("rb", "rb2501", ts=60.0)
 
-        # Tick at 1700000045 -> bar should be [1700000000, 1700000060)
-        builder.on_tick("rb", make_book("rb2501", ts=1700000045.0, last=4000.0))
+        # Tick at ts=75 -> bar should be [60, 120)
+        builder.on_tick("rb", make_book("rb2501", ts=75.0, last=4000.0))
 
-        # Force completion by next minute tick
-        builder.on_tick("rb", make_book("rb2501", ts=1700000060.0, last=4010.0))
+        # Force completion by next minute tick at ts=120
+        builder.on_tick("rb", make_book("rb2501", ts=120.0, last=4010.0))
 
         bars = builder.get_bars("rb")
-        assert len(bars) == 1
-        assert bars[0].ts_start == 1700000000.0, (
+        assert len(bars) == 1, f"[{self.RULE_ID}] Should have 1 completed bar"
+        assert bars[0].ts_start == 60.0, (
             f"[{self.RULE_ID}] Bar start should align to interval boundary"
         )
-        assert bars[0].ts_end == 1700000060.0, (
+        assert bars[0].ts_end == 120.0, (
             f"[{self.RULE_ID}] Bar end should be start + interval"
         )
 
