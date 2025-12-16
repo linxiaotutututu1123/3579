@@ -47,6 +47,7 @@ ignore = [
     "TRY003",   # 允许长异常消息
     "TRY004",   # 允许 RuntimeError 代替 TypeError
     "TRY300",   # 允许 try 内 return
+    "TRY301",   # 允许 try 内 raise（CTP连接/认证需要）
     "ARG001",   # 允许未使用参数（接口预留）
     "ARG002",   # 允许未使用的方法参数（接口兼容）
     "B008",     # 允许函数默认参数使用函数调用（FastAPI 依赖）
