@@ -430,7 +430,7 @@ class MarginMonitor:
         if self._level == MarginLevel.CRITICAL:
             return OpenPositionCheckResult(
                 can_open=False,
-                reason="保证金已达临界等级，禁止开仓",
+                reason="保证金已达临界等级, 禁止开仓",
                 current_level=self._level,
                 usage_ratio=self._usage_ratio,
                 available_margin=self.margin_available,
@@ -440,7 +440,7 @@ class MarginMonitor:
         if self._level == MarginLevel.DANGER:
             return OpenPositionCheckResult(
                 can_open=False,
-                reason="保证金处于危险等级，禁止开仓",
+                reason="保证金处于危险等级, 禁止开仓",
                 current_level=self._level,
                 usage_ratio=self._usage_ratio,
                 available_margin=self.margin_available,
@@ -450,7 +450,7 @@ class MarginMonitor:
         if self._level == MarginLevel.WARNING and not allow_warning:
             return OpenPositionCheckResult(
                 can_open=False,
-                reason="保证金处于预警等级，不允许开仓",
+                reason="保证金处于预警等级, 不允许开仓",
                 current_level=self._level,
                 usage_ratio=self._usage_ratio,
                 available_margin=self.margin_available,
@@ -493,7 +493,7 @@ class MarginMonitor:
         if new_level in (MarginLevel.DANGER, MarginLevel.CRITICAL):
             return OpenPositionCheckResult(
                 can_open=False,
-                reason=f"开仓后保证金将达到{new_level.value}等级，禁止开仓",
+                reason=f"开仓后保证金将达到{new_level.value}等级, 禁止开仓",
                 current_level=self._level,
                 usage_ratio=self._usage_ratio,
                 available_margin=available,
@@ -503,7 +503,7 @@ class MarginMonitor:
 
         return OpenPositionCheckResult(
             can_open=True,
-            reason="保证金充足，可以开仓",
+            reason="保证金充足, 可以开仓",
             current_level=self._level,
             usage_ratio=self._usage_ratio,
             available_margin=available,
