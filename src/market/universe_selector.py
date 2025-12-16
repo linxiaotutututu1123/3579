@@ -19,6 +19,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from src.market.instrument_cache import InstrumentCache
 
@@ -141,9 +142,7 @@ class UniverseSelector:
             # 主力选择（考虑冷却期）
             candidate_dominant = scored[0][0]
             current_dominant = (
-                self._current.dominant_by_product.get(product)
-                if self._current
-                else None
+                self._current.dominant_by_product.get(product) if self._current else None
             )
 
             # 检查冷却期和切换门槛
@@ -151,9 +150,7 @@ class UniverseSelector:
                 if self._is_in_cooldown(product, now_ts):
                     # 冷却期内，保持原主力
                     candidate_dominant = current_dominant
-                elif not self._meets_switch_edge(
-                    current_dominant, candidate_dominant, oi, vol
-                ):
+                elif not self._meets_switch_edge(current_dominant, candidate_dominant, oi, vol):
                     # 未达到切换门槛，保持原主力
                     candidate_dominant = current_dominant
                 else:
@@ -179,9 +176,7 @@ class UniverseSelector:
         self._current = snapshot
         return snapshot
 
-    def _filter_expiry(
-        self, instruments: list, trading_day: str | None
-    ) -> list:
+    def _filter_expiry(self, instruments: list, trading_day: str | None) -> list:
         """过滤临期合约.
 
         V2 Scenario: UNIV.EXPIRY.GATE

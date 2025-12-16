@@ -13,13 +13,15 @@ V2 Scenarios: MKT.QUALITY.OUTLIER, MKT.QUALITY.GAP, MKT.QUALITY.DISORDER
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
-    from src.market.quote_cache import BookTop
     from src.market.instrument_cache import InstrumentInfo
+    from src.market.quote_cache import BookTop
 
 
 class QualityIssue(Enum):

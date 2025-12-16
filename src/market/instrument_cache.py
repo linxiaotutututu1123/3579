@@ -16,9 +16,10 @@ from __future__ import annotations
 import json
 import os
 import tempfile
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     pass
@@ -124,9 +125,7 @@ class InstrumentCache:
         }
 
         # 原子化写入：先写 tmp，再 rename
-        fd, tmp_path = tempfile.mkstemp(
-            suffix=".json", prefix="inst_", dir=path.parent
-        )
+        fd, tmp_path = tempfile.mkstemp(suffix=".json", prefix="inst_", dir=path.parent)
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)

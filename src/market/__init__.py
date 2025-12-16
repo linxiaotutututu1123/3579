@@ -28,21 +28,22 @@ Required Scenarios (11 条):
 
 from __future__ import annotations
 
-from src.market.instrument_cache import InstrumentCache, InstrumentInfo
-from src.market.universe_selector import UniverseSelector, UniverseSnapshot
-from src.market.subscriber import Subscriber
-from src.market.quote_cache import QuoteCache, BookTop
 from src.market.bar_builder import BarBuilder
+from src.market.instrument_cache import InstrumentCache, InstrumentInfo
 from src.market.quality import QualityChecker
+from src.market.quote_cache import BookTop, QuoteCache
+from src.market.subscriber import Subscriber
+from src.market.universe_selector import UniverseSelector, UniverseSnapshot
+
 
 __all__ = [
+    "BarBuilder",
+    "BookTop",
     "InstrumentCache",
     "InstrumentInfo",
+    "QualityChecker",
+    "QuoteCache",
+    "Subscriber",
     "UniverseSelector",
     "UniverseSnapshot",
-    "Subscriber",
-    "QuoteCache",
-    "BookTop",
-    "BarBuilder",
-    "QualityChecker",
 ]

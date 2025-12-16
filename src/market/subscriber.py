@@ -12,8 +12,10 @@ V2 Scenarios: MKT.SUBSCRIBER.DIFF_UPDATE
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Protocol
+from typing import TYPE_CHECKING, Protocol
+
 
 if TYPE_CHECKING:
     pass

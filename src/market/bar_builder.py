@@ -12,8 +12,10 @@ V2 Scenarios: MKT.CONTINUITY.BARS
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from src.market.quote_cache import BookTop
