@@ -536,7 +536,7 @@ class DeliveryApproachingTrigger(BaseTrigger):
         current_date = state.get("current_date")
 
         if current_date is None:
-            current_date = date.today()
+            current_date = date.today()  # noqa: DTZ011
         elif isinstance(current_date, datetime):
             current_date = current_date.date()
 
@@ -559,7 +559,9 @@ class DeliveryApproachingTrigger(BaseTrigger):
                 continue
             if isinstance(delivery_date, str):
                 try:
-                    delivery_date = datetime.strptime(delivery_date, "%Y-%m-%d").date()
+                    delivery_date = datetime.strptime(  # noqa: DTZ007
+                        delivery_date, "%Y-%m-%d"
+                    ).date()
                 except ValueError:
                     continue
             elif isinstance(delivery_date, datetime):
