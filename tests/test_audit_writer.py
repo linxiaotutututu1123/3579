@@ -128,7 +128,7 @@ class TestAuditWriter:
                 run_id = ""
                 exec_id = ""
 
-                def to_dict(self) -> dict:
+                def to_dict(self) -> dict[str, Any]:
                     return {}
 
             with pytest.raises(ValueError, match="ts"):
@@ -149,7 +149,7 @@ class TestAuditWriter:
                 run_id = ""
                 exec_id = ""
 
-                def to_dict(self) -> dict:
+                def to_dict(self) -> dict[str, Any]:
                     return {"ts": 1.0}
 
             with pytest.raises(ValueError, match="event_type"):
