@@ -393,7 +393,7 @@ class TrainingMonitor:
 
         # 计算ETA
         if days_remaining > 0:
-            eta = datetime.now()  # noqa: DTZ005 + timedelta(days=days_remaining)
+            eta = datetime.now() + timedelta(days=days_remaining)  # noqa: DTZ005
         elif report.total_score < self.ACTIVATION_THRESHOLD:
             # 预估还需要多少天达到80%
             history_scores = self._progress_history.get(session_id, [])
@@ -403,7 +403,7 @@ class TrainingMonitor:
                 if recent_progress > 0:
                     remaining_pct = self.ACTIVATION_THRESHOLD - report.total_score
                     est_days = int(remaining_pct / recent_progress)
-                    eta = datetime.now()  # noqa: DTZ005 + timedelta(days=est_days)
+                    eta = datetime.now() + timedelta(days=est_days)  # noqa: DTZ005
                 else:
                     eta = None
             else:
