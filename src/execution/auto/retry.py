@@ -16,7 +16,6 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 
 class RetryReason(Enum):
@@ -277,17 +276,16 @@ class RetryPolicy:
         if direction == "BUY":
             if mode == RepriceMode.TO_BEST:
                 return ask
-            elif mode == RepriceMode.TO_BEST_PLUS_TICK:
+            if mode == RepriceMode.TO_BEST_PLUS_TICK:
                 return ask + tick_size
-            else:  # TO_CROSS
-                return ask + tick_size * 2
-        else:  # SELL
-            if mode == RepriceMode.TO_BEST:
-                return bid
-            elif mode == RepriceMode.TO_BEST_PLUS_TICK:
-                return bid - tick_size
-            else:  # TO_CROSS
-                return bid - tick_size * 2
+            # TO_CROSS
+            return ask + tick_size * 2
+        if mode == RepriceMode.TO_BEST:
+            return bid
+        if mode == RepriceMode.TO_BEST_PLUS_TICK:
+            return bid - tick_size
+        # TO_CROSS
+        return bid - tick_size * 2
 
     def __len__(self) -> int:
         """返回重试状态数量."""

@@ -5,7 +5,6 @@ V3PRO+ Platform - Phase 2
 V2 Scenario: EXEC.CONTEXT.TRACKING
 """
 
-import pytest
 
 from src.execution.auto.exec_context import (
     ExecContext,

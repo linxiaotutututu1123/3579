@@ -17,12 +17,13 @@ from src.execution.pair.pair_executor import (
     PairStatus,
 )
 
+
 __all__ = [
+    "Leg",
+    "LegManager",
+    "LegStatus",
     "PairExecutor",
     "PairOrder",
     "PairResult",
     "PairStatus",
-    "LegManager",
-    "Leg",
-    "LegStatus",
 ]

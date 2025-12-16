@@ -10,7 +10,6 @@ V2 Scenarios:
 - PAIR.BREAKER.STOP_Z
 """
 
-import pytest
 
 from src.execution.pair.leg_manager import (
     Leg,

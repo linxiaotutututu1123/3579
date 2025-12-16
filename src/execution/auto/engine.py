@@ -17,18 +17,19 @@ V2 Scenarios:
 from __future__ import annotations
 
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING
 
 from src.execution.auto.order_context import OrderContext, OrderContextRegistry
-from src.execution.auto.retry import RepriceMode, RetryConfig, RetryPolicy, RetryReason
+from src.execution.auto.retry import RetryConfig, RetryPolicy, RetryReason
 from src.execution.auto.state_machine import (
-    TERMINAL_STATES,
     OrderEvent,
     OrderFSM,
     OrderState,
 )
 from src.execution.auto.timeout import TimeoutConfig, TimeoutManager, TimeoutType
+
 
 if TYPE_CHECKING:
     from src.execution.broker import Broker
@@ -372,7 +373,6 @@ class AutoOrderEngine:
             reason: 原因
         """
         # 可以记录日志或触发告警
-        pass
 
     def _emit_event(self, local_id: str, state: OrderState, event: OrderEvent) -> None:
         """触发事件回调.
@@ -481,17 +481,17 @@ class AutoOrderEngine:
 
         if status == "0":
             return OrderEvent.FILL
-        elif status == "1":
+        if status == "1":
             if filled_qty > prev_filled:
                 return OrderEvent.PARTIAL_FILL
             return OrderEvent.ACK
-        elif status == "2":
+        if status == "2":
             return OrderEvent.PARTIAL_FILL
-        elif status == "3":
+        if status == "3":
             return OrderEvent.ACK
-        elif status == "4":
+        if status == "4":
             return OrderEvent.STATUS_4
-        elif status == "5":
+        if status == "5":
             return None  # 撤单中，等待确认
 
         return None

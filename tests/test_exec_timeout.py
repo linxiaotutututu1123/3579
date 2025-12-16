@@ -7,7 +7,6 @@ V2 Scenarios:
 - EXEC.TIMEOUT.FILL
 """
 
-import pytest
 
 from src.execution.auto.timeout import (
     TimeoutConfig,

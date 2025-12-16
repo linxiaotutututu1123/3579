@@ -18,11 +18,13 @@ from __future__ import annotations
 
 import time
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
-from src.execution.pair.leg_manager import Leg, LegManager, LegStatus
+from src.execution.pair.leg_manager import LegManager, LegStatus
+
 
 if TYPE_CHECKING:
     from src.execution.auto.engine import AutoOrderEngine

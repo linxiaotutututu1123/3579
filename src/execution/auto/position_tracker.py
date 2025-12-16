@@ -18,9 +18,10 @@ V2 Scenarios:
 from __future__ import annotations
 
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 
 class ReconcileStatus(Enum):
@@ -175,16 +176,15 @@ class PositionTracker:
             else:
                 # 买平（平空）：减少空头
                 pos.short_qty = max(0, pos.short_qty - trade.volume)
-        else:  # SELL
-            if trade.offset == "OPEN":
-                # 卖开：增加空头
-                total_cost = pos.short_avg_cost * pos.short_qty + trade.price * trade.volume
-                pos.short_qty += trade.volume
-                if pos.short_qty > 0:
-                    pos.short_avg_cost = total_cost / pos.short_qty
-            else:
-                # 卖平（平多）：减少多头
-                pos.long_qty = max(0, pos.long_qty - trade.volume)
+        elif trade.offset == "OPEN":
+            # 卖开：增加空头
+            total_cost = pos.short_avg_cost * pos.short_qty + trade.price * trade.volume
+            pos.short_qty += trade.volume
+            if pos.short_qty > 0:
+                pos.short_avg_cost = total_cost / pos.short_qty
+        else:
+            # 卖平（平多）：减少多头
+            pos.long_qty = max(0, pos.long_qty - trade.volume)
 
         pos.last_update = trade.ts
         self._trade_count += 1

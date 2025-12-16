@@ -15,11 +15,12 @@ from src.execution.protection.fat_finger import FatFingerConfig, FatFingerGate
 from src.execution.protection.liquidity import LiquidityConfig, LiquidityGate
 from src.execution.protection.throttle import ThrottleConfig, ThrottleGate
 
+
 __all__ = [
-    "LiquidityGate",
-    "LiquidityConfig",
-    "FatFingerGate",
     "FatFingerConfig",
-    "ThrottleGate",
+    "FatFingerGate",
+    "LiquidityConfig",
+    "LiquidityGate",
     "ThrottleConfig",
+    "ThrottleGate",
 ]

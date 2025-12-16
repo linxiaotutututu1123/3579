@@ -5,7 +5,6 @@ V3PRO+ Platform - Phase 2
 V2 Scenario: EXEC.ID.MAPPING
 """
 
-import pytest
 
 from src.execution.auto.order_context import OrderContext, OrderContextRegistry
 

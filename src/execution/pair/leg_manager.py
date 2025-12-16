@@ -325,14 +325,13 @@ class LegManager:
                 "qty": abs(imbalance),
                 "reason": "auto_hedge",
             }
-        else:
-            # 远腿多了，需要补近腿
-            return {
-                "symbol": info.near_leg.symbol,
-                "direction": info.near_leg.direction,
-                "qty": abs(imbalance),
-                "reason": "auto_hedge",
-            }
+        # 远腿多了，需要补近腿
+        return {
+            "symbol": info.near_leg.symbol,
+            "direction": info.near_leg.direction,
+            "qty": abs(imbalance),
+            "reason": "auto_hedge",
+        }
 
     def is_pair_complete(self, pair_id: str) -> bool:
         """配对是否完成.

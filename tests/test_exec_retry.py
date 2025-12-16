@@ -5,7 +5,6 @@ V3PRO+ Platform - Phase 2
 V2 Scenario: EXEC.RETRY.BACKOFF
 """
 
-import pytest
 
 from src.execution.auto.retry import (
     RepriceMode,
