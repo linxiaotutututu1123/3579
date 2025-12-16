@@ -52,8 +52,8 @@ class TestCostEstimator:
         estimator.set_fee_rate("SA", 0.0003)
         fee = estimator.fee_estimate("SA2501", notional=100000.0)
 
-        # 100000 * 0.0003 = 30
-        assert fee == 30.0
+        # 100000 * 0.0003 = 30 (浮点精度)
+        assert abs(fee - 30.0) < 1e-9
 
     def test_cost_model_fee_estimate_get_rate(self) -> None:
         """COST.MODEL.FEE_ESTIMATE: 获取费率."""
