@@ -1,6 +1,5 @@
 """VaR计算器测试 (军规级 v4.0)."""
 
-
 from src.risk.var_calculator import VaRCalculator, VaRResult
 
 
@@ -122,8 +121,16 @@ class TestVaRCalculatorIntegration:
         """测试所有方法一致性."""
         calc = VaRCalculator()
         returns = [
-            -0.08, -0.06, -0.04, -0.02, 0.00,
-            0.02, 0.04, 0.06, 0.08, 0.10,
+            -0.08,
+            -0.06,
+            -0.04,
+            -0.02,
+            0.00,
+            0.02,
+            0.04,
+            0.06,
+            0.08,
+            0.10,
         ] * 10
 
         hist = calc.historical_var(returns)

@@ -275,11 +275,10 @@ class TestReplayVerifierFileOps:
     def test_verify_files_decision(self) -> None:
         """测试验证决策文件."""
         verifier = ReplayVerifier()
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f1, tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f2:
+        with (
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f1,
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f2,
+        ):
             f1.write('{"event_type": "decision", "value": 1}\n')
             f2.write('{"event_type": "decision", "value": 1}\n')
             path_a = Path(f1.name)
@@ -293,11 +292,10 @@ class TestReplayVerifierFileOps:
     def test_verify_files_guardian(self) -> None:
         """测试验证守护文件."""
         verifier = ReplayVerifier()
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f1, tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f2:
+        with (
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f1,
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f2,
+        ):
             f1.write('{"event_type": "guardian", "mode": "normal"}\n')
             f2.write('{"event_type": "guardian", "mode": "normal"}\n')
             path_a = Path(f1.name)
@@ -311,11 +309,10 @@ class TestReplayVerifierFileOps:
     def test_verify_files_all(self) -> None:
         """测试验证所有事件."""
         verifier = ReplayVerifier()
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f1, tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f2:
+        with (
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f1,
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f2,
+        ):
             f1.write('{"type": "any", "value": 1}\n')
             f2.write('{"type": "any", "value": 1}\n')
             path_a = Path(f1.name)
@@ -332,11 +329,10 @@ class TestVerifyReplayDeterminism:
 
     def test_verify_replay_determinism_both_match(self) -> None:
         """测试决策和守护都匹配."""
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f1, tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f2:
+        with (
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f1,
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f2,
+        ):
             content = (
                 '{"event_type": "decision", "action": "buy"}\n'
                 '{"event_type": "guardian", "mode": "normal"}\n'
@@ -346,9 +342,7 @@ class TestVerifyReplayDeterminism:
             path_orig = Path(f1.name)
             path_replay = Path(f2.name)
 
-        decision_result, guardian_result = verify_replay_determinism(
-            path_orig, path_replay
-        )
+        decision_result, guardian_result = verify_replay_determinism(path_orig, path_replay)
         assert decision_result.is_match is True
         assert guardian_result.is_match is True
         path_orig.unlink()
@@ -356,19 +350,16 @@ class TestVerifyReplayDeterminism:
 
     def test_verify_replay_determinism_mismatch(self) -> None:
         """测试不匹配情况."""
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f1, tempfile.NamedTemporaryFile(
-            mode="w", suffix=".jsonl", delete=False
-        ) as f2:
+        with (
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f1,
+            tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f2,
+        ):
             f1.write('{"event_type": "decision", "action": "buy"}\n')
             f2.write('{"event_type": "decision", "action": "sell"}\n')
             path_orig = Path(f1.name)
             path_replay = Path(f2.name)
 
-        decision_result, guardian_result = verify_replay_determinism(
-            path_orig, path_replay
-        )
+        decision_result, guardian_result = verify_replay_determinism(path_orig, path_replay)
         assert decision_result.is_match is False
         path_orig.unlink()
         path_replay.unlink()

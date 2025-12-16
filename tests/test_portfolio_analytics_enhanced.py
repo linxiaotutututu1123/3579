@@ -262,9 +262,30 @@ class TestPositionAggregatorEnhanced:
         agg = PositionAggregator()
         data = {
             "positions": [
-                {"symbol": "rb2501", "quantity": 10, "strategy": "arb", "avg_price": 4000.0, "realized_pnl": 100.0, "unrealized_pnl": 50.0},
-                {"symbol": "rb2501", "quantity": -5, "strategy": "hedge", "avg_price": 4050.0, "realized_pnl": -20.0, "unrealized_pnl": 30.0},
-                {"symbol": "au2506", "quantity": 3, "strategy": "arb", "avg_price": 500.0, "realized_pnl": 10.0, "unrealized_pnl": 5.0},
+                {
+                    "symbol": "rb2501",
+                    "quantity": 10,
+                    "strategy": "arb",
+                    "avg_price": 4000.0,
+                    "realized_pnl": 100.0,
+                    "unrealized_pnl": 50.0,
+                },
+                {
+                    "symbol": "rb2501",
+                    "quantity": -5,
+                    "strategy": "hedge",
+                    "avg_price": 4050.0,
+                    "realized_pnl": -20.0,
+                    "unrealized_pnl": 30.0,
+                },
+                {
+                    "symbol": "au2506",
+                    "quantity": 3,
+                    "strategy": "arb",
+                    "avg_price": 500.0,
+                    "realized_pnl": 10.0,
+                    "unrealized_pnl": 5.0,
+                },
             ],
         }
 

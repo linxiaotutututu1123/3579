@@ -18,6 +18,7 @@ from src.strategy.fallback import (
 @dataclass
 class MockTargetPortfolio:
     """模拟目标组合."""
+
     positions: dict[str, float]
 
 
@@ -31,6 +32,7 @@ class MockStrategy:
 
     def on_tick(self, state: Any) -> MockTargetPortfolio:
         import time
+
         if self.delay > 0:
             time.sleep(self.delay)
         if self.should_fail:
