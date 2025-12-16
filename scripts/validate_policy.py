@@ -228,15 +228,16 @@ def validate_ci_report(path: Path, result: ValidationResult) -> None:
         report_path = artifacts.get("report_path")
         expected_path = FIXED_PATHS["ci_report"]
         # Normalize: accept relative or absolute path that resolves to same location
+        # 军规级: 使用 POSIX 格式比较，确保跨平台一致性 (Windows \ → Linux /)
         if report_path:
-            actual_resolved = (PROJECT_ROOT / report_path).resolve()
-            expected_resolved = expected_path.resolve()
-            if actual_resolved != expected_resolved:
+            actual_normalized = normalize_path_for_comparison(PROJECT_ROOT / report_path)
+            expected_normalized = normalize_path_for_comparison(expected_path)
+            if actual_normalized != expected_normalized:
                 result.add_violation(
                     "POLICY.FIXED_PATH_MISMATCH",
-                    f"CI report path must resolve to {expected_resolved}, got: {actual_resolved}",
+                    f"CI report path must resolve to {expected_normalized}, got: {actual_normalized}",
                     str(path),
-                    {"expected": str(expected_resolved), "actual": str(actual_resolved)},
+                    {"expected": expected_normalized, "actual": actual_normalized},
                 )
 
 
