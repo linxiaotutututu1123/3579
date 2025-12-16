@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 
 if TYPE_CHECKING:
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 class QuoteCallback(Protocol):
     """行情回调协议."""
 
-    def __call__(self, symbol: str, data: dict) -> None:
+    def __call__(self, symbol: str, data: dict[str, Any]) -> None:
         """处理行情数据."""
         ...
 
