@@ -44,7 +44,7 @@ class PositionEntry:
     updated_at: float = field(default_factory=time.time)
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary."""
+        """转换为字典."""
         return {
             "symbol": self.symbol,
             "quantity": self.quantity,
