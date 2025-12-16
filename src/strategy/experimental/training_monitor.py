@@ -277,7 +277,7 @@ class TrainingMonitor:
 
         history = TrainingHistory(
             strategy_id=strategy_id,
-            start_date=datetime.now()  # noqa: DTZ005,
+            start_date=datetime.now(),  # noqa: DTZ005
         )
 
         session = TrainingSession(
@@ -285,10 +285,10 @@ class TrainingMonitor:
             strategy_id=strategy_id,
             strategy_name=strategy_name,
             strategy_type=strategy_type,
-            start_time=datetime.now()  # noqa: DTZ005,
+            start_time=datetime.now(),  # noqa: DTZ005
             status=TrainingStatus.RUNNING,
             history=history,
-            last_update=datetime.now()  # noqa: DTZ005,
+            last_update=datetime.now(),  # noqa: DTZ005
         )
 
         self._sessions[session_id] = session

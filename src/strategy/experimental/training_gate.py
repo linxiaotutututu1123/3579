@@ -67,7 +67,7 @@ class ActivationDecision:
     reasons: list[str]
     report: MaturityReport | None
     requires_manual_approval: bool
-    timestamp: datetime = field(default_factory=datetime.now)  # noqa: DTZ005
+    timestamp: datetime = field(default_factory=datetime.now)
 
     def to_display(self) -> str:
         """生成显示文本.
@@ -91,7 +91,7 @@ class ActivationDecision:
             lines.append("")
 
         if self.allowed:
-            lines.append("  ✅ 策略已达到启用标准！")
+            lines.append("  ✅ 策略已达到启用标准!")
             if self.requires_manual_approval:
                 lines.append("  ⚠️  需要人工审批后才能正式启用")
         else:
