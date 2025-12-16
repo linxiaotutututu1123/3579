@@ -1,14 +1,14 @@
-"""VaR Calculator (Military-Grade v3.0).
+"""VaR 风险价值计算器 (军规级 v3.0).
 
-Provides Value at Risk (VaR) calculation functionality.
+提供风险价值 (VaR) 计算功能。
 
-Features:
-- Historical VaR
-- Parametric VaR
-- Monte Carlo VaR
-- Expected Shortfall (CVaR)
+功能特性:
+- 历史模拟法 VaR
+- 参数法 VaR
+- 蒙特卡洛模拟 VaR
+- 预期尾部损失 (CVaR/ES)
 
-Example:
+示例:
     calculator = VaRCalculator()
     var_95 = calculator.historical_var(returns, confidence=0.95)
     cvar = calculator.expected_shortfall(returns, confidence=0.95)
