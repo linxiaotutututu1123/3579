@@ -7,6 +7,13 @@
 			"command": "install",
 			"problemMatcher": [],
 			"detail": "CMake 模板 安装 任务"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: 包",
+			"command": "package",
+			"problemMatcher": [],
+			"detail": "CMake 模板 包 任务"
 		}
 	]
 }
