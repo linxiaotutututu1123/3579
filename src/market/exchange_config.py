@@ -173,26 +173,26 @@ EXCHANGE_CONFIGS: dict[Exchange, ExchangeConfig] = {
         settlement_time="15:15",
         products=[
             # 农产品
-            "c",   # 玉米
+            "c",  # 玉米
             "cs",  # 玉米淀粉
-            "a",   # 豆一
-            "b",   # 豆二
-            "m",   # 豆粕
-            "y",   # 豆油
-            "p",   # 棕榈油
+            "a",  # 豆一
+            "b",  # 豆二
+            "m",  # 豆粕
+            "y",  # 豆油
+            "p",  # 棕榈油
             "jd",  # 鸡蛋
             "lh",  # 生猪
             "rr",  # 粳米
             # 化工
-            "l",   # 塑料
-            "v",   # PVC
+            "l",  # 塑料
+            "v",  # PVC
             "pp",  # 聚丙烯
             "eg",  # 乙二醇
             "eb",  # 苯乙烯
             "pg",  # LPG
             # 黑色系
-            "i",   # 铁矿石
-            "j",   # 焦炭
+            "i",  # 铁矿石
+            "j",  # 焦炭
             "jm",  # 焦煤
             # 其他
             "fb",  # 纤维板
@@ -251,7 +251,7 @@ EXCHANGE_CONFIGS: dict[Exchange, ExchangeConfig] = {
             "IC",  # 中证500股指期货
             "IM",  # 中证1000股指期货
             # 国债期货
-            "T",   # 10年期国债期货
+            "T",  # 10年期国债期货
             "TF",  # 5年期国债期货
             "TS",  # 2年期国债期货
             "TL",  # 30年期国债期货
@@ -315,8 +315,22 @@ PRODUCT_CATEGORIES: dict[str, dict[str, list[str]]] = {
     },
     "农产品": {
         "DCE": ["c", "cs", "a", "b", "m", "y", "p", "jd", "lh", "rr", "fb", "bb"],
-        "CZCE": ["WH", "PM", "RI", "LR", "JR", "CF", "CY", "SR", "OI", "RM",
-                 "RS", "AP", "CJ", "PK"],
+        "CZCE": [
+            "WH",
+            "PM",
+            "RI",
+            "LR",
+            "JR",
+            "CF",
+            "CY",
+            "SR",
+            "OI",
+            "RM",
+            "RS",
+            "AP",
+            "CJ",
+            "PK",
+        ],
     },
     "金融": {
         "CFFEX": ["IF", "IH", "IC", "IM", "T", "TF", "TS", "TL"],
@@ -507,35 +521,86 @@ def get_exchange_by_code(code: str) -> Exchange | None:
 NIGHT_SESSION_PRODUCTS: dict[NightSessionEnd, list[str]] = {
     NightSessionEnd.T_23_00: [
         # DCE农产品
-        "c", "cs", "a", "b", "m", "y", "p", "jd", "lh", "rr",
+        "c",
+        "cs",
+        "a",
+        "b",
+        "m",
+        "y",
+        "p",
+        "jd",
+        "lh",
+        "rr",
         # DCE化工
-        "l", "v", "pp", "eg", "eb", "pg",
+        "l",
+        "v",
+        "pp",
+        "eg",
+        "eb",
+        "pg",
         # DCE黑色
-        "i", "j", "jm",
+        "i",
+        "j",
+        "jm",
         # CZCE农产品
-        "CF", "CY", "SR", "OI", "RM", "AP", "CJ", "PK",
+        "CF",
+        "CY",
+        "SR",
+        "OI",
+        "RM",
+        "AP",
+        "CJ",
+        "PK",
         # CZCE化工
-        "MA", "TA", "SA", "UR", "PF", "FG",
+        "MA",
+        "TA",
+        "SA",
+        "UR",
+        "PF",
+        "FG",
         # GFEX
-        "lc", "si",
+        "lc",
+        "si",
     ],
     NightSessionEnd.T_01_00: [
         # SHFE黑色
-        "rb", "hc", "ss",
+        "rb",
+        "hc",
+        "ss",
         # SHFE能化
-        "bu", "ru", "sp", "fu",
+        "bu",
+        "ru",
+        "sp",
+        "fu",
     ],
     NightSessionEnd.T_02_30: [
         # SHFE有色金属
-        "cu", "al", "zn", "pb", "ni", "sn", "ao",
+        "cu",
+        "al",
+        "zn",
+        "pb",
+        "ni",
+        "sn",
+        "ao",
         # SHFE贵金属
-        "au", "ag",
+        "au",
+        "ag",
         # INE
-        "sc", "lu", "bc", "nr",
+        "sc",
+        "lu",
+        "bc",
+        "nr",
     ],
     NightSessionEnd.NONE: [
         # CFFEX（无夜盘）
-        "IF", "IH", "IC", "IM", "T", "TF", "TS", "TL",
+        "IF",
+        "IH",
+        "IC",
+        "IM",
+        "T",
+        "TF",
+        "TS",
+        "TL",
     ],
 }
 
