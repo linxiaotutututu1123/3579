@@ -7,6 +7,8 @@ Phase 0 Market Layer - Subscriber
 
 from __future__ import annotations
 
+from typing import Any
+
 from src.market.subscriber import Subscriber
 
 
