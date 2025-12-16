@@ -468,11 +468,15 @@ class StressTester:
             results.append(result)
 
             # 统计
-            if result.impact_level in (ImpactLevel.NEGLIGIBLE, ImpactLevel.MINOR):
+            level = result.impact_level
+            is_pass = level in (
+                ImpactLevel.NEGLIGIBLE,
+                ImpactLevel.MINOR,
+                ImpactLevel.MODERATE,
+            )
+            if is_pass:
                 passed += 1
-            elif result.impact_level == ImpactLevel.MODERATE:
-                passed += 1
-            elif result.impact_level == ImpactLevel.SIGNIFICANT:
+            elif level == ImpactLevel.SIGNIFICANT:
                 warning += 1
             else:
                 failed += 1
