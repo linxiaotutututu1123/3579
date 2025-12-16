@@ -1,14 +1,14 @@
-"""Portfolio Management Module (Military-Grade v3.0).
+"""投资组合管理模块 (军规级 v3.0).
 
-This module provides portfolio-level position management and analysis
-as specified in V3PRO_UPGRADE_PLAN extension modules (Chapter 24).
+本模块提供投资组合级别的持仓管理和分析功能，
+参照 V3PRO_UPGRADE_PLAN 扩展模块规划 (第24章)。
 
-Components:
-- PortfolioManager: Portfolio-level position aggregation
-- PortfolioAnalytics: Risk metrics and analytics
-- PositionAggregator: Multi-strategy position aggregation
+组件:
+- PortfolioManager: 投资组合级持仓聚合
+- PortfolioAnalytics: 风险指标和分析
+- PositionAggregator: 多策略持仓聚合
 
-Example:
+示例:
     from src.portfolio import PortfolioManager, PortfolioAnalytics
 
     manager = PortfolioManager()
