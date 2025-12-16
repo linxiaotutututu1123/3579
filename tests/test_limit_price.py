@@ -677,8 +677,8 @@ class TestEdgeCases:
     def test_very_small_limit_pct(self) -> None:
         """测试极小涨跌停幅度."""
         guard = LimitPriceGuard()
-        # 0.1% 涨跌停
-        limits = guard.get_limit_prices(100.0, limit_pct=0.001)
+        # 0.1% 涨跌停, tick_size=0.1
+        limits = guard.get_limit_prices(100.0, limit_pct=0.001, tick_size=0.1)
         assert limits.limit_up == 100.1
         assert limits.limit_down == 99.9
 

@@ -18,13 +18,13 @@ Exports:
 
 from src.execution.protection.fat_finger import FatFingerConfig, FatFingerGate
 from src.execution.protection.limit_price import (
+    PRODUCT_LIMIT_PCT,
     LimitPriceCheckOutput,
     LimitPriceCheckResult,
     LimitPriceConfig,
     LimitPriceGuard,
     LimitPrices,
     LimitStatus,
-    PRODUCT_LIMIT_PCT,
     check_limit_price,
     get_default_guard,
     get_limit_prices,
@@ -34,6 +34,7 @@ from src.execution.protection.throttle import ThrottleConfig, ThrottleGate
 
 
 __all__ = [
+    "PRODUCT_LIMIT_PCT",
     "FatFingerConfig",
     "FatFingerGate",
     "LimitPriceCheckOutput",
@@ -44,7 +45,6 @@ __all__ = [
     "LimitStatus",
     "LiquidityConfig",
     "LiquidityGate",
-    "PRODUCT_LIMIT_PCT",
     "ThrottleConfig",
     "ThrottleGate",
     "check_limit_price",
