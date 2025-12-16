@@ -8,8 +8,8 @@
   "run_id": "e5faddf7-0222-4282-9dec-fd2b6e64c733",
   "exec_id": "3ed7d563_20251215053323",
   "artifacts": {
-    "report_path": "artifacts\\check\\report.json",
-    "context_path": "artifacts\\context\\context.md"
+    "report_path": "artifacts/check/report.json",
+    "context_path": "artifacts/context/context.md"
   },
   "context_manifest_sha": "9fb1d157189889f50bdc5072e38da2b355bcda192bc16007c0b20d6541fa3378",
   "all_passed": true,
