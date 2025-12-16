@@ -194,7 +194,8 @@ class FatFingerGate:
 
         # 检查价格偏离
         abs_deviation = abs(price_deviation)
-        if abs_deviation > self._config.max_price_deviation:
+        max_dev = self._config.max_price_deviation
+        if abs_deviation > max_dev:
             self._reject_count += 1
             return FatFingerCheckOutput(
                 result=FatFingerCheckResult.PRICE_DEVIATION,
@@ -202,7 +203,7 @@ class FatFingerGate:
                 qty=qty,
                 notional=notional,
                 price_deviation=price_deviation,
-                message=f"Price deviation {abs_deviation:.2%} > {self._config.max_price_deviation:.2%}",
+                message=f"Price deviation {abs_deviation:.2%} > {max_dev:.2%}",
             )
 
         # 通过
