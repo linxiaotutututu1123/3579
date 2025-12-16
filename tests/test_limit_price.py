@@ -12,13 +12,13 @@ from __future__ import annotations
 import pytest
 
 from src.execution.protection.limit_price import (
+    PRODUCT_LIMIT_PCT,
     LimitPriceCheckOutput,
     LimitPriceCheckResult,
     LimitPriceConfig,
     LimitPriceGuard,
     LimitPrices,
     LimitStatus,
-    PRODUCT_LIMIT_PCT,
     check_limit_price,
     get_default_guard,
     get_limit_prices,

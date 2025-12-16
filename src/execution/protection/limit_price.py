@@ -443,7 +443,7 @@ class LimitPriceGuard:
                     limit_down=limits.limit_down,
                     last_settle=last_settle,
                     limit_pct=limits.limit_pct,
-                    message=f"订单价格 {order_price} 等于涨停价，不允许涨停价下单",
+                    message=f"订单价格 {order_price} 等于涨停价, 不允许涨停价下单",
                 )
 
         # 检查是否刚好等于跌停价
@@ -459,7 +459,7 @@ class LimitPriceGuard:
                     limit_down=limits.limit_down,
                     last_settle=last_settle,
                     limit_pct=limits.limit_pct,
-                    message=f"订单价格 {order_price} 等于跌停价，不允许跌停价下单",
+                    message=f"订单价格 {order_price} 等于跌停价, 不允许跌停价下单",
                 )
 
         # 通过检查
