@@ -1,7 +1,7 @@
 {
     "env": {
-      "ANTHROPIC_MODEL": "claude-opus-4-5-20251101",
-      "ANTHROPIC_SMALL_FAST_MODEL": "claude-opus-4-5-20251101",
+      "ANTHROPIC_MODEL": "claude-opus-4-5-20251101-thinking",
+      "ANTHROPIC_SMALL_FAST_MODEL": "claude-opus-4-5-20251101-thinking",
       "ANTHROPIC_BASE_URL": "https://api.xiaocaseai.com",
       "ANTHROPIC_AUTH_TOKEN": "sk-H2INpn37Rd2mAFRY41c9M0Y9skiOqBAG1OCXqrqJLrxzuOcS"
     }
