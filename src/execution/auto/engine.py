@@ -204,9 +204,9 @@ class AutoOrderEngine:
         if self._broker:
             ctx = self._registry.get_by_local_id(local_id)
             if ctx and ctx.order_sys_id:
-                self._broker.cancel_order(ctx.order_sys_id)
+                self._broker.cancel_order(ctx.order_sys_id)  # type: ignore[attr-defined]
             elif ctx and ctx.order_ref:
-                self._broker.cancel_order_by_ref(ctx.order_ref)
+                self._broker.cancel_order_by_ref(ctx.order_ref)  # type: ignore[attr-defined]
 
         return True
 
