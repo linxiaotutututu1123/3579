@@ -230,6 +230,7 @@ class TrainingProgress:
     def _mini_progress_bar(self, pct: float, width: int = 15) -> str:
         """小进度条."""
         filled = int(pct * width)
+        empty = width - filled
         return "█" * filled + "░" * empty
 
 
