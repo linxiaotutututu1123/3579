@@ -99,8 +99,8 @@ class TestMarginConfig:
     def test_config_is_frozen(self) -> None:
         """测试配置不可变."""
         config = MarginConfig()
-        with pytest.raises(Exception):  # frozen dataclass
-            config.safe_threshold = 0.6  # type: ignore
+        with pytest.raises(AttributeError):  # frozen dataclass
+            config.safe_threshold = 0.6  # type: ignore[misc]
 
 
 # ============================================================

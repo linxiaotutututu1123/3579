@@ -387,10 +387,7 @@ class MarginMonitor:
         current_idx = level_order.index(self._level)
         previous_idx = level_order.index(self._previous_level)
 
-        if current_idx > previous_idx:
-            direction = "升级"  # 风险上升
-        else:
-            direction = "降级"  # 风险下降
+        direction = "升级" if current_idx > previous_idx else "降级"
 
         message = (
             f"保证金等级{direction}: {self._previous_level.value} → {self._level.value}, "
