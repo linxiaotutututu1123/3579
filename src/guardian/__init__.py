@@ -57,6 +57,7 @@ from src.guardian.triggers_china import (
 
 
 __all__ = [
+    "VALID_TRANSITIONS",
     "ActionResult",
     "ActionStatus",
     "ActionType",
@@ -84,7 +85,6 @@ __all__ = [
     "TransitionError",
     "TriggerManager",
     "TriggerResult",
-    "VALID_TRANSITIONS",
     "create_default_china_triggers",
     "register_china_triggers",
 ]
