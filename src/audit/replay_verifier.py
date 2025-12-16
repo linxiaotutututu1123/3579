@@ -136,8 +136,9 @@ class ReplayVerifier:
 
         # 长度不同也记录
         if len(original_outputs) != len(replay_outputs):
-            for i in range(min_len, max(len(original_outputs), len(replay_outputs))):
-                mismatches.append(i)
+            mismatches.extend(
+                range(min_len, max(len(original_outputs), len(replay_outputs)))
+            )
 
         is_deterministic = input_hash_match and output_hash_match and len(mismatches) == 0
 

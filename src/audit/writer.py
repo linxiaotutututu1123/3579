@@ -198,9 +198,9 @@ def read_audit_events(path: Path) -> list[dict[str, Any]]:
         return events
 
     with open(path, encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                events.append(json.loads(line))
+        for raw_line in f:
+            stripped = raw_line.strip()
+            if stripped:
+                events.append(json.loads(stripped))
 
     return events
