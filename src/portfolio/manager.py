@@ -289,7 +289,7 @@ class PortfolioManager:
     @property
     def strategies(self) -> list[str]:
         """List of all strategies with positions."""
-        return list({key[1] for key in self._positions.keys()})
+        return list({key[1] for key in self._positions})
 
     def get_snapshot(self) -> dict[str, Any]:
         """Get portfolio snapshot for audit.
