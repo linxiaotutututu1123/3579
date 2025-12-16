@@ -73,6 +73,7 @@ ignore = [
     "RUF059",   # 测试允许未使用的解包变量
     "PLR0124",  # 测试允许 NaN 检查 (qty == qty)
     "DTZ001",   # 测试允许无时区的datetime（中国期货市场使用本地时间）
+    "DTZ005",   # 测试允许datetime.now()不带tz参数
 ]
 "scripts/*" = [
     "T201",     # 脚本允许 print
