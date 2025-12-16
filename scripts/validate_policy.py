@@ -233,9 +233,10 @@ def validate_ci_report(path: Path, result: ValidationResult) -> None:
             actual_normalized = normalize_path_for_comparison(PROJECT_ROOT / report_path)
             expected_normalized = normalize_path_for_comparison(expected_path)
             if actual_normalized != expected_normalized:
+                msg = f"CI report path must resolve to {expected_normalized}"
                 result.add_violation(
                     "POLICY.FIXED_PATH_MISMATCH",
-                    f"CI report path must resolve to {expected_normalized}, got: {actual_normalized}",
+                    f"{msg}, got: {actual_normalized}",
                     str(path),
                     {"expected": expected_normalized, "actual": actual_normalized},
                 )
