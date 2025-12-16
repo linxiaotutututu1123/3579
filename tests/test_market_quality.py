@@ -7,8 +7,6 @@ Phase 0 Market Layer - QualityChecker
 
 from __future__ import annotations
 
-import pytest
-
 from src.market.instrument_cache import InstrumentInfo
 from src.market.quality import QualityChecker, QualityEvent, QualityIssue
 from src.market.quote_cache import BookTop

@@ -9,8 +9,6 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
-
 from src.market.bar_builder import Bar, BarBuilder
 from src.market.quote_cache import BookTop
 

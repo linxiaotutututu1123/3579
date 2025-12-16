@@ -8,8 +8,6 @@ Phase 0 Market Layer - UniverseSelector
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock
-
 import pytest
 
 from src.market.instrument_cache import InstrumentCache, InstrumentInfo

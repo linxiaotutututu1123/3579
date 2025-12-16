@@ -7,8 +7,6 @@ Phase 0 Market Layer - QuoteCache
 
 from __future__ import annotations
 
-import pytest
-
 from src.market.quote_cache import (
     QUOTE_HARD_STALE_MS,
     QUOTE_STALE_MS,

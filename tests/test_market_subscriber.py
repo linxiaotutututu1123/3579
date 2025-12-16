@@ -7,9 +7,7 @@ Phase 0 Market Layer - Subscriber
 
 from __future__ import annotations
 
-import pytest
-
-from src.market.subscriber import Subscriber, SubscriptionDiff
+from src.market.subscriber import Subscriber
 
 
 class TestMktSubscriberDiffUpdate:
