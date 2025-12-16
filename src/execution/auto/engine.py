@@ -274,10 +274,7 @@ class AutoOrderEngine:
         # 更新成交
         total_filled = fsm.filled_qty + volume
 
-        if total_filled >= ctx.qty:
-            event = OrderEvent.FILL
-        else:
-            event = OrderEvent.PARTIAL_FILL
+        event = OrderEvent.FILL if total_filled >= ctx.qty else OrderEvent.PARTIAL_FILL
 
         fsm.transition(event, volume)
         self._emit_event(local_id, fsm.state, event)
