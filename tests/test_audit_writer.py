@@ -174,9 +174,11 @@ class TestAuditWriter:
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "audit.jsonl"
 
-            with AuditWriter(path, run_id="run-001") as writer:
-                with pytest.raises(ValueError, match="ts"):
-                    writer.write_dict({"event_type": "TEST"})
+            with (
+                AuditWriter(path, run_id="run-001") as writer,
+                pytest.raises(ValueError, match="ts"),
+            ):
+                writer.write_dict({"event_type": "TEST"})
 
     def test_read_empty_file(self) -> None:
         """测试读取空文件."""

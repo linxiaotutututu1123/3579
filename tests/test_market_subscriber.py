@@ -160,8 +160,8 @@ class TestSubscriberExtended:
         received1: list[str] = []
         received2: list[str] = []
 
-        subscriber.register_callback("rb2501", lambda s, d: received1.append(s))
-        subscriber.register_callback("rb2501", lambda s, d: received2.append(s))
+        subscriber.register_callback("rb2501", lambda s, _d: received1.append(s))
+        subscriber.register_callback("rb2501", lambda s, _d: received2.append(s))
 
         subscriber.dispatch("rb2501", {})
 
@@ -228,7 +228,7 @@ class TestSubscriberExtended:
             pass  # Required to trigger callback cleanup
 
         subscriber = Subscriber(on_unsubscribe=on_unsub)
-        subscriber.register_callback("rb2501", lambda s, d: received.append(s))
+        subscriber.register_callback("rb2501", lambda s, _d: received.append(s))
         subscriber.update({"rb2501"})
 
         # Unsubscribe should clear callback (only when on_unsubscribe is set)
