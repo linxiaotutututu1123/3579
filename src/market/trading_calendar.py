@@ -244,10 +244,7 @@ class ChinaTradingCalendar:
             return True
 
         # 周末不是交易日
-        if self.is_weekend(d):
-            return False
-
-        return True
+        return not self.is_weekend(d)
 
     def has_night_session_on_day(self, d: date) -> bool:
         """判断某日是否有夜盘.
