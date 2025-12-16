@@ -1,14 +1,14 @@
-"""Health Checker (Military-Grade v3.0).
+"""健康检查器 (军规级 v3.0).
 
-Provides system health monitoring functionality.
+提供系统健康监控功能。
 
-Features:
-- Component health checks
-- Dependency status monitoring
-- Health history tracking
-- Alerting support
+功能特性:
+- 组件健康检查
+- 依赖状态监控
+- 健康历史记录
+- 告警支持
 
-Example:
+示例:
     checker = HealthChecker()
     checker.register_check("broker", check_broker_connection)
     status = checker.check_all()
