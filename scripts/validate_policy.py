@@ -339,10 +339,11 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
             expected_dir = "artifacts/sim/"
 
         # 验证 report_path
+        # 军规级: 使用 POSIX 格式比较，确保跨平台一致性 (Windows \ → Linux /)
         if report_path:
-            actual_resolved = (PROJECT_ROOT / report_path).resolve()
-            expected_resolved = expected_report.resolve()
-            if actual_resolved != expected_resolved:
+            actual_normalized = normalize_path_for_comparison(PROJECT_ROOT / report_path)
+            expected_normalized = normalize_path_for_comparison(expected_report)
+            if actual_normalized != expected_normalized:
                 msg = f"type={report_type} requires report_path in {expected_dir}"
                 result.add_violation(
                     "POLICY.TYPE_PATH_MISMATCH",
@@ -352,10 +353,11 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
                 )
 
         # 验证 events_jsonl_path
+        # 军规级: 使用 POSIX 格式比较，确保跨平台一致性 (Windows \ → Linux /)
         if events_path:
-            actual_resolved = (PROJECT_ROOT / events_path).resolve()
-            expected_resolved = expected_events.resolve()
-            if actual_resolved != expected_resolved:
+            actual_normalized = normalize_path_for_comparison(PROJECT_ROOT / events_path)
+            expected_normalized = normalize_path_for_comparison(expected_events)
+            if actual_normalized != expected_normalized:
                 msg = f"type={report_type} requires events_jsonl in {expected_dir}"
                 result.add_violation(
                     "POLICY.TYPE_PATH_MISMATCH",
