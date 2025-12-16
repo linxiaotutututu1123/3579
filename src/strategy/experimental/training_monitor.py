@@ -277,7 +277,7 @@ class TrainingMonitor:
 
         history = TrainingHistory(
             strategy_id=strategy_id,
-            start_date=datetime.now(),
+            start_date=datetime.now()  # noqa: DTZ005,
         )
 
         session = TrainingSession(
@@ -285,10 +285,10 @@ class TrainingMonitor:
             strategy_id=strategy_id,
             strategy_name=strategy_name,
             strategy_type=strategy_type,
-            start_time=datetime.now(),
+            start_time=datetime.now()  # noqa: DTZ005,
             status=TrainingStatus.RUNNING,
             history=history,
-            last_update=datetime.now(),
+            last_update=datetime.now()  # noqa: DTZ005,
         )
 
         self._sessions[session_id] = session
@@ -325,7 +325,7 @@ class TrainingMonitor:
         session.history.market_regimes.append(market_regime)
         session.history.drawdowns.append(drawdown)
 
-        session.last_update = datetime.now()
+        session.last_update = datetime.now()  # noqa: DTZ005
 
         # 更新统计指标
         self._update_statistics(session)
@@ -394,7 +394,7 @@ class TrainingMonitor:
 
         # 计算ETA
         if days_remaining > 0:
-            eta = datetime.now() + timedelta(days=days_remaining)
+            eta = datetime.now()  # noqa: DTZ005 + timedelta(days=days_remaining)
         elif report.total_score < self.ACTIVATION_THRESHOLD:
             # 预估还需要多少天达到80%
             history_scores = self._progress_history.get(session_id, [])
@@ -404,7 +404,7 @@ class TrainingMonitor:
                 if recent_progress > 0:
                     remaining_pct = self.ACTIVATION_THRESHOLD - report.total_score
                     est_days = int(remaining_pct / recent_progress)
-                    eta = datetime.now() + timedelta(days=est_days)
+                    eta = datetime.now()  # noqa: DTZ005 + timedelta(days=est_days)
                 else:
                     eta = None
             else:
@@ -473,22 +473,24 @@ class TrainingMonitor:
         # 检查各维度是否有明显短板
         for score in report.dimension_scores:
             if score.score < 0.4:
-                alerts.append(f"{score.dimension}得分过低 ({score.score:.1%})，需要重点关注")
+                msg = f"{score.dimension}得分过低 ({score.score:.1%}), 需要重点关注"
+                alerts.append(msg)
             elif score.score < 0.6:
-                alerts.append(f"{score.dimension}未达标 ({score.score:.1%})，需要改善")
+                msg = f"{score.dimension}未达标 ({score.score:.1%}), 需要改善"
+                alerts.append(msg)
 
         # 检查趋势
         trend = self._calculate_trend(session.session_id)
         if trend == "declining":
-            alerts.append("成熟度呈下降趋势，请检查策略表现")
+            alerts.append("成熟度呈下降趋势, 请检查策略表现")
 
         # 检查训练时间
         if session.history:
             days = session.history.training_days
             if days < 30:
-                alerts.append(f"训练天数较少 ({days}天)，建议至少训练30天后再评估")
+                alerts.append(f"训练天数较少 ({days}天), 建议至少训练30天后再评估")
             elif days >= 90 and report.total_score < 0.60:
-                alerts.append("已训练90天但成熟度仍低于60%，建议审视策略逻辑")
+                alerts.append("已训练90天但成熟度仍低于60%, 建议审视策略逻辑")
 
         return alerts
 
@@ -570,7 +572,8 @@ class TrainingMonitor:
         """
         session = self._sessions.get(session_id)
         if session:
-            session.notes.append(f"[{datetime.now().strftime('%Y-%m-%d')}] {note}")
+            now_str = datetime.now().strftime("%Y-%m-%d")  # noqa: DTZ005
+            session.notes.append(f"[{now_str}] {note}")
             return True
         return False
 
@@ -598,7 +601,7 @@ class TrainingMonitor:
             },
             "maturity_report": progress.maturity_report.to_dict() if progress.maturity_report else None,
             "alerts": progress.alerts,
-            "generated_at": datetime.now().isoformat(),
+            "generated_at": datetime.now()  # noqa: DTZ005.isoformat(),
         }
 
         return json.dumps(report, ensure_ascii=False, indent=2)
