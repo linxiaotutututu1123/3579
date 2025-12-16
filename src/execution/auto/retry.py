@@ -140,7 +140,7 @@ class RetryPolicy:
         Returns:
             延迟秒数
         """
-        delay = self._config.base_delay_s * (self._config.backoff_factor ** retry_count)
+        delay = self._config.base_delay_s * (self._config.backoff_factor**retry_count)
         return min(delay, self._config.max_delay_s)
 
     def should_retry(self, local_id: str, reason: RetryReason) -> bool:

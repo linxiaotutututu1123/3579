@@ -205,9 +205,7 @@ class OrderFSM:
         """是否可撤单."""
         return self._state in CANCELLABLE_STATES
 
-    def transition(
-        self, event: OrderEvent, filled_qty: int = 0
-    ) -> OrderState:
+    def transition(self, event: OrderEvent, filled_qty: int = 0) -> OrderState:
         """执行状态转移.
 
         V2 Scenarios:

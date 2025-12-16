@@ -253,9 +253,7 @@ class PairExecutor:
 
         return pair_id
 
-    def on_leg_fill(
-        self, pair_id: str, leg_id: str, qty: int, price: float
-    ) -> None:
+    def on_leg_fill(self, pair_id: str, leg_id: str, qty: int, price: float) -> None:
         """处理腿成交.
 
         Args:
@@ -408,7 +406,7 @@ class PairExecutor:
         if variance <= 0:
             return False
 
-        std: float = variance ** 0.5
+        std: float = variance**0.5
         z_score: float = abs(current_spread - mean) / std
 
         return bool(z_score > self._breaker_config.max_z_score)
@@ -430,11 +428,7 @@ class PairExecutor:
         Returns:
             活动配对 ID 列表
         """
-        return [
-            pair_id
-            for pair_id, result in self._results.items()
-            if not result.is_complete()
-        ]
+        return [pair_id for pair_id, result in self._results.items() if not result.is_complete()]
 
     def check_imbalances(self) -> list[str]:
         """检查所有不平衡.
