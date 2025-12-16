@@ -223,7 +223,6 @@ class GuardianMonitor:
 
             # 检查是否可以转移
             if self._fsm.can_transition(event_name):
-                old_mode = self._fsm.mode
                 new_mode = self._fsm.transition(event_name)
 
                 # 记录模式变更动作
