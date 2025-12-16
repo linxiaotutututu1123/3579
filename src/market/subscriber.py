@@ -138,7 +138,7 @@ class Subscriber:
             self._callbacks[symbol] = []
         self._callbacks[symbol].append(callback)
 
-    def dispatch(self, symbol: str, data: dict) -> None:
+    def dispatch(self, symbol: str, data: dict[str, Any]) -> None:
         """分发行情数据.
 
         Args:
