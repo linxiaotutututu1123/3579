@@ -2,26 +2,26 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "cmake",
-			"label": "CMake: 安装",
-			"command": "install",
-			"problemMatcher": [],
-			"detail": "CMake 模板 安装 任务"
-		},
+					"type": "cmake",
+					"label": "CMake: 安装",
+					"command": "install",
+					"problemMatcher": [561],
+					"detail": "CMake 模板 安装 任务"
+				},
 		{
-			"type": "cmake",
-			"label": "CMake: 包",
-			"command": "package",
-			"problemMatcher": [],
-			"detail": "CMake 模板 包 任务"
-		},
+					"type": "cmake",
+					"label": "CMake: 包",
+					"command": "build",
+					"problemMatcher": [1],
+					"detail": "CMake 模板 包 任务"
+				},
 		{
-			"type": "cmake",
-			"label": "CMake: 工作流",
-			"command": "workflow",
-			"problemMatcher": [],
-			"detail": "CMake 模板 工作流 任务"
-		},
+					"type": "cmake",
+					"label": "CMake: 工作流",
+					"command": "build",
+					"problemMatcher": [],
+					"detail": "CMake 模板 工作流 任务"
+				},
 		{
 			"type": "cmake",
 			"label": "CMake: 测试",
