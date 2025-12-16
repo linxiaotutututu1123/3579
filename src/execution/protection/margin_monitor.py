@@ -690,11 +690,7 @@ class MarginMonitor:
         # 判断是升级还是降级
         prev_order = level_order[previous_level]
         curr_order = level_order[self._level]
-
-        if curr_order > prev_order:
-            direction = "升级"
-        else:
-            direction = "降级"
+        direction = "升级" if curr_order > prev_order else "降级"
 
         message = (
             f"保证金等级{direction}: {previous_level.value} → {self._level.value}, "
@@ -728,7 +724,7 @@ def get_default_monitor() -> MarginMonitor:
     Returns:
         默认监控器
     """
-    global _default_monitor  # noqa: PLW0603
+    global _default_monitor
     if _default_monitor is None:
         _default_monitor = MarginMonitor()
     return _default_monitor
