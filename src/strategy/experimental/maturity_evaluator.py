@@ -487,7 +487,10 @@ class MaturityEvaluator:
         )
 
         covered = len(unique_regimes & expected_regimes)
-        reason = f"覆盖{covered}/5种市场状态, 一致性{regime_consistency:.1%}, 存活{survival_score:.1%}"
+        reason = (
+            f"覆盖{covered}/5种市场状态, "
+            f"一致性{regime_consistency:.1%}, 存活{survival_score:.1%}"
+        )
 
         return MaturityScore(
             dimension="市场适应性",
