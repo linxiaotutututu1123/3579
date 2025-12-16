@@ -40,9 +40,7 @@ from src.market.exchange_config import (
     Exchange,
     NightSessionEnd,
     get_exchange_for_product,
-    get_night_session_end,
     get_night_session_end_for_product,
-    has_night_session,
 )
 
 
