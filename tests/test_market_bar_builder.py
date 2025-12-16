@@ -161,9 +161,7 @@ class TestMktContinuityBars:
         assert bars[0].ts_start == 60.0, (
             f"[{self.RULE_ID}] Bar start should align to interval boundary"
         )
-        assert bars[0].ts_end == 120.0, (
-            f"[{self.RULE_ID}] Bar end should be start + interval"
-        )
+        assert bars[0].ts_end == 120.0, f"[{self.RULE_ID}] Bar end should be start + interval"
 
     def test_get_bars_returns_time_ordered(self) -> None:
         """获取的 bars 按时间正序."""
