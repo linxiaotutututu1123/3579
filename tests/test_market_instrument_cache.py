@@ -11,7 +11,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from src.market.instrument_cache import InstrumentCache, InstrumentInfo
+from src.market.instrument_cache import InstrumentCache
 
 
 class TestInstCacheLoad:
