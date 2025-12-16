@@ -408,10 +408,10 @@ class PairExecutor:
         if variance <= 0:
             return False
 
-        std = variance ** 0.5
-        z_score = abs(current_spread - mean) / std
+        std: float = variance ** 0.5
+        z_score: float = abs(current_spread - mean) / std
 
-        return z_score > self._breaker_config.max_z_score
+        return bool(z_score > self._breaker_config.max_z_score)
 
     def get_result(self, pair_id: str) -> PairResult | None:
         """获取配对结果.
