@@ -59,9 +59,7 @@ class TestUnivDominantBasic:
     RULE_ID = "UNIV.DOMINANT.BASIC"
     COMPONENT = "UniverseSelector"
 
-    def test_select_dominant_by_oi_volume_score(
-        self, instrument_cache: InstrumentCache
-    ) -> None:
+    def test_select_dominant_by_oi_volume_score(self, instrument_cache: InstrumentCache) -> None:
         """基于OI+Volume评分选择主力."""
         selector = UniverseSelector(instrument_cache)
 
@@ -78,9 +76,7 @@ class TestUnivDominantBasic:
             f"got {snapshot.dominant_by_product.get('rb')}"
         )
 
-    def test_dominant_in_subscribe_set(
-        self, instrument_cache: InstrumentCache
-    ) -> None:
+    def test_dominant_in_subscribe_set(self, instrument_cache: InstrumentCache) -> None:
         """主力合约在订阅集中."""
         selector = UniverseSelector(instrument_cache)
         oi = {"rb2501": 1000, "rb2505": 5000}
@@ -99,9 +95,7 @@ class TestUnivSubdominantPairing:
     RULE_ID = "UNIV.SUBDOMINANT.PAIRING"
     COMPONENT = "UniverseSelector"
 
-    def test_subdominant_not_equal_dominant(
-        self, instrument_cache: InstrumentCache
-    ) -> None:
+    def test_subdominant_not_equal_dominant(self, instrument_cache: InstrumentCache) -> None:
         """次主力 != 主力."""
         selector = UniverseSelector(instrument_cache)
         oi = {"rb2501": 1000, "rb2505": 5000, "rb2510": 3000}
@@ -114,14 +108,11 @@ class TestUnivSubdominantPairing:
 
         # Assert - Evidence
         assert dominant != subdominant, (
-            f"[{self.RULE_ID}] Subdominant ({subdominant}) "
-            f"must not equal dominant ({dominant})"
+            f"[{self.RULE_ID}] Subdominant ({subdominant}) must not equal dominant ({dominant})"
         )
         assert subdominant is not None, f"[{self.RULE_ID}] Subdominant should exist"
 
-    def test_subdominant_is_second_highest_score(
-        self, instrument_cache: InstrumentCache
-    ) -> None:
+    def test_subdominant_is_second_highest_score(self, instrument_cache: InstrumentCache) -> None:
         """次主力是评分第二高的合约."""
         selector = UniverseSelector(instrument_cache)
         # Score: rb2505=5000*0.6+3000*0.4=4200, rb2510=3000*0.6+2000*0.4=2600,
@@ -136,9 +127,7 @@ class TestUnivSubdominantPairing:
             f"[{self.RULE_ID}] Expected rb2510 as subdominant (2nd highest score)"
         )
 
-    def test_subdominant_in_subscribe_set(
-        self, instrument_cache: InstrumentCache
-    ) -> None:
+    def test_subdominant_in_subscribe_set(self, instrument_cache: InstrumentCache) -> None:
         """次主力合约在订阅集中."""
         selector = UniverseSelector(instrument_cache)
         oi = {"rb2501": 1000, "rb2505": 5000, "rb2510": 3000}
@@ -157,9 +146,7 @@ class TestUnivRollCooldown:
     RULE_ID = "UNIV.ROLL.COOLDOWN"
     COMPONENT = "UniverseSelector"
 
-    def test_no_switch_during_cooldown(
-        self, instrument_cache: InstrumentCache
-    ) -> None:
+    def test_no_switch_during_cooldown(self, instrument_cache: InstrumentCache) -> None:
         """冷却期内不切换主力."""
         selector = UniverseSelector(
             instrument_cache,
@@ -180,13 +167,10 @@ class TestUnivRollCooldown:
 
         # Assert - Evidence
         assert snapshot2.dominant_by_product["rb"] == "rb2505", (
-            f"[{self.RULE_ID}] Should NOT switch during cooldown period "
-            f"(100s < {ROLL_COOLDOWN_S}s)"
+            f"[{self.RULE_ID}] Should NOT switch during cooldown period (100s < {ROLL_COOLDOWN_S}s)"
         )
 
-    def test_switch_after_cooldown(
-        self, instrument_cache: InstrumentCache
-    ) -> None:
+    def test_switch_after_cooldown(self, instrument_cache: InstrumentCache) -> None:
         """冷却期后可以切换主力."""
         selector = UniverseSelector(
             instrument_cache,
@@ -206,13 +190,10 @@ class TestUnivRollCooldown:
 
         # Assert - Evidence
         assert snapshot2.dominant_by_product["rb"] == "rb2510", (
-            f"[{self.RULE_ID}] Should switch after cooldown period "
-            f"(400s > {ROLL_COOLDOWN_S}s)"
+            f"[{self.RULE_ID}] Should switch after cooldown period (400s > {ROLL_COOLDOWN_S}s)"
         )
 
-    def test_no_switch_below_edge_threshold(
-        self, instrument_cache: InstrumentCache
-    ) -> None:
+    def test_no_switch_below_edge_threshold(self, instrument_cache: InstrumentCache) -> None:
         """未达到切换门槛时不切换."""
         selector = UniverseSelector(
             instrument_cache,
@@ -232,7 +213,7 @@ class TestUnivRollCooldown:
 
         # Assert - Evidence
         assert snapshot2.dominant_by_product["rb"] == "rb2505", (
-            f"[{self.RULE_ID}] Should NOT switch below {MIN_SWITCH_EDGE*100}% edge"
+            f"[{self.RULE_ID}] Should NOT switch below {MIN_SWITCH_EDGE * 100}% edge"
         )
 
 
@@ -256,9 +237,7 @@ class TestUnivExpiryGate:
         oi = {"rb2501": 10000, "rb2505": 5000}
         vol = {"rb2501": 8000, "rb2505": 3000}
 
-        snapshot = selector.select(
-            oi, vol, now_ts=1736640000.0, trading_day="20250112"
-        )
+        snapshot = selector.select(oi, vol, now_ts=1736640000.0, trading_day="20250112")
 
         # Assert - Evidence
         assert snapshot.dominant_by_product["rb"] == "rb2505", (
@@ -278,9 +257,7 @@ class TestUnivExpiryGate:
         oi = {"rb2501": 10000, "rb2505": 5000}
         vol = {"rb2501": 8000, "rb2505": 3000}
 
-        snapshot = selector.select(
-            oi, vol, now_ts=1735689600.0, trading_day="20250101"
-        )
+        snapshot = selector.select(oi, vol, now_ts=1735689600.0, trading_day="20250101")
 
         # Assert - Evidence
         assert snapshot.dominant_by_product["rb"] == "rb2501", (

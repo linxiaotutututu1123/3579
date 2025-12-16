@@ -76,19 +76,13 @@ class TestMktContinuityBars:
         builder.update_dominant("rb", "rb2501", ts=1700000000.0)
 
         # Dominant tick
-        result1 = builder.on_tick(
-            "rb", make_book("rb2501", ts=1700000000.0, last=4000.0)
-        )
+        result1 = builder.on_tick("rb", make_book("rb2501", ts=1700000000.0, last=4000.0))
 
         # Non-dominant tick (should be ignored)
-        result2 = builder.on_tick(
-            "rb", make_book("rb2505", ts=1700000010.0, last=3900.0)
-        )
+        result2 = builder.on_tick("rb", make_book("rb2505", ts=1700000010.0, last=3900.0))
 
         # Assert - Evidence
-        assert result2 is None, (
-            f"[{self.RULE_ID}] Non-dominant tick should return None"
-        )
+        assert result2 is None, f"[{self.RULE_ID}] Non-dominant tick should return None"
 
         # Verify bar state only has dominant tick
         bars = builder.get_bars("rb")
@@ -96,21 +90,21 @@ class TestMktContinuityBars:
         builder.on_tick("rb", make_book("rb2501", ts=1700000060.0, last=4010.0))
         bars = builder.get_bars("rb")
         assert len(bars) == 1
-        assert bars[0].low == 4000.0, (
-            f"[{self.RULE_ID}] Non-dominant tick should not affect bar"
-        )
+        assert bars[0].low == 4000.0, f"[{self.RULE_ID}] Non-dominant tick should not affect bar"
 
     def test_roll_event_triggers_audit(self) -> None:
         """主力切换触发审计事件."""
         roll_events: list[dict[str, Any]] = []
 
         def on_roll(product: str, old_symbol: str, new_symbol: str, ts: float) -> None:
-            roll_events.append({
-                "product": product,
-                "old_symbol": old_symbol,
-                "new_symbol": new_symbol,
-                "ts": ts,
-            })
+            roll_events.append(
+                {
+                    "product": product,
+                    "old_symbol": old_symbol,
+                    "new_symbol": new_symbol,
+                    "ts": ts,
+                }
+            )
 
         builder = BarBuilder(bar_interval_s=60, on_roll_event=on_roll)
 
@@ -146,9 +140,7 @@ class TestMktContinuityBars:
         builder.update_dominant("rb", "rb2505", ts=1700000040.0)
 
         # Assert - Evidence
-        assert len(completed_bars) == 1, (
-            f"[{self.RULE_ID}] Roll should force bar completion"
-        )
+        assert len(completed_bars) == 1, f"[{self.RULE_ID}] Roll should force bar completion"
         assert completed_bars[0].ts_end == 1700000040.0, (
             f"[{self.RULE_ID}] Forced bar should end at roll time"
         )

@@ -83,9 +83,7 @@ class TestMktQualityOutlier:
 
         # Assert - Evidence
         outlier_events = [e for e in events if e.issue == QualityIssue.OUTLIER]
-        assert len(outlier_events) == 1, (
-            f"[{self.RULE_ID}] 60 ticks change should trigger outlier"
-        )
+        assert len(outlier_events) == 1, f"[{self.RULE_ID}] 60 ticks change should trigger outlier"
         assert outlier_events[0].symbol == "rb2501"
         assert outlier_events[0].details["ticks_change"] == 60.0
 
@@ -110,18 +108,14 @@ class TestMktQualityOutlier:
         def on_event(event: QualityEvent) -> None:
             received_events.append(event)
 
-        checker = QualityChecker(
-            outlier_ticks_threshold=50, on_quality_event=on_event
-        )
+        checker = QualityChecker(outlier_ticks_threshold=50, on_quality_event=on_event)
         checker.register_instrument(make_instrument("rb2501", tick_size=1.0))
 
         checker.check(make_book("rb2501", ts=1000000.0, last=4000.0))
         checker.check(make_book("rb2501", ts=1000001.0, last=4060.0))
 
         # Assert - Evidence
-        assert len(received_events) == 1, (
-            f"[{self.RULE_ID}] Callback should be invoked for outlier"
-        )
+        assert len(received_events) == 1, f"[{self.RULE_ID}] Callback should be invoked for outlier"
         assert received_events[0].issue == QualityIssue.OUTLIER
 
 
@@ -143,9 +137,7 @@ class TestMktQualityGap:
 
         # Assert - Evidence
         gap_events = [e for e in events if e.issue == QualityIssue.GAP]
-        assert len(gap_events) == 0, (
-            f"[{self.RULE_ID}] 3000ms gap should NOT trigger"
-        )
+        assert len(gap_events) == 0, f"[{self.RULE_ID}] 3000ms gap should NOT trigger"
 
     def test_gap_beyond_threshold(self) -> None:
         """超过阈值的时间间隙标记为 gap."""
@@ -156,9 +148,7 @@ class TestMktQualityGap:
 
         # Assert - Evidence
         gap_events = [e for e in events if e.issue == QualityIssue.GAP]
-        assert len(gap_events) == 1, (
-            f"[{self.RULE_ID}] 8000ms gap should trigger"
-        )
+        assert len(gap_events) == 1, f"[{self.RULE_ID}] 8000ms gap should trigger"
         assert gap_events[0].details["gap_ms"] == 8000.0
 
     def test_gap_with_millisecond_timestamps(self) -> None:
@@ -214,9 +204,7 @@ class TestMktQualityDisorder:
         # Assert - Evidence
         # Should not have gap event (5s from 1000010), not from disordered 1000005
         gap_events = [e for e in events if e.issue == QualityIssue.GAP]
-        assert len(gap_events) == 0, (
-            f"[{self.RULE_ID}] Disordered tick should not update cache"
-        )
+        assert len(gap_events) == 0, f"[{self.RULE_ID}] Disordered tick should not update cache"
 
     def test_equal_timestamp_not_disorder(self) -> None:
         """相同时间戳不算乱序."""
