@@ -150,16 +150,14 @@ class StandardFormatter(logging.Formatter):
         self,
         fmt: str | None = None,
         datefmt: str | None = None,
-        style: str = "%",
     ) -> None:
         """初始化格式化器.
 
         参数:
             fmt: 日志格式
             datefmt: 日期格式
-            style: 格式风格
         """
-        super().__init__(fmt or DEFAULT_LOG_FORMAT, datefmt or DEFAULT_DATE_FORMAT, style)
+        super().__init__(fmt or DEFAULT_LOG_FORMAT, datefmt or DEFAULT_DATE_FORMAT)
 
 
 class JsonFormatter(logging.Formatter):
