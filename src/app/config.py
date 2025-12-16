@@ -513,34 +513,31 @@ def check_environment_isolation(
         return False
 
     # PROD环境: 不能使用测试/开发配置
-    if expected_env == Environment.PROD:
-        dev_keywords = ["test", "dev", "staging", "sandbox", "local"]
-        db_name_lower = config.database.name.lower()
-        db_host_lower = config.database.host.lower()
+    # expected_env == Environment.PROD
+    dev_keywords = ["test", "dev", "staging", "sandbox", "local"]
+    db_name_lower = config.database.name.lower()
+    db_host_lower = config.database.host.lower()
 
-        if any(kw in db_name_lower for kw in dev_keywords):
-            logger.error(
-                "PROD模式检测到开发/测试数据库名: %s",
-                config.database.name,
-            )
-            return False
+    if any(kw in db_name_lower for kw in dev_keywords):
+        logger.error(
+            "PROD模式检测到开发/测试数据库名: %s",
+            config.database.name,
+        )
+        return False
 
-        if db_host_lower in ("localhost", "127.0.0.1"):
-            logger.error(
-                "PROD模式检测到本地数据库: %s",
-                config.database.host,
-            )
-            return False
+    if db_host_lower in ("localhost", "127.0.0.1"):
+        logger.error(
+            "PROD模式检测到本地数据库: %s",
+            config.database.host,
+        )
+        return False
 
-        # 不允许debug模式
-        if config.debug:
-            logger.error("PROD模式不允许开启debug")
-            return False
+    # 不允许debug模式
+    if config.debug:
+        logger.error("PROD模式不允许开启debug")
+        return False
 
-        return True
-
-    # 其他环境默认通过
-    return True  # pragma: no cover
+    return True
 
 
 def get_current_environment() -> Environment:

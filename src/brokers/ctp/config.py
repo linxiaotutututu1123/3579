@@ -411,19 +411,16 @@ def check_environment_isolation(
         return any(kw in front_addr_lower for kw in sim_keywords)
 
     # LIVE模式: 不能使用仿真前置
-    if expected_env == TradeEnvironment.LIVE:
-        sim_keywords = ["simnow", "sim", "test", "demo", "mock"]
-        front_addr_lower = config.front_addr.lower()
-        if any(kw in front_addr_lower for kw in sim_keywords):
-            logger.error(
-                "LIVE模式检测到仿真前置地址: %s, 拒绝加载",
-                config.front_addr,
-            )
-            return False
-        return True
-
-    # 其他环境默认通过
-    return True  # pragma: no cover
+    # expected_env == TradeEnvironment.LIVE
+    sim_keywords = ["simnow", "sim", "test", "demo", "mock"]
+    front_addr_lower = config.front_addr.lower()
+    if any(kw in front_addr_lower for kw in sim_keywords):
+        logger.error(
+            "LIVE模式检测到仿真前置地址: %s, 拒绝加载",
+            config.front_addr,
+        )
+        return False
+    return True
 
 
 def get_current_environment() -> TradeEnvironment:
