@@ -17,7 +17,8 @@
       "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -m pytest:*)",
       "Bash(cat:*)",
       "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(.venv\\Scripts\\python.exe -m pytest:*)"
     ]
   }
 }
