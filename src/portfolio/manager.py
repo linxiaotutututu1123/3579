@@ -1,14 +1,14 @@
-"""Portfolio Manager (Military-Grade v3.0).
+"""投资组合管理器 (军规级 v3.0).
 
-Provides portfolio-level position management with multi-strategy support.
+提供多策略持仓管理功能。
 
-Features:
-- Position tracking by symbol and strategy
-- Net position aggregation
-- P&L tracking
-- Position limits enforcement
+功能特性:
+- 按合约和策略追踪持仓
+- 净持仓聚合
+- 盈亏追踪
+- 持仓限额控制
 
-Example:
+示例:
     manager = PortfolioManager(max_position_per_symbol=100)
     manager.update_position("AO2501", 10, "calendar_arb")
     net_position = manager.get_net_position("AO2501")
