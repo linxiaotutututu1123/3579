@@ -35,12 +35,12 @@ from src.strategy.experimental.maturity_evaluator import (
 class ActivationStatus(Enum):
     """启用状态."""
 
-    TRAINING = "training"            # 训练中
-    PENDING_REVIEW = "pending"       # 待审核
-    APPROVED = "approved"            # 已批准
-    REJECTED = "rejected"            # 已拒绝
-    ACTIVATED = "activated"          # 已启用
-    SUSPENDED = "suspended"          # 已暂停
+    TRAINING = "training"  # 训练中
+    PENDING_REVIEW = "pending"  # 待审核
+    APPROVED = "approved"  # 已批准
+    REJECTED = "rejected"  # 已拒绝
+    ACTIVATED = "activated"  # 已启用
+    SUSPENDED = "suspended"  # 已暂停
 
 
 @dataclass
@@ -301,14 +301,16 @@ class TrainingGate:
             strategy_id: 策略ID
             decision: 决策
         """
-        self._activation_log.append({
-            "type": "check",
-            "strategy_id": strategy_id,
-            "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
-            "allowed": decision.allowed,
-            "maturity_pct": decision.maturity_pct,
-            "status": decision.status.value,
-        })
+        self._activation_log.append(
+            {
+                "type": "check",
+                "strategy_id": strategy_id,
+                "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
+                "allowed": decision.allowed,
+                "maturity_pct": decision.maturity_pct,
+                "status": decision.status.value,
+            }
+        )
 
     def _log_approval(self, strategy_id: str, approver: str) -> None:
         """记录审批日志.
@@ -317,12 +319,14 @@ class TrainingGate:
             strategy_id: 策略ID
             approver: 审批人
         """
-        self._activation_log.append({
-            "type": "approval",
-            "strategy_id": strategy_id,
-            "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
-            "approver": approver,
-        })
+        self._activation_log.append(
+            {
+                "type": "approval",
+                "strategy_id": strategy_id,
+                "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
+                "approver": approver,
+            }
+        )
 
     def _log_rejection(self, strategy_id: str, rejector: str, reason: str) -> None:
         """记录拒绝日志.
@@ -332,13 +336,15 @@ class TrainingGate:
             rejector: 拒绝人
             reason: 原因
         """
-        self._activation_log.append({
-            "type": "rejection",
-            "strategy_id": strategy_id,
-            "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
-            "rejector": rejector,
-            "reason": reason,
-        })
+        self._activation_log.append(
+            {
+                "type": "rejection",
+                "strategy_id": strategy_id,
+                "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
+                "rejector": rejector,
+                "reason": reason,
+            }
+        )
 
     def _log_revocation(self, strategy_id: str, revoker: str, reason: str) -> None:
         """记录撤销日志.
@@ -348,13 +354,15 @@ class TrainingGate:
             revoker: 撤销人
             reason: 原因
         """
-        self._activation_log.append({
-            "type": "revocation",
-            "strategy_id": strategy_id,
-            "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
-            "revoker": revoker,
-            "reason": reason,
-        })
+        self._activation_log.append(
+            {
+                "type": "revocation",
+                "strategy_id": strategy_id,
+                "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
+                "revoker": revoker,
+                "reason": reason,
+            }
+        )
 
     @property
     def activation_log(self) -> list[dict]:

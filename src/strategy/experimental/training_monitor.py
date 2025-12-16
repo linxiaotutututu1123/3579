@@ -26,7 +26,7 @@ import json
 import math
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 from typing import ClassVar
 
@@ -40,12 +40,12 @@ from src.strategy.experimental.maturity_evaluator import (
 class TrainingStatus(Enum):
     """训练状态."""
 
-    NOT_STARTED = "not_started"   # 未开始
-    RUNNING = "running"           # 训练中
-    PAUSED = "paused"             # 暂停
-    COMPLETED = "completed"       # 完成
-    FAILED = "failed"             # 失败
-    CANCELLED = "cancelled"       # 取消
+    NOT_STARTED = "not_started"  # 未开始
+    RUNNING = "running"  # 训练中
+    PAUSED = "paused"  # 暂停
+    COMPLETED = "completed"  # 完成
+    FAILED = "failed"  # 失败
+    CANCELLED = "cancelled"  # 取消
 
 
 @dataclass
@@ -165,9 +165,7 @@ class TrainingProgress:
         lines.append("")
 
         # 趋势
-        trend_emoji = {"improving": "📈", "stable": "➡️", "declining": "📉"}.get(
-            self.trend, "❓"
-        )
+        trend_emoji = {"improving": "📈", "stable": "➡️", "declining": "📉"}.get(self.trend, "❓")
         lines.append(f"  趋势: {trend_emoji} {self.trend}")
         lines.append("")
 

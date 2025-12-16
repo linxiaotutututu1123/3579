@@ -35,11 +35,11 @@ from typing import ClassVar
 class MaturityLevel(Enum):
     """成熟度级别."""
 
-    EMBRYONIC = "embryonic"       # 初生期 (0-20%)
-    DEVELOPING = "developing"    # 发展期 (20-40%)
-    GROWING = "growing"          # 成长期 (40-60%)
-    MATURING = "maturing"        # 成熟期 (60-80%)
-    MATURE = "mature"            # 成熟 (80-100%)
+    EMBRYONIC = "embryonic"  # 初生期 (0-20%)
+    DEVELOPING = "developing"  # 发展期 (20-40%)
+    GROWING = "growing"  # 成长期 (40-60%)
+    MATURING = "maturing"  # 成熟期 (60-80%)
+    MATURE = "mature"  # 成熟 (80-100%)
 
 
 @dataclass(frozen=True)
@@ -186,38 +186,38 @@ class MaturityEvaluator:
 
     # ==================== 权重配置 ====================
     # 各维度权重，总和必须为1.0
-    WEIGHT_RETURN_STABILITY: ClassVar[float] = 0.25      # 收益稳定性
-    WEIGHT_RISK_CONTROL: ClassVar[float] = 0.25          # 风险控制
-    WEIGHT_MARKET_ADAPTABILITY: ClassVar[float] = 0.20   # 市场适应性
+    WEIGHT_RETURN_STABILITY: ClassVar[float] = 0.25  # 收益稳定性
+    WEIGHT_RISK_CONTROL: ClassVar[float] = 0.25  # 风险控制
+    WEIGHT_MARKET_ADAPTABILITY: ClassVar[float] = 0.20  # 市场适应性
     WEIGHT_TRAINING_SUFFICIENCY: ClassVar[float] = 0.20  # 训练充分度
-    WEIGHT_CONSISTENCY: ClassVar[float] = 0.10           # 一致性
+    WEIGHT_CONSISTENCY: ClassVar[float] = 0.10  # 一致性
 
     # ==================== 门槛配置 ====================
     # 启用门槛
-    ACTIVATION_THRESHOLD: ClassVar[float] = 0.80         # 总成熟度门槛80%
-    DIMENSION_THRESHOLD: ClassVar[float] = 0.60          # 单维度门槛60%
-    MIN_TRAINING_DAYS: ClassVar[int] = 90                # 最低训练90天
+    ACTIVATION_THRESHOLD: ClassVar[float] = 0.80  # 总成熟度门槛80%
+    DIMENSION_THRESHOLD: ClassVar[float] = 0.60  # 单维度门槛60%
+    MIN_TRAINING_DAYS: ClassVar[int] = 90  # 最低训练90天
 
     # ==================== 评分标准 ====================
     # 收益稳定性评分标准
-    SHARPE_EXCELLENT: ClassVar[float] = 2.0              # 优秀夏普
-    SHARPE_GOOD: ClassVar[float] = 1.5                   # 良好夏普
-    SHARPE_PASS: ClassVar[float] = 1.0                   # 及格夏普
+    SHARPE_EXCELLENT: ClassVar[float] = 2.0  # 优秀夏普
+    SHARPE_GOOD: ClassVar[float] = 1.5  # 良好夏普
+    SHARPE_PASS: ClassVar[float] = 1.0  # 及格夏普
 
     # 风险控制评分标准
-    MAX_DD_EXCELLENT: ClassVar[float] = 0.10             # 优秀最大回撤10%
-    MAX_DD_GOOD: ClassVar[float] = 0.15                  # 良好最大回撤15%
-    MAX_DD_PASS: ClassVar[float] = 0.20                  # 及格最大回撤20%
+    MAX_DD_EXCELLENT: ClassVar[float] = 0.10  # 优秀最大回撤10%
+    MAX_DD_GOOD: ClassVar[float] = 0.15  # 良好最大回撤15%
+    MAX_DD_PASS: ClassVar[float] = 0.20  # 及格最大回撤20%
 
     # 胜率评分标准
-    WIN_RATE_EXCELLENT: ClassVar[float] = 0.55           # 优秀胜率55%
-    WIN_RATE_GOOD: ClassVar[float] = 0.50                # 良好胜率50%
-    WIN_RATE_PASS: ClassVar[float] = 0.45                # 及格胜率45%
+    WIN_RATE_EXCELLENT: ClassVar[float] = 0.55  # 优秀胜率55%
+    WIN_RATE_GOOD: ClassVar[float] = 0.50  # 良好胜率50%
+    WIN_RATE_PASS: ClassVar[float] = 0.45  # 及格胜率45%
 
     # 盈亏比评分标准
-    PF_EXCELLENT: ClassVar[float] = 2.0                  # 优秀盈亏比
-    PF_GOOD: ClassVar[float] = 1.5                       # 良好盈亏比
-    PF_PASS: ClassVar[float] = 1.2                       # 及格盈亏比
+    PF_EXCELLENT: ClassVar[float] = 2.0  # 优秀盈亏比
+    PF_GOOD: ClassVar[float] = 1.5  # 良好盈亏比
+    PF_PASS: ClassVar[float] = 1.2  # 及格盈亏比
 
     def __init__(self) -> None:
         """初始化成熟度评估器."""
@@ -254,16 +254,12 @@ class MaturityEvaluator:
 
         # 检查总分
         if total_score < self.ACTIVATION_THRESHOLD:
-            blocking_reasons.append(
-                f"总成熟度 {total_score:.1%} < 80% 门槛"
-            )
+            blocking_reasons.append(f"总成熟度 {total_score:.1%} < 80% 门槛")
 
         # 检查各维度
         for score in scores:
             if not score.is_passing:
-                blocking_reasons.append(
-                    f"{score.dimension} 得分 {score.score:.1%} < 60% 门槛"
-                )
+                blocking_reasons.append(f"{score.dimension} 得分 {score.score:.1%} < 60% 门槛")
 
         # 检查训练时间
         if history.training_days < self.MIN_TRAINING_DAYS:
@@ -339,11 +335,7 @@ class MaturityEvaluator:
         details["monthly_consistency"] = monthly_consistency
 
         # 综合得分
-        total_score = (
-            sharpe_score * 0.4 +
-            cv_score * 0.3 +
-            monthly_consistency * 0.3
-        )
+        total_score = sharpe_score * 0.4 + cv_score * 0.3 + monthly_consistency * 0.3
 
         reason = f"夏普{sharpe:.2f}, 稳定性{cv_score:.1%}, 月度一致{monthly_consistency:.1%}"
 
@@ -403,12 +395,12 @@ class MaturityEvaluator:
         if win_rate >= self.WIN_RATE_EXCELLENT:
             wr_score = 1.0
         elif win_rate >= self.WIN_RATE_GOOD:
-            delta = (win_rate - self.WIN_RATE_GOOD)
-            delta /= (self.WIN_RATE_EXCELLENT - self.WIN_RATE_GOOD)
+            delta = win_rate - self.WIN_RATE_GOOD
+            delta /= self.WIN_RATE_EXCELLENT - self.WIN_RATE_GOOD
             wr_score = 0.8 + delta * 0.2
         elif win_rate >= self.WIN_RATE_PASS:
-            delta = (win_rate - self.WIN_RATE_PASS)
-            delta /= (self.WIN_RATE_GOOD - self.WIN_RATE_PASS)
+            delta = win_rate - self.WIN_RATE_PASS
+            delta /= self.WIN_RATE_GOOD - self.WIN_RATE_PASS
             wr_score = 0.6 + delta * 0.2
         else:
             wr_score = max(0, win_rate / self.WIN_RATE_PASS * 0.6)
@@ -427,12 +419,7 @@ class MaturityEvaluator:
         details["profit_factor_score"] = pf_score
 
         # 综合得分
-        total_score = (
-            dd_score * 0.35 +
-            calmar_score * 0.25 +
-            wr_score * 0.20 +
-            pf_score * 0.20
-        )
+        total_score = dd_score * 0.35 + calmar_score * 0.25 + wr_score * 0.20 + pf_score * 0.20
 
         reason = f"最大回撤{max_dd:.1%}, 卡玛{calmar:.2f}, 胜率{win_rate:.1%}, 盈亏比{pf:.2f}"
 
@@ -480,16 +467,11 @@ class MaturityEvaluator:
         details["survival_score"] = survival_score
 
         # 综合得分
-        total_score = (
-            regime_coverage * 0.4 +
-            regime_consistency * 0.3 +
-            survival_score * 0.3
-        )
+        total_score = regime_coverage * 0.4 + regime_consistency * 0.3 + survival_score * 0.3
 
         covered = len(unique_regimes & expected_regimes)
         reason = (
-            f"覆盖{covered}/5种市场状态, "
-            f"一致性{regime_consistency:.1%}, 存活{survival_score:.1%}"
+            f"覆盖{covered}/5种市场状态, 一致性{regime_consistency:.1%}, 存活{survival_score:.1%}"
         )
 
         return MaturityScore(
@@ -546,11 +528,7 @@ class MaturityEvaluator:
         details["diversity_score"] = min(1.0, diversity_score)
 
         # 综合得分
-        total_score = (
-            days_score * 0.5 +
-            trades_score * 0.3 +
-            details["diversity_score"] * 0.2
-        )
+        total_score = days_score * 0.5 + trades_score * 0.3 + details["diversity_score"] * 0.2
 
         reason = f"训练{days}天, {trades}笔交易, 多样性{details['diversity_score']:.1%}"
 
@@ -590,10 +568,7 @@ class MaturityEvaluator:
         details["rolling_consistency"] = rolling_consistency
 
         # 综合得分
-        total_score = (
-            corr_score * 0.5 +
-            rolling_consistency * 0.5
-        )
+        total_score = corr_score * 0.5 + rolling_consistency * 0.5
 
         reason = f"信号相关{corr_score:.2f}, 滚动一致{rolling_consistency:.1%}"
 
@@ -639,7 +614,7 @@ class MaturityEvaluator:
         # 按月分组（假设每月20个交易日）
         monthly_returns = []
         for i in range(0, len(daily_returns), 20):
-            month_data = daily_returns[i:i + 20]
+            month_data = daily_returns[i : i + 20]
             if len(month_data) >= 15:  # 至少15天
                 monthly_return = sum(month_data)
                 monthly_returns.append(monthly_return)
@@ -756,10 +731,7 @@ class MaturityEvaluator:
         mean_s = sum(signals) / n
         mean_r = sum(returns) / n
 
-        cov_sum = sum(
-            (s - mean_s) * (r - mean_r)
-            for s, r in zip(signals, returns, strict=True)
-        )
+        cov_sum = sum((s - mean_s) * (r - mean_r) for s, r in zip(signals, returns, strict=True))
         cov = cov_sum / n
         std_s = math.sqrt(sum((s - mean_s) ** 2 for s in signals) / n)
         std_r = math.sqrt(sum((r - mean_r) ** 2 for r in returns) / n)
@@ -790,7 +762,7 @@ class MaturityEvaluator:
         # 计算滚动窗口的夏普比率
         rolling_sharpes = []
         for i in range(len(daily_returns) - window + 1):
-            window_returns = daily_returns[i:i + window]
+            window_returns = daily_returns[i : i + window]
             mean = sum(window_returns) / window
             variance = sum((r - mean) ** 2 for r in window_returns) / window
             std = math.sqrt(variance) if variance > 0 else 1e-8
