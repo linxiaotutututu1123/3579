@@ -26,7 +26,7 @@ import json
 import math
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
 from typing import ClassVar
 
@@ -180,7 +180,7 @@ class TrainingProgress:
 
         # 启用状态
         if self.progress_pct >= 0.80 and self.days_elapsed >= 90:
-            lines.append("  ✅ 策略已达到启用标准！可以申请人工审批。")
+            lines.append("  ✅ 策略已达到启用标准! 可以申请人工审批.")
         else:
             if self.progress_pct < 0.80:
                 diff = 0.80 - self.progress_pct
