@@ -74,7 +74,7 @@ class TestMktContinuityBars:
         builder.update_dominant("rb", "rb2501", ts=1700000000.0)
 
         # Dominant tick
-        result1 = builder.on_tick("rb", make_book("rb2501", ts=1700000000.0, last=4000.0))
+        builder.on_tick("rb", make_book("rb2501", ts=1700000000.0, last=4000.0))
 
         # Non-dominant tick (should be ignored)
         result2 = builder.on_tick("rb", make_book("rb2505", ts=1700000010.0, last=3900.0))
