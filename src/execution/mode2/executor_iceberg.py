@@ -523,7 +523,7 @@ class IcebergExecutor(ExecutorBase):
             return []
         return list(ctx.pending_orders.keys())
 
-    def get_iceberg_status(self, plan_id: str) -> dict | None:
+    def get_iceberg_status(self, plan_id: str) -> dict[str, Any] | None:
         """获取冰山单状态.
 
         Args:
