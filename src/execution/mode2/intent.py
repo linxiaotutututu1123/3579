@@ -323,10 +323,12 @@ class IntentIdGenerator:
         Raises:
             ValueError: 参数超出范围
         """
-        if not 0 <= slice_index <= 9999:
-            raise ValueError(f"slice_index 超出范围 [0, 9999]: {slice_index}")
-        if not 0 <= retry_count <= 99:
-            raise ValueError(f"retry_count 超出范围 [0, 99]: {retry_count}")
+        if not 0 <= slice_index <= cls.MAX_SLICE_INDEX:
+            msg = f"slice_index out of range [0, {cls.MAX_SLICE_INDEX}]: {slice_index}"
+            raise ValueError(msg)
+        if not 0 <= retry_count <= cls.MAX_RETRY_COUNT:
+            msg = f"retry_count out of range [0, {cls.MAX_RETRY_COUNT}]: {retry_count}"
+            raise ValueError(msg)
 
         return f"{intent_id}_{slice_index:04d}_{retry_count:02d}"
 
