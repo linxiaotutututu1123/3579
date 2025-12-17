@@ -557,6 +557,7 @@ class DynamicVaREngine:
             )
         else:
             # 默认历史VaR
+            self._calculation_count += 1
             result = self._base_calculator.historical_var(returns, confidence)
             return self._wrap_result(result, VaRMethod.HISTORICAL)
 
