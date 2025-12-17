@@ -12,9 +12,6 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
-from unittest.mock import patch
-
-import pytest
 
 from src.strategy.calendar_arb.strategy import (
     ArbConfig,
