@@ -1,22 +1,32 @@
-"""VaR 风险价值计算器 (军规级 v3.0).
+"""VaR 风险价值计算器 (军规级 v4.0).
 
 提供风险价值 (VaR) 计算功能。
 
 功能特性:
 - 历史模拟法 VaR
 - 参数法 VaR
-- 蒙特卡洛模拟 VaR
+- 蒙特卡洛模拟 VaR (可重现)
 - 预期尾部损失 (CVaR/ES)
 
+军规级要求 (M3 完整审计, M19 组合VaR增强):
+- 随机数生成器支持固定种子，确保结果可重现
+- 支持审计追溯和回放验证
+
 示例:
-    calculator = VaRCalculator()
-    var_95 = calculator.historical_var(returns, confidence=0.95)
-    cvar = calculator.expected_shortfall(returns, confidence=0.95)
+    # 可重现的蒙特卡洛VaR
+    calculator = VaRCalculator(seed=42)
+    var_95 = calculator.monte_carlo_var(returns, confidence=0.95)
+
+    # 重置种子后结果完全相同
+    calculator.reset_seed(42)
+    var_95_again = calculator.monte_carlo_var(returns, confidence=0.95)
+    assert var_95.var == var_95_again.var  # 保证相同
 """
 
 from __future__ import annotations
 
 import math
+import time
 from dataclasses import dataclass
 from typing import Any
 
