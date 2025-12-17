@@ -90,7 +90,12 @@
 ### 核心指示文件
 - `docs/V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md` - 最高指示文件
 - `docs/V4PRO_ACCEPTANCE_MATRIX_SUPREME.md` - 验收矩阵 (165场景)
-- `未确定方案/V4PRO军规级审计报告_CLAUDE上校.md` - 审计报告
+- `docs/V4PRO_FILE_INVENTORY_SUPREME_REPORT.md` - 文件清单报告 (新增)
+- `docs/V4PRO-MILITARY_GRADE_AUDIT_REPORT.md` - 军规级审计报告
+- `docs/V4PRO-CLAUDE_PROJECT_MEMORY.md` - 项目记忆文件 (本文件)
+- `docs/V4PROEXIT_CODES.md` - 退出码约定
+- `docs/V4PRO_AUTOMATION_CLAUDE_LOOP_SUPREME.md` - 自动闭环系统
+- `未确定方案/V4PRO军规级审计报告_CLAUDE上校.md` - 原始审计报告
 
 ### 已完成模块
 - `src/strategy/federation/` - 策略联邦
