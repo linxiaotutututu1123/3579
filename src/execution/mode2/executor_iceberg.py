@@ -172,9 +172,7 @@ class IcebergExecutor(ExecutorBase):
         display_qty = max(config.min_slice_qty, min(display_qty, config.max_slice_qty))
 
         # 确保不超过总量
-        display_qty = min(display_qty, total_qty)
-
-        return display_qty
+        return min(display_qty, total_qty)
 
     def _generate_slices(
         self, intent: OrderIntent, display_qty: int, slice_count: int
