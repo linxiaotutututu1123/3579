@@ -138,40 +138,37 @@ class TestMktSubscriber:
 
     def test_add_symbols_subscription(self) -> None:
         """MKT.SUBSCRIBER.ADD_SYMBOLS: 新增订阅."""
-        from src.market.subscriber import SubscriptionDiff
+        from src.market.subscriber import Subscriber
 
-        diff = SubscriptionDiff(
-            add=frozenset(["AO2501", "AO2505"]),
-            remove=frozenset(),
-            unchanged=frozenset(),
-        )
+        subscriber = Subscriber()
+        diff = subscriber.subscribe({"AO2501", "AO2505"})
         assert "AO2501" in diff.add
         assert "AO2505" in diff.add
         assert len(diff.add) == 2
 
     def test_remove_symbols_subscription(self) -> None:
         """MKT.SUBSCRIBER.REMOVE_SYMBOLS: 取消订阅."""
-        from src.market.subscriber import SubscriptionDiff
+        from src.market.subscriber import Subscriber
 
-        diff = SubscriptionDiff(
-            add=frozenset(),
-            remove=frozenset(["RB2501"]),
-            unchanged=frozenset(),
-        )
+        subscriber = Subscriber()
+        subscriber.subscribe({"RB2501", "RB2505"})
+        diff = subscriber.unsubscribe({"RB2501"})
         assert "RB2501" in diff.remove
         assert len(diff.remove) == 1
 
     def test_unchanged_symbols_subscription(self) -> None:
         """MKT.SUBSCRIBER.UNCHANGED_SYMBOLS: 保持订阅."""
-        from src.market.subscriber import SubscriptionDiff
+        from src.market.subscriber import Subscriber
 
-        diff = SubscriptionDiff(
-            add=frozenset(),
-            remove=frozenset(),
-            unchanged=frozenset(["CU2501", "AL2501"]),
-        )
-        assert "CU2501" in diff.unchanged
-        assert "AL2501" in diff.unchanged
+        subscriber = Subscriber()
+        subscriber.subscribe({"CU2501", "AL2501"})
+        # 更新时保持相同集合，不变的合约不会出现在diff中
+        diff = subscriber.update({"CU2501", "AL2501"})
+        assert len(diff.add) == 0
+        assert len(diff.remove) == 0
+        # 验证当前订阅保持不变
+        assert "CU2501" in subscriber.current_subscriptions
+        assert "AL2501" in subscriber.current_subscriptions
 
 
 class TestMktStream:
