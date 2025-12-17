@@ -393,15 +393,13 @@ class VaRCalculator:
     def _random_uniform(self) -> float:
         """Generate pseudo-random uniform number.
 
-        Simple LCG for reproducibility (not cryptographically secure).
+        使用线性同余生成器 (LCG)，确保结果可重现。
+        军规级要求: M3 完整审计 - 固定种子时结果完全确定
 
         Returns:
             Random number in (0, 1)
         """
-        import time
-
-        # Use time-based seed
-        seed = int(time.time() * 1000000) % (2**31)
-        # LCG parameters
-        seed = (1103515245 * seed + 12345) % (2**31)
-        return (seed / (2**31 - 1)) * 0.9998 + 0.0001  # Avoid exact 0 or 1
+        # LCG: X_{n+1} = (a * X_n + c) mod m
+        self._seed = (self._LCG_A * self._seed + self._LCG_C) % self._LCG_M
+        # 归一化到 (0, 1)，避免精确的 0 或 1
+        return (self._seed / (self._LCG_M - 1)) * 0.9998 + 0.0001
