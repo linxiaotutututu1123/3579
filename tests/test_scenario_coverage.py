@@ -27,7 +27,6 @@ from src.trading.ci_gate import (
     CI_REPORT_REQUIRED_FIELDS,
     CIJsonReport,
     CIJsonReportV3,
-    PolicyReport,
     assert_not_check_mode,
     check_command_whitelist,
     disable_check_mode,
