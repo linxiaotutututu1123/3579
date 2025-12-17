@@ -269,6 +269,9 @@ jobs:
       # =========================================================================
       - name: Windows sanity check
         shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: "1"
         run: |
           Write-Host "Checking tool versions..."
           .\.venv\Scripts\python.exe -m ruff --version
@@ -278,7 +281,7 @@ jobs:
           import sys
           print(f'Python: {sys.version}')
 
-          # Core modules (军规级：使用实际存在的导出)
+          # Core modules
           from src import config
           from src.runner import run_f21, init_components, Components
           from src.orchestrator import handle_risk_update, OrchestratorResult
@@ -293,20 +296,23 @@ jobs:
           enable_check_mode()
           print('CHECK mode enabled OK')
 
-          # Verify new exit codes exist (军规级 v4.0)
+          # Verify new exit codes exist (v4.0)
           assert hasattr(ExitCode, 'MODEL_WEIGHTS_FAIL'), 'Missing MODEL_WEIGHTS_FAIL'
           assert hasattr(ExitCode, 'SCENARIO_MISSING'), 'Missing SCENARIO_MISSING'
           assert hasattr(ExitCode, 'CAPABILITY_MISSING'), 'Missing CAPABILITY_MISSING'
           assert ExitCode.MODEL_WEIGHTS_FAIL == 10
           assert ExitCode.SCENARIO_MISSING == 11
           assert ExitCode.CAPABILITY_MISSING == 13
-          print('All exit codes verified OK (军规级 v4.0)')
+          print('All exit codes verified OK (v4.0)')
           "@
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Windows 测试 (军规级覆盖率门槛)
       - name: Test on Windows
         shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: "1"
         run: |
           .\.venv\Scripts\python.exe -m pytest -q --cov=src --cov-fail-under=${{ env.COVERAGE_THRESHOLD }}
 
@@ -315,6 +321,9 @@ jobs:
         if: always()
         continue-on-error: true
         shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: "1"
         run: |
           New-Item -ItemType Directory -Force -Path artifacts\context | Out-Null
           .\.venv\Scripts\python.exe scripts\export_context.py --out artifacts\context\context.md --level lite
