@@ -119,7 +119,7 @@ class TestVaRCalculatorIntegration:
 
     def test_all_methods_consistent(self) -> None:
         """测试所有方法一致性."""
-        calc = VaRCalculator()
+        calc = VaRCalculator(seed=42)  # 使用固定种子确保稳定
         returns = [
             -0.08,
             -0.06,
@@ -141,3 +141,95 @@ class TestVaRCalculatorIntegration:
         assert hist.var >= 0
         assert param.var >= 0
         assert mc.var >= 0
+
+
+class TestVaRCalculatorReproducibility:
+    """VaR计算器可重现性测试 (军规级 M3 完整审计)."""
+
+    def test_monte_carlo_reproducible_with_seed(self) -> None:
+        """测试蒙特卡洛VaR使用固定种子可重现."""
+        returns = [-0.05, -0.03, -0.01, 0.01, 0.02, 0.03, 0.04, 0.05]
+
+        # 第一次计算
+        calc1 = VaRCalculator(seed=12345)
+        result1 = calc1.monte_carlo_var(returns, simulations=100)
+
+        # 第二次计算 - 相同种子
+        calc2 = VaRCalculator(seed=12345)
+        result2 = calc2.monte_carlo_var(returns, simulations=100)
+
+        # 结果必须完全相同
+        assert result1.var == result2.var
+        assert result1.expected_shortfall == result2.expected_shortfall
+
+    def test_reset_seed_reproduces_result(self) -> None:
+        """测试重置种子后结果可重现."""
+        returns = [-0.05, -0.03, -0.01, 0.01, 0.02, 0.03, 0.04, 0.05]
+
+        calc = VaRCalculator(seed=42)
+        result1 = calc.monte_carlo_var(returns, simulations=100)
+
+        # 重置种子
+        calc.reset_seed(42)
+        result2 = calc.monte_carlo_var(returns, simulations=100)
+
+        assert result1.var == result2.var
+
+    def test_different_seeds_different_results(self) -> None:
+        """测试不同种子产生不同结果."""
+        returns = [-0.05, -0.03, -0.01, 0.01, 0.02, 0.03, 0.04, 0.05]
+
+        calc1 = VaRCalculator(seed=1)
+        result1 = calc1.monte_carlo_var(returns, simulations=100)
+
+        calc2 = VaRCalculator(seed=999)
+        result2 = calc2.monte_carlo_var(returns, simulations=100)
+
+        # 不同种子结果应该不同
+        assert result1.var != result2.var
+
+    def test_current_seed_property(self) -> None:
+        """测试当前种子属性."""
+        calc = VaRCalculator(seed=42)
+        assert calc.current_seed == 42
+
+        # 调用随机数后种子会变化
+        calc._random_uniform()
+        assert calc.current_seed != 42
+
+    def test_reset_seed_to_initial(self) -> None:
+        """测试重置到初始种子."""
+        calc = VaRCalculator(seed=100)
+
+        # 消耗一些随机数
+        for _ in range(10):
+            calc._random_uniform()
+
+        # 重置到初始种子
+        calc.reset_seed()
+        assert calc.current_seed == 100
+
+    def test_reset_seed_to_new_value(self) -> None:
+        """测试重置到新种子值."""
+        calc = VaRCalculator(seed=100)
+        calc.reset_seed(200)
+        assert calc.current_seed == 200
+
+    def test_random_uniform_deterministic(self) -> None:
+        """测试随机数生成器确定性."""
+        calc1 = VaRCalculator(seed=42)
+        calc2 = VaRCalculator(seed=42)
+
+        # 生成10个随机数，应该完全相同
+        for _ in range(10):
+            r1 = calc1._random_uniform()
+            r2 = calc2._random_uniform()
+            assert r1 == r2
+
+    def test_random_uniform_range(self) -> None:
+        """测试随机数在(0,1)范围内."""
+        calc = VaRCalculator(seed=42)
+
+        for _ in range(100):
+            r = calc._random_uniform()
+            assert 0 < r < 1
