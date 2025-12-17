@@ -313,6 +313,30 @@ class TestGetExitCode:
         )
         assert get_exit_code(report) == ExitCode.BROKER_CREDS_FAIL
 
+    def test_model_weights_fail_returns_model_weights_fail(self) -> None:
+        """Model weights failure returns MODEL_WEIGHTS_FAIL (军规级 v4.0)."""
+        report = GateReport(
+            checks=(GateCheck("model_weights_exist", GateCheckStatus.FAIL, required=True),),
+            target_mode="LIVE",
+        )
+        assert get_exit_code(report) == ExitCode.MODEL_WEIGHTS_FAIL
+
+    def test_scenarios_complete_fail_returns_scenario_missing(self) -> None:
+        """Scenarios complete failure returns SCENARIO_MISSING (军规级 v4.0)."""
+        report = GateReport(
+            checks=(GateCheck("scenarios_complete", GateCheckStatus.FAIL, required=True),),
+            target_mode="LIVE",
+        )
+        assert get_exit_code(report) == ExitCode.SCENARIO_MISSING
+
+    def test_capability_present_fail_returns_capability_missing(self) -> None:
+        """Capability present failure returns CAPABILITY_MISSING (军规级 v4.0)."""
+        report = GateReport(
+            checks=(GateCheck("capability_present", GateCheckStatus.FAIL, required=True),),
+            target_mode="LIVE",
+        )
+        assert get_exit_code(report) == ExitCode.CAPABILITY_MISSING
+
     def test_unknown_fail_returns_general_error(self) -> None:
         """Unknown failure returns GENERAL_ERROR."""
         report = GateReport(
