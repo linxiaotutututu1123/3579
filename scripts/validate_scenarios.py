@@ -124,7 +124,8 @@ def load_scenarios_yaml(path: Path) -> dict[str, Any]:
     content = path.read_text(encoding="utf-8")
 
     if HAS_YAML:
-        return yaml.safe_load(content)
+        result: dict[str, Any] = yaml.safe_load(content)
+        return result
 
     # 简单解析（无yaml库时的备用方案）
     return parse_yaml_simple(content)
