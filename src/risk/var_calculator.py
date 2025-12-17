@@ -68,15 +68,51 @@ class VaRCalculator:
 
     Provides multiple methods for VaR calculation including
     historical, parametric, and Monte Carlo approaches.
+
+    军规级要求 (M3, M19):
+    - 支持固定种子确保蒙特卡洛结果可重现
+    - 支持审计追溯
     """
 
-    def __init__(self, default_confidence: float = 0.95) -> None:
+    # LCG 参数 (与 glibc 相同)
+    _LCG_A: int = 1103515245
+    _LCG_C: int = 12345
+    _LCG_M: int = 2**31
+
+    def __init__(
+        self,
+        default_confidence: float = 0.95,
+        seed: int | None = None,
+    ) -> None:
         """Initialize VaR calculator.
 
         Args:
             default_confidence: Default confidence level (0.95 = 95%)
+            seed: Random seed for Monte Carlo (None = time-based, 固定值 = 可重现)
         """
         self._default_confidence = default_confidence
+        self._initial_seed = seed
+        self._seed = seed if seed is not None else int(time.time() * 1000000) % self._LCG_M
+
+    def reset_seed(self, seed: int | None = None) -> None:
+        """Reset random seed for reproducibility.
+
+        军规级要求: M3 完整审计 - 支持结果重现
+
+        Args:
+            seed: New seed value (None = use initial seed)
+        """
+        if seed is not None:
+            self._seed = seed % self._LCG_M
+        elif self._initial_seed is not None:
+            self._seed = self._initial_seed
+        else:
+            self._seed = int(time.time() * 1000000) % self._LCG_M
+
+    @property
+    def current_seed(self) -> int:
+        """Get current seed value for audit purposes."""
+        return self._seed
 
     def historical_var(self, returns: list[float], confidence: float | None = None) -> VaRResult:
         """Calculate historical VaR.
