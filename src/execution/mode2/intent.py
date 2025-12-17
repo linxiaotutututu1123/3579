@@ -135,13 +135,14 @@ class OrderIntent:
     def __post_init__(self) -> None:
         """验证参数合法性."""
         if self.target_qty <= 0:
-            raise ValueError(f"target_qty 必须为正整数, 当前值: {self.target_qty}")
+            msg = f"target_qty must be positive, got: {self.target_qty}"
+            raise ValueError(msg)
         if not self.strategy_id:
-            raise ValueError("strategy_id 不能为空 (军规 M1)")
+            raise ValueError("strategy_id required (M1)")
         if not self.decision_hash:
-            raise ValueError("decision_hash 不能为空 (军规 M3)")
+            raise ValueError("decision_hash required (M3)")
         if not self.instrument:
-            raise ValueError("instrument 不能为空")
+            raise ValueError("instrument required")
 
     @property
     def intent_id(self) -> str:
