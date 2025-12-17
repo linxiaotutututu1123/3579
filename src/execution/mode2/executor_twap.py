@@ -97,7 +97,7 @@ class TWAPExecutor(ExecutorBase):
             config: 执行器配置
         """
         super().__init__(config or TWAPConfig())
-        self._twap_config: TWAPConfig = self._config  # type: ignore
+        self._twap_config: TWAPConfig = self._config  # type: ignore[assignment]
 
     def make_plan(self, intent: OrderIntent) -> str:
         """生成执行计划.
