@@ -379,7 +379,7 @@ def print_report(report: ValidationReport) -> None:
 def main() -> int:
     """主入口."""
     parser = argparse.ArgumentParser(description="军规级场景验证脚本")
-    parser.add_argument("--strict", action="store_true", help="严格模式（任何缺失即失败）")
+    parser.add_argument("--strict", action="store_true", help="严格模式(任何缺失即失败)")
     parser.add_argument("--report", type=Path, default=REPORT_PATH, help="报告输出路径")
     parser.add_argument("--quiet", action="store_true", help="静默模式")
     args = parser.parse_args()
