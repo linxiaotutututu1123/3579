@@ -56,7 +56,6 @@ ignore = [
     "RUF046",   # 允许 int(round(...))（明确意图）
     "RET504",   # 允许 return 前赋值（调试友好）
     "PLW0603",  # 允许 global 语句（状态管理需要）
-    "PLW1510",  # 允许 subprocess.run 不带 check
     "PLC0415",  # 允许函数内 import（延迟加载）
     "SIM102",   # 允许嵌套 if（可读性）
     "PERF401",  # 允许循环 append（可读性）
