@@ -23,8 +23,8 @@
 
 | 模块 | 可行性 | 风险 | 状态 | 完成日期 |
 |------|--------|------|------|----------|
-| 策略联邦中枢 | ★★★★☆ | MEDIUM | ✅ 完成 | 2025-12-17 |
-| 动态风控引擎 | ★★★☆☆ | HIGH | ✅ 完成 | 2025-12-17 |
+| 策略联邦中枢 | ★★★★☆ | MEDIUM | 未完成 | 2025-12-17 |
+| 动态风控引擎 | ★★★☆☆ | HIGH | 未完成| 2025-12-17 |
 | 多维收益归因 | ★★★★★ | LOW | 🔄 进行中 | - |
 | 实验策略门禁闭环 | ★★★★☆ | LOW | ⏸ 待实施 | - |
 | 夜盘全链路集成 | ★★★★★ | LOW | ⏸ 待实施 | - |
@@ -33,30 +33,6 @@
 
 ## 三、已完成模块详情
 
-### 3.1 策略联邦中枢 (✅ 完成)
-- **位置**: `src/strategy/federation/`
-- **核心文件**:
-  - `central_coordinator.py` (~696行)
-  - `__init__.py`
-- **测试文件**: `tests/test_strategy_federation.py` (44个测试)
-- **军规覆盖**: M1 (单一信号源), M19 (风险归因), M20 (跨所一致)
-- **核心功能**:
-  - StrategyFederation 联邦管理器
-  - CorrelationMatrix 相关性矩阵
-  - FederationSignal 联邦信号
-  - 动态权重更新
-  - 相关性惩罚机制
-
-### 3.2 动态风控引擎 (✅ 完成)
-- **位置**: `src/risk/dynamic_var.py`
-- **测试文件**: `tests/test_dynamic_var.py`
-- **军规覆盖**: M6 (熔断保护), M13 (涨跌停感知), M16 (保证金监控)
-- **核心功能**:
-  - EVT极值理论VaR (POT + GPD)
-  - 半参数VaR (核密度 + GPD)
-  - 涨跌停调整VaR
-  - 流动性调整VaR
-  - 风险等级动态计算
 
 ### 3.3 风险归因模块 (已部分实施 - v4.1)
 - **位置**: `src/risk/attribution.py`
@@ -148,6 +124,8 @@
 **每次任务前必读文件**:
 1. `docs/V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md`
 2. `docs/CLAUDE_PROJECT_MEMORY.md` (本文件)
+3. 以及所有的前缀是V4PRO的文件
+4. 
 
 ---
 
