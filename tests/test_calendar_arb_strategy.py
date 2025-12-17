@@ -201,7 +201,7 @@ class TestCalendarArbStrategyOnTick:
 
         # 制造一个大的负 z-score（价差过窄）
         state = self._make_market_state({"AO2501": 80.0, "AO2505": 105.0})
-        portfolio = strategy.on_tick(state)
+        strategy.on_tick(state)
 
         # 检查是否有信号产生
         assert strategy.last_snapshot is not None
