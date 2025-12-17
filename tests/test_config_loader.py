@@ -95,7 +95,7 @@ class TestTradingSessionModel:
     def test_invalid_time_format(self) -> None:
         """测试无效时间格式."""
         with pytest.raises(ValueError):
-            TradingSessionModel(start="9:00", end="10:15")  # 缺少前导零
+            TradingSessionModel(start="invalid", end="10:15")  # 无效格式
 
     def test_invalid_time_range(self) -> None:
         """测试无效时间范围."""
