@@ -10,11 +10,11 @@ V4PRO Scenarios:
 - MODE2.EXECUTOR.ICEBERG.REFRESH: 自动补单
 
 执行策略:
-    隐藏真实订单规模，只显示部分数量:
+    隐藏真实订单规模,只显示部分数量:
     - 显示量 (display_qty): 市场可见的挂单数量
     - 总量 (total_qty): 实际需要成交的总数量
     - 每次显示量成交后自动补单
-    - 适用于大额订单（防止暴露交易意图）
+    - 适用于大额订单(防止暴露交易意图)
 
 军规级要求:
 - 显示量在计划创建时确定 (M7)
@@ -49,17 +49,17 @@ class IcebergConfig(ExecutorConfig):
     """冰山单执行器配置.
 
     Attributes:
-        max_slice_qty: 单个分片最大数量（作为显示量上限）
-        min_slice_qty: 单个分片最小数量（作为显示量下限）
-        price_tolerance: 价格容忍度（滑点）
-        timeout_seconds: 单个订单超时时间（秒）
+        max_slice_qty: 单个分片最大数量(作为显示量上限)
+        min_slice_qty: 单个分片最小数量(作为显示量下限)
+        price_tolerance: 价格容忍度(滑点)
+        timeout_seconds: 单个订单超时时间(秒)
         retry_count: 重试次数
         audit_enabled: 是否启用审计
-        display_qty: 显示量（0 表示使用 max_slice_qty）
-        display_qty_ratio: 显示量占总量比例（当 display_qty=0 时使用）
+        display_qty: 显示量(0 表示使用 max_slice_qty)
+        display_qty_ratio: 显示量占总量比例(当 display_qty=0 时使用)
         refresh_on_partial: 部分成交时是否补单
         min_refresh_qty: 最小补单数量
-        price_improvement: 是否启用价格改善（追单）
+        price_improvement: 是否启用价格改善(追单)
     """
 
     display_qty: int = 0  # 0 表示自动计算
@@ -221,7 +221,7 @@ class IcebergExecutor(ExecutorBase):
             current_time: 当前时间戳
 
         Returns:
-            下一个动作，None 表示当前无动作
+            下一个动作,None 表示当前无动作
         """
         ctx = self._plans.get(plan_id)
         if ctx is None:
@@ -282,7 +282,7 @@ class IcebergExecutor(ExecutorBase):
         # 查找下一个待执行的分片
         next_slice = self._find_next_slice(ctx)
         if next_slice is None:
-            # 所有预定分片已执行，检查是否需要额外补单
+            # 所有预定分片已执行,检查是否需要额外补单
             remaining = ctx.intent.target_qty - ctx.progress.filled_qty
             if remaining > 0:
                 # 创建补单分片
@@ -373,7 +373,7 @@ class IcebergExecutor(ExecutorBase):
             ctx: 计划上下文
 
         Returns:
-            下一个待执行的分片，None 表示无
+            下一个待执行的分片,None 表示无
         """
         for slice_info in ctx.slices:
             if not slice_info.executed:
@@ -387,7 +387,7 @@ class IcebergExecutor(ExecutorBase):
             client_order_id: 客户订单ID
 
         Returns:
-            分片索引，解析失败返回 -1
+            分片索引,解析失败返回 -1
         """
         try:
             _, slice_index, _ = IntentIdGenerator.parse_client_order_id(client_order_id)
@@ -426,7 +426,7 @@ class IcebergExecutor(ExecutorBase):
                 )
                 ctx.filled_orders.append(filled_order)
 
-                # 完全成交时移除挂单（触发补单）
+                # 完全成交时移除挂单(触发补单)
                 if event.event_type == "FILL":
                     del ctx.pending_orders[client_order_id]
                 elif event.event_type == "PARTIAL_FILL":

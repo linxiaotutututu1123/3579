@@ -88,13 +88,13 @@ class ExecutorAction:
 
     Attributes:
         action_type: 动作类型
-        client_order_id: 客户订单ID（PLACE_ORDER/CANCEL_ORDER/MODIFY_ORDER 必填）
+        client_order_id: 客户订单ID(PLACE_ORDER/CANCEL_ORDER/MODIFY_ORDER 必填)
         instrument: 合约代码
         side: 交易方向
         offset: 开平方向
         price: 价格
         qty: 数量
-        wait_until: 等待到指定时间戳（WAIT 动作）
+        wait_until: 等待到指定时间戳(WAIT 动作)
         reason: 动作原因
         metadata: 扩展元数据
     """
@@ -195,7 +195,7 @@ class ExecutionProgress:
         avg_price: 平均成交价格
         total_cost: 总成本
         start_time: 开始时间
-        elapsed_time: 已用时间（秒）
+        elapsed_time: 已用时间(秒)
     """
 
     total_qty: int = 0
@@ -246,8 +246,8 @@ class ExecutorConfig:
     Attributes:
         max_slice_qty: 单个分片最大数量
         min_slice_qty: 单个分片最小数量
-        price_tolerance: 价格容忍度（滑点）
-        timeout_seconds: 单个订单超时时间（秒）
+        price_tolerance: 价格容忍度(滑点)
+        timeout_seconds: 单个订单超时时间(秒)
         retry_count: 重试次数
         audit_enabled: 是否启用审计
     """
@@ -312,7 +312,7 @@ class ExecutorBase(ABC):
             current_time: 当前时间戳
 
         Returns:
-            下一个动作，None 表示当前无动作
+            下一个动作,None 表示当前无动作
         """
 
     @abstractmethod

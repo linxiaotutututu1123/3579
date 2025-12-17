@@ -44,7 +44,7 @@ from src.execution.mode2.executor_base import (
 from src.execution.mode2.intent import IntentIdGenerator, OrderIntent
 
 
-# 中国期货市场默认成交量分布曲线（按 30 分钟时段）
+# 中国期货市场默认成交量分布曲线(按 30 分钟时段)
 # 基于中国期货市场实际交易特征:
 # - 开盘 30 分钟成交活跃
 # - 午盘相对平稳
@@ -71,14 +71,14 @@ class VWAPConfig(ExecutorConfig):
     Attributes:
         max_slice_qty: 单个分片最大数量
         min_slice_qty: 单个分片最小数量
-        price_tolerance: 价格容忍度（滑点）
-        timeout_seconds: 单个订单超时时间（秒）
+        price_tolerance: 价格容忍度(滑点)
+        timeout_seconds: 单个订单超时时间(秒)
         retry_count: 重试次数
         audit_enabled: 是否启用审计
-        duration_seconds: 执行总时长（秒）
-        volume_profile: 成交量分布曲线（各时段占比列表）
-        min_slice_qty_ratio: 最小分片占比（防止分片过小）
-        participation_rate: 参与率上限（占市场成交量的比例）
+        duration_seconds: 执行总时长(秒)
+        volume_profile: 成交量分布曲线(各时段占比列表)
+        min_slice_qty_ratio: 最小分片占比(防止分片过小)
+        participation_rate: 参与率上限(占市场成交量的比例)
     """
 
     duration_seconds: float = 300.0  # 默认 5 分钟
@@ -165,7 +165,7 @@ class VWAPExecutor(ExecutorBase):
 
         V4PRO Scenario: MODE2.EXECUTOR.VWAP.PROFILE
 
-        根据成交量分布曲线分配订单数量，确保:
+        根据成交量分布曲线分配订单数量,确保:
         - 高成交量时段分配更多
         - 每个分片数量在合理范围内
         - 总数量等于目标数量
@@ -184,12 +184,12 @@ class VWAPExecutor(ExecutorBase):
         # 归一化成交量分布
         profile_sum = sum(profile)
         if profile_sum <= 0:
-            # 如果分布无效，使用均匀分布
+            # 如果分布无效,使用均匀分布
             normalized_profile = [1.0 / len(profile)] * len(profile)
         else:
             normalized_profile = [p / profile_sum for p in profile]
 
-        # 计算分片数量（根据执行时长和分布时段数）
+        # 计算分片数量(根据执行时长和分布时段数)
         slice_count = len(normalized_profile)
         interval = duration / slice_count if slice_count > 0 else duration
 
@@ -223,11 +223,11 @@ class VWAPExecutor(ExecutorBase):
                 )
                 allocated_qty += slice_qty
 
-        # 处理尾差（分配到最后一个分片）
+        # 处理尾差(分配到最后一个分片)
         if allocated_qty < total_qty and slices:
             slices[-1].qty += total_qty - allocated_qty
         elif allocated_qty > total_qty and slices:
-            # 如果超分配，从后往前减少
+            # 如果超分配,从后往前减少
             excess = allocated_qty - total_qty
             for s in reversed(slices):
                 reduce = min(excess, s.qty - 1)
@@ -255,7 +255,7 @@ class VWAPExecutor(ExecutorBase):
             current_time: 当前时间戳
 
         Returns:
-            下一个动作，None 表示当前无动作
+            下一个动作,None 表示当前无动作
         """
         ctx = self._plans.get(plan_id)
         if ctx is None:
@@ -409,7 +409,7 @@ class VWAPExecutor(ExecutorBase):
             ctx: 计划上下文
 
         Returns:
-            下一个待执行的分片，None 表示无
+            下一个待执行的分片,None 表示无
         """
         for slice_info in ctx.slices:
             if not slice_info.executed:
@@ -423,7 +423,7 @@ class VWAPExecutor(ExecutorBase):
             client_order_id: 客户订单ID
 
         Returns:
-            分片索引，解析失败返回 -1
+            分片索引,解析失败返回 -1
         """
         try:
             _, slice_index, _ = IntentIdGenerator.parse_client_order_id(client_order_id)
@@ -549,7 +549,7 @@ class VWAPExecutor(ExecutorBase):
         return list(ctx.pending_orders.keys())
 
     def get_schedule(self, plan_id: str) -> list[dict[str, Any]]:
-        """获取执行时间表（含成交量权重）.
+        """获取执行时间表(含成交量权重).
 
         Args:
             plan_id: 计划ID
@@ -576,10 +576,10 @@ class VWAPExecutor(ExecutorBase):
     def set_volume_profile(self, profile: list[float]) -> None:
         """设置成交量分布曲线.
 
-        用于动态更新成交量分布。注意：只影响新创建的计划，
-        不影响已有计划（M7 回放一致性）。
+        用于动态更新成交量分布。注意:只影响新创建的计划,
+        不影响已有计划(M7 回放一致性)。
 
         Args:
-            profile: 成交量分布曲线（各时段占比列表）
+            profile: 成交量分布曲线(各时段占比列表)
         """
         self._vwap_config.volume_profile = profile.copy()

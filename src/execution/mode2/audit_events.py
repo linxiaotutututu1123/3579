@@ -36,8 +36,8 @@ class Mode2AuditEventType(str, Enum):
     V4PRO Scenario: MODE2.AUDIT.*
 
     事件类型按执行生命周期排列:
-    - INTENT_CREATED: 意图创建（策略层输出）
-    - INTENT_REJECTED: 意图被拒绝（幂等检查失败等）
+    - INTENT_CREATED: 意图创建(策略层输出)
+    - INTENT_REJECTED: 意图被拒绝(幂等检查失败等)
     - PLAN_CREATED: 执行计划创建
     - SLICE_SCHEDULED: 分片调度
     - SLICE_SENT: 分片订单发送
@@ -81,8 +81,8 @@ class Mode2AuditEvent:
 
     Attributes:
         event_type: 事件类型
-        intent_id: 意图ID（幂等键）
-        ts: 事件时间戳（毫秒）
+        intent_id: 意图ID(幂等键)
+        ts: 事件时间戳(毫秒)
         plan_id: 计划ID
         client_order_id: 客户订单ID
         slice_index: 分片索引
@@ -122,7 +122,7 @@ class Mode2AuditEvent:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        """转换为字典（用于 JSONL 序列化）.
+        """转换为字典(用于 JSONL 序列化).
 
         Returns:
             包含所有字段的字典
@@ -553,7 +553,7 @@ def create_intent_completed_event(
         avg_price: 平均成交价格
         total_cost: 总成本
         slice_count: 分片数量
-        elapsed_seconds: 执行耗时（秒）
+        elapsed_seconds: 执行耗时(秒)
 
     Returns:
         审计事件

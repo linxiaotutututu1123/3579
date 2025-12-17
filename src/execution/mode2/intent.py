@@ -31,12 +31,12 @@ class AlgoType(str, Enum):
     """执行算法类型.
 
     支持的算法:
-    - IMMEDIATE: 立即执行，一次性下单
+    - IMMEDIATE: 立即执行,一次性下单
     - TWAP: 时间加权平均价格算法
     - VWAP: 成交量加权平均价格算法
-    - ICEBERG: 冰山单，分批隐藏显示量
+    - ICEBERG: 冰山单,分批隐藏显示量
     - POV: 参与率算法 (Percentage of Volume)
-    - ADAPTIVE: 自适应算法，根据市场状态动态调整
+    - ADAPTIVE: 自适应算法,根据市场状态动态调整
     """
 
     IMMEDIATE = "IMMEDIATE"
@@ -51,10 +51,10 @@ class Urgency(str, Enum):
     """执行紧急程度.
 
     影响执行速度和滑点容忍度:
-    - LOW: 低紧急度，优先最小化市场冲击
-    - NORMAL: 正常紧急度，平衡冲击和速度
-    - HIGH: 高紧急度，优先快速完成
-    - CRITICAL: 关键紧急度，立即全量执行（风控触发等场景）
+    - LOW: 低紧急度,优先最小化市场冲击
+    - NORMAL: 正常紧急度,平衡冲击和速度
+    - HIGH: 高紧急度,优先快速完成
+    - CRITICAL: 关键紧急度,立即全量执行(风控触发等场景)
     """
 
     LOW = "LOW"
@@ -75,9 +75,9 @@ class Offset(str, Enum):
 
     中国期货市场特化:
     - OPEN: 开仓
-    - CLOSE: 平仓（平昨）
+    - CLOSE: 平仓(平昨)
     - CLOSETODAY: 平今仓
-    - AUTO: 自动选择（优先平今，减少手续费）
+    - AUTO: 自动选择(优先平今,减少手续费)
     """
 
     OPEN = "OPEN"
@@ -90,7 +90,7 @@ class Offset(str, Enum):
 class OrderIntent:
     """交易意图 - 策略层输出对象.
 
-    OrderIntent 是策略层到执行层的唯一接口，封装了所有执行所需信息。
+    OrderIntent 是策略层到执行层的唯一接口,封装了所有执行所需信息。
 
     V4PRO Scenarios:
     - MODE2.INTENT.IDEMPOTENT: intent_id 幂等键
@@ -103,18 +103,18 @@ class OrderIntent:
     - intent_id 必须确定性生成 (M7)
 
     Attributes:
-        strategy_id: 策略唯一标识符，用于追溯信号来源
-        decision_hash: 策略决策哈希，关联到具体决策日志
-        instrument: 合约代码，如 "rb2501"
+        strategy_id: 策略唯一标识符,用于追溯信号来源
+        decision_hash: 策略决策哈希,关联到具体决策日志
+        instrument: 合约代码,如 "rb2501"
         side: 交易方向 (BUY/SELL)
         offset: 开平方向 (OPEN/CLOSE/CLOSETODAY/AUTO)
-        target_qty: 目标数量（正整数）
+        target_qty: 目标数量(正整数)
         algo: 执行算法类型
         urgency: 紧急程度
-        limit_price: 限价（None 表示市价）
-        signal_ts: 信号时间戳（毫秒精度）
-        expire_ts: 过期时间戳（毫秒精度，None 表示当日有效）
-        parent_intent_id: 父意图ID（用于关联分拆订单）
+        limit_price: 限价(None 表示市价)
+        signal_ts: 信号时间戳(毫秒精度)
+        expire_ts: 过期时间戳(毫秒精度,None 表示当日有效)
+        parent_intent_id: 父意图ID(用于关联分拆订单)
         metadata: 扩展元数据
     """
 
@@ -168,7 +168,7 @@ class OrderIntent:
         """检查意图是否已过期.
 
         Args:
-            current_ts: 当前时间戳（毫秒），None 表示使用当前时间
+            current_ts: 当前时间戳(毫秒),None 表示使用当前时间
 
         Returns:
             是否已过期
@@ -179,7 +179,7 @@ class OrderIntent:
         return now > self.expire_ts
 
     def to_dict(self) -> dict[str, Any]:
-        """转换为字典（用于审计日志）.
+        """转换为字典(用于审计日志).
 
         Returns:
             包含所有字段的字典
@@ -241,10 +241,10 @@ class IntentIdGenerator:
     - 必须包含所有关键字段防止碰撞
     """
 
-    # 分隔符，用于组合字段
+    # 分隔符,用于组合字段
     SEPARATOR = "|"
 
-    # 哈希前缀长度（16 字符 = 64 bit）
+    # 哈希前缀长度(16 字符 = 64 bit)
     HASH_PREFIX_LENGTH = 16
 
     @classmethod
@@ -303,14 +303,14 @@ class IntentIdGenerator:
     ) -> str:
         """生成 client_order_id.
 
-        用于实际下单时的订单标识，支持分片和重试。
+        用于实际下单时的订单标识,支持分片和重试。
 
         组成: {intent_id}_{slice_index:04d}_{retry_count:02d}
 
         Args:
             intent_id: 意图ID
-            slice_index: 分片索引（0-9999）
-            retry_count: 重试次数（0-99）
+            slice_index: 分片索引(0-9999)
+            retry_count: 重试次数(0-99)
 
         Returns:
             client_order_id
@@ -355,7 +355,7 @@ class IntentIdGenerator:
 class IntentRegistry:
     """意图注册表.
 
-    用于跟踪已提交的意图，防止重复执行。
+    用于跟踪已提交的意图,防止重复执行。
 
     V4PRO Scenario: MODE2.INTENT.IDEMPOTENT
 
@@ -377,7 +377,7 @@ class IntentRegistry:
             intent: 交易意图
 
         Returns:
-            是否注册成功（False 表示已存在）
+            是否注册成功(False 表示已存在)
         """
         intent_id = intent.intent_id
         if intent_id in self._intents:
@@ -465,7 +465,7 @@ class IntentRegistry:
         self._failed.clear()
 
     def to_dict(self) -> dict[str, Any]:
-        """转换为字典（用于持久化）.
+        """转换为字典(用于持久化).
 
         Returns:
             包含所有状态的字典

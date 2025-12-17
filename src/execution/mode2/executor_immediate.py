@@ -9,9 +9,9 @@ V4PRO Scenarios:
 - MODE2.EXECUTOR.IMMEDIATE.RETRY: 立即执行重试机制
 
 执行策略:
-    一次性下单全部数量，适用于:
-    - 小额订单（市场冲击可忽略）
-    - 高紧急度订单（CRITICAL urgency）
+    一次性下单全部数量,适用于:
+    - 小额订单(市场冲击可忽略)
+    - 高紧急度订单(CRITICAL urgency)
     - 流动性充足的合约
 
 军规级要求:
@@ -50,10 +50,10 @@ class ImmediateConfig(ExecutorConfig):
     继承 ExecutorConfig 的所有配置项。
 
     Attributes:
-        max_slice_qty: 单个分片最大数量（立即执行时为全量）
+        max_slice_qty: 单个分片最大数量(立即执行时为全量)
         min_slice_qty: 单个分片最小数量
-        price_tolerance: 价格容忍度（滑点）
-        timeout_seconds: 单个订单超时时间（秒）
+        price_tolerance: 价格容忍度(滑点)
+        timeout_seconds: 单个订单超时时间(秒)
         retry_count: 重试次数
         audit_enabled: 是否启用审计
     """
@@ -69,7 +69,7 @@ class ImmediateExecutor(ExecutorBase):
     - MODE2.EXECUTOR.IMMEDIATE.RETRY: 立即执行重试机制
 
     执行逻辑:
-    1. make_plan: 创建单分片计划（全量）
+    1. make_plan: 创建单分片计划(全量)
     2. next_action: 返回 PLACE_ORDER 动作
     3. on_event: 处理成交/拒绝事件
     4. 支持超时重试机制
@@ -93,7 +93,7 @@ class ImmediateExecutor(ExecutorBase):
 
         V4PRO Scenario: MODE2.EXECUTOR.IMMEDIATE
 
-        创建单分片计划，一次性下单全部数量。
+        创建单分片计划,一次性下单全部数量。
 
         Args:
             intent: 交易意图
@@ -106,7 +106,7 @@ class ImmediateExecutor(ExecutorBase):
         """
         plan_id = intent.intent_id
 
-        # 幂等检查：如果计划已存在，直接返回
+        # 幂等检查:如果计划已存在,直接返回
         if plan_id in self._plans:
             return plan_id
 
@@ -145,10 +145,10 @@ class ImmediateExecutor(ExecutorBase):
 
         Args:
             plan_id: 计划ID
-            current_time: 当前时间戳（用于超时检查）
+            current_time: 当前时间戳(用于超时检查)
 
         Returns:
-            下一个动作，None 表示当前无动作
+            下一个动作,None 表示当前无动作
         """
         ctx = self._plans.get(plan_id)
         if ctx is None:
@@ -186,7 +186,7 @@ class ImmediateExecutor(ExecutorBase):
             for order_id, pending in list(ctx.pending_orders.items()):
                 elapsed = now - pending.submit_time
                 if elapsed > self._config.timeout_seconds:
-                    # 超时，需要撤单
+                    # 超时,需要撤单
                     return ExecutorAction(
                         action_type=ExecutorActionType.CANCEL_ORDER,
                         client_order_id=order_id,
@@ -243,7 +243,7 @@ class ImmediateExecutor(ExecutorBase):
             retry_count=retry_count,
         )
 
-        # 计算实际下单数量（减去已成交数量）
+        # 计算实际下单数量(减去已成交数量)
         remaining_qty = ctx.intent.target_qty - ctx.progress.filled_qty
         order_qty = min(current_slice.qty, remaining_qty)
 
@@ -252,7 +252,7 @@ class ImmediateExecutor(ExecutorBase):
             ctx.end_time = now
             return ExecutorAction(
                 action_type=ExecutorActionType.COMPLETE,
-                reason="执行完成（无剩余数量）",
+                reason="执行完成(无剩余数量)",
             )
 
         # 更新状态
@@ -305,7 +305,7 @@ class ImmediateExecutor(ExecutorBase):
 
         # 处理不同事件类型
         if event.event_type == "ACK":
-            # 订单确认，无需特殊处理
+            # 订单确认,无需特殊处理
             pass
 
         elif event.event_type in ("PARTIAL_FILL", "FILL"):
@@ -354,7 +354,7 @@ class ImmediateExecutor(ExecutorBase):
                     ctx.slices[ctx.current_slice_index].executed = False
 
         elif event.event_type == "CANCEL_REJECT":
-            # 撤单被拒绝（可能订单已成交）
+            # 撤单被拒绝(可能订单已成交)
             pass
 
     def cancel_plan(self, plan_id: str, reason: str = "") -> bool:

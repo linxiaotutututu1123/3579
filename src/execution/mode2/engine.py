@@ -12,7 +12,7 @@ V4PRO Scenarios:
 
 执行引擎核心职责:
 1. 接收策略层的 OrderIntent
-2. 幂等检查（拒绝重复意图）
+2. 幂等检查(拒绝重复意图)
 3. 选择合适的执行器
 4. 管理执行生命周期
 5. 记录完整审计日志
@@ -99,7 +99,7 @@ class ExecutionPlan:
     V4PRO Scenario: MODE2.ENGINE.LIFECYCLE
 
     Attributes:
-        plan_id: 计划ID（等于 intent_id）
+        plan_id: 计划ID(等于 intent_id)
         intent: 交易意图
         algo: 执行算法
         executor_type: 执行器类型名称
@@ -188,7 +188,7 @@ class ExecutionEngine:
     - MODE2.ENGINE.AUDIT: 审计日志集成
 
     核心职责:
-    1. 管理意图注册表（幂等检查）
+    1. 管理意图注册表(幂等检查)
     2. 创建和分发执行器
     3. 协调执行生命周期
     4. 集成审计日志
@@ -216,7 +216,7 @@ class ExecutionEngine:
         self._audit_callback = audit_callback
         self._cost_check_callback = cost_check_callback
 
-        # 意图注册表（幂等检查）
+        # 意图注册表(幂等检查)
         self._registry = IntentRegistry()
 
         # 执行计划映射
@@ -359,7 +359,7 @@ class ExecutionEngine:
             current_time: 当前时间戳
 
         Returns:
-            下一个动作，None 表示无动作
+            下一个动作,None 表示无动作
         """
         executor = self._executors.get(plan_id)
         plan = self._plans.get(plan_id)
@@ -455,7 +455,7 @@ class ExecutionEngine:
             logger.warning(f"计划执行失败: {plan_id}, 原因: {action.reason}")
 
         elif action.action_type == ExecutorActionType.CANCEL_ORDER:
-            # 审计: 分片取消（撤单请求）
+            # 审计: 分片取消(撤单请求)
             if action.client_order_id:
                 self._emit_audit(
                     create_slice_cancelled_event(
@@ -773,7 +773,7 @@ class ExecutionEngine:
             client_order_id: 客户订单ID
 
         Returns:
-            分片索引，解析失败返回 -1
+            分片索引,解析失败返回 -1
         """
         try:
             from src.execution.mode2.intent import IntentIdGenerator

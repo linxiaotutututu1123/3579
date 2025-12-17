@@ -10,8 +10,8 @@ V4PRO Scenarios:
 - MODE2.EXECUTOR.TWAP.ADAPTIVE: 自适应调整
 
 执行策略:
-    将订单按时间均匀分割，在指定时间窗口内等间隔执行:
-    - 适用于大额订单（需要分散市场冲击）
+    将订单按时间均匀分割,在指定时间窗口内等间隔执行:
+    - 适用于大额订单(需要分散市场冲击)
     - 适用于需要跟踪 TWAP 基准的场景
     - 支持自适应调整分片大小
 
@@ -50,16 +50,16 @@ class TWAPConfig(ExecutorConfig):
     Attributes:
         max_slice_qty: 单个分片最大数量
         min_slice_qty: 单个分片最小数量
-        price_tolerance: 价格容忍度（滑点）
-        timeout_seconds: 单个订单超时时间（秒）
+        price_tolerance: 价格容忍度(滑点)
+        timeout_seconds: 单个订单超时时间(秒)
         retry_count: 重试次数
         audit_enabled: 是否启用审计
-        duration_seconds: 执行总时长（秒）
-        slice_count: 分片数量（0 表示自动计算）
-        min_interval_seconds: 最小分片间隔（秒）
-        max_interval_seconds: 最大分片间隔（秒）
-        randomize_interval: 是否随机化间隔（防止被预测）
-        catch_up_enabled: 是否启用追赶模式（延迟时加速执行）
+        duration_seconds: 执行总时长(秒)
+        slice_count: 分片数量(0 表示自动计算)
+        min_interval_seconds: 最小分片间隔(秒)
+        max_interval_seconds: 最大分片间隔(秒)
+        randomize_interval: 是否随机化间隔(防止被预测)
+        catch_up_enabled: 是否启用追赶模式(延迟时加速执行)
     """
 
     duration_seconds: float = 300.0  # 默认 5 分钟
@@ -104,7 +104,7 @@ class TWAPExecutor(ExecutorBase):
 
         V4PRO Scenario: MODE2.EXECUTOR.TWAP
 
-        计算分片数量和时间表，确保:
+        计算分片数量和时间表,确保:
         - 每个分片数量在 [min_slice_qty, max_slice_qty] 范围内
         - 分片时间均匀分布在 duration_seconds 内
         - 总数量等于目标数量
@@ -181,7 +181,7 @@ class TWAPExecutor(ExecutorBase):
                 elif interval > config.max_interval_seconds:
                     slice_count = max(2, int(duration / config.max_interval_seconds) + 1)
 
-        # 计算每个分片的数量（尽量均匀）
+        # 计算每个分片的数量(尽量均匀)
         base_qty = total_qty // slice_count
         remainder = total_qty % slice_count
 
@@ -223,7 +223,7 @@ class TWAPExecutor(ExecutorBase):
             current_time: 当前时间戳
 
         Returns:
-            下一个动作，None 表示当前无动作
+            下一个动作,None 表示当前无动作
         """
         ctx = self._plans.get(plan_id)
         if ctx is None:
@@ -308,14 +308,14 @@ class TWAPExecutor(ExecutorBase):
                 reason=f"等待分片 #{next_slice.index} 执行时间",
             )
 
-        # 计算重试次数（基于该分片的取消次数）
+        # 计算重试次数(基于该分片的取消次数)
         slice_cancelled_count = sum(
             1
             for oid in ctx.cancelled_orders
             if self._get_slice_index_from_order_id(oid) == next_slice.index
         )
         if slice_cancelled_count >= self._config.retry_count:
-            # 跳过该分片，继续下一个
+            # 跳过该分片,继续下一个
             next_slice.executed = True
             ctx.current_slice_index = next_slice.index + 1
             return self.next_action(plan_id, now)
@@ -376,15 +376,15 @@ class TWAPExecutor(ExecutorBase):
 
         V4PRO Scenario: MODE2.EXECUTOR.TWAP.SLICE
 
-        支持追赶模式: 如果当前时间已超过某些分片的调度时间，
-        则按顺序执行这些分片（而非跳过）。
+        支持追赶模式: 如果当前时间已超过某些分片的调度时间,
+        则按顺序执行这些分片(而非跳过)。
 
         Args:
             ctx: 计划上下文
             current_time: 当前时间
 
         Returns:
-            下一个待执行的分片，None 表示无
+            下一个待执行的分片,None 表示无
         """
         for slice_info in ctx.slices:
             if not slice_info.executed:
@@ -398,7 +398,7 @@ class TWAPExecutor(ExecutorBase):
             client_order_id: 客户订单ID
 
         Returns:
-            分片索引，解析失败返回 -1
+            分片索引,解析失败返回 -1
         """
         try:
             _, slice_index, _ = IntentIdGenerator.parse_client_order_id(client_order_id)
