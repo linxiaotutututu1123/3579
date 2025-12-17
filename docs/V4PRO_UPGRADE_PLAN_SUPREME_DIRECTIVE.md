@@ -150,11 +150,11 @@
 ### 2.2 代码库锚点
 
 ```
-当前代码库状态 (2025-12-16):
+当前代码库状态 (2025-12-17):
 ├── src/
 │   ├── market/           # 7 files ✅
 │   ├── audit/            # 7 files ✅
-│   ├── cost/             # 2 files ✅
+│   ├── cost/             # 3 files ✅ (Phase 5 完成)
 │   ├── guardian/         # 6 files ✅
 │   ├── execution/
 │   │   ├── auto/         # 8 files ✅
