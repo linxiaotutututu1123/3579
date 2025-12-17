@@ -150,7 +150,8 @@ class OrderIntent:
 
         V4PRO Scenario: MODE2.INTENT.IDEMPOTENT
 
-        组成: SHA256(strategy_id + decision_hash + instrument + side + offset + target_qty + signal_ts)[:16]
+        组成: SHA256(strategy_id + decision_hash + instrument + side +
+                    offset + target_qty + signal_ts)[:16]
 
         Returns:
             16 字符的十六进制幂等键
