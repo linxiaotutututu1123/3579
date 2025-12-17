@@ -343,8 +343,10 @@ class StrategyFederation:
         member.last_signal = signal
 
         # 记录信号历史 (用于相关性计算)
-        direction_value = 1.0 if signal.direction == SignalDirection.LONG else (
-            -1.0 if signal.direction == SignalDirection.SHORT else 0.0
+        direction_value = (
+            1.0
+            if signal.direction == SignalDirection.LONG
+            else (-1.0 if signal.direction == SignalDirection.SHORT else 0.0)
         )
         history = self._signal_history[signal.strategy_id]
         history.append(direction_value * signal.strength)
@@ -370,7 +372,8 @@ class StrategyFederation:
 
         # 过滤有效信号
         valid_signals = [
-            s for s in signals
+            s
+            for s in signals
             if s.strategy_id in self._members
             and self._members[s.strategy_id].enabled
             and s.confidence >= self._min_confidence
@@ -424,11 +427,7 @@ class StrategyFederation:
         weights: dict[str, float] = {}
         for signal in signals:
             member = self._members[signal.strategy_id]
-            weight = (
-                member.dynamic_weight
-                if self._enable_dynamic_weights
-                else member.weight
-            )
+            weight = member.dynamic_weight if self._enable_dynamic_weights else member.weight
             weights[signal.strategy_id] = weight
 
         # 归一化权重
@@ -451,8 +450,8 @@ class StrategyFederation:
                 short_score += w * signal.strength * signal.confidence
 
         # 应用相关性惩罚
-        long_score *= (1 - correlation_penalty)
-        short_score *= (1 - correlation_penalty)
+        long_score *= 1 - correlation_penalty
+        short_score *= 1 - correlation_penalty
 
         # 确定最终方向
         if long_score > short_score and long_score > 0.1:
@@ -466,9 +465,7 @@ class StrategyFederation:
             strength = 0.0
 
         # 计算融合置信度
-        confidence = sum(
-            weights.get(s.strategy_id, 0.0) * s.confidence for s in signals
-        )
+        confidence = sum(weights.get(s.strategy_id, 0.0) * s.confidence for s in signals)
 
         contributing = tuple(s.strategy_id for s in signals)
 
@@ -483,9 +480,7 @@ class StrategyFederation:
             timestamp=timestamp,
         )
 
-    def _calculate_correlation_penalty(
-        self, signals: list[StrategySignal]
-    ) -> float:
+    def _calculate_correlation_penalty(self, signals: list[StrategySignal]) -> float:
         """计算相关性惩罚 (M20).
 
         参数:
@@ -501,7 +496,7 @@ class StrategyFederation:
         pair_count = 0
 
         for i, signal_a in enumerate(signals):
-            for signal_b in signals[i + 1:]:
+            for signal_b in signals[i + 1 :]:
                 correlation = self._correlation_matrix.get_correlation(
                     signal_a.strategy_id, signal_b.strategy_id
                 )
@@ -525,9 +520,7 @@ class StrategyFederation:
             return
 
         # 检查是否有足够的历史数据
-        min_history = min(
-            len(self._signal_history[sid]) for sid in strategy_ids
-        )
+        min_history = min(len(self._signal_history[sid]) for sid in strategy_ids)
         if min_history < 10:
             return
 
@@ -574,18 +567,14 @@ class StrategyFederation:
                 # 动态权重 = 基础权重 * (1 + 表现因子)
                 base_weight = self._members[strategy_id].weight
                 perf_factor = max(0, perf) / total_perf
-                self._members[strategy_id].dynamic_weight = (
-                    base_weight * (0.5 + perf_factor)
-                )
+                self._members[strategy_id].dynamic_weight = base_weight * (0.5 + perf_factor)
 
     def record_hit(self, strategy_id: str) -> None:
         """记录策略命中."""
         if strategy_id in self._members:
             self._members[strategy_id].hit_count += 1
 
-    def register_callback(
-        self, callback: Callable[[FederationSignal], None]
-    ) -> None:
+    def register_callback(self, callback: Callable[[FederationSignal], None]) -> None:
         """注册信号回调."""
         self._on_signal_callbacks.append(callback)
 
@@ -614,9 +603,7 @@ class StrategyFederation:
             "signal_count": self._signal_count,
             "conflict_count": self._conflict_count,
             "conflict_rate": (
-                self._conflict_count / self._signal_count
-                if self._signal_count > 0
-                else 0.0
+                self._conflict_count / self._signal_count if self._signal_count > 0 else 0.0
             ),
             "correlation_threshold": self._correlation_threshold,
             "members": {
