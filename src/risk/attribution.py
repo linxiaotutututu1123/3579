@@ -516,7 +516,8 @@ class RiskAttributionEngine:
                 with torch.no_grad():
                     tensor = torch.from_numpy(x).float()
                     output = model(tensor)
-                    return output.numpy()
+                    result: np.ndarray = output.numpy()
+                    return result
 
             # 准备基准数据
             if baseline_features is None:
