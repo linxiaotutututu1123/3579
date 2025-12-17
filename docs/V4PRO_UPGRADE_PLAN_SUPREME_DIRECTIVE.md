@@ -1807,13 +1807,11 @@ jobs:
 | scripts/ | 6 | ~900 |
 | tests/ | ~40 | ~5000 |
 
-### 32.2 待新增文件 (28个)
+### 32.2 待新增文件 (26个)
 
 | 文件路径 | 功能 | 预计行数 |
 |----------|------|----------|
-| `src/market/exchange_config.py` | 六大交易所配置 | ~300 |
 | `src/market/trading_calendar.py` | 夜盘交易日历 | ~250 |
-| `src/cost/china_fee_calculator.py` | 中国期货手续费 | ~300 |
 | `src/execution/protection/limit_price.py` | 涨跌停保护 | ~200 |
 | `src/execution/protection/margin_monitor.py` | 保证金监控 | ~250 |
 | `src/execution/algo/twap.py` | TWAP算法 | ~200 |
