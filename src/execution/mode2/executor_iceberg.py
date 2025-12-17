@@ -389,9 +389,10 @@ class IcebergExecutor(ExecutorBase):
         """
         try:
             _, slice_index, _ = IntentIdGenerator.parse_client_order_id(client_order_id)
-            return slice_index
         except ValueError:
             return -1
+        else:
+            return slice_index
 
     def on_event(self, plan_id: str, event: OrderEvent) -> None:
         """处理订单事件.
