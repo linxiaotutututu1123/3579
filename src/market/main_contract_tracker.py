@@ -199,9 +199,7 @@ class MainContractTracker:
         """获取切换次数."""
         return self._switch_count
 
-    def register_callback(
-        self, callback: Callable[[ContractSwitchEvent], None]
-    ) -> None:
+    def register_callback(self, callback: Callable[[ContractSwitchEvent], None]) -> None:
         """注册切换回调.
 
         参数:
@@ -209,9 +207,7 @@ class MainContractTracker:
         """
         self._on_switch_callbacks.append(callback)
 
-    def unregister_callback(
-        self, callback: Callable[[ContractSwitchEvent], None]
-    ) -> None:
+    def unregister_callback(self, callback: Callable[[ContractSwitchEvent], None]) -> None:
         """注销切换回调.
 
         参数:
@@ -269,9 +265,7 @@ class MainContractTracker:
 
         return switch_event
 
-    def _detect_switch(
-        self, product: str, timestamp: str
-    ) -> ContractSwitchEvent | None:
+    def _detect_switch(self, product: str, timestamp: str) -> ContractSwitchEvent | None:
         """检测主力合约切换.
 
         参数:
@@ -295,10 +289,7 @@ class MainContractTracker:
         best_score = 0.0
 
         for contract in contracts:
-            score = (
-                contract.volume * self._volume_weight
-                + contract.open_interest * self._oi_weight
-            )
+            score = contract.volume * self._volume_weight + contract.open_interest * self._oi_weight
             if score > best_score:
                 best_score = score
                 best_contract = contract
@@ -360,9 +351,7 @@ class MainContractTracker:
 
         # 综合指标切换
         else:
-            combined_ratio = (
-                volume_ratio * self._volume_weight + oi_ratio * self._oi_weight
-            )
+            combined_ratio = volume_ratio * self._volume_weight + oi_ratio * self._oi_weight
             if combined_ratio >= self._combined_threshold:
                 switch_reason = SwitchReason.COMBINED_DOMINANCE
 

@@ -110,9 +110,7 @@ class ExchangeConfigModel(BaseModel):
     night_session_end: dict[str, list[str]] = Field(
         default_factory=dict, description="夜盘收盘时间"
     )
-    products: dict[str, list[ProductModel]] = Field(
-        default_factory=dict, description="品种列表"
-    )
+    products: dict[str, list[ProductModel]] = Field(default_factory=dict, description="品种列表")
 
     def get_all_products(self) -> list[ProductModel]:
         """获取所有品种."""
@@ -333,9 +331,7 @@ class ConfigValidator:
             "valid": len(self._errors) == 0,
             "exchange_count": len(configs),
             "exchanges": list(configs.keys()),
-            "total_products": sum(
-                len(c.get_all_products()) for c in configs.values()
-            ),
+            "total_products": sum(len(c.get_all_products()) for c in configs.values()),
             "errors": self._errors,
             "warnings": self._warnings,
         }

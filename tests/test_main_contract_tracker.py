@@ -136,9 +136,7 @@ class TestUpdate:
 class TestSwitch:
     """切换测试."""
 
-    def test_volume_dominance_switch(
-        self, tracker_low_threshold: MainContractTracker
-    ) -> None:
+    def test_volume_dominance_switch(self, tracker_low_threshold: MainContractTracker) -> None:
         """测试成交量主导切换."""
         tracker_low_threshold.update("rb2501", "rb", 100000, 50000)
         event = tracker_low_threshold.update("rb2505", "rb", 150000, 50000)
@@ -148,9 +146,7 @@ class TestSwitch:
         assert event.old_contract == "rb2501"
         assert event.new_contract == "rb2505"
 
-    def test_oi_dominance_switch(
-        self, tracker_low_threshold: MainContractTracker
-    ) -> None:
+    def test_oi_dominance_switch(self, tracker_low_threshold: MainContractTracker) -> None:
         """测试持仓量主导切换."""
         tracker_low_threshold.update("rb2501", "rb", 100000, 50000)
         event = tracker_low_threshold.update("rb2505", "rb", 100000, 60000)
@@ -159,9 +155,7 @@ class TestSwitch:
         assert event.reason == SwitchReason.OI_DOMINANCE
         assert event.new_contract == "rb2505"
 
-    def test_combined_dominance_switch(
-        self, tracker_low_threshold: MainContractTracker
-    ) -> None:
+    def test_combined_dominance_switch(self, tracker_low_threshold: MainContractTracker) -> None:
         """测试综合指标切换."""
         tracker_low_threshold.update("rb2501", "rb", 100000, 50000)
         # 成交量和持仓量都略高,但单独不够阈值
@@ -172,9 +166,7 @@ class TestSwitch:
         assert event is not None
         assert event.reason == SwitchReason.COMBINED_DOMINANCE
 
-    def test_switch_increments_count(
-        self, tracker_low_threshold: MainContractTracker
-    ) -> None:
+    def test_switch_increments_count(self, tracker_low_threshold: MainContractTracker) -> None:
         """测试切换计数递增."""
         tracker_low_threshold.update("rb2501", "rb", 100000, 50000)
         assert tracker_low_threshold.switch_count == 1  # 初始设置
@@ -253,9 +245,7 @@ class TestHistory:
         history = tracker.get_switch_history("rb")
         assert len(history) == 0
 
-    def test_switch_history_records(
-        self, tracker_low_threshold: MainContractTracker
-    ) -> None:
+    def test_switch_history_records(self, tracker_low_threshold: MainContractTracker) -> None:
         """测试历史记录."""
         tracker_low_threshold.update("rb2501", "rb", 100000, 50000)
         tracker_low_threshold.update("rb2505", "rb", 150000, 60000)
