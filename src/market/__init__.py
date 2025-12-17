@@ -14,6 +14,7 @@ V2 SPEC: 第 4 章
 - 六大交易所配置 (ExchangeConfig) - Phase 7 新增
 - 夜盘交易日历 (TradingCalendar) - Phase 7 新增
 - 主力合约追踪器 (MainContractTracker) - v4.1 新增
+- 配置验证加载器 (ConfigLoader) - v4.1 新增
 
 Required Scenarios (13+ 条):
 - INST.CACHE.LOAD
@@ -31,11 +32,24 @@ Required Scenarios (13+ 条):
 - CHINA.EXCHANGE.PRODUCT_MAP (Phase 7)
 - MAIN.CONTRACT.DETECT (v4.1)
 - MAIN.CONTRACT.SWITCH (v4.1)
+- CONFIG.VALIDATE.PYDANTIC (v4.1)
 """
 
 from __future__ import annotations
 
 from src.market.bar_builder import BarBuilder
+from src.market.config_loader import (
+    ConfigValidator,
+    ExchangeConfigModel,
+    ExchangeInfoModel,
+    ProductModel,
+    TradingSessionModel,
+    TradingSessionsModel,
+    get_all_products_from_configs,
+    load_all_exchanges,
+    load_exchange_config,
+    validate_exchange_config,
+)
 from src.market.exchange_config import (
     Exchange,
     ExchangeConfig,
@@ -84,16 +98,21 @@ __all__ = [
     "BookTop",
     # Phase 7 新增: 夜盘交易日历
     "ChinaTradingCalendar",
+    # v4.1 新增: 配置验证
+    "ConfigValidator",
     # v4.1 新增: 主力合约追踪器
     "ContractMetrics",
     "ContractSwitchEvent",
     # Phase 7 新增: 六大交易所配置
     "Exchange",
     "ExchangeConfig",
+    "ExchangeConfigModel",
+    "ExchangeInfoModel",
     "InstrumentCache",
     "InstrumentInfo",
     "MainContractTracker",
     "NightSessionEnd",
+    "ProductModel",
     "ProductState",
     "QualityChecker",
     "QuoteCache",
@@ -102,11 +121,14 @@ __all__ = [
     "TradingDayInfo",
     "TradingPeriod",
     "TradingSession",
+    "TradingSessionModel",
+    "TradingSessionsModel",
     "UniverseSelector",
     "UniverseSnapshot",
     "create_tracker",
     "extract_product",
     "get_all_exchanges",
+    "get_all_products_from_configs",
     "get_default_calendar",
     "get_exchange_by_code",
     "get_exchange_config",
@@ -121,4 +143,7 @@ __all__ = [
     "is_main_month",
     "is_trading_day",
     "is_trading_time",
+    "load_all_exchanges",
+    "load_exchange_config",
+    "validate_exchange_config",
 ]

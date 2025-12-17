@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from src.config.exchange_config_loader import (
+from src.market.config_loader import (
     ConfigValidator,
     ExchangeConfigModel,
     ExchangeInfoModel,
