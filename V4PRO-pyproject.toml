@@ -144,13 +144,15 @@ disallow_untyped_decorators = false
 warn_unreachable = false
 ignore_errors = true
 
-# 外部依赖类型桩（CTP SDK 可选依赖）
+# 外部依赖类型桩（CTP SDK 和可选AI依赖）
 [[tool.mypy.overrides]]
 module = [
     "ctp",
     "ctp.*",
     "thostmduserapi.*",
     "thosttraderapi.*",
+    "shap",
+    "shap.*",
 ]
 ignore_missing_imports = true
 
