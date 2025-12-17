@@ -28,7 +28,8 @@
       "Bash(C:/Users/1/2468/3579/.venv/Scripts/python.exe -c:*)",
       "Bash(C:/Users/1/2468/3579/.venv/Scripts/python.exe scripts/validate_scenarios.py:*)",
       "Bash(git add:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(xargs:*)"
     ]
   }
 }
