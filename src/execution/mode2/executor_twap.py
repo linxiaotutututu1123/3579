@@ -442,26 +442,18 @@ class TWAPExecutor(ExecutorBase):
                 ctx.status = ExecutorStatus.COMPLETED
                 ctx.end_time = time.time()
 
-        elif event.event_type == "REJECT":
-            if client_order_id in ctx.pending_orders:
-                del ctx.pending_orders[client_order_id]
-                ctx.cancelled_orders.append(client_order_id)
+        elif (
+            event.event_type in {"REJECT", "CANCEL_ACK"}
+            and client_order_id in ctx.pending_orders
+        ):
+            del ctx.pending_orders[client_order_id]
+            ctx.cancelled_orders.append(client_order_id)
 
-                # 重置分片状态
-                slice_index = self._get_slice_index_from_order_id(client_order_id)
-                if 0 <= slice_index < len(ctx.slices):
-                    ctx.slices[slice_index].executed = False
-                    ctx.current_slice_index = min(ctx.current_slice_index, slice_index)
-
-        elif event.event_type == "CANCEL_ACK":
-            if client_order_id in ctx.pending_orders:
-                del ctx.pending_orders[client_order_id]
-                ctx.cancelled_orders.append(client_order_id)
-
-                slice_index = self._get_slice_index_from_order_id(client_order_id)
-                if 0 <= slice_index < len(ctx.slices):
-                    ctx.slices[slice_index].executed = False
-                    ctx.current_slice_index = min(ctx.current_slice_index, slice_index)
+            # 重置分片状态
+            slice_index = self._get_slice_index_from_order_id(client_order_id)
+            if 0 <= slice_index < len(ctx.slices):
+                ctx.slices[slice_index].executed = False
+                ctx.current_slice_index = min(ctx.current_slice_index, slice_index)
 
     def cancel_plan(self, plan_id: str, reason: str = "") -> bool:
         """取消计划.
