@@ -400,6 +400,22 @@ class ExecutorBase(ABC):
             进度或 None
         """
 
+    def get_pending_cancel_orders(self, plan_id: str) -> list[str]:
+        """获取需要撤销的挂单列表.
+
+        V4PRO Scenario: MODE2.EXECUTOR.CANCEL
+
+        Args:
+            plan_id: 计划ID
+
+        Returns:
+            需要撤销的 client_order_id 列表
+        """
+        ctx = self._plans.get(plan_id)
+        if ctx is None:
+            return []
+        return list(ctx.pending_orders.keys())
+
     def get_active_plans(self) -> list[str]:
         """获取活动计划列表.
 
