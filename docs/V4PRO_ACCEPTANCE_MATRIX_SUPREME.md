@@ -486,39 +486,180 @@
 
 ## §K B类模型层 (Phase 6)
 
-### K.1 LSTM预测场景
+### K.1 DL基础场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K01 | `DL.LSTM.PREDICT` | LSTM预测输出 | M18 | test_lstm.py | ⏸ |
-| K02 | `DL.LSTM.SEQUENCE_LENGTH` | 序列长度正确 | M7 | test_lstm.py | ⏸ |
-| K03 | `DL.LSTM.HIDDEN_STATE` | 隐藏状态正确 | M7 | test_lstm.py | ⏸ |
+| K01 | `DL.BASE.DETERMINISTIC` | DL模型确定性验证 | M7 | test_dl_base.py | ⏸ |
+| K02 | `DL.BASE.AUDIT_LOG` | DL模型审计日志 | M3 | test_dl_base.py | ⏸ |
+| K03 | `DL.BASE.MATURITY_GATE` | DL模型成熟度门禁 | M18 | test_dl_base.py | ⏸ |
 
-### K.2 Transformer场景
-
-| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
-|------|---------|----------|------|----------|------|
-| K04 | `DL.TRANSFORMER.ATTENTION` | 注意力计算正确 | M18 | test_transformer.py | ⏸ |
-| K05 | `DL.TRANSFORMER.POSITION_ENCODING` | 位置编码正确 | M7 | test_transformer.py | ⏸ |
-
-### K.3 因子挖掘场景
+### K.2 LSTM模型场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K06 | `DL.FACTOR.MINE` | 因子挖掘正确 | M18 | test_factor.py | ⏸ |
-| K07 | `DL.FACTOR.IC_CALCULATE` | IC计算正确 | M19 | test_factor.py | ⏸ |
+| K04 | `DL.LSTM.PREDICT` | LSTM预测输出正确 | M18 | test_lstm.py | ⏸ |
+| K05 | `DL.LSTM.SEQUENCE_LENGTH` | LSTM序列长度验证 | M7 | test_lstm.py | ⏸ |
+| K06 | `DL.LSTM.HIDDEN_STATE` | LSTM隐藏状态正确 | M7 | test_lstm.py | ⏸ |
 
-### K.4 强化学习场景
+### K.3 Transformer模型场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K08 | `RL.PPO.ACTION` | PPO动作选择 | M18 | test_ppo.py | ⏸ |
-| K09 | `RL.PPO.REWARD` | PPO奖励计算 | M18 | test_ppo.py | ⏸ |
-| K10 | `RL.DQN.QVALUE` | DQN Q值计算 | M18 | test_dqn.py | ⏸ |
-| K11 | `RL.DQN.EPSILON_DECAY` | ε衰减正确 | M18 | test_dqn.py | ⏸ |
-| K12 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数 | M18 | test_reward.py | ⏸ |
+| K07 | `DL.TRANSFORMER.ATTENTION` | Transformer注意力计算 | M18 | test_transformer.py | ⏸ |
+| K08 | `DL.TRANSFORMER.POSITION_ENCODING` | Transformer位置编码 | M7 | test_transformer.py | ⏸ |
+| K09 | `DL.TRANSFORMER.MASK` | Transformer掩码正确 | M7 | test_transformer.py | ⏸ |
 
-**Phase K 小计: 12 场景 (0 ✅, 12 ⏸)**
+### K.4 CNN模型场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K10 | `DL.CNN.CONV_OUTPUT` | CNN卷积输出正确 | M18 | test_cnn.py | ⏸ |
+
+### K.5 数据处理场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K11 | `DL.DATA.SEQUENCE_VALID` | 序列数据验证 | M7 | test_data.py | ⏸ |
+| K12 | `DL.DATA.BATCH_LOAD` | 批次数据加载正确 | M7 | test_data.py | ⏸ |
+
+### K.6 因子挖掘场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K13 | `DL.FACTOR.MINE` | 因子挖掘正确 | M18 | test_factor.py | ⏸ |
+| K14 | `DL.FACTOR.IC_CALCULATE` | IC计算正确 | M19 | test_factor.py | ⏸ |
+| K15 | `DL.FACTOR.IR_CALCULATE` | IR计算正确 | M19 | test_factor.py | ⏸ |
+| K16 | `DL.FACTOR.FEATURE_SELECT` | 特征选择正确 | M18 | test_factor.py | ⏸ |
+
+### K.7 预测器场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K17 | `DL.PREDICTOR.LSTM_OUTPUT` | LSTM预测器输出 | M18 | test_predictor.py | ⏸ |
+| K18 | `DL.PREDICTOR.TRANSFORMER_OUTPUT` | Transformer预测器输出 | M18 | test_predictor.py | ⏸ |
+
+### K.8 损失函数场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K19 | `DL.LOSS.MSE` | MSE损失计算正确 | - | test_loss.py | ⏸ |
+| K20 | `DL.LOSS.SHARPE` | 夏普损失计算正确 | M18 | test_loss.py | ⏸ |
+
+### K.9 评估指标场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K21 | `DL.METRICS.ACCURACY` | 准确率计算正确 | M19 | test_metrics.py | ⏸ |
+| K22 | `DL.METRICS.SHARPE` | 夏普比率计算正确 | M19 | test_metrics.py | ⏸ |
+
+### K.10 训练器场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K23 | `DL.TRAINER.EPOCH` | 训练轮次执行正确 | M18 | test_trainer.py | ⏸ |
+| K24 | `DL.TRAINER.AUDIT_LOG` | 训练审计日志 | M3 | test_trainer.py | ⏸ |
+
+### K.11 早停与检查点场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K25 | `DL.EARLY_STOP.TRIGGER` | 早停触发正确 | M18 | test_early_stopping.py | ⏸ |
+| K26 | `DL.CHECKPOINT.SAVE` | 检查点保存正确 | M3,M11 | test_checkpoint.py | ⏸ |
+| K27 | `DL.CHECKPOINT.LOAD` | 检查点加载正确 | M11 | test_checkpoint.py | ⏸ |
+
+**DL场景小计: 27 场景 (0 ✅, 27 ⏸)**
+
+### K.12 RL基础场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K28 | `RL.BASE.DETERMINISTIC` | RL代理确定性验证 | M7 | test_rl_base.py | ⏸ |
+| K29 | `RL.BASE.AUDIT_LOG` | RL代理审计日志 | M3 | test_rl_base.py | ⏸ |
+| K30 | `RL.BASE.MATURITY_GATE` | RL代理成熟度门禁 | M18 | test_rl_base.py | ⏸ |
+
+### K.13 交易环境场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K31 | `RL.ENV.STATE_SPACE` | 环境状态空间正确 | M7 | test_environment.py | ⏸ |
+| K32 | `RL.ENV.ACTION_SPACE` | 环境动作空间正确 | M7 | test_environment.py | ⏸ |
+| K33 | `RL.ENV.REWARD_CALC` | 环境奖励计算正确 | M18 | test_environment.py | ⏸ |
+| K34 | `RL.ENV.STEP` | 环境步进正确 | M7 | test_environment.py | ⏸ |
+
+### K.14 经验回放场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K35 | `RL.MEMORY.STORE` | 经验存储正确 | M7 | test_memory.py | ⏸ |
+| K36 | `RL.MEMORY.SAMPLE` | 经验采样正确 | M7 | test_memory.py | ⏸ |
+
+### K.15 PPO强化学习场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K37 | `RL.PPO.ACTION` | PPO动作选择正确 | M18 | test_ppo.py | ⏸ |
+| K38 | `RL.PPO.REWARD` | PPO奖励计算正确 | M18 | test_ppo.py | ⏸ |
+| K39 | `RL.PPO.CLIP_RATIO` | PPO裁剪比率正确 | M18 | test_ppo.py | ⏸ |
+| K40 | `RL.PPO.UPDATE` | PPO更新正确 | M18 | test_ppo.py | ⏸ |
+
+### K.16 DQN强化学习场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K41 | `RL.DQN.QVALUE` | DQN Q值计算正确 | M18 | test_dqn.py | ⏸ |
+| K42 | `RL.DQN.EPSILON_DECAY` | DQN ε衰减正确 | M18 | test_dqn.py | ⏸ |
+| K43 | `RL.DQN.TARGET_UPDATE` | DQN目标网络更新 | M7 | test_dqn.py | ⏸ |
+| K44 | `RL.DQN.REPLAY` | DQN经验回放正确 | M7 | test_dqn.py | ⏸ |
+
+### K.17 Dueling DQN场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K45 | `RL.DUELING.ADVANTAGE` | Dueling DQN优势函数 | M18 | test_dueling_dqn.py | ⏸ |
+
+### K.18 Actor-Critic场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K46 | `RL.AC.ACTOR_OUTPUT` | Actor网络输出正确 | M18 | test_actor_critic.py | ⏸ |
+| K47 | `RL.AC.CRITIC_OUTPUT` | Critic网络输出正确 | M18 | test_actor_critic.py | ⏸ |
+
+### K.19 奖励函数场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K48 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数正确 | M18 | test_reward.py | ⏸ |
+| K49 | `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励正确 | M18,M19 | test_reward.py | ⏸ |
+| K50 | `RL.REWARD.DRAWDOWN_PENALTY` | 回撤惩罚正确 | M6 | test_reward.py | ⏸ |
+
+### K.20 探索策略场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K51 | `RL.EXPLORATION.EPSILON` | ε-greedy探索正确 | M7 | test_exploration.py | ⏸ |
+| K52 | `RL.EXPLORATION.UCB` | UCB探索正确 | M7 | test_exploration.py | ⏸ |
+
+**RL场景小计: 25 场景 (0 ✅, 25 ⏸)**
+
+### K.21 交叉验证场景
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K53 | `CV.SPLIT.TIMESERIES` | 时序划分正确 | M7 | test_cv_splitter.py | ⏸ |
+| K54 | `CV.SPLIT.NO_LEAKAGE` | 无数据泄露 | M7 | test_cv_splitter.py | ⏸ |
+| K55 | `CV.SPLIT.GAP` | 间隔设置正确 | M7 | test_cv_splitter.py | ⏸ |
+| K56 | `CV.RUN.FOLD_EXECUTE` | 折叠执行正确 | M7 | test_cv_runner.py | ⏸ |
+| K57 | `CV.RUN.DETERMINISTIC` | 运行确定性 | M7 | test_cv_runner.py | ⏸ |
+| K58 | `CV.EVAL.METRICS` | 评估指标正确 | M19 | test_cv_evaluator.py | ⏸ |
+| K59 | `CV.EVAL.AGGREGATE` | 聚合结果正确 | M19 | test_cv_evaluator.py | ⏸ |
+| K60 | `CV.REPORT.GENERATE` | 报告生成正确 | M3 | test_cv_reporter.py | ⏸ |
+| K61 | `CV.LOG.RECORD` | 日志记录正确 | M3 | test_cv_logger.py | ⏸ |
+| K62 | `CV.DATA.HANDLE` | 数据处理正确 | M7 | test_cv_data.py | ⏸ |
+
+**CV场景小计: 10 场景 (0 ✅, 10 ⏸)**
+
+**Phase K 总计: 62 场景 (0 ✅, 62 ⏸)**
 
 ---
 
@@ -538,15 +679,17 @@
 | H | 智能策略 | 22 | 8 | 14 | 36% |
 | I | 合规监控 | 16 | 7 | 9 | 44% |
 | J | 组合风控 | 25 | 18 | 7 | 72% |
-| K | B类模型 | 12 | 0 | 12 | 0% |
-| **总计** | - | **165** | **96** | **69** | **58%** |
+| K | B类模型(DL) | 27 | 0 | 27 | 0% |
+| K | B类模型(RL) | 25 | 0 | 25 | 0% |
+| K | B类模型(CV) | 10 | 0 | 10 | 0% |
+| **总计** | - | **215** | **96** | **119** | **45%** |
 
 ### 按状态统计
 
 | 状态 | 数量 | 占比 |
 |------|------|------|
-| ✅ 已完成 | 96 | 58% |
-| ⏸ 待完成 | 69 | 42% |
+| ✅ 已完成 | 96 | 45% |
+| ⏸ 待完成 | 119 | 55% |
 
 ---
 
@@ -557,23 +700,23 @@
 | 军规 | 场景ID列表 | 场景数 | 覆盖状态 |
 |------|------------|--------|----------|
 | M1 | B01,B03,C18,D07,J01,J03,J10,J11 | 8 | ✅ 100% |
-| M3 | A15,C01-C18,J04,J12 | 20 | ✅ 100% |
+| M3 | A15,C01-C18,J04,J12,K02,K24,K26,K29,K60,K61 | 26 | ✅ 100% |
 | M4 | A11,B10,C12,C13,D01-D03,H11,I11 | 9 | ✅ 100% |
 | M5 | D08,D12,F01-F08,H01-H14 | 22 | 部分 |
-| M6 | D06,D09,D11,G16-G21,J02,J05,J06,J09,J13-J20,J24,J25 | 24 | 部分 |
-| M7 | B08,B09,B11,B12,D04,D05,E01,E02,K02,K03,K05 | 11 | ✅ 100% |
+| M6 | D06,D09,D11,G16-G21,J02,J05,J06,J09,J13-J20,J24,J25,K50 | 25 | 部分 |
+| M7 | B08,B09,B11,B12,D04,D05,E01,E02,K01,K05,K06,K08,K09,K11,K12,K28,K31-K36,K43,K44,K51-K57,K62 | 32 | ✅ 100% |
 | M8 | A01-A14 | 14 | ✅ 100% |
 | M9 | A08-A11,B02,H21,I09-I16 | 15 | 部分 |
 | M10 | B07,C16 | 2 | ✅ 100% |
-| M11 | B04,B06 | 2 | ✅ 100% |
+| M11 | B04,B06,K26,K27 | 4 | ✅ 100% |
 | M12 | H19,I07,I08 | 3 | 部分 |
 | M13 | G08-G11,G16,J19 | 6 | ⏸ 待实现 |
 | M14 | F04 | 1 | ⏸ 待实现 |
 | M15 | B05,D10,G04-G07,G16-G18,G22,G23 | 11 | ⏸ 待实现 |
 | M16 | G12-G15,G17 | 5 | ⏸ 待实现 |
 | M17 | I01-I06 | 6 | ⏸ 待实现 |
-| M18 | H15-H22,K01-K12 | 20 | 部分 |
-| M19 | J07,J08,J21-J23,K07 | 6 | 部分 |
+| M18 | H15-H22,K03,K04,K07,K10,K13,K16-K18,K20,K23,K25,K30,K33,K37-K42,K45-K49 | 35 | 部分 |
+| M19 | J07,J08,J21-J23,K14,K15,K21,K22,K49,K58,K59 | 12 | 部分 |
 | M20 | F08,G01-G03 | 4 | ⏸ 待实现 |
 
 ### 军规覆盖率统计
