@@ -105,6 +105,100 @@
 | `__init__.py` | 模块导出(10项) | M1,M19,M20 | ✅ V4PRO核心 |
 | `central_coordinator.py` | 联邦中枢协调器 | M1,M19,M20 | ✅ V4PRO新增 |
 
+#### 2.3.4 B类模型 - 深度学习子模块 (src/strategy/dl/) - Phase 6 待新增
+
+| 文件 | 功能描述 | 军规覆盖 | 状态 |
+|------|----------|----------|------|
+| `__init__.py` | 模块导出 | - | ⏸ 待新增 |
+| `models/__init__.py` | 模型导出 | - | ⏸ 待新增 |
+| `models/base.py` | DL模型基类(审计/种子控制) | M3,M7,M18 | ⏸ 待新增 |
+| `models/lstm.py` | LSTM模型结构 | M7,M18 | ⏸ 待新增 |
+| `models/transformer.py` | Transformer模型(注意力+位置编码) | M7,M18 | ⏸ 待新增 |
+| `models/cnn.py` | CNN模型结构 | M18 | ⏸ 待新增 |
+| `data/sequence_handler.py` | 序列数据处理(长度验证) | M7 | ⏸ 待新增 |
+| `data/dataset.py` | 数据集定义 | M7 | ⏸ 待新增 |
+| `data/dataloader.py` | 数据加载器 | M7 | ⏸ 待新增 |
+| `factor/factor_miner.py` | 因子挖掘器 | M18,M19 | ⏸ 待新增 |
+| `factor/ic_calculator.py` | IC/IR计算器 | M19 | ⏸ 待新增 |
+| `factor/feature_selector.py` | 特征选择器 | M18 | ⏸ 待新增 |
+| `predictor/lstm_predictor.py` | LSTM预测器 | M7,M18 | ⏸ 待新增 |
+| `predictor/transformer_predictor.py` | Transformer预测器 | M7,M18 | ⏸ 待新增 |
+| `predictor/cnn_predictor.py` | CNN预测器 | M18 | ⏸ 待新增 |
+| `loss/loss_functions.py` | 损失函数(MSE/Huber/夏普) | M18 | ⏸ 待新增 |
+| `metrics/metrics.py` | 评估指标(准确率/夏普/回撤) | M18,M19 | ⏸ 待新增 |
+| `optimizer/optimizer.py` | 优化器封装(Adam/SGD) | - | ⏸ 待新增 |
+| `trainer/trainer.py` | 模型训练器 | M3,M18 | ⏸ 待新增 |
+| `scheduler/scheduler.py` | 学习率调度器 | - | ⏸ 待新增 |
+| `early_stopping/early_stopping.py` | 早停机制 | M18 | ⏸ 待新增 |
+| `checkpoint/checkpoint.py` | 模型检查点管理 | M3,M11 | ⏸ 待新增 |
+
+**DL模块小计: 21 文件, ~4670 行**
+
+#### 2.3.5 B类模型 - 强化学习子模块 (src/strategy/rl/) - Phase 6 待新增
+
+| 文件 | 功能描述 | 军规覆盖 | 状态 |
+|------|----------|----------|------|
+| `__init__.py` | 模块导出 | - | ⏸ 待新增 |
+| `config.py` | RL配置参数 | M8 | ⏸ 待新增 |
+| `base.py` | RL基类(审计/种子/门禁) | M3,M7,M18 | ⏸ 待新增 |
+| `environment.py` | 交易环境(状态/动作/奖励) | M7,M18 | ⏸ 待新增 |
+| `memory.py` | 经验回放内存 | M7 | ⏸ 待新增 |
+| `actor_critic.py` | Actor-Critic网络结构 | M18 | ⏸ 待新增 |
+| `ppo_model.py` | PPO模型结构 | M18 | ⏸ 待新增 |
+| `dqn_model.py` | DQN模型结构 | M18 | ⏸ 待新增 |
+| `dueling_dqn.py` | Dueling DQN模型 | M18 | ⏸ 待新增 |
+| `target_network.py` | 目标网络更新 | M7 | ⏸ 待新增 |
+| `exploration.py` | 探索策略(ε-greedy/UCB) | M7,M18 | ⏸ 待新增 |
+| `reward_function.py` | 奖励函数设计 | M18,M19 | ⏸ 待新增 |
+| `ppo_agent.py` | PPO强化学习代理 | M3,M7,M18 | ⏸ 待新增 |
+| `actor_critic_agent.py` | Actor-Critic代理 | M3,M7,M18 | ⏸ 待新增 |
+| `dqn_agent.py` | DQN强化学习代理 | M3,M7,M18 | ⏸ 待新增 |
+
+**RL模块小计: 15 文件, ~4110 行**
+
+#### 2.3.6 B类模型 - 交叉验证子模块 (src/strategy/cv/) - Phase 6 待新增
+
+| 文件 | 功能描述 | 军规覆盖 | 状态 |
+|------|----------|----------|------|
+| `__init__.py` | 模块导出 | - | ⏸ 待新增 |
+| `cv_config.py` | 交叉验证配置 | M8 | ⏸ 待新增 |
+| `cv_splitter.py` | 时序交叉验证划分器 | M7 | ⏸ 待新增 |
+| `cv_runner.py` | 交叉验证运行器 | M7,M18 | ⏸ 待新增 |
+| `cv_evaluator.py` | 交叉验证评估器 | M18,M19 | ⏸ 待新增 |
+| `cv_reporter.py` | 交叉验证报告生成器 | M3 | ⏸ 待新增 |
+| `cv_plotter.py` | 交叉验证结果可视化 | - | ⏸ 待新增 |
+| `cv_logger.py` | 交叉验证日志记录 | M3 | ⏸ 待新增 |
+| `cv_data_handler.py` | 交叉验证数据处理 | M7 | ⏸ 待新增 |
+| `cv_utils.py` | 交叉验证工具函数 | - | ⏸ 待新增 |
+
+**CV模块小计: 10 文件, ~1740 行**
+
+#### 2.3.7 B类模型 - 工具模块 (src/strategy/utils/, common/) - Phase 6 待新增
+
+| 文件 | 功能描述 | 军规覆盖 | 状态 |
+|------|----------|----------|------|
+| `utils/__init__.py` | 工具导出 | - | ⏸ 待新增 |
+| `utils/logger.py` | 统一日志记录 | M3,M9 | ⏸ 待新增 |
+| `utils/visualizer.py` | 结果可视化 | - | ⏸ 待新增 |
+| `utils/experiment_tracker.py` | 实验跟踪(MLflow集成) | M3 | ⏸ 待新增 |
+| `utils/utils.py` | 通用工具函数 | - | ⏸ 待新增 |
+| `common/__init__.py` | 公共导出 | - | ⏸ 待新增 |
+| `common/config.py` | 配置解析工具 | M8 | ⏸ 待新增 |
+| `common/logging.py` | 日志记录器 | M3 | ⏸ 待新增 |
+| `common/utils.py` | 公共工具函数 | - | ⏸ 待新增 |
+
+**工具模块小计: 9 文件, ~1150 行**
+
+#### Phase 6 文件统计汇总
+
+| 模块 | 文件数 | 预计行数 | 状态 |
+|------|--------|----------|------|
+| DL 深度学习 | 21 | ~4670 | ⏸ 待新增 |
+| RL 强化学习 | 15 | ~4110 | ⏸ 待新增 |
+| CV 交叉验证 | 10 | ~1740 | ⏸ 待新增 |
+| 工具模块 | 9 | ~1150 | ⏸ 待新增 |
+| **Phase 6 总计** | **55** | **~11670** | ⏸ |
+
 ### 2.4 审计模块 (src/audit/) - Phase 2
 
 | 文件 | 功能描述 | 军规覆盖 | 状态 |
