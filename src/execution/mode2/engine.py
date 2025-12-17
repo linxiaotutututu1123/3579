@@ -63,6 +63,7 @@ from src.execution.mode2.executor_twap import TWAPConfig, TWAPExecutor
 from src.execution.mode2.executor_vwap import VWAPConfig, VWAPExecutor
 from src.execution.mode2.intent import (
     AlgoType,
+    IntentIdGenerator,
     IntentRegistry,
     OrderIntent,
     Urgency,
