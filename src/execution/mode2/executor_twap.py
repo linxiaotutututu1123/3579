@@ -186,10 +186,7 @@ class TWAPExecutor(ExecutorBase):
         remainder = total_qty % slice_count
 
         # 计算时间间隔
-        if slice_count > 1:
-            interval = duration / (slice_count - 1)
-        else:
-            interval = 0.0
+        interval = duration / (slice_count - 1) if slice_count > 1 else 0.0
 
         # 生成分片
         slices: list[SliceInfo] = []
