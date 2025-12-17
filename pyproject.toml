@@ -62,6 +62,11 @@ ignore = [
 "scripts/*" = [
     "T201",     # 脚本允许 print
 ]
+"src/execution/mode2/*" = [
+    "RUF002",   # 允许中文全角字符(括号/逗号)在文档字符串中使用
+    "PLR2004",  # 允许魔术数字(分片索引上限等已在文档中说明)
+    "TRY003",   # 允许详细的中文异常信息
+]
 
 [tool.ruff.lint.pylint]
 max-statements = 80  # 默认50，军规级验证函数需要更多语句
