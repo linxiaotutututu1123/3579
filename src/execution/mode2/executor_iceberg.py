@@ -449,10 +449,10 @@ class IcebergExecutor(ExecutorBase):
             del ctx.pending_orders[client_order_id]
             ctx.cancelled_orders.append(client_order_id)
 
-                slice_index = self._get_slice_index_from_order_id(client_order_id)
-                if 0 <= slice_index < len(ctx.slices):
-                    ctx.slices[slice_index].executed = False
-                    ctx.current_slice_index = min(ctx.current_slice_index, slice_index)
+            slice_index = self._get_slice_index_from_order_id(client_order_id)
+            if 0 <= slice_index < len(ctx.slices):
+                ctx.slices[slice_index].executed = False
+                ctx.current_slice_index = min(ctx.current_slice_index, slice_index)
 
     def cancel_plan(self, plan_id: str, reason: str = "") -> bool:
         """取消计划.
