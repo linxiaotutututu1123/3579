@@ -217,16 +217,18 @@ class DynamicVaREngine:
                 base_result, VaRMethod.HISTORICAL, {"fallback": "insufficient_samples"}
             )
 
-        # 1. 确定阈值
-        sorted_returns = sorted(returns)
-        threshold_idx = int(len(sorted_returns) * (1 - threshold_pct))
-        threshold_idx = max(1, min(threshold_idx, len(sorted_returns) - 1))
-        threshold = sorted_returns[threshold_idx]
+        # 1. 确定阈值 (基于损失分布，即负收益)
+        losses = [-r for r in returns]  # 转换为损失
+        sorted_losses = sorted(losses, reverse=True)  # 从大到小排序
 
-        # 2. 提取超阈值样本 (负收益超过阈值)
-        exceedances = [threshold - r for r in returns if r < threshold]
+        # 阈值取前threshold_pct的损失
+        threshold_idx = max(1, int(len(sorted_losses) * (1 - threshold_pct)))
+        threshold = sorted_losses[threshold_idx]
 
-        if len(exceedances) < 10:
+        # 2. 提取超阈值样本 (损失超过阈值)
+        exceedances = [loss - threshold for loss in losses if loss > threshold]
+
+        if len(exceedances) < 5:
             # 超阈值样本不足，回退
             base_result = self._base_calculator.historical_var(returns, confidence)
             return self._wrap_result(
@@ -238,21 +240,21 @@ class DynamicVaREngine:
         # 3. 估计GPD参数 (矩估计法)
         gpd_params = self._estimate_gpd_params(exceedances, threshold)
 
-        # 4. 计算VaR
+        # 4. 计算VaR (基于损失分布)
         n = len(returns)
         nu = len(exceedances)
         p = 1 - confidence
 
         if abs(gpd_params.xi) > 1e-10:
             # xi != 0
-            var_value = -threshold + (gpd_params.beta / gpd_params.xi) * (
+            var_value = threshold + (gpd_params.beta / gpd_params.xi) * (
                 pow((n / nu) * p, -gpd_params.xi) - 1
             )
         else:
             # xi ≈ 0 (指数分布)
-            var_value = -threshold + gpd_params.beta * math.log((n / nu) * p)
+            var_value = threshold + gpd_params.beta * math.log((n / nu) * p)
 
-        var_value = abs(var_value)
+        var_value = max(0, abs(var_value))  # VaR 必须非负
 
         # 5. 计算ES
         es = self._evt_expected_shortfall(var_value, gpd_params)
@@ -323,6 +325,9 @@ class DynamicVaREngine:
         var_value = self._kernel_density_quantile(
             sorted_returns, target_p, bandwidth, std
         )
+
+        # VaR必须非负
+        var_value = max(0, var_value)
 
         # 计算ES
         es_returns = [r for r in returns if r < -var_value]
@@ -716,18 +721,21 @@ class DynamicVaREngine:
         返回:
             动态VaR结果
         """
-        self._calculation_count += 1
-        risk_level = self._calculate_risk_level(base_result.var)
+        # 注意: 不在此处增加计数，因为调用者已经增加过了
+        risk_level = self._calculate_risk_level(max(0, base_result.var))
 
         metadata = base_result.metadata or {}
         if extra_metadata:
             metadata.update(extra_metadata)
 
+        # VaR 必须非负
+        var_value = max(0, base_result.var)
+
         result = DynamicVaRResult(
-            var=base_result.var,
+            var=var_value,
             confidence=base_result.confidence,
             method=method,
-            expected_shortfall=base_result.expected_shortfall,
+            expected_shortfall=max(0, base_result.expected_shortfall),
             risk_level=risk_level,
             sample_size=base_result.sample_size,
             metadata=metadata,
