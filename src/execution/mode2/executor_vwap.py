@@ -113,7 +113,7 @@ class VWAPExecutor(ExecutorBase):
             config: 执行器配置
         """
         super().__init__(config or VWAPConfig())
-        self._vwap_config: VWAPConfig = self._config  # type: ignore
+        self._vwap_config: VWAPConfig = self._config  # type: ignore[assignment]
 
     def make_plan(self, intent: OrderIntent) -> str:
         """生成执行计划.
