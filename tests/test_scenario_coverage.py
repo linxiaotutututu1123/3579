@@ -401,8 +401,8 @@ class TestAuditEvent:
         """AUDIT.EVENT.TIMESTAMP_ISO: ISO时间戳."""
         ts = datetime.now(UTC).isoformat()
         assert "T" in ts
-        # ISO8601格式包含T分隔符
-        assert ts.endswith("+00:00") or ts.endswith("Z") or "+" in ts
+        # ISO8601格式包含T分隔符和时区信息
+        assert ts.endswith(("+00:00", "Z")) or "+" in ts
 
     def test_run_id_uuid_format(self) -> None:
         """AUDIT.EVENT.RUN_ID_UUID: run_id UUID."""
