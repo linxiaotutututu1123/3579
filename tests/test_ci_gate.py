@@ -1,8 +1,47 @@
-"""Tests for CI gate checks."""
+"""Tests for CI gate checks (军规级 v4.0).
+
+覆盖场景:
+- INFRA.CI.GATE_PASS: CI门禁全部通过
+- INFRA.CI.LINT_PASS: Ruff检查通过
+- INFRA.CI.TYPE_PASS: Mypy检查通过
+- INFRA.CI.TEST_PASS: Pytest通过
+- INFRA.CI.COVERAGE_MIN: 覆盖率≥80%
+"""
 
 from __future__ import annotations
 
-from src.trading.ci_gate import CIGate, GateCheck, GateCheckStatus, GateReport
+import json
+import tempfile
+from pathlib import Path
+
+import pytest
+
+from src.trading.ci_gate import (
+    CIGate,
+    CIJsonReport,
+    CIJsonReportV3,
+    CIStep,
+    CIStepFailure,
+    CIStepStatus,
+    ExitCode,
+    GateCheck,
+    GateCheckStatus,
+    GateReport,
+    PolicyReport,
+    PolicyViolation,
+    assert_not_check_mode,
+    check_command_whitelist,
+    disable_check_mode,
+    enable_check_mode,
+    get_exit_code,
+    get_hints_for_step,
+    is_check_mode,
+    log_gate_report,
+    parse_mypy_output,
+    parse_pytest_output,
+    parse_ruff_output,
+    validate_report_schema,
+)
 
 
 class TestGateCheck:
