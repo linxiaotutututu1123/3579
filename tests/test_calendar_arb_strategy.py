@@ -659,7 +659,7 @@ class TestCalendarArbStrategyHelpers:
     def test_make_flat_portfolio(self) -> None:
         """测试创建平仓组合."""
         strategy = CalendarArbStrategy()
-        state = MarketState(prices={})
+        state = MarketState(prices={}, equity=100000.0, bars_1m={})
         portfolio = strategy._make_flat_portfolio(state)
         assert portfolio.target_net_qty == {}
         assert portfolio.features_hash == "flat"
@@ -668,6 +668,10 @@ class TestCalendarArbStrategyHelpers:
 
 class TestCalendarArbStrategyIntegration:
     """CalendarArbStrategy 集成测试."""
+
+    def _make_market_state(self, prices: dict[str, float]) -> MarketState:
+        """创建测试用的 MarketState."""
+        return MarketState(prices=prices, equity=100000.0, bars_1m={})
 
     def test_full_trading_cycle(self) -> None:
         """测试完整交易周期."""
@@ -690,7 +694,7 @@ class TestCalendarArbStrategyIntegration:
         for i in range(20):
             near = 100.0 + i * 0.1
             far = 105.0 + i * 0.1
-            state = MarketState(prices={"AO2501": near, "AO2505": far})
+            state = self._make_market_state({"AO2501": near, "AO2505": far})
             strategy.on_tick(state)
 
         assert strategy.state == ArbState.ACTIVE
