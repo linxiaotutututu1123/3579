@@ -86,7 +86,7 @@ class ExitCode:
 
 | 严重级别 | 问题编号 | 描述 | 状态 |
 |----------|----------|------|------|
-| INFO | P0-001 | v3pro_required_scenarios.yml 文件不存在 | 待创建 |
+| INFO | P0-001 | v3pro_required_scenarios.yml 文件不存在 | **已修复** |
 
 ---
 
