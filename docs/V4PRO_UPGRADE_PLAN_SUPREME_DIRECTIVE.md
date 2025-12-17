@@ -188,6 +188,7 @@
 
 | 模块 | 核心功能 | 军规覆盖 |
 |------|----------|----------|
+| `src/cost/` | 成本估计、中国期货手续费计算、平今平昨分离 | M5, M14, M20 |
 | `src/portfolio/` | 多策略持仓管理、风险分析、夏普比率 | M1, M3, M19 |
 | `src/monitoring/` | 健康检查、Prometheus指标、告警 | M9, M10 |
 | `src/risk/var_calculator.py` | 历史/参数/蒙特卡洛VaR | M6, M16 |
