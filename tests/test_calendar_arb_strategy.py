@@ -143,10 +143,14 @@ class TestCalendarArbStrategyInit:
 class TestCalendarArbStrategyOnTick:
     """CalendarArbStrategy on_tick 测试."""
 
+    def _make_market_state(self, prices: dict[str, float]) -> MarketState:
+        """创建测试用的 MarketState."""
+        return MarketState(prices=prices, equity=100000.0, bars_1m={})
+
     def test_on_tick_without_leg_pair(self) -> None:
         """测试未配置腿对时的 on_tick."""
         strategy = CalendarArbStrategy()
-        state = MarketState(prices={"AO2501": 100.0, "AO2505": 105.0})
+        state = self._make_market_state({"AO2501": 100.0, "AO2505": 105.0})
         portfolio = strategy.on_tick(state)
         assert portfolio.target_net_qty == {}
         assert portfolio.features_hash == "flat"
@@ -161,7 +165,7 @@ class TestCalendarArbStrategyOnTick:
             far_expiry="20260515",
         )
         # 价格为0
-        state = MarketState(prices={"AO2501": 0.0, "AO2505": 105.0})
+        state = self._make_market_state({"AO2501": 0.0, "AO2505": 105.0})
         portfolio = strategy.on_tick(state)
         assert portfolio.target_net_qty == {}
 
@@ -174,7 +178,7 @@ class TestCalendarArbStrategyOnTick:
             near_expiry="20260115",
             far_expiry="20260515",
         )
-        state = MarketState(prices={"AO2501": 100.0, "AO2505": 105.0})
+        state = self._make_market_state({"AO2501": 100.0, "AO2505": 105.0})
         portfolio = strategy.on_tick(state)
         assert portfolio.model_version == "3.0.0"
         # 第一个 tick 通常不会产生信号 (需要 warmup)
@@ -195,11 +199,11 @@ class TestCalendarArbStrategyOnTick:
         for i in range(100):
             near = 100.0 + i * 0.01
             far = 105.0 + i * 0.01
-            state = MarketState(prices={"AO2501": near, "AO2505": far})
+            state = self._make_market_state({"AO2501": near, "AO2505": far})
             strategy.on_tick(state)
 
         # 制造一个大的负 z-score（价差过窄）
-        state = MarketState(prices={"AO2501": 80.0, "AO2505": 105.0})
+        state = self._make_market_state({"AO2501": 80.0, "AO2505": 105.0})
         portfolio = strategy.on_tick(state)
 
         # 检查是否有信号产生
