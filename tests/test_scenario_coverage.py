@@ -381,9 +381,7 @@ class TestAuditWrite:
     def test_utf8_encoding(self) -> None:
         """AUDIT.WRITE.UTF8_ENCODING: UTF-8编码."""
         test_data = "中文测试数据 Chinese Test Data"
-        with tempfile.NamedTemporaryFile(
-            mode="w", delete=False, encoding="utf-8"
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, encoding="utf-8") as f:
             f.write(test_data)
             path = f.name
 
