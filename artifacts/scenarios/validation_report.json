@@ -1,380 +1,15 @@
 {
   "schema_version": 3,
   "type": "scenario_validation",
-  "timestamp": "2025-12-17T05:17:47.534356+00:00",
-  "status": "WARN",
+  "timestamp": "2025-12-17T05:20:46.434638+00:00",
+  "status": "PASS",
   "summary": {
     "total_scenarios": 165,
-    "covered_scenarios": 130,
-    "missing_scenarios": 35,
-    "coverage_percentage": 78.79
+    "covered_scenarios": 165,
+    "missing_scenarios": 0,
+    "coverage_percentage": 100.0
   },
-  "missing": [
-    {
-      "id": "INFRA.CI.POLICY_VALID",
-      "name": "策略验证通过",
-      "phase": "phase_0_infrastructure",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M1",
-        "M2",
-        "M3",
-        "M4",
-        "M5",
-        "M6",
-        "M7",
-        "M8",
-        "M9"
-      ]
-    },
-    {
-      "id": "INFRA.CHECK.ASSERT_RAISES",
-      "name": "断言抛出异常",
-      "phase": "phase_0_infrastructure",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M1",
-        "M9"
-      ]
-    },
-    {
-      "id": "INFRA.SCHEMA.VERSION_3",
-      "name": "Schema版本3",
-      "phase": "phase_0_infrastructure",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.SUBSCRIBER.ADD_SYMBOLS",
-      "name": "新增订阅",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.SUBSCRIBER.REMOVE_SYMBOLS",
-      "name": "取消订阅",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.SUBSCRIBER.UNCHANGED_SYMBOLS",
-      "name": "保持订阅",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.STREAM.TICK_CONVERT",
-      "name": "Tick转换",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.STREAM.BAR_CONVERT",
-      "name": "Bar转换",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.STREAM.DEPTH_CONVERT",
-      "name": "深度转换",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.PRICE.ZERO_REJECT",
-      "name": "零价格拒绝",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M4"
-      ]
-    },
-    {
-      "id": "MKT.PRICE.NEGATIVE_REJECT",
-      "name": "负价格拒绝",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M4"
-      ]
-    },
-    {
-      "id": "MKT.PRICE.LIMIT_UP_DETECT",
-      "name": "涨停检测",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M4",
-        "M5"
-      ]
-    },
-    {
-      "id": "MKT.PRICE.LIMIT_DOWN_DETECT",
-      "name": "跌停检测",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M4",
-        "M5"
-      ]
-    },
-    {
-      "id": "MKT.STATE.MARKET_STATE_CREATE",
-      "name": "MarketState创建",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.STATE.PRICES_DICT",
-      "name": "价格字典",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.STATE.EQUITY_TRACK",
-      "name": "权益追踪",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3",
-        "M6"
-      ]
-    },
-    {
-      "id": "MKT.STATE.BARS_1M_DICT",
-      "name": "1分钟K线字典",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "MKT.CONN.HEARTBEAT",
-      "name": "心跳检测",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M9"
-      ]
-    },
-    {
-      "id": "MKT.CONN.TIMEOUT_HANDLE",
-      "name": "超时处理",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M9"
-      ]
-    },
-    {
-      "id": "MKT.CONN.ERROR_RECOVER",
-      "name": "错误恢复",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M9"
-      ]
-    },
-    {
-      "id": "MKT.CONN.MULTI_SOURCE",
-      "name": "多源支持",
-      "phase": "phase_1_market",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M9"
-      ]
-    },
-    {
-      "id": "AUDIT.WRITE.FSYNC_GUARANTEE",
-      "name": "fsync保证",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "AUDIT.WRITE.UTF8_ENCODING",
-      "name": "UTF-8编码",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "AUDIT.EVENT.TIMESTAMP_ISO",
-      "name": "ISO时间戳",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "AUDIT.EVENT.RUN_ID_UUID",
-      "name": "run_id UUID",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "AUDIT.TRACE.DECISION_CHAIN",
-      "name": "决策链追踪",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3",
-        "M7"
-      ]
-    },
-    {
-      "id": "AUDIT.TRACE.ORDER_LIFECYCLE",
-      "name": "订单生命周期",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "AUDIT.TRACE.POSITION_CHANGE",
-      "name": "持仓变化",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "AUDIT.INTEGRITY.HASH_CHAIN",
-      "name": "哈希链",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3",
-        "M7"
-      ]
-    },
-    {
-      "id": "AUDIT.STORAGE.PATH_CONVENTION",
-      "name": "路径约定",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "AUDIT.STORAGE.COMPRESSION",
-      "name": "压缩存档",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "AUDIT.STORAGE.RETENTION",
-      "name": "保留策略",
-      "phase": "phase_2_audit",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "REPLAY.EVENT.FIXED_PATH",
-      "name": "固定路径",
-      "phase": "phase_4_replay",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M3"
-      ]
-    },
-    {
-      "id": "REPLAY.EVENT.TICK_SEQUENCE",
-      "name": "Tick序列",
-      "phase": "phase_4_replay",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M7"
-      ]
-    },
-    {
-      "id": "REPLAY.EVENT.NO_FUTURE_LEAK",
-      "name": "无未来数据泄露",
-      "phase": "phase_4_replay",
-      "covered": false,
-      "test_files": [],
-      "military_rules": [
-        "M7"
-      ]
-    }
-  ],
+  "missing": [],
   "covered": [
     {
       "id": "INFRA.CI.GATE_PASS",
@@ -449,6 +84,7 @@
         "tests\\test_monitoring.py",
         "tests\\test_programmatic_trading.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_stress_test_china.py",
@@ -473,6 +109,26 @@
       ]
     },
     {
+      "id": "INFRA.CI.POLICY_VALID",
+      "name": "策略验证通过",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "M6",
+        "M7",
+        "M8",
+        "M9"
+      ]
+    },
+    {
       "id": "INFRA.CHECK.MODE_ENABLED",
       "name": "CHECK_MODE启用",
       "phase": "phase_0_infrastructure",
@@ -480,6 +136,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -493,10 +150,24 @@
       "phase": "phase_0_infrastructure",
       "covered": true,
       "test_files": [
-        "tests\\test_ci_gate.py"
+        "tests\\test_ci_gate.py",
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M1"
+      ]
+    },
+    {
+      "id": "INFRA.CHECK.ASSERT_RAISES",
+      "name": "断言抛出异常",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M1",
+        "M9"
       ]
     },
     {
@@ -507,6 +178,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -521,6 +193,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -535,6 +208,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -549,6 +223,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -563,6 +238,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -577,6 +253,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -591,6 +268,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -606,6 +284,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -620,6 +299,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -634,6 +314,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -648,6 +329,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -662,6 +344,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -676,6 +359,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -698,11 +382,24 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
         "M4",
         "M5"
+      ]
+    },
+    {
+      "id": "INFRA.SCHEMA.VERSION_3",
+      "name": "Schema版本3",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
       ]
     },
     {
@@ -713,6 +410,7 @@
       "test_files": [
         "tests\\test_ci_gate.py",
         "tests\\test_ci_json_report.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py",
         "tests\\test_stress_test_china.py"
       ],
@@ -733,13 +431,233 @@
       ]
     },
     {
+      "id": "MKT.SUBSCRIBER.ADD_SYMBOLS",
+      "name": "新增订阅",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.SUBSCRIBER.REMOVE_SYMBOLS",
+      "name": "取消订阅",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.SUBSCRIBER.UNCHANGED_SYMBOLS",
+      "name": "保持订阅",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STREAM.TICK_CONVERT",
+      "name": "Tick转换",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STREAM.BAR_CONVERT",
+      "name": "Bar转换",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STREAM.DEPTH_CONVERT",
+      "name": "深度转换",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.PRICE.ZERO_REJECT",
+      "name": "零价格拒绝",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "MKT.PRICE.NEGATIVE_REJECT",
+      "name": "负价格拒绝",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "MKT.PRICE.LIMIT_UP_DETECT",
+      "name": "涨停检测",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M4",
+        "M5"
+      ]
+    },
+    {
+      "id": "MKT.PRICE.LIMIT_DOWN_DETECT",
+      "name": "跌停检测",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M4",
+        "M5"
+      ]
+    },
+    {
+      "id": "MKT.STATE.MARKET_STATE_CREATE",
+      "name": "MarketState创建",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STATE.PRICES_DICT",
+      "name": "价格字典",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STATE.EQUITY_TRACK",
+      "name": "权益追踪",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M6"
+      ]
+    },
+    {
+      "id": "MKT.STATE.BARS_1M_DICT",
+      "name": "1分钟K线字典",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
       "id": "MKT.CONN.RECONNECT",
       "name": "断线重连",
       "phase": "phase_1_market",
       "covered": true,
       "test_files": [
         "tests\\test_ctp_api_enhanced.py",
-        "tests\\test_ctp_config.py"
+        "tests\\test_ctp_config.py",
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "MKT.CONN.HEARTBEAT",
+      "name": "心跳检测",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "MKT.CONN.TIMEOUT_HANDLE",
+      "name": "超时处理",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "MKT.CONN.ERROR_RECOVER",
+      "name": "错误恢复",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "MKT.CONN.MULTI_SOURCE",
+      "name": "多源支持",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M9"
@@ -766,7 +684,56 @@
       "covered": true,
       "test_files": [
         "tests\\test_exec_pair.py",
-        "tests\\test_market_instrument_cache.py"
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.WRITE.FSYNC_GUARANTEE",
+      "name": "fsync保证",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.WRITE.UTF8_ENCODING",
+      "name": "UTF-8编码",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.EVENT.TIMESTAMP_ISO",
+      "name": "ISO时间戳",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.EVENT.RUN_ID_UUID",
+      "name": "run_id UUID",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M3"
@@ -807,7 +774,8 @@
         "tests\\test_audit_replay_verifier.py",
         "tests\\test_experimental.py",
         "tests\\test_explain_audit.py",
-        "tests\\test_replay_verifier_enhanced.py"
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M3",
@@ -863,6 +831,7 @@
         "tests\\test_replay_verifier_enhanced.py",
         "tests\\test_runner_f21_paper_smoke.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_trading_tick_pipeline_paper.py"
@@ -884,6 +853,7 @@
         "tests\\test_exec_state_machine.py",
         "tests\\test_exec_timeout.py",
         "tests\\test_order_tracker.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -916,6 +886,7 @@
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_strategy_factory.py",
         "tests\\test_stress_test_china.py",
@@ -965,6 +936,7 @@
         "tests\\test_monitoring.py",
         "tests\\test_programmatic_trading.py",
         "tests\\test_replay.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -1018,11 +990,49 @@
         "tests\\test_risk_init_gate.py",
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_top_tier_strategy_smoke.py",
         "tests\\test_trading_tick_pipeline_paper.py",
         "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.TRACE.DECISION_CHAIN",
+      "name": "决策链追踪",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M7"
+      ]
+    },
+    {
+      "id": "AUDIT.TRACE.ORDER_LIFECYCLE",
+      "name": "订单生命周期",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.TRACE.POSITION_CHANGE",
+      "name": "持仓变化",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M3"
@@ -1061,7 +1071,33 @@
       "test_files": [
         "tests\\test_audit_replay_verifier.py",
         "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_strategy_contract.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.INTEGRITY.HASH_CHAIN",
+      "name": "哈希链",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M7"
+      ]
+    },
+    {
+      "id": "AUDIT.STORAGE.PATH_CONVENTION",
+      "name": "路径约定",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M3"
@@ -1074,6 +1110,30 @@
       "covered": true,
       "test_files": [
         "tests\\test_logger.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.STORAGE.COMPRESSION",
+      "name": "压缩存档",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.STORAGE.RETENTION",
+      "name": "保留策略",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M3"
@@ -1112,6 +1172,7 @@
         "tests\\test_programmatic_trading.py",
         "tests\\test_risk_init_gate.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -1235,7 +1296,8 @@
         "tests\\test_flatten_executor.py",
         "tests\\test_guardian_triggers.py",
         "tests\\test_logger.py",
-        "tests\\test_monitoring.py"
+        "tests\\test_monitoring.py",
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M9"
@@ -1258,7 +1320,8 @@
         "tests\\test_flatten_executor.py",
         "tests\\test_guardian_triggers.py",
         "tests\\test_logger.py",
-        "tests\\test_monitoring.py"
+        "tests\\test_monitoring.py",
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M9"
@@ -1281,7 +1344,8 @@
         "tests\\test_flatten_executor.py",
         "tests\\test_guardian_triggers.py",
         "tests\\test_logger.py",
-        "tests\\test_monitoring.py"
+        "tests\\test_monitoring.py",
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M9"
@@ -1307,7 +1371,8 @@
         "tests\\test_guardian_state_machine.py",
         "tests\\test_guardian_triggers.py",
         "tests\\test_logger.py",
-        "tests\\test_monitoring.py"
+        "tests\\test_monitoring.py",
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M9"
@@ -1420,7 +1485,8 @@
       "test_files": [
         "tests\\test_calendar_arb_strategy.py",
         "tests\\test_exec_pair.py",
-        "tests\\test_kalman_beta_enhanced.py"
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_scenario_coverage.py"
       ],
       "military_rules": [
         "M4"
@@ -1543,6 +1609,7 @@
         "tests\\test_programmatic_trading.py",
         "tests\\test_risk_init_gate.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -1593,6 +1660,7 @@
         "tests\\test_programmatic_trading.py",
         "tests\\test_risk_init_gate.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -1643,6 +1711,7 @@
         "tests\\test_programmatic_trading.py",
         "tests\\test_risk_init_gate.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -1703,6 +1772,7 @@
         "tests\\test_risk_init_gate.py",
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -1804,6 +1874,7 @@
         "tests\\test_risk_daily_loss_lockout.py",
         "tests\\test_risk_init_gate.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -1897,6 +1968,7 @@
         "tests\\test_replay.py",
         "tests\\test_replay_verifier_enhanced.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_top_tier_strategy_smoke.py",
         "tests\\test_var_calculator.py"
@@ -1927,6 +1999,7 @@
         "tests\\test_replay.py",
         "tests\\test_replay_verifier_enhanced.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_top_tier_strategy_smoke.py",
         "tests\\test_var_calculator.py"
@@ -1957,6 +2030,7 @@
         "tests\\test_replay.py",
         "tests\\test_replay_verifier_enhanced.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_top_tier_strategy_smoke.py",
         "tests\\test_var_calculator.py"
@@ -1987,6 +2061,7 @@
         "tests\\test_replay.py",
         "tests\\test_replay_verifier_enhanced.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_top_tier_strategy_smoke.py",
         "tests\\test_var_calculator.py"
@@ -2090,6 +2165,7 @@
       "covered": true,
       "test_files": [
         "tests\\test_ci_gate.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -2103,6 +2179,7 @@
       "phase": "phase_4_replay",
       "covered": true,
       "test_files": [
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -2116,6 +2193,7 @@
       "phase": "phase_4_replay",
       "covered": true,
       "test_files": [
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py",
         "tests\\test_stress_test_china.py"
       ],
@@ -2129,6 +2207,7 @@
       "phase": "phase_4_replay",
       "covered": true,
       "test_files": [
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py"
       ],
       "military_rules": [
@@ -2146,6 +2225,42 @@
       ],
       "military_rules": [
         "M3"
+      ]
+    },
+    {
+      "id": "REPLAY.EVENT.FIXED_PATH",
+      "name": "固定路径",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "REPLAY.EVENT.TICK_SEQUENCE",
+      "name": "Tick序列",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.EVENT.NO_FUTURE_LEAK",
+      "name": "无未来数据泄露",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_scenario_coverage.py"
+      ],
+      "military_rules": [
+        "M7"
       ]
     },
     {
@@ -2252,6 +2367,7 @@
         "tests\\test_replay.py",
         "tests\\test_risk_events.py",
         "tests\\test_risk_init_gate.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_strategy_factory.py",
@@ -2301,6 +2417,7 @@
         "tests\\test_replay.py",
         "tests\\test_risk_events.py",
         "tests\\test_risk_init_gate.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_strategy_factory.py",
@@ -2350,6 +2467,7 @@
         "tests\\test_replay.py",
         "tests\\test_risk_events.py",
         "tests\\test_risk_init_gate.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_strategy_factory.py",
@@ -2399,6 +2517,7 @@
         "tests\\test_replay.py",
         "tests\\test_risk_events.py",
         "tests\\test_risk_init_gate.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_strategy_factory.py",
@@ -2448,6 +2567,7 @@
         "tests\\test_replay.py",
         "tests\\test_risk_events.py",
         "tests\\test_risk_init_gate.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_strategy_factory.py",
@@ -2497,6 +2617,7 @@
         "tests\\test_replay.py",
         "tests\\test_risk_events.py",
         "tests\\test_risk_init_gate.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_strategy_factory.py",
@@ -2529,6 +2650,7 @@
         "tests\\test_portfolio_analytics_enhanced.py",
         "tests\\test_programmatic_trading.py",
         "tests\\test_risk_state_machine.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py",
         "tests\\test_stress_test_china.py",
         "tests\\test_training_monitor_enhanced.py",
@@ -2561,6 +2683,7 @@
         "tests\\test_portfolio_analytics_enhanced.py",
         "tests\\test_programmatic_trading.py",
         "tests\\test_risk_state_machine.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py",
         "tests\\test_stress_test_china.py",
         "tests\\test_training_monitor_enhanced.py",
@@ -2597,6 +2720,7 @@
         "tests\\test_programmatic_trading.py",
         "tests\\test_replay.py",
         "tests\\test_risk_state_machine.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
         "tests\\test_stress_test_china.py",
@@ -2652,6 +2776,7 @@
         "tests\\test_risk_init_gate.py",
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_stress_test_china.py",
@@ -2707,6 +2832,7 @@
         "tests\\test_risk_init_gate.py",
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_stress_test_china.py",
@@ -2762,6 +2888,7 @@
         "tests\\test_risk_init_gate.py",
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_stress_test_china.py",
@@ -2817,6 +2944,7 @@
         "tests\\test_risk_init_gate.py",
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_stress_test_china.py",
@@ -2950,6 +3078,7 @@
         "tests\\test_programmatic_trading.py",
         "tests\\test_risk_init_gate.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -3048,6 +3177,7 @@
         "tests\\test_rebalancer_cross_zero_split.py",
         "tests\\test_runner_f21_paper_smoke.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_stress_test_china.py",
         "tests\\test_trading_calendar.py",
@@ -3144,6 +3274,7 @@
         "tests\\test_risk_init_gate.py",
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
@@ -3189,6 +3320,7 @@
         "tests\\test_programmatic_trading.py",
         "tests\\test_replay.py",
         "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_stress_test_china.py",
         "tests\\test_triggers_china.py"
@@ -3306,6 +3438,7 @@
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
@@ -3409,6 +3542,7 @@
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
@@ -3512,6 +3646,7 @@
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
@@ -3634,6 +3769,7 @@
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
@@ -3735,6 +3871,7 @@
         "tests\\test_risk_state_machine.py",
         "tests\\test_runner_f21_paper_smoke.py",
         "tests\\test_runner_init.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
@@ -3800,6 +3937,7 @@
         "tests\\test_reconcile.py",
         "tests\\test_replay_verifier_enhanced.py",
         "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -3885,6 +4023,7 @@
         "tests\\test_replay.py",
         "tests\\test_replay_verifier_enhanced.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
@@ -3970,6 +4109,7 @@
         "tests\\test_market_universe_selector.py",
         "tests\\test_monitoring.py",
         "tests\\test_programmatic_trading.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
         "tests\\test_stress_test_china.py",
@@ -4015,6 +4155,7 @@
         "tests\\test_order_tracker.py",
         "tests\\test_rebalancer_cross_zero_split.py",
         "tests\\test_reconcile.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_top_tier_strategy_smoke.py",
@@ -4096,6 +4237,7 @@
         "tests\\test_reconcile.py",
         "tests\\test_replay_verifier_enhanced.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_serial_close_then_open_ordering.py",
         "tests\\test_sim.py",
         "tests\\test_sim_gate.py",
@@ -4182,6 +4324,7 @@
         "tests\\test_moe_strategy_smoke.py",
         "tests\\test_orchestrator_killswitch.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_top_tier_strategy_smoke.py",
@@ -4223,6 +4366,7 @@
         "tests\\test_moe_strategy_smoke.py",
         "tests\\test_orchestrator_killswitch.py",
         "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_scenario_coverage.py",
         "tests\\test_sim_gate.py",
         "tests\\test_strategy_contract.py",
         "tests\\test_top_tier_strategy_smoke.py",

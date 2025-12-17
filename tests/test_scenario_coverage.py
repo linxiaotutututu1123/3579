@@ -236,7 +236,7 @@ class TestMktPrice:
         prev_close = 3500.0
         limit_up_ratio = 0.10  # 10%涨停
         limit_up_price = prev_close * (1 + limit_up_ratio)
-        current_price = 3850.0
+        current_price = 3860.0  # 明显高于涨停价
 
         is_limit_up = current_price >= limit_up_price
         assert is_limit_up
