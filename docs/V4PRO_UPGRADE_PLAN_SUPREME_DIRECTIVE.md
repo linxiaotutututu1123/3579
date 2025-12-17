@@ -684,9 +684,9 @@ class CostBreakdown:
 
 | 文件 | 行数 | 功能 | 状态 |
 |------|------|------|------|
-| `src/market/exchange_config.py` | ~300 | 六大交易所配置 | ⏸ 待新增 |
+| `src/market/exchange_config.py` | ~628 | 六大交易所配置 | ✅ |
 | `src/market/trading_calendar.py` | ~250 | 夜盘交易日历 | ⏸ 待新增 |
-| `src/cost/china_fee_calculator.py` | ~300 | 中国期货手续费 | ⏸ 待新增 |
+| `src/cost/china_fee_calculator.py` | ~653 | 中国期货手续费 | ✅ |
 | `src/execution/protection/limit_price.py` | ~200 | 涨跌停保护 | ⏸ 待新增 |
 | `src/execution/protection/margin_monitor.py` | ~250 | 保证金监控 | ⏸ 待新增 |
 | `src/guardian/triggers_china.py` | ~300 | 中国期货触发器 | ⏸ 待新增 |
