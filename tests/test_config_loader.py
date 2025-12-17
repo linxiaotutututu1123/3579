@@ -22,7 +22,6 @@ from src.config.exchange_config_loader import (
     ExchangeInfoModel,
     ProductModel,
     TradingSessionModel,
-    TradingSessionsModel,
     get_all_products_from_configs,
     load_all_exchanges,
     load_exchange_config,
