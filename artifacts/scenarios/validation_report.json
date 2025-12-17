@@ -1,0 +1,4236 @@
+{
+  "schema_version": 3,
+  "type": "scenario_validation",
+  "timestamp": "2025-12-17T05:17:47.534356+00:00",
+  "status": "WARN",
+  "summary": {
+    "total_scenarios": 165,
+    "covered_scenarios": 130,
+    "missing_scenarios": 35,
+    "coverage_percentage": 78.79
+  },
+  "missing": [
+    {
+      "id": "INFRA.CI.POLICY_VALID",
+      "name": "策略验证通过",
+      "phase": "phase_0_infrastructure",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "M6",
+        "M7",
+        "M8",
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.CHECK.ASSERT_RAISES",
+      "name": "断言抛出异常",
+      "phase": "phase_0_infrastructure",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M1",
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.SCHEMA.VERSION_3",
+      "name": "Schema版本3",
+      "phase": "phase_0_infrastructure",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.SUBSCRIBER.ADD_SYMBOLS",
+      "name": "新增订阅",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.SUBSCRIBER.REMOVE_SYMBOLS",
+      "name": "取消订阅",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.SUBSCRIBER.UNCHANGED_SYMBOLS",
+      "name": "保持订阅",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STREAM.TICK_CONVERT",
+      "name": "Tick转换",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STREAM.BAR_CONVERT",
+      "name": "Bar转换",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STREAM.DEPTH_CONVERT",
+      "name": "深度转换",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.PRICE.ZERO_REJECT",
+      "name": "零价格拒绝",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "MKT.PRICE.NEGATIVE_REJECT",
+      "name": "负价格拒绝",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "MKT.PRICE.LIMIT_UP_DETECT",
+      "name": "涨停检测",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M4",
+        "M5"
+      ]
+    },
+    {
+      "id": "MKT.PRICE.LIMIT_DOWN_DETECT",
+      "name": "跌停检测",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M4",
+        "M5"
+      ]
+    },
+    {
+      "id": "MKT.STATE.MARKET_STATE_CREATE",
+      "name": "MarketState创建",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STATE.PRICES_DICT",
+      "name": "价格字典",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.STATE.EQUITY_TRACK",
+      "name": "权益追踪",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3",
+        "M6"
+      ]
+    },
+    {
+      "id": "MKT.STATE.BARS_1M_DICT",
+      "name": "1分钟K线字典",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.CONN.HEARTBEAT",
+      "name": "心跳检测",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "MKT.CONN.TIMEOUT_HANDLE",
+      "name": "超时处理",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "MKT.CONN.ERROR_RECOVER",
+      "name": "错误恢复",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "MKT.CONN.MULTI_SOURCE",
+      "name": "多源支持",
+      "phase": "phase_1_market",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "AUDIT.WRITE.FSYNC_GUARANTEE",
+      "name": "fsync保证",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.WRITE.UTF8_ENCODING",
+      "name": "UTF-8编码",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.EVENT.TIMESTAMP_ISO",
+      "name": "ISO时间戳",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.EVENT.RUN_ID_UUID",
+      "name": "run_id UUID",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.TRACE.DECISION_CHAIN",
+      "name": "决策链追踪",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3",
+        "M7"
+      ]
+    },
+    {
+      "id": "AUDIT.TRACE.ORDER_LIFECYCLE",
+      "name": "订单生命周期",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.TRACE.POSITION_CHANGE",
+      "name": "持仓变化",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.INTEGRITY.HASH_CHAIN",
+      "name": "哈希链",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3",
+        "M7"
+      ]
+    },
+    {
+      "id": "AUDIT.STORAGE.PATH_CONVENTION",
+      "name": "路径约定",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.STORAGE.COMPRESSION",
+      "name": "压缩存档",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.STORAGE.RETENTION",
+      "name": "保留策略",
+      "phase": "phase_2_audit",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "REPLAY.EVENT.FIXED_PATH",
+      "name": "固定路径",
+      "phase": "phase_4_replay",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "REPLAY.EVENT.TICK_SEQUENCE",
+      "name": "Tick序列",
+      "phase": "phase_4_replay",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.EVENT.NO_FUTURE_LEAK",
+      "name": "无未来数据泄露",
+      "phase": "phase_4_replay",
+      "covered": false,
+      "test_files": [],
+      "military_rules": [
+        "M7"
+      ]
+    }
+  ],
+  "covered": [
+    {
+      "id": "INFRA.CI.GATE_PASS",
+      "name": "CI门禁全部通过",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_replay.py",
+        "tests\\test_sim.py"
+      ],
+      "military_rules": [
+        "M1",
+        "M2",
+        "M3"
+      ]
+    },
+    {
+      "id": "INFRA.CI.LINT_PASS",
+      "name": "Ruff检查通过",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "INFRA.CI.TYPE_PASS",
+      "name": "Mypy检查通过",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_stress_test_china.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "INFRA.CI.TEST_PASS",
+      "name": "Pytest通过",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_calendar.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M7"
+      ]
+    },
+    {
+      "id": "INFRA.CI.COVERAGE_MIN",
+      "name": "覆盖率门槛",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "INFRA.CHECK.MODE_ENABLED",
+      "name": "CHECK_MODE启用",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M1",
+        "M7"
+      ]
+    },
+    {
+      "id": "INFRA.CHECK.BROKER_BLOCKED",
+      "name": "Broker操作阻塞",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py"
+      ],
+      "military_rules": [
+        "M1"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_0_SUCCESS",
+      "name": "退出码0成功",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_1_GENERAL",
+      "name": "退出码1一般错误",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_2_LINT",
+      "name": "退出码2格式错误",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_3_TYPE",
+      "name": "退出码3类型错误",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_4_TEST",
+      "name": "退出码4测试失败",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_5_COVERAGE",
+      "name": "退出码5覆盖率不足",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_6_RISK",
+      "name": "退出码6风控配置缺失",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M6",
+        "M16"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_7_BROKER",
+      "name": "退出码7凭证无效",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M8"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_8_REPLAY",
+      "name": "退出码8回放失败",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_9_SIM",
+      "name": "退出码9模拟失败",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_10_MODEL",
+      "name": "退出码10模型权重缺失",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M18"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_11_SCENARIO",
+      "name": "退出码11场景缺失",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_12_POLICY",
+      "name": "退出码12军法处置",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "M6",
+        "M7",
+        "M8",
+        "M9"
+      ]
+    },
+    {
+      "id": "INFRA.EXIT.CODE_13_CAPABILITY",
+      "name": "退出码13能力缺失",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M4",
+        "M5"
+      ]
+    },
+    {
+      "id": "INFRA.SCHEMA.REQUIRED_FIELDS",
+      "name": "必填字段完整",
+      "phase": "phase_0_infrastructure",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_stress_test_china.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.SUBSCRIBER.DIFF_UPDATE",
+      "name": "订阅差分更新",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_market_subscriber.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "MKT.CONN.RECONNECT",
+      "name": "断线重连",
+      "phase": "phase_1_market",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_config.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "AUDIT.WRITE.JSONL_FORMAT",
+      "name": "JSONL格式",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_writer.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.WRITE.ATOMIC_APPEND",
+      "name": "原子追加",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_exec_pair.py",
+        "tests\\test_market_instrument_cache.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.EVENT.EXEC_ID_FORMAT",
+      "name": "exec_id格式",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_json_report.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.EVENT.EVENT_TYPE_ENUM",
+      "name": "事件类型枚举",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_guardian_log.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.TYPE.DECISION",
+      "name": "决策事件",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_replay_verifier_enhanced.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M7"
+      ]
+    },
+    {
+      "id": "AUDIT.TYPE.ORDER",
+      "name": "订单事件",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.TYPE.FILL",
+      "name": "成交事件",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.TYPE.RISK",
+      "name": "风控事件",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M6"
+      ]
+    },
+    {
+      "id": "AUDIT.TYPE.ERROR",
+      "name": "错误事件",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_replay.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M9"
+      ]
+    },
+    {
+      "id": "AUDIT.TYPE.STATE",
+      "name": "状态事件",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.TRACE.PNL_ATTRIBUTION",
+      "name": "盈亏归因",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_portfolio_analytics_enhanced.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.INTEGRITY.NO_GAP",
+      "name": "无断层",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_market_quality.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.INTEGRITY.SEQUENCE",
+      "name": "序列递增",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_strategy_contract.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "AUDIT.STORAGE.ROTATION",
+      "name": "日志轮转",
+      "phase": "phase_2_audit",
+      "covered": true,
+      "test_files": [
+        "tests\\test_logger.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "FALL.MANAGER.INIT",
+      "name": "FallbackManager初始化",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.MANAGER.REGISTER",
+      "name": "策略注册",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_fallback.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.MANAGER.EXECUTE",
+      "name": "执行降级",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_serial_close_then_open_ordering.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.CHAIN.DEFAULT_CONFIG",
+      "name": "默认降级链配置",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_fallback.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_logger.py",
+        "tests\\test_programmatic_trading.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.CHAIN.CUSTOM_CONFIG",
+      "name": "自定义降级链",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_fallback.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_programmatic_trading.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.CHAIN.FLAT_TERMINAL",
+      "name": "flat终止降级",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_fallback.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.REASON.EXCEPTION",
+      "name": "异常触发降级",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_logger.py",
+        "tests\\test_monitoring.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.REASON.TIMEOUT",
+      "name": "超时触发降级",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_logger.py",
+        "tests\\test_monitoring.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.REASON.NOT_REGISTERED",
+      "name": "未注册触发降级",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_logger.py",
+        "tests\\test_monitoring.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "FALL.REASON.MANUAL",
+      "name": "手动触发降级",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_logger.py",
+        "tests\\test_monitoring.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "ARB.LEGS.FIXED_NEAR_FAR",
+      "name": "近/远月合约固定",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.LEGS.PRODUCT_MATCH",
+      "name": "品种匹配",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.LEGS.EXPIRY_ORDER",
+      "name": "到期顺序",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.SIGNAL.HALF_LIFE_GATE",
+      "name": "半衰期门禁",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.SIGNAL.STOP_Z_BREAKER",
+      "name": "止损触发",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4",
+        "M6"
+      ]
+    },
+    {
+      "id": "ARB.SIGNAL.EXPIRY_GATE",
+      "name": "到期门禁",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.SIGNAL.CORRELATION_BREAK",
+      "name": "相关性崩溃",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.SIGNAL.LONG_SPREAD",
+      "name": "多头价差信号",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.SIGNAL.SHORT_SPREAD",
+      "name": "空头价差信号",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.SIGNAL.FLAT",
+      "name": "平仓信号",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.COST.ENTRY_GATE",
+      "name": "成本门禁",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_cost_estimator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.COST.MIN_EDGE_BPS",
+      "name": "最小边际收益",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_cost_estimator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "ARB.STATE.INIT",
+      "name": "初始状态",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "ARB.STATE.ACTIVE",
+      "name": "激活状态",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "ARB.STATE.STOPPED",
+      "name": "停止状态",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "ARB.STATE.COOLDOWN",
+      "name": "冷却状态",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M9"
+      ]
+    },
+    {
+      "id": "ARB.KALMAN.BETA_UPDATE",
+      "name": "Beta更新",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "ARB.KALMAN.RESIDUAL_COMPUTE",
+      "name": "残差计算",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "ARB.KALMAN.ZSCORE_COMPUTE",
+      "name": "Z-score计算",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "ARB.KALMAN.HALF_LIFE_COMPUTE",
+      "name": "半衰期计算",
+      "phase": "phase_3_fallback",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.VERIFIER.INIT",
+      "name": "验证器初始化",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.VERIFIER.DECISION_SEQ",
+      "name": "决策序列验证",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_serial_close_then_open_ordering.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.VERIFIER.GUARDIAN_SEQ",
+      "name": "Guardian序列验证",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_serial_close_then_open_ordering.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.VERIFIER.HASH_MATCH",
+      "name": "哈希匹配",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_serial_close_then_open_ordering.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.HASH.SHA256",
+      "name": "SHA256算法",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.HASH.EXCLUDE_FIELDS",
+      "name": "排除时间戳字段",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.HASH.SORT_KEYS",
+      "name": "键排序",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.HASH.DETERMINISTIC",
+      "name": "确定性哈希",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.DETERMINISTIC.RANDOM_SEED",
+      "name": "随机数种子",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.DETERMINISTIC.LCG_RANDOM",
+      "name": "LCG随机数生成器",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.DETERMINISTIC.NO_SYSTEM_TIME",
+      "name": "无系统时间依赖",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.DETERMINISTIC.FLOAT_PRECISION",
+      "name": "浮点精度",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.SIM.REPORT_SCHEMA",
+      "name": "报告Schema",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_ci_gate.py",
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.SIM.CHECK_MODE_REQUIRED",
+      "name": "CHECK_MODE必需",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M1",
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.SIM.SCENARIOS_COUNT",
+      "name": "场景计数",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_sim_gate.py",
+        "tests\\test_stress_test_china.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.SIM.FAILURE_STRUCTURE",
+      "name": "失败结构",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_sim_gate.py"
+      ],
+      "military_rules": [
+        "M3",
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.EVENT.JSONL_FORMAT",
+      "name": "JSONL格式",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_writer.py"
+      ],
+      "military_rules": [
+        "M3"
+      ]
+    },
+    {
+      "id": "REPLAY.VAR.HISTORICAL",
+      "name": "历史VaR",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_stress_test_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.VAR.PARAMETRIC",
+      "name": "参数VaR",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_stress_test_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.VAR.MONTE_CARLO",
+      "name": "蒙特卡洛VaR",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_stress_test_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.VAR.EXPECTED_SHORTFALL",
+      "name": "预期短缺",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_stress_test_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "REPLAY.VAR.CONFIDENCE_LEVELS",
+      "name": "置信度级别",
+      "phase": "phase_4_replay",
+      "covered": true,
+      "test_files": [
+        "tests\\test_stress_test_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M7"
+      ]
+    },
+    {
+      "id": "COST.EXCHANGE.SHFE",
+      "name": "上期所费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_sim.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.EXCHANGE.DCE",
+      "name": "大商所费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_sim.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.EXCHANGE.CZCE",
+      "name": "郑商所费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_sim.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.EXCHANGE.CFFEX",
+      "name": "中金所费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_sim.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.EXCHANGE.GFEX",
+      "name": "广期所费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_sim.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.EXCHANGE.INE",
+      "name": "能源中心费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_replay.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_sim.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.FEE_TYPE.FIXED",
+      "name": "固定费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.FEE_TYPE.RATIO",
+      "name": "比例费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.FEE_TYPE.MIXED",
+      "name": "混合费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_replay.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.DIRECTION.OPEN",
+      "name": "开仓费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.DIRECTION.CLOSE",
+      "name": "平昨费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.DIRECTION.CLOSE_TODAY",
+      "name": "平今费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.DIRECTION.CLOSE_TODAY_FREE",
+      "name": "平今免费",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.BREAKDOWN.FEE",
+      "name": "手续费分解",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_delivery_aware.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.BREAKDOWN.SLIPPAGE",
+      "name": "滑点分解",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_delivery_aware.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.BREAKDOWN.IMPACT",
+      "name": "冲击分解",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_stress_test_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.BREAKDOWN.TOTAL",
+      "name": "总成本",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_stress_test_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.BREAKDOWN.TOTAL_BPS",
+      "name": "总成本基点",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_delivery_aware.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.ESTIMATOR.INIT",
+      "name": "估算器初始化",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.ESTIMATOR.ESTIMATE",
+      "name": "成本估算",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.ESTIMATOR.EDGE_GATE",
+      "name": "边际门禁",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_cost_estimator.py",
+        "tests\\test_kalman_beta_enhanced.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.CU",
+      "name": "铜费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.AL",
+      "name": "铝费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_main.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.RB",
+      "name": "螺纹钢费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_logger.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_sim.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.HC",
+      "name": "热卷费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.M",
+      "name": "豆粕费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_main.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.Y",
+      "name": "豆油费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_main.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.P",
+      "name": "棕榈油费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_main.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.CF",
+      "name": "棉花费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_top_tier_strategy_smoke.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.SR",
+      "name": "白糖费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_main.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.TA",
+      "name": "PTA费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_main.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_risk_events.py",
+        "tests\\test_risk_init_gate.py",
+        "tests\\test_risk_state_machine.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_runner_init.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.IF",
+      "name": "沪深300费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_order_types_offset_open.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_risk_daily_loss_lockout.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.IC",
+      "name": "中证500费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_idempotency.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.IH",
+      "name": "上证50费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_stress_test_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.SC",
+      "name": "原油费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_exec_timeout.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_subscriber.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_monitoring.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.AO",
+      "name": "氧化铝费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_actions.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.SI",
+      "name": "工业硅费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_app_config.py",
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_decision_log.py",
+        "tests\\test_audit_guardian_log.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_audit_replay_verifier.py",
+        "tests\\test_audit_writer.py",
+        "tests\\test_broker_factory.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_china_futures_rules.py",
+        "tests\\test_ci_gate.py",
+        "tests\\test_ci_json_report.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_ctp_broker.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_ctp_mapping.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dingtalk.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_execution_events.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_engine.py",
+        "tests\\test_exec_order_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_exec_state_machine.py",
+        "tests\\test_experimental.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_executor.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_guardian_monitor.py",
+        "tests\\test_guardian_recovery.py",
+        "tests\\test_guardian_state_machine.py",
+        "tests\\test_guardian_triggers.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_kalman_beta_enhanced.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_live_guard.py",
+        "tests\\test_logger.py",
+        "tests\\test_margin_monitor.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_quote_cache.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_portfolio.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_programmatic_trading.py",
+        "tests\\test_rebalancer_cross_zero_split.py",
+        "tests\\test_reconcile.py",
+        "tests\\test_replay_verifier_enhanced.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_serial_close_then_open_ordering.py",
+        "tests\\test_sim.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_strategy_factory.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.PRODUCT.LC",
+      "name": "碳酸锂费率",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_china_fee_calculator.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_ctp_config.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exchange_config.py",
+        "tests\\test_exec_context.py",
+        "tests\\test_exec_pair.py",
+        "tests\\test_exec_position_tracker.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_explain_audit.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_order_tracker.py",
+        "tests\\test_portfolio_analytics_enhanced.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_stress_test_china.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_calendar.py",
+        "tests\\test_trading_tick_pipeline_paper.py",
+        "tests\\test_training_monitor_enhanced.py",
+        "tests\\test_triggers_china.py",
+        "tests\\test_var_calculator.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.SLIPPAGE.FIXED_TICK",
+      "name": "固定滑点",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    },
+    {
+      "id": "COST.SLIPPAGE.VOLUME_BASED",
+      "name": "成交量滑点",
+      "phase": "phase_5_cost",
+      "covered": true,
+      "test_files": [
+        "tests\\test_audit_correlation.py",
+        "tests\\test_audit_pnl_attribution.py",
+        "tests\\test_calendar_arb_strategy.py",
+        "tests\\test_constraints_recovery_and_margin.py",
+        "tests\\test_correlation_across_risk_and_execution.py",
+        "tests\\test_cost_estimator.py",
+        "tests\\test_coverage_complete.py",
+        "tests\\test_ctp_api_enhanced.py",
+        "tests\\test_delivery_aware.py",
+        "tests\\test_dl_torch_policy_smoke.py",
+        "tests\\test_exec_protection.py",
+        "tests\\test_exec_retry.py",
+        "tests\\test_fallback.py",
+        "tests\\test_flatten_plan.py",
+        "tests\\test_hg5_abort_and_data_quality.py",
+        "tests\\test_hg6_fault_injection.py",
+        "tests\\test_hg6_replay_deterministic.py",
+        "tests\\test_limit_price.py",
+        "tests\\test_linear_ai_smoke.py",
+        "tests\\test_market_bar_builder.py",
+        "tests\\test_market_instrument_cache.py",
+        "tests\\test_market_quality.py",
+        "tests\\test_market_universe_selector.py",
+        "tests\\test_moe_strategy_smoke.py",
+        "tests\\test_orchestrator_killswitch.py",
+        "tests\\test_runner_f21_paper_smoke.py",
+        "tests\\test_sim_gate.py",
+        "tests\\test_strategy_contract.py",
+        "tests\\test_top_tier_strategy_smoke.py",
+        "tests\\test_trading_tick_pipeline_paper.py"
+      ],
+      "military_rules": [
+        "M4"
+      ]
+    }
+  ]
+}
