@@ -101,7 +101,10 @@ class GateReport:
     def summary(self) -> str:
         """Generate summary string."""
         status = "PASS" if self.all_passed else "FAIL"
-        return f"CI Gate [{self.target_mode}]: {status} ({self.pass_count}/{len(self.checks)} passed)"
+        return (
+            f"CI Gate [{self.target_mode}]: {status} "
+            f"({self.pass_count}/{len(self.checks)} passed)"
+        )
 
 
 class CIGate:

@@ -530,7 +530,10 @@ class StrategyLifecycleManager:
                 or perf.sharpe_ratio < self.DEMOTION_SHARPE_THRESHOLD
             ):
                 new_stage = LifecycleStage.DEGRADED
-                reason = f"表现下滑 (夏普={perf.sharpe_ratio:.2f}, 回撤={perf.max_drawdown:.1%})，降级处理"
+                reason = (
+                    f"表现下滑 (夏普={perf.sharpe_ratio:.2f}, "
+                    f"回撤={perf.max_drawdown:.1%})，降级处理"
+                )
 
         # 3. 检查恢复条件 (降级期策略)
         if current_stage == LifecycleStage.DEGRADED:
