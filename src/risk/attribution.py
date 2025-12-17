@@ -182,7 +182,7 @@ class RiskAttributionEngine:
     """
 
     # 特征组定义 (对应 features.py 的结构)
-    DEFAULT_FEATURE_GROUPS: list[FeatureGroup] = [
+    DEFAULT_FEATURE_GROUPS: ClassVar[list[FeatureGroup]] = [
         FeatureGroup("returns", 0, 60, FactorType.MOMENTUM),
         FeatureGroup("volumes", 60, 120, FactorType.VOLUME),
         FeatureGroup("ranges", 120, 180, FactorType.VOLATILITY),
