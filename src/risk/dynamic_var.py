@@ -525,12 +525,15 @@ class DynamicVaREngine:
         confidence = confidence or self._default_confidence
 
         if method == VaRMethod.HISTORICAL:
+            self._calculation_count += 1
             result = self._base_calculator.historical_var(returns, confidence)
             return self._wrap_result(result, method)
         elif method == VaRMethod.PARAMETRIC:
+            self._calculation_count += 1
             result = self._base_calculator.parametric_var(returns, confidence)
             return self._wrap_result(result, method)
         elif method == VaRMethod.MONTE_CARLO:
+            self._calculation_count += 1
             result = self._base_calculator.monte_carlo_var(
                 returns, confidence, kwargs.get("simulations", 10000)
             )
