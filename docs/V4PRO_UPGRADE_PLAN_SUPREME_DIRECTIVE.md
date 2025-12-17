@@ -588,7 +588,7 @@ class ReplayVerifier:
 | 文件 | 行数 | 功能 | 状态 |
 |------|------|------|------|
 | `src/cost/estimator.py` | ~328 | 成本估计器 | ✅ |
-| `src/cost/china_fee_calculator.py` | ~300 | 中国期货手续费 | ⏸ 待新增 |
+| `src/cost/china_fee_calculator.py` | ~653 | 中国期货手续费 | ✅ |
 
 ### 10.2 成本模型
 
