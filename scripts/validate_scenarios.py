@@ -35,7 +35,7 @@ except ImportError:
 # =============================================================================
 # 常量定义
 # =============================================================================
-SCENARIOS_FILE = Path("scenarios/v3pro_required_scenarios.yml")
+SCENARIOS_FILE = Path("scenarios/v4pro_required_scenarios.yml")
 TESTS_DIR = Path("tests")
 REPORT_PATH = Path("artifacts/scenarios/validation_report.json")
 

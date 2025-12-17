@@ -29,12 +29,12 @@
 
 ## 问题修复记录 (Issue Resolution Log)
 
-### P0-001: v3pro_required_scenarios.yml 缺失 [已修复]
+### P0-001: v4pro_required_scenarios.yml 缺失 [已修复]
 
 **问题描述**: 场景定义文件不存在
 **修复措施**:
 1. 创建 `scenarios/` 目录
-2. 创建 `scenarios/v3pro_required_scenarios.yml` 完整场景定义文件 (165个场景)
+2. 创建 `scenarios/v4pro_required_scenarios.yml` 完整场景定义文件 (165个场景)
 3. 创建 `scripts/validate_scenarios.py` 场景验证脚本
 4. 创建 `tests/test_scenario_coverage.py` 场景覆盖测试 (43个测试)
 
@@ -341,7 +341,7 @@ Step 6: Policy Validation → Exit 12 on failure ✓
 
 | 编号 | 描述 | 建议 | 优先级 |
 |------|------|------|--------|
-| P0-001 | v3pro_required_scenarios.yml 不存在 | 创建场景定义文件 | LOW |
+| P0-001 | v4pro_required_scenarios.yml 不存在 | 创建场景定义文件 | LOW |
 
 ---
 
@@ -381,7 +381,7 @@ Step 6: Policy Validation → Exit 12 on failure ✓
 
 ### 建议
 
-1. **创建场景定义文件**: 建议创建 `scenarios/v3pro_required_scenarios.yml` 定义165个必需场景
+1. **创建场景定义文件**: 建议创建 `scenarios/v4pro_required_scenarios.yml` 定义165个必需场景
 2. **持续监控**: 保持覆盖率在85%以上
 3. **定期审计**: 每次重大更新后执行军规级审计
 

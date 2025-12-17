@@ -1,1 +1,47 @@
+"""
+Strategy Module - 策略框架与降级管理 (军规级 v4.0).
+
+V4PRO Platform Component - Phase 0/3
+V2 SPEC: 第 5 章 策略框架
+
+模块职责:
+- 策略基类 (Strategy)
+- 类型定义 (MarketState, TargetPortfolio)
+- 降级管理 (FallbackManager)
+- 策略工厂 (create_strategy)
+
+Required Scenarios:
+- STRAT.BASE.ON_TICK
+- STRAT.FALLBACK.ON_EXCEPTION
+- STRAT.FALLBACK.ON_TIMEOUT
+- STRAT.FALLBACK.CHAIN_DEFINED
+"""
+
 from __future__ import annotations
+
+from src.strategy.base import Strategy
+from src.strategy.fallback import (
+    DEFAULT_FALLBACK_CHAINS,
+    DEFAULT_FINAL_FALLBACK,
+    FallbackConfig,
+    FallbackEvent,
+    FallbackManager,
+    FallbackReason,
+    FallbackResult,
+)
+from src.strategy.types import Bar1m, MarketState, TargetPortfolio
+
+
+__all__ = [
+    "DEFAULT_FALLBACK_CHAINS",
+    "DEFAULT_FINAL_FALLBACK",
+    "Bar1m",
+    "FallbackConfig",
+    "FallbackEvent",
+    "FallbackManager",
+    "FallbackReason",
+    "FallbackResult",
+    "MarketState",
+    "Strategy",
+    "TargetPortfolio",
+]
