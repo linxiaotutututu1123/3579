@@ -776,12 +776,11 @@ class ExecutionEngine:
             分片索引,解析失败返回 -1
         """
         try:
-            from src.execution.mode2.intent import IntentIdGenerator
-
             _, slice_index, _ = IntentIdGenerator.parse_client_order_id(client_order_id)
-            return slice_index
         except ValueError:
             return -1
+        else:
+            return slice_index
 
     def set_audit_callback(self, callback: AuditCallback) -> None:
         """设置审计回调.
