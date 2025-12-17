@@ -200,10 +200,10 @@ class TestCIGate:
 
 
 class TestExitCode:
-    """Tests for ExitCode constants."""
+    """Tests for ExitCode constants (军规级 v4.0)."""
 
     def test_exit_code_values(self) -> None:
-        """Exit codes have correct values."""
+        """Exit codes have correct values (军规级 v4.0)."""
         assert ExitCode.SUCCESS == 0
         assert ExitCode.GENERAL_ERROR == 1
         assert ExitCode.FORMAT_LINT_FAIL == 2
@@ -214,7 +214,36 @@ class TestExitCode:
         assert ExitCode.BROKER_CREDS_FAIL == 7
         assert ExitCode.REPLAY_FAIL == 8
         assert ExitCode.SIM_FAIL == 9
+        assert ExitCode.MODEL_WEIGHTS_FAIL == 10
+        assert ExitCode.SCENARIO_MISSING == 11
         assert ExitCode.POLICY_VIOLATION == 12
+        assert ExitCode.CAPABILITY_MISSING == 13
+
+    def test_exit_code_new_v4_codes(self) -> None:
+        """新增的军规级 v4.0 退出码."""
+        # 验证新退出码存在
+        assert hasattr(ExitCode, "MODEL_WEIGHTS_FAIL")
+        assert hasattr(ExitCode, "SCENARIO_MISSING")
+        assert hasattr(ExitCode, "CAPABILITY_MISSING")
+
+        # 验证退出码值不冲突
+        codes = [
+            ExitCode.SUCCESS,
+            ExitCode.GENERAL_ERROR,
+            ExitCode.FORMAT_LINT_FAIL,
+            ExitCode.TYPE_CHECK_FAIL,
+            ExitCode.TEST_FAIL,
+            ExitCode.COVERAGE_FAIL,
+            ExitCode.RISK_CONFIG_FAIL,
+            ExitCode.BROKER_CREDS_FAIL,
+            ExitCode.REPLAY_FAIL,
+            ExitCode.SIM_FAIL,
+            ExitCode.MODEL_WEIGHTS_FAIL,
+            ExitCode.SCENARIO_MISSING,
+            ExitCode.POLICY_VIOLATION,
+            ExitCode.CAPABILITY_MISSING,
+        ]
+        assert len(codes) == len(set(codes)), "Exit codes must be unique"
 
 
 class TestGetExitCode:
