@@ -165,10 +165,8 @@ class TestSwitch:
         """测试综合指标切换."""
         tracker_low_threshold.update("rb2501", "rb", 100000, 50000)
         # 成交量和持仓量都略高,但单独不够阈值
-        # volume_ratio = 1.10 < 1.2, oi_ratio = 1.08 < 1.1
-        # combined = 1.10 * 0.6 + 1.08 * 0.4 = 0.66 + 0.432 = 1.092 < 1.1
-        # 需要调整使 combined >= 1.1 但单独指标不够
-        # volume_ratio = 1.15, oi_ratio = 1.05: combined = 1.15*0.6 + 1.05*0.4 = 0.69 + 0.42 = 1.11 >= 1.1
+        # volume_ratio = 1.15 < 1.2, oi_ratio = 1.05 < 1.1
+        # combined = 1.15*0.6 + 1.05*0.4 = 1.11 >= 1.1
         event = tracker_low_threshold.update("rb2505", "rb", 115000, 52500)
 
         assert event is not None

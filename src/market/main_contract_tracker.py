@@ -391,11 +391,8 @@ class MainContractTracker:
             event: 切换事件
         """
         for callback in self._on_switch_callbacks:
-            try:
+            with contextlib.suppress(Exception):
                 callback(event)
-            except Exception:
-                # 回调错误不影响主流程
-                pass
 
     def get_main_contract(self, product: str) -> str | None:
         """获取主力合约.
