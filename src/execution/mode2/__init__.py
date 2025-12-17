@@ -22,39 +22,6 @@ V4PRO Scenarios:
 
 from __future__ import annotations
 
-from src.execution.mode2.intent import (
-    AlgoType,
-    IntentIdGenerator,
-    IntentRegistry,
-    Offset,
-    OrderIntent,
-    Side,
-    Urgency,
-)
-from src.execution.mode2.engine import (
-    ExecutionEngine,
-    ExecutionEngineConfig,
-    ExecutionPlan,
-    ExecutionPlanStatus,
-)
-from src.execution.mode2.executor_base import (
-    ExecutionPlanContext,
-    ExecutionProgress,
-    ExecutorAction,
-    ExecutorActionType,
-    ExecutorBase,
-    ExecutorConfig,
-    ExecutorStatus,
-    FilledOrder,
-    OrderEvent,
-    PendingOrder,
-    SliceInfo,
-    TERMINAL_STATUSES,
-)
-from src.execution.mode2.executor_twap import TWAPExecutor, TWAPConfig
-from src.execution.mode2.executor_vwap import VWAPExecutor, VWAPConfig
-from src.execution.mode2.executor_iceberg import IcebergExecutor, IcebergConfig
-from src.execution.mode2.executor_immediate import ImmediateExecutor, ImmediateConfig
 from src.execution.mode2.audit_events import (
     Mode2AuditEvent,
     Mode2AuditEventType,
@@ -72,8 +39,43 @@ from src.execution.mode2.audit_events import (
     create_slice_rejected_event,
     create_slice_sent_event,
 )
+from src.execution.mode2.engine import (
+    ExecutionEngine,
+    ExecutionEngineConfig,
+    ExecutionPlan,
+    ExecutionPlanStatus,
+)
+from src.execution.mode2.executor_base import (
+    TERMINAL_STATUSES,
+    ExecutionPlanContext,
+    ExecutionProgress,
+    ExecutorAction,
+    ExecutorActionType,
+    ExecutorBase,
+    ExecutorConfig,
+    ExecutorStatus,
+    FilledOrder,
+    OrderEvent,
+    PendingOrder,
+    SliceInfo,
+)
+from src.execution.mode2.executor_iceberg import IcebergConfig, IcebergExecutor
+from src.execution.mode2.executor_immediate import ImmediateConfig, ImmediateExecutor
+from src.execution.mode2.executor_twap import TWAPConfig, TWAPExecutor
+from src.execution.mode2.executor_vwap import VWAPConfig, VWAPExecutor
+from src.execution.mode2.intent import (
+    AlgoType,
+    IntentIdGenerator,
+    IntentRegistry,
+    Offset,
+    OrderIntent,
+    Side,
+    Urgency,
+)
+
 
 __all__ = [
+    "TERMINAL_STATUSES",
     "AlgoType",
     "ExecutionEngine",
     "ExecutionEngineConfig",
@@ -101,7 +103,6 @@ __all__ = [
     "PendingOrder",
     "Side",
     "SliceInfo",
-    "TERMINAL_STATUSES",
     "TWAPConfig",
     "TWAPExecutor",
     "Urgency",

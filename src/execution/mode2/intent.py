@@ -202,7 +202,7 @@ class OrderIntent:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "OrderIntent":
+    def from_dict(cls, data: dict[str, Any]) -> OrderIntent:
         """从字典创建 OrderIntent.
 
         Args:
@@ -292,7 +292,7 @@ class IntentIdGenerator:
         hash_bytes = hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
         # 取前 16 字符
-        return hash_bytes[:cls.HASH_PREFIX_LENGTH]
+        return hash_bytes[: cls.HASH_PREFIX_LENGTH]
 
     @classmethod
     def generate_client_order_id(

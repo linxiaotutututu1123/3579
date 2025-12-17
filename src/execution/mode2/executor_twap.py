@@ -24,9 +24,10 @@ V4PRO Scenarios:
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from src.execution.mode2.executor_base import (
+    TERMINAL_STATUSES,
     ExecutionPlanContext,
     ExecutionProgress,
     ExecutorAction,
@@ -38,7 +39,6 @@ from src.execution.mode2.executor_base import (
     OrderEvent,
     PendingOrder,
     SliceInfo,
-    TERMINAL_STATUSES,
 )
 from src.execution.mode2.intent import IntentIdGenerator, OrderIntent
 
@@ -213,9 +213,7 @@ class TWAPExecutor(ExecutorBase):
 
         return slices
 
-    def next_action(
-        self, plan_id: str, current_time: float | None = None
-    ) -> ExecutorAction | None:
+    def next_action(self, plan_id: str, current_time: float | None = None) -> ExecutorAction | None:
         """获取下一个动作.
 
         V4PRO Scenario: MODE2.EXECUTOR.TWAP
@@ -240,16 +238,15 @@ class TWAPExecutor(ExecutorBase):
                     action_type=ExecutorActionType.COMPLETE,
                     reason="TWAP 执行完成",
                 )
-            elif ctx.status == ExecutorStatus.CANCELLED:
+            if ctx.status == ExecutorStatus.CANCELLED:
                 return ExecutorAction(
                     action_type=ExecutorActionType.ABORT,
                     reason="计划已取消",
                 )
-            else:
-                return ExecutorAction(
-                    action_type=ExecutorActionType.ABORT,
-                    reason=ctx.error or "执行失败",
-                )
+            return ExecutorAction(
+                action_type=ExecutorActionType.ABORT,
+                reason=ctx.error or "执行失败",
+            )
 
         # 暂停状态
         if ctx.status == ExecutorStatus.PAUSED:
@@ -295,14 +292,13 @@ class TWAPExecutor(ExecutorBase):
                     action_type=ExecutorActionType.COMPLETE,
                     reason="TWAP 执行完成",
                 )
-            else:
-                # 未完成但无更多分片
-                ctx.status = ExecutorStatus.FAILED
-                ctx.error = "所有分片已处理但未达成目标"
-                return ExecutorAction(
-                    action_type=ExecutorActionType.ABORT,
-                    reason=ctx.error,
-                )
+            # 未完成但无更多分片
+            ctx.status = ExecutorStatus.FAILED
+            ctx.error = "所有分片已处理但未达成目标"
+            return ExecutorAction(
+                action_type=ExecutorActionType.ABORT,
+                reason=ctx.error,
+            )
 
         # 检查是否到达执行时间
         if next_slice.scheduled_time is not None and now < next_slice.scheduled_time:
@@ -314,7 +310,8 @@ class TWAPExecutor(ExecutorBase):
 
         # 计算重试次数（基于该分片的取消次数）
         slice_cancelled_count = sum(
-            1 for oid in ctx.cancelled_orders
+            1
+            for oid in ctx.cancelled_orders
             if self._get_slice_index_from_order_id(oid) == next_slice.index
         )
         if slice_cancelled_count >= self._config.retry_count:
@@ -374,9 +371,7 @@ class TWAPExecutor(ExecutorBase):
             },
         )
 
-    def _find_next_slice(
-        self, ctx: ExecutionPlanContext, current_time: float
-    ) -> SliceInfo | None:
+    def _find_next_slice(self, ctx: ExecutionPlanContext, current_time: float) -> SliceInfo | None:
         """查找下一个待执行的分片.
 
         V4PRO Scenario: MODE2.EXECUTOR.TWAP.SLICE

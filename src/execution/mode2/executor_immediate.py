@@ -27,6 +27,7 @@ import time
 from dataclasses import dataclass
 
 from src.execution.mode2.executor_base import (
+    TERMINAL_STATUSES,
     ExecutionPlanContext,
     ExecutionProgress,
     ExecutorAction,
@@ -38,7 +39,6 @@ from src.execution.mode2.executor_base import (
     OrderEvent,
     PendingOrder,
     SliceInfo,
-    TERMINAL_STATUSES,
 )
 from src.execution.mode2.intent import IntentIdGenerator, OrderIntent
 
@@ -58,7 +58,7 @@ class ImmediateConfig(ExecutorConfig):
         audit_enabled: 是否启用审计
     """
 
-    pass  # 使用基类默认配置
+    # 使用基类默认配置
 
 
 class ImmediateExecutor(ExecutorBase):
@@ -138,9 +138,7 @@ class ImmediateExecutor(ExecutorBase):
 
         return plan_id
 
-    def next_action(
-        self, plan_id: str, current_time: float | None = None
-    ) -> ExecutorAction | None:
+    def next_action(self, plan_id: str, current_time: float | None = None) -> ExecutorAction | None:
         """获取下一个动作.
 
         V4PRO Scenario: MODE2.EXECUTOR.IMMEDIATE
@@ -165,16 +163,15 @@ class ImmediateExecutor(ExecutorBase):
                     action_type=ExecutorActionType.COMPLETE,
                     reason="执行完成",
                 )
-            elif ctx.status == ExecutorStatus.CANCELLED:
+            if ctx.status == ExecutorStatus.CANCELLED:
                 return ExecutorAction(
                     action_type=ExecutorActionType.ABORT,
                     reason="计划已取消",
                 )
-            else:
-                return ExecutorAction(
-                    action_type=ExecutorActionType.ABORT,
-                    reason=ctx.error or "执行失败",
-                )
+            return ExecutorAction(
+                action_type=ExecutorActionType.ABORT,
+                reason=ctx.error or "执行失败",
+            )
 
         # 暂停状态
         if ctx.status == ExecutorStatus.PAUSED:

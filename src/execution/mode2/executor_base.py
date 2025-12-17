@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from src.execution.mode2.intent import OrderIntent, Side, Offset
+from src.execution.mode2.intent import Offset, OrderIntent, Side
 
 
 class ExecutorActionType(str, Enum):
@@ -71,11 +71,13 @@ class ExecutorStatus(str, Enum):
 
 
 # 终态集合
-TERMINAL_STATUSES = frozenset([
-    ExecutorStatus.COMPLETED,
-    ExecutorStatus.CANCELLED,
-    ExecutorStatus.FAILED,
-])
+TERMINAL_STATUSES = frozenset(
+    [
+        ExecutorStatus.COMPLETED,
+        ExecutorStatus.CANCELLED,
+        ExecutorStatus.FAILED,
+    ]
+)
 
 
 @dataclass
@@ -276,7 +278,7 @@ class ExecutorBase(ABC):
             config: 执行器配置
         """
         self._config = config or ExecutorConfig()
-        self._plans: dict[str, "ExecutionPlanContext"] = {}
+        self._plans: dict[str, ExecutionPlanContext] = {}
 
     @property
     def config(self) -> ExecutorConfig:
@@ -405,9 +407,7 @@ class ExecutorBase(ABC):
             活动计划ID列表
         """
         return [
-            plan_id
-            for plan_id, ctx in self._plans.items()
-            if ctx.status not in TERMINAL_STATUSES
+            plan_id for plan_id, ctx in self._plans.items() if ctx.status not in TERMINAL_STATUSES
         ]
 
     def is_plan_active(self, plan_id: str) -> bool:
@@ -451,10 +451,10 @@ class ExecutionPlanContext:
     intent: OrderIntent
     status: ExecutorStatus = ExecutorStatus.PENDING
     progress: ExecutionProgress = field(default_factory=ExecutionProgress)
-    slices: list["SliceInfo"] = field(default_factory=list)
+    slices: list[SliceInfo] = field(default_factory=list)
     current_slice_index: int = 0
-    pending_orders: dict[str, "PendingOrder"] = field(default_factory=dict)
-    filled_orders: list["FilledOrder"] = field(default_factory=list)
+    pending_orders: dict[str, PendingOrder] = field(default_factory=dict)
+    filled_orders: list[FilledOrder] = field(default_factory=list)
     cancelled_orders: list[str] = field(default_factory=list)
     error: str = ""
     start_time: float = 0.0

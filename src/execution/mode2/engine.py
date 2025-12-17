@@ -28,9 +28,10 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 from src.execution.mode2.audit_events import (
     Mode2AuditEvent,
@@ -49,13 +50,12 @@ from src.execution.mode2.audit_events import (
     create_slice_sent_event,
 )
 from src.execution.mode2.executor_base import (
+    ExecutionProgress,
     ExecutorAction,
     ExecutorActionType,
     ExecutorBase,
     ExecutorStatus,
     OrderEvent,
-    ExecutionProgress,
-    TERMINAL_STATUSES,
 )
 from src.execution.mode2.executor_iceberg import IcebergConfig, IcebergExecutor
 from src.execution.mode2.executor_immediate import ImmediateExecutor
@@ -249,18 +249,14 @@ class ExecutionEngine:
         # 幂等检查
         if self._registry.is_registered(intent_id):
             error_msg = f"意图已存在: {intent_id} (M2 幂等检查)"
-            self._emit_audit(create_intent_rejected_event(
-                intent, "DUPLICATE_INTENT", error_msg
-            ))
+            self._emit_audit(create_intent_rejected_event(intent, "DUPLICATE_INTENT", error_msg))
             logger.warning(error_msg)
             return False, error_msg
 
         # 检查意图是否过期
         if intent.is_expired():
             error_msg = f"意图已过期: {intent_id}"
-            self._emit_audit(create_intent_rejected_event(
-                intent, "INTENT_EXPIRED", error_msg
-            ))
+            self._emit_audit(create_intent_rejected_event(intent, "INTENT_EXPIRED", error_msg))
             logger.warning(error_msg)
             return False, error_msg
 
@@ -269,22 +265,23 @@ class ExecutionEngine:
             passed, reason = self._cost_check_callback(intent)
             if not passed:
                 error_msg = f"成本检查失败: {reason} (M5)"
-                self._emit_audit(create_intent_rejected_event(
-                    intent, "COST_CHECK_FAILED", error_msg
-                ))
+                self._emit_audit(
+                    create_intent_rejected_event(intent, "COST_CHECK_FAILED", error_msg)
+                )
                 logger.warning(error_msg)
                 return False, error_msg
 
         # 检查并发计划数
         active_count = sum(
-            1 for p in self._plans.values()
+            1
+            for p in self._plans.values()
             if p.status in (ExecutionPlanStatus.PENDING, ExecutionPlanStatus.ACTIVE)
         )
         if active_count >= self._config.max_concurrent_plans:
             error_msg = f"并发计划数超限: {active_count} >= {self._config.max_concurrent_plans}"
-            self._emit_audit(create_intent_rejected_event(
-                intent, "MAX_CONCURRENT_EXCEEDED", error_msg
-            ))
+            self._emit_audit(
+                create_intent_rejected_event(intent, "MAX_CONCURRENT_EXCEEDED", error_msg)
+            )
             logger.warning(error_msg)
             return False, error_msg
 
@@ -304,9 +301,7 @@ class ExecutionEngine:
         # 审计: 计划创建
         progress = executor.get_progress(plan_id)
         slice_count = progress.slice_count if progress else 1
-        self._emit_audit(create_plan_created_event(
-            intent, plan_id, slice_count, intent.algo.value
-        ))
+        self._emit_audit(create_plan_created_event(intent, plan_id, slice_count, intent.algo.value))
 
         # 记录计划
         plan = ExecutionPlan(
@@ -385,17 +380,19 @@ class ExecutionEngine:
 
             # 审计: 分片发送
             if action.client_order_id:
-                self._emit_audit(create_slice_sent_event(
-                    intent_id=plan.intent.intent_id,
-                    plan_id=plan_id,
-                    client_order_id=action.client_order_id,
-                    slice_index=action.metadata.get("slice_index", 0),
-                    instrument=action.instrument or "",
-                    side=action.side.value if action.side else "",
-                    offset=action.offset.value if action.offset else "",
-                    qty=action.qty or 0,
-                    price=action.price or 0.0,
-                ))
+                self._emit_audit(
+                    create_slice_sent_event(
+                        intent_id=plan.intent.intent_id,
+                        plan_id=plan_id,
+                        client_order_id=action.client_order_id,
+                        slice_index=action.metadata.get("slice_index", 0),
+                        instrument=action.instrument or "",
+                        side=action.side.value if action.side else "",
+                        offset=action.offset.value if action.offset else "",
+                        qty=action.qty or 0,
+                        price=action.price or 0.0,
+                    )
+                )
 
         elif action.action_type == ExecutorActionType.COMPLETE:
             plan.status = ExecutionPlanStatus.COMPLETED
@@ -411,17 +408,23 @@ class ExecutionEngine:
             self._registry.mark_completed(plan.intent.intent_id)
 
             # 审计: 意图完成
-            self._emit_audit(create_intent_completed_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                filled_qty=plan.filled_qty,
-                avg_price=plan.avg_price,
-                total_cost=progress.total_cost if progress else 0.0,
-                slice_count=progress.slice_count if progress else 0,
-                elapsed_seconds=plan.completed_at - plan.started_at if plan.started_at > 0 else 0.0,
-            ))
+            self._emit_audit(
+                create_intent_completed_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    filled_qty=plan.filled_qty,
+                    avg_price=plan.avg_price,
+                    total_cost=progress.total_cost if progress else 0.0,
+                    slice_count=progress.slice_count if progress else 0,
+                    elapsed_seconds=plan.completed_at - plan.started_at
+                    if plan.started_at > 0
+                    else 0.0,
+                )
+            )
 
-            logger.info(f"计划执行完成: {plan_id}, 成交={plan.filled_qty}, 均价={plan.avg_price:.4f}")
+            logger.info(
+                f"计划执行完成: {plan_id}, 成交={plan.filled_qty}, 均价={plan.avg_price:.4f}"
+            )
 
         elif action.action_type == ExecutorActionType.ABORT:
             plan.status = ExecutionPlanStatus.FAILED
@@ -438,27 +441,31 @@ class ExecutionEngine:
                 plan.avg_price = progress.avg_price
 
             # 审计: 意图失败
-            self._emit_audit(create_intent_failed_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                filled_qty=plan.filled_qty,
-                remaining_qty=plan.intent.target_qty - plan.filled_qty,
-                error_code="EXECUTION_FAILED",
-                error_msg=action.reason,
-            ))
+            self._emit_audit(
+                create_intent_failed_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    filled_qty=plan.filled_qty,
+                    remaining_qty=plan.intent.target_qty - plan.filled_qty,
+                    error_code="EXECUTION_FAILED",
+                    error_msg=action.reason,
+                )
+            )
 
             logger.warning(f"计划执行失败: {plan_id}, 原因: {action.reason}")
 
         elif action.action_type == ExecutorActionType.CANCEL_ORDER:
             # 审计: 分片取消（撤单请求）
             if action.client_order_id:
-                self._emit_audit(create_slice_cancelled_event(
-                    intent_id=plan.intent.intent_id,
-                    plan_id=plan_id,
-                    client_order_id=action.client_order_id,
-                    slice_index=action.metadata.get("slice_index", -1),
-                    reason=action.reason,
-                ))
+                self._emit_audit(
+                    create_slice_cancelled_event(
+                        intent_id=plan.intent.intent_id,
+                        plan_id=plan_id,
+                        client_order_id=action.client_order_id,
+                        slice_index=action.metadata.get("slice_index", -1),
+                        reason=action.reason,
+                    )
+                )
 
         return action
 
@@ -483,44 +490,52 @@ class ExecutionEngine:
 
         # 审计
         if event.event_type == "ACK":
-            self._emit_audit(create_slice_ack_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                client_order_id=event.client_order_id,
-                slice_index=self._parse_slice_index(event.client_order_id),
-                exchange_order_id=event.exchange_order_id,
-            ))
+            self._emit_audit(
+                create_slice_ack_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    client_order_id=event.client_order_id,
+                    slice_index=self._parse_slice_index(event.client_order_id),
+                    exchange_order_id=event.exchange_order_id,
+                )
+            )
 
         elif event.event_type in ("PARTIAL_FILL", "FILL"):
-            self._emit_audit(create_slice_filled_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                client_order_id=event.client_order_id,
-                slice_index=self._parse_slice_index(event.client_order_id),
-                filled_qty=event.filled_qty,
-                filled_price=event.filled_price,
-                remaining_qty=event.remaining_qty,
-                is_partial=event.event_type == "PARTIAL_FILL",
-            ))
+            self._emit_audit(
+                create_slice_filled_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    client_order_id=event.client_order_id,
+                    slice_index=self._parse_slice_index(event.client_order_id),
+                    filled_qty=event.filled_qty,
+                    filled_price=event.filled_price,
+                    remaining_qty=event.remaining_qty,
+                    is_partial=event.event_type == "PARTIAL_FILL",
+                )
+            )
 
         elif event.event_type == "REJECT":
-            self._emit_audit(create_slice_rejected_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                client_order_id=event.client_order_id,
-                slice_index=self._parse_slice_index(event.client_order_id),
-                error_code=event.error_code,
-                error_msg=event.error_msg,
-            ))
+            self._emit_audit(
+                create_slice_rejected_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    client_order_id=event.client_order_id,
+                    slice_index=self._parse_slice_index(event.client_order_id),
+                    error_code=event.error_code,
+                    error_msg=event.error_msg,
+                )
+            )
 
         elif event.event_type == "CANCEL_ACK":
-            self._emit_audit(create_slice_cancelled_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                client_order_id=event.client_order_id,
-                slice_index=self._parse_slice_index(event.client_order_id),
-                reason="撤单确认",
-            ))
+            self._emit_audit(
+                create_slice_cancelled_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    client_order_id=event.client_order_id,
+                    slice_index=self._parse_slice_index(event.client_order_id),
+                    reason="撤单确认",
+                )
+            )
 
         # 同步更新计划状态
         status = executor.get_status(plan_id)
@@ -552,11 +567,13 @@ class ExecutionEngine:
         success = executor.pause(plan_id)
         if success:
             plan.status = ExecutionPlanStatus.PAUSED
-            self._emit_audit(create_plan_paused_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                reason="用户暂停",
-            ))
+            self._emit_audit(
+                create_plan_paused_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    reason="用户暂停",
+                )
+            )
             logger.info(f"计划已暂停: {plan_id}")
 
         return success
@@ -581,11 +598,13 @@ class ExecutionEngine:
         success = executor.resume(plan_id)
         if success:
             plan.status = ExecutionPlanStatus.ACTIVE
-            self._emit_audit(create_plan_resumed_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                reason="用户恢复",
-            ))
+            self._emit_audit(
+                create_plan_resumed_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    reason="用户恢复",
+                )
+            )
             logger.info(f"计划已恢复: {plan_id}")
 
         return success
@@ -623,13 +642,15 @@ class ExecutionEngine:
             # 标记意图失败
             self._registry.mark_failed(plan.intent.intent_id)
 
-            self._emit_audit(create_plan_cancelled_event(
-                intent_id=plan.intent.intent_id,
-                plan_id=plan_id,
-                filled_qty=plan.filled_qty,
-                remaining_qty=plan.intent.target_qty - plan.filled_qty,
-                reason=plan.error,
-            ))
+            self._emit_audit(
+                create_plan_cancelled_event(
+                    intent_id=plan.intent.intent_id,
+                    plan_id=plan_id,
+                    filled_qty=plan.filled_qty,
+                    remaining_qty=plan.intent.target_qty - plan.filled_qty,
+                    reason=plan.error,
+                )
+            )
             logger.info(f"计划已取消: {plan_id}, 原因: {plan.error}")
 
         return success
@@ -710,20 +731,18 @@ class ExecutionEngine:
         """
         total_plans = len(self._plans)
         active_plans = sum(
-            1 for p in self._plans.values()
+            1
+            for p in self._plans.values()
             if p.status in (ExecutionPlanStatus.PENDING, ExecutionPlanStatus.ACTIVE)
         )
         completed_plans = sum(
-            1 for p in self._plans.values()
-            if p.status == ExecutionPlanStatus.COMPLETED
+            1 for p in self._plans.values() if p.status == ExecutionPlanStatus.COMPLETED
         )
         failed_plans = sum(
-            1 for p in self._plans.values()
-            if p.status == ExecutionPlanStatus.FAILED
+            1 for p in self._plans.values() if p.status == ExecutionPlanStatus.FAILED
         )
         cancelled_plans = sum(
-            1 for p in self._plans.values()
-            if p.status == ExecutionPlanStatus.CANCELLED
+            1 for p in self._plans.values() if p.status == ExecutionPlanStatus.CANCELLED
         )
 
         return {
@@ -758,6 +777,7 @@ class ExecutionEngine:
         """
         try:
             from src.execution.mode2.intent import IntentIdGenerator
+
             _, slice_index, _ = IntentIdGenerator.parse_client_order_id(client_order_id)
             return slice_index
         except ValueError:

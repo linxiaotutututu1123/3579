@@ -365,9 +365,7 @@ def create_slice_filled_event(
         审计事件
     """
     event_type = (
-        Mode2AuditEventType.SLICE_PARTIAL_FILL
-        if is_partial
-        else Mode2AuditEventType.SLICE_FILLED
+        Mode2AuditEventType.SLICE_PARTIAL_FILL if is_partial else Mode2AuditEventType.SLICE_FILLED
     )
     return Mode2AuditEvent(
         event_type=event_type,

@@ -28,6 +28,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from src.execution.mode2.executor_base import (
+    TERMINAL_STATUSES,
     ExecutionPlanContext,
     ExecutionProgress,
     ExecutorAction,
@@ -39,7 +40,6 @@ from src.execution.mode2.executor_base import (
     OrderEvent,
     PendingOrder,
     SliceInfo,
-    TERMINAL_STATUSES,
 )
 from src.execution.mode2.intent import IntentIdGenerator, OrderIntent
 
@@ -245,9 +245,7 @@ class VWAPExecutor(ExecutorBase):
 
         return slices
 
-    def next_action(
-        self, plan_id: str, current_time: float | None = None
-    ) -> ExecutorAction | None:
+    def next_action(self, plan_id: str, current_time: float | None = None) -> ExecutorAction | None:
         """获取下一个动作.
 
         V4PRO Scenario: MODE2.EXECUTOR.VWAP
@@ -272,16 +270,15 @@ class VWAPExecutor(ExecutorBase):
                     action_type=ExecutorActionType.COMPLETE,
                     reason="VWAP 执行完成",
                 )
-            elif ctx.status == ExecutorStatus.CANCELLED:
+            if ctx.status == ExecutorStatus.CANCELLED:
                 return ExecutorAction(
                     action_type=ExecutorActionType.ABORT,
                     reason="计划已取消",
                 )
-            else:
-                return ExecutorAction(
-                    action_type=ExecutorActionType.ABORT,
-                    reason=ctx.error or "执行失败",
-                )
+            return ExecutorAction(
+                action_type=ExecutorActionType.ABORT,
+                reason=ctx.error or "执行失败",
+            )
 
         # 暂停状态
         if ctx.status == ExecutorStatus.PAUSED:
@@ -326,13 +323,12 @@ class VWAPExecutor(ExecutorBase):
                     action_type=ExecutorActionType.COMPLETE,
                     reason="VWAP 执行完成",
                 )
-            else:
-                ctx.status = ExecutorStatus.FAILED
-                ctx.error = "所有分片已处理但未达成目标"
-                return ExecutorAction(
-                    action_type=ExecutorActionType.ABORT,
-                    reason=ctx.error,
-                )
+            ctx.status = ExecutorStatus.FAILED
+            ctx.error = "所有分片已处理但未达成目标"
+            return ExecutorAction(
+                action_type=ExecutorActionType.ABORT,
+                reason=ctx.error,
+            )
 
         # 检查执行时间
         if next_slice.scheduled_time is not None and now < next_slice.scheduled_time:
@@ -344,7 +340,8 @@ class VWAPExecutor(ExecutorBase):
 
         # 计算重试次数
         slice_cancelled_count = sum(
-            1 for oid in ctx.cancelled_orders
+            1
+            for oid in ctx.cancelled_orders
             if self._get_slice_index_from_order_id(oid) == next_slice.index
         )
         if slice_cancelled_count >= self._config.retry_count:
@@ -472,17 +469,7 @@ class VWAPExecutor(ExecutorBase):
                 ctx.status = ExecutorStatus.COMPLETED
                 ctx.end_time = time.time()
 
-        elif event.event_type == "REJECT":
-            if client_order_id in ctx.pending_orders:
-                del ctx.pending_orders[client_order_id]
-                ctx.cancelled_orders.append(client_order_id)
-
-                slice_index = self._get_slice_index_from_order_id(client_order_id)
-                if 0 <= slice_index < len(ctx.slices):
-                    ctx.slices[slice_index].executed = False
-                    ctx.current_slice_index = min(ctx.current_slice_index, slice_index)
-
-        elif event.event_type == "CANCEL_ACK":
+        elif event.event_type == "REJECT" or event.event_type == "CANCEL_ACK":
             if client_order_id in ctx.pending_orders:
                 del ctx.pending_orders[client_order_id]
                 ctx.cancelled_orders.append(client_order_id)
