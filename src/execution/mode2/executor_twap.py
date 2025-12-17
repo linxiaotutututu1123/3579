@@ -524,7 +524,7 @@ class TWAPExecutor(ExecutorBase):
             return []
         return list(ctx.pending_orders.keys())
 
-    def get_schedule(self, plan_id: str) -> list[dict]:
+    def get_schedule(self, plan_id: str) -> list[dict[str, Any]]:
         """获取执行时间表.
 
         Args:
