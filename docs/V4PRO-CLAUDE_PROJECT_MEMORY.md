@@ -146,8 +146,8 @@
 
 ### 核心指示文件
 - `docs/V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md` - 最高指示文件
-- `docs/V4PRO_ACCEPTANCE_MATRIX_SUPREME.md` - 验收矩阵 (165场景)
-- `docs/V4PRO_FILE_INVENTORY_SUPREME_REPORT.md` - 文件清单报告 (新增)
+- `docs/V4PRO_ACCEPTANCE_MATRIX_SUPREME.md` - 验收矩阵 (215场景, 含62个Phase 6场景)
+- `docs/V4PRO_FILE_INVENTORY_SUPREME_REPORT.md` - 文件清单报告
 - `docs/V4PRO-MILITARY_GRADE_AUDIT_REPORT.md` - 军规级审计报告
 - `docs/V4PRO-CLAUDE_PROJECT_MEMORY.md` - 项目记忆文件 (本文件)
 - `docs/V4PROEXIT_CODES.md` - 退出码约定
@@ -159,7 +159,14 @@
 - `src/risk/dynamic_var.py` - 动态VaR
 - `src/risk/attribution.py` - 风险归因
 
-### 待实施模块位置
+### 待实施模块位置 - Phase 6 B类模型
+- `src/strategy/dl/` - 深度学习模块 (21文件)
+- `src/strategy/rl/` - 强化学习模块 (15文件)
+- `src/strategy/cv/` - 交叉验证模块 (10文件)
+- `src/strategy/utils/` - 工具模块 (5文件)
+- `src/strategy/common/` - 公共模块 (4文件)
+
+### 待实施模块位置 - 其他Phase
 - `src/strategy/experimental/` - 实验策略门禁
 - `src/market/trading_calendar.py` - 交易日历
 
