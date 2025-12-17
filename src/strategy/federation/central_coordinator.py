@@ -36,6 +36,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 

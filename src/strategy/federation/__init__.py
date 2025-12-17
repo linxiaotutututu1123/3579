@@ -27,6 +27,7 @@ from src.strategy.federation.central_coordinator import (
     create_signal,
 )
 
+
 __all__ = [
     "CorrelationMatrix",
     "FederationSignal",
