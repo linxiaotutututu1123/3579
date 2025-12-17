@@ -57,6 +57,7 @@
 - [§33 工时估算](#33-工时估算)
 - [§34 验收标准](#34-验收标准)
 - [§35 附录](#35-附录)
+- [§36 修订历史](#36-修订历史)
 
 ---
 
@@ -1849,6 +1850,10 @@ RPN等级:
 | 测试覆盖下降 | 单次提交 | 自动 |
 | 生产异常 | 版本回滚 | 手动 |
 | 资金异常 | 系统暂停 | 手动 |
+| 策略异常 | 策略降级 | 自动 |
+| 风控触发 | 系统熔断 | 自动 |
+
+|----------|----------|-----------|
 
 ### 28.2 回滚流程
 
@@ -1861,6 +1866,29 @@ RPN等级:
 6. 恢复服务
 7. 发送告警
 8. 事后分析
+9. 优化流程
+10. 更新文档
+11. AI辅助诊断
+12. 持续改进
+13. 定期演练
+14. 多环境测试
+15. 回滚审批
+16. 版本控制
+17. 灰度发布
+18. 回滚日志
+19. 回滚通知
+20. 回滚监控
+21. 回滚报告
+22. 回滚培训
+23. 回滚演练
+24. 回滚工具
+25. 回滚策略评审
+26. 回滚风险评估
+27. 回滚最佳实践
+28. 回滚自动化
+29. 回滚文档化
+
+30. 回滚持续改进
 ```
 
 ---
@@ -1871,19 +1899,16 @@ RPN等级:
 
 ```
 tests/
-├── unit/                    # 单元测试
-│   ├── test_market/
-│   ├── test_strategy/
-│   ├── test_risk/
+├── unit/                  # 单元测试
+│   ├── test_trading.py
+
+|   ├── test_risk.py
 │   └── ...
-├── integration/             # 集成测试
-│   ├── test_trading_flow/
-│   └── test_ctp_integration/
-├── e2e/                     # 端到端测试
-│   └── test_full_cycle/
-├── stress/                  # 压力测试
-│   └── test_high_load/
-└── conftest.py              # 公共fixtures
+├── integration/           # 集成测试
+│   ├── test_market_data.py
+|   ├── test_order_execution.py
+
+│   └── ...
 ```
 
 ### 29.2 测试覆盖要求
@@ -1895,7 +1920,18 @@ tests/
 | src/strategy/ | 90% | 88% |
 | src/market/ | 90% | 92% |
 | src/execution/ | 90% | 87% |
-| 总体 | 85% | 88.22% |
+| src/compliance/ | 85% | 86% |
+| src/audit/ | 90% | 89% |
+| src/cost/ | 90% | 90% |
+| src/guardian/ | 90% | 84% |
+| src/replay/ | 90% | 87% |
+| src/portfolio/ | 85% | 88% |
+| src/monitoring/ | 85% | 86% |
+| src/experimental/ | 80% | 82% |
+| src/advanced_risk/ | 80% | 81% |
+| src/fee_calculator/ | 85% | 88% |
+
+| 总体 | 90% | 88.22% |
 
 ### 29.3 场景测试命名
 
@@ -1906,6 +1942,10 @@ def test_{module}_{feature}_{scenario}():
     RULE_ID: {MODULE}.{FEATURE}.{SCENARIO}
     军规: M{X}
     描述: ...
+    前置条件: ...
+    操作步骤: ...
+
+    预期结果: ...
     """
     pass
 ```
@@ -1926,6 +1966,10 @@ on:
     branches: [main, feat/*]
   pull_request:
     branches: [main]
+
+
+
+
 
 jobs:
   lint:
