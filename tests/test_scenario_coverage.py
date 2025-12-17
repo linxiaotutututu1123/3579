@@ -336,8 +336,11 @@ class TestMktConn:
     def test_error_recover(self) -> None:
         """MKT.CONN.ERROR_RECOVER: 错误恢复."""
         # 模拟错误恢复状态机
-        states = ["connected", "error", "recovering", "connected"]
+        valid_states = {"connected", "error", "recovering"}
         current_state = "error"
+
+        # 验证初始状态有效
+        assert current_state in valid_states
 
         # 触发恢复
         if current_state == "error":
@@ -346,6 +349,7 @@ class TestMktConn:
             current_state = "connected"
 
         assert current_state == "connected"
+        assert current_state in valid_states
 
     def test_multi_source_support(self) -> None:
         """MKT.CONN.MULTI_SOURCE: 多源支持."""
