@@ -428,11 +428,12 @@ class IcebergExecutor(ExecutorBase):
                 # 完全成交时移除挂单(触发补单)
                 if event.event_type == "FILL":
                     del ctx.pending_orders[client_order_id]
-                elif event.event_type == "PARTIAL_FILL":
-                    # 部分成交时根据配置决定是否补单
-                    if self._iceberg_config.refresh_on_partial:
-                        # 更新挂单数量
-                        pending.qty = event.remaining_qty
+                elif (
+                    event.event_type == "PARTIAL_FILL"
+                    and self._iceberg_config.refresh_on_partial
+                ):
+                    # 部分成交时根据配置决定是否补单,更新挂单数量
+                    pending.qty = event.remaining_qty
 
             ctx.update_progress()
 
@@ -441,10 +442,12 @@ class IcebergExecutor(ExecutorBase):
                 ctx.status = ExecutorStatus.COMPLETED
                 ctx.end_time = time.time()
 
-        elif event.event_type == "REJECT" or event.event_type == "CANCEL_ACK":
-            if client_order_id in ctx.pending_orders:
-                del ctx.pending_orders[client_order_id]
-                ctx.cancelled_orders.append(client_order_id)
+        elif (
+            event.event_type in {"REJECT", "CANCEL_ACK"}
+            and client_order_id in ctx.pending_orders
+        ):
+            del ctx.pending_orders[client_order_id]
+            ctx.cancelled_orders.append(client_order_id)
 
                 slice_index = self._get_slice_index_from_order_id(client_order_id)
                 if 0 <= slice_index < len(ctx.slices):
