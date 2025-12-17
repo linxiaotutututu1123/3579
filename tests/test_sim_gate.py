@@ -336,3 +336,119 @@ class TestSimGate:
         content = json.loads(output.read_text())
         assert content["schema_version"] == 3
         assert content["type"] == "replay"
+
+    def test_set_metrics(self) -> None:
+        """set_metrics updates report metrics."""
+        gate = SimGate(sim_type="sim")
+        gate.set_metrics(
+            total_ticks=1000,
+            avg_tick_duration_ms=1.5,
+            max_drawdown_pct=5.0,
+            orders_placed=100,
+            orders_rejected=10,
+            orders_filled=90,
+            pnl_total=5000.0,
+        )
+        metrics = gate.report.metrics
+        assert metrics.total_ticks == 1000
+        assert metrics.avg_tick_duration_ms == 1.5
+        assert metrics.max_drawdown_pct == 5.0
+        assert metrics.orders_placed == 100
+        assert metrics.orders_rejected == 10
+        assert metrics.orders_filled == 90
+        assert metrics.pnl_total == 5000.0
+
+    def test_generate_report(self) -> None:
+        """generate_report returns the report."""
+        gate = SimGate(sim_type="replay")
+        gate.record_pass("test")
+        report = gate.generate_report()
+        assert report.scenarios_passed == 1
+
+
+class TestGetSimExitCode:
+    """Tests for get_sim_exit_code function."""
+
+    def test_passed_returns_success(self) -> None:
+        """Passed report returns SUCCESS."""
+        from src.trading.sim_gate import get_sim_exit_code
+
+        report = SimReport(type="replay", scenarios_passed=5)
+        assert get_sim_exit_code(report) == SimExitCode.SUCCESS
+
+    def test_replay_fail_returns_replay_fail(self) -> None:
+        """Failed replay returns REPLAY_FAIL."""
+        from src.trading.sim_gate import get_sim_exit_code
+
+        report = SimReport(type="replay", scenarios_failed=1)
+        assert get_sim_exit_code(report) == SimExitCode.REPLAY_FAIL
+
+    def test_sim_fail_returns_sim_fail(self) -> None:
+        """Failed sim returns SIM_FAIL."""
+        from src.trading.sim_gate import get_sim_exit_code
+
+        report = SimReport(type="sim", scenarios_failed=1)
+        assert get_sim_exit_code(report) == SimExitCode.SIM_FAIL
+
+
+class TestGetPathsForType:
+    """Tests for get_paths_for_type function."""
+
+    def test_replay_paths(self) -> None:
+        """Replay paths are correct."""
+        from src.trading.sim_gate import get_paths_for_type
+
+        paths = get_paths_for_type("replay")
+        assert "report" in paths
+        assert "events_jsonl" in paths
+        assert "replay" in str(paths["report"])
+
+    def test_sim_paths(self) -> None:
+        """Sim paths are correct."""
+        from src.trading.sim_gate import get_paths_for_type
+
+        paths = get_paths_for_type("sim")
+        assert "report" in paths
+        assert "sim" in str(paths["report"])
+
+
+class TestSimReportSummary:
+    """Tests for SimReport summary method."""
+
+    def test_summary_pass(self) -> None:
+        """Summary for passed report."""
+        report = SimReport(type="replay", scenarios_total=5, scenarios_passed=5)
+        summary = report.summary()
+        assert "PASS" in summary
+        assert "5/5" in summary
+
+    def test_summary_fail(self) -> None:
+        """Summary for failed report."""
+        report = SimReport(type="sim", scenarios_total=5, scenarios_passed=3, scenarios_failed=2)
+        summary = report.summary()
+        assert "FAIL" in summary
+        assert "3/5" in summary
+
+
+class TestSimReportJson:
+    """Tests for SimReport JSON methods."""
+
+    def test_to_json(self) -> None:
+        """to_json returns valid JSON."""
+        import json
+
+        report = SimReport(type="replay")
+        json_str = report.to_json()
+        data = json.loads(json_str)
+        assert data["schema_version"] == 3
+        assert data["type"] == "replay"
+
+    def test_to_dict_artifacts_match_type(self) -> None:
+        """Artifacts paths match report type."""
+        report = SimReport(type="replay")
+        d = report.to_dict()
+        assert "replay" in d["artifacts"]["report_path"]
+
+        report_sim = SimReport(type="sim")
+        d_sim = report_sim.to_dict()
+        assert "sim" in d_sim["artifacts"]["report_path"]
