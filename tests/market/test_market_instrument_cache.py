@@ -58,7 +58,9 @@ class TestInstCacheLoad:
             cache.load_from_file(filepath)
 
             # Assert - Evidence
-            assert len(cache) == 2, f"[{self.RULE_ID}] Expected 2 instruments, got {len(cache)}"
+            assert len(cache) == 2, (
+                f"[{self.RULE_ID}] Expected 2 instruments, got {len(cache)}"
+            )
             rb2501 = cache.get("rb2501")
             rb2505 = cache.get("rb2505")
             assert rb2501 is not None, f"[{self.RULE_ID}] rb2501 should exist"

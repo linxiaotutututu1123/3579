@@ -427,7 +427,9 @@ class StrategyFederation:
         weights: dict[str, float] = {}
         for signal in signals:
             member = self._members[signal.strategy_id]
-            weight = member.dynamic_weight if self._enable_dynamic_weights else member.weight
+            weight = (
+                member.dynamic_weight if self._enable_dynamic_weights else member.weight
+            )
             weights[signal.strategy_id] = weight
 
         # 归一化权重
@@ -465,7 +467,9 @@ class StrategyFederation:
             strength = 0.0
 
         # 计算融合置信度
-        confidence = sum(weights.get(s.strategy_id, 0.0) * s.confidence for s in signals)
+        confidence = sum(
+            weights.get(s.strategy_id, 0.0) * s.confidence for s in signals
+        )
 
         contributing = tuple(s.strategy_id for s in signals)
 
@@ -567,7 +571,9 @@ class StrategyFederation:
                 # 动态权重 = 基础权重 * (1 + 表现因子)
                 base_weight = self._members[strategy_id].weight
                 perf_factor = max(0, perf) / total_perf
-                self._members[strategy_id].dynamic_weight = base_weight * (0.5 + perf_factor)
+                self._members[strategy_id].dynamic_weight = base_weight * (
+                    0.5 + perf_factor
+                )
 
     def record_hit(self, strategy_id: str) -> None:
         """记录策略命中."""
@@ -603,7 +609,9 @@ class StrategyFederation:
             "signal_count": self._signal_count,
             "conflict_count": self._conflict_count,
             "conflict_rate": (
-                self._conflict_count / self._signal_count if self._signal_count > 0 else 0.0
+                self._conflict_count / self._signal_count
+                if self._signal_count > 0
+                else 0.0
             ),
             "correlation_threshold": self._correlation_threshold,
             "members": {

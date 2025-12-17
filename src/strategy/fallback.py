@@ -160,7 +160,9 @@ class FallbackManager:
         }
         self._final_fallback = final_fallback
         self._strategies: dict[str, Strategy] = {}
-        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fallback")
+        self._executor = ThreadPoolExecutor(
+            max_workers=1, thread_name_prefix="fallback"
+        )
         self._fallback_counts: dict[str, int] = {}
         self._event_handlers: list[Callable[[FallbackEvent], None]] = []
 
@@ -273,7 +275,9 @@ class FallbackManager:
 
             # Try to execute with timeout and exception handling
             try:
-                portfolio = self._execute_with_timeout(strategy, state, current_strategy)
+                portfolio = self._execute_with_timeout(
+                    strategy, state, current_strategy
+                )
                 strategy_used = current_strategy
                 break  # Success, exit loop
 
@@ -292,7 +296,9 @@ class FallbackManager:
                     fallback_events.append(event)
                     self._emit_event(event)
                     self._increment_fallback_count(current_strategy)
-                    logger.warning("Strategy %s timed out, trying fallback", current_strategy)
+                    logger.warning(
+                        "Strategy %s timed out, trying fallback", current_strategy
+                    )
 
             except Exception as e:
                 # STRAT.FALLBACK.ON_EXCEPTION
@@ -366,7 +372,9 @@ class FallbackManager:
 
     def _increment_fallback_count(self, strategy_name: str) -> None:
         """Increment fallback count for a strategy."""
-        self._fallback_counts[strategy_name] = self._fallback_counts.get(strategy_name, 0) + 1
+        self._fallback_counts[strategy_name] = (
+            self._fallback_counts.get(strategy_name, 0) + 1
+        )
 
     def get_fallback_counts(self) -> dict[str, int]:
         """Get fallback counts by strategy.

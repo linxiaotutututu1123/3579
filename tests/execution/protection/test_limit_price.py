@@ -122,7 +122,9 @@ class TestLimitPriceCheckOutput:
         output_pass = LimitPriceCheckOutput(result=LimitPriceCheckResult.PASS)
         assert output_pass.passed is True
 
-        output_reject = LimitPriceCheckOutput(result=LimitPriceCheckResult.ABOVE_LIMIT_UP)
+        output_reject = LimitPriceCheckOutput(
+            result=LimitPriceCheckResult.ABOVE_LIMIT_UP
+        )
         assert output_reject.passed is False
 
     def test_to_dict(self) -> None:

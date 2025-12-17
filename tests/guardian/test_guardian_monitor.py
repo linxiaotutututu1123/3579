@@ -99,7 +99,9 @@ class TestGuardianMonitor:
     def test_check_triggers_mode_change(self) -> None:
         """测试检查触发模式变更."""
         fsm = GuardianFSM(initial_mode=GuardianMode.RUNNING)
-        trigger_manager = TriggerManager(triggers=[QuoteStaleTrigger(hard_stale_ms=5000.0)])
+        trigger_manager = TriggerManager(
+            triggers=[QuoteStaleTrigger(hard_stale_ms=5000.0)]
+        )
         monitor = GuardianMonitor(fsm=fsm, trigger_manager=trigger_manager)
 
         now = time.time()
@@ -117,7 +119,9 @@ class TestGuardianMonitor:
     def test_check_no_triggers(self) -> None:
         """测试无触发."""
         fsm = GuardianFSM(initial_mode=GuardianMode.RUNNING)
-        trigger_manager = TriggerManager(triggers=[QuoteStaleTrigger(hard_stale_ms=5000.0)])
+        trigger_manager = TriggerManager(
+            triggers=[QuoteStaleTrigger(hard_stale_ms=5000.0)]
+        )
         monitor = GuardianMonitor(fsm=fsm, trigger_manager=trigger_manager)
 
         now = time.time()
@@ -160,7 +164,9 @@ class TestGuardianMonitor:
         """测试模式变更回调."""
         changes: list[tuple[GuardianMode, GuardianMode, str]] = []
 
-        def on_change(from_mode: GuardianMode, to_mode: GuardianMode, trigger: str) -> None:
+        def on_change(
+            from_mode: GuardianMode, to_mode: GuardianMode, trigger: str
+        ) -> None:
             changes.append((from_mode, to_mode, trigger))
 
         monitor = GuardianMonitor(on_mode_change=on_change)

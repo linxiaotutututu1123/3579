@@ -50,7 +50,9 @@ class TestReplayVerifier:
             },
         ]
 
-        result = verifier.verify_decision_determinism(original_decisions, replay_decisions)
+        result = verifier.verify_decision_determinism(
+            original_decisions, replay_decisions
+        )
 
         assert result.is_deterministic is True
         assert result.output_hash_match is True
@@ -78,7 +80,9 @@ class TestReplayVerifier:
             },
         ]
 
-        result = verifier.verify_decision_determinism(original_decisions, replay_decisions)
+        result = verifier.verify_decision_determinism(
+            original_decisions, replay_decisions
+        )
 
         assert result.is_deterministic is False
         assert len(result.mismatches) > 0

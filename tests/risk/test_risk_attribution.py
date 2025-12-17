@@ -274,7 +274,9 @@ class TestFactorDecomposition:
 
         # 主因子应该是重要性最高的
         max_importance = max(f.importance for f in result.factors)
-        primary = next(f for f in result.factors if f.factor_type == result.primary_factor)
+        primary = next(
+            f for f in result.factors if f.factor_type == result.primary_factor
+        )
         assert primary.importance == max_importance
 
     def test_feature_importances_dict(
@@ -307,7 +309,9 @@ class TestProfitVsLoss:
         result = engine.attribute_trade("T001", "rb2501", 500.0, profit_features)
         assert result.is_loss is False
 
-    def test_loss_is_loss(self, engine: RiskAttributionEngine, loss_features: np.ndarray) -> None:
+    def test_loss_is_loss(
+        self, engine: RiskAttributionEngine, loss_features: np.ndarray
+    ) -> None:
         """测试亏损判定."""
         result = engine.attribute_trade("T001", "rb2501", -500.0, loss_features)
         assert result.is_loss is True
@@ -328,16 +332,22 @@ class TestProfitVsLoss:
 class TestGradientAttribution:
     """梯度归因测试."""
 
-    def test_gradient_method_with_model_output(self, sample_features: np.ndarray) -> None:
+    def test_gradient_method_with_model_output(
+        self, sample_features: np.ndarray
+    ) -> None:
         """测试带模型输出的梯度归因."""
         engine = RiskAttributionEngine(method=AttributionMethod.GRADIENT)
-        result = engine.attribute_trade("T001", "rb2501", -100.0, sample_features, model_output=0.5)
+        result = engine.attribute_trade(
+            "T001", "rb2501", -100.0, sample_features, model_output=0.5
+        )
 
         assert result.method == AttributionMethod.GRADIENT
         assert result.confidence == 0.8
         assert "model_output" in result.metadata
 
-    def test_gradient_falls_back_without_model_output(self, sample_features: np.ndarray) -> None:
+    def test_gradient_falls_back_without_model_output(
+        self, sample_features: np.ndarray
+    ) -> None:
         """测试无模型输出时回退到简单方法."""
         engine = RiskAttributionEngine(method=AttributionMethod.GRADIENT)
         result = engine.attribute_trade("T001", "rb2501", -100.0, sample_features)

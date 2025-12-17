@@ -86,7 +86,13 @@ class ReplayVerifier:
             序列哈希
         """
         # 只对关键字段哈希，忽略时间戳等可变字段
-        key_fields = ["event_type", "strategy_id", "target_portfolio", "mode_from", "mode_to"]
+        key_fields = [
+            "event_type",
+            "strategy_id",
+            "target_portfolio",
+            "mode_from",
+            "mode_to",
+        ]
 
         filtered_events = []
         for event in events:
@@ -136,9 +142,13 @@ class ReplayVerifier:
 
         # 长度不同也记录
         if len(original_outputs) != len(replay_outputs):
-            mismatches.extend(range(min_len, max(len(original_outputs), len(replay_outputs))))
+            mismatches.extend(
+                range(min_len, max(len(original_outputs), len(replay_outputs)))
+            )
 
-        is_deterministic = input_hash_match and output_hash_match and len(mismatches) == 0
+        is_deterministic = (
+            input_hash_match and output_hash_match and len(mismatches) == 0
+        )
 
         return ReplayResult(
             is_deterministic=is_deterministic,

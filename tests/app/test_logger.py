@@ -117,7 +117,11 @@ class TestLogFormat:
         data = json.loads(output)
 
         assert "extra" in data
-        extra = json.loads(data["extra"]) if isinstance(data["extra"], str) else data["extra"]
+        extra = (
+            json.loads(data["extra"])
+            if isinstance(data["extra"], str)
+            else data["extra"]
+        )
         assert "exception" in extra
 
     def test_json_formatter_escapes_special_chars(self) -> None:
@@ -198,7 +202,9 @@ class TestLogLevel:
 
     def test_set_log_level_by_enum(self) -> None:
         """测试通过枚举设置日志级别."""
-        logger = setup_logging(LogConfig(level=LogLevel.INFO), root_name="test_set_enum")
+        logger = setup_logging(
+            LogConfig(level=LogLevel.INFO), root_name="test_set_enum"
+        )
         set_log_level(LogLevel.DEBUG, "test_set_enum")
 
         assert logger.level == logging.DEBUG

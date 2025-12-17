@@ -200,7 +200,11 @@ class TestPortfolioModuleImports:
 
     def test_import(self) -> None:
         """测试从portfolio模块导入."""
-        from src.portfolio import PortfolioAnalytics, PortfolioManager, PositionAggregator
+        from src.portfolio import (
+            PortfolioAnalytics,
+            PortfolioManager,
+            PositionAggregator,
+        )
 
         assert PortfolioManager is not None
         assert PortfolioAnalytics is not None

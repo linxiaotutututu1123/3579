@@ -81,7 +81,9 @@ class TestMktQualityOutlier:
 
         # Assert - Evidence
         outlier_events = [e for e in events if e.issue == QualityIssue.OUTLIER]
-        assert len(outlier_events) == 1, f"[{self.RULE_ID}] 60 ticks change should trigger outlier"
+        assert len(outlier_events) == 1, (
+            f"[{self.RULE_ID}] 60 ticks change should trigger outlier"
+        )
         assert outlier_events[0].symbol == "rb2501"
         assert outlier_events[0].details["ticks_change"] == 60.0
 
@@ -113,7 +115,9 @@ class TestMktQualityOutlier:
         checker.check(make_book("rb2501", ts=1000001.0, last=4060.0))
 
         # Assert - Evidence
-        assert len(received_events) == 1, f"[{self.RULE_ID}] Callback should be invoked for outlier"
+        assert len(received_events) == 1, (
+            f"[{self.RULE_ID}] Callback should be invoked for outlier"
+        )
         assert received_events[0].issue == QualityIssue.OUTLIER
 
 
@@ -202,7 +206,9 @@ class TestMktQualityDisorder:
         # Assert - Evidence
         # Should not have gap event (5s from 1000010), not from disordered 1000005
         gap_events = [e for e in events if e.issue == QualityIssue.GAP]
-        assert len(gap_events) == 0, f"[{self.RULE_ID}] Disordered tick should not update cache"
+        assert len(gap_events) == 0, (
+            f"[{self.RULE_ID}] Disordered tick should not update cache"
+        )
 
     def test_equal_timestamp_not_disorder(self) -> None:
         """相同时间戳不算乱序."""

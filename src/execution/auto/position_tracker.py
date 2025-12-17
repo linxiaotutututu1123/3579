@@ -169,7 +169,9 @@ class PositionTracker:
         if trade.direction == "BUY":
             if trade.offset == "OPEN":
                 # 买开：增加多头
-                total_cost = pos.long_avg_cost * pos.long_qty + trade.price * trade.volume
+                total_cost = (
+                    pos.long_avg_cost * pos.long_qty + trade.price * trade.volume
+                )
                 pos.long_qty += trade.volume
                 if pos.long_qty > 0:
                     pos.long_avg_cost = total_cost / pos.long_qty

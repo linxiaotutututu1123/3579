@@ -418,7 +418,10 @@ def setup_logging(
 
     # 添加文件处理器
     if config.file_output:
-        log_file = Path(config.log_dir) / f"{root_name}_{datetime.now(UTC).strftime('%Y%m%d')}.log"
+        log_file = (
+            Path(config.log_dir)
+            / f"{root_name}_{datetime.now(UTC).strftime('%Y%m%d')}.log"
+        )
         file_handler = create_file_handler(
             str(log_file),
             level=config.level.to_logging_level(),

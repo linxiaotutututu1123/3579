@@ -60,7 +60,9 @@ class TestMktSubscriberDiffUpdate:
 
         # Assert - Evidence
         assert diff.add == {"hc2501"}, f"[{self.RULE_ID}] add should be {{hc2501}}"
-        assert diff.remove == {"rb2505"}, f"[{self.RULE_ID}] remove should be {{rb2505}}"
+        assert diff.remove == {"rb2505"}, (
+            f"[{self.RULE_ID}] remove should be {{rb2505}}"
+        )
 
     def test_diff_no_change(self) -> None:
         """无变化时add和remove都为空."""

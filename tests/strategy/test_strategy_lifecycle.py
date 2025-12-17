@@ -19,12 +19,9 @@ import pytest
 
 from src.strategy.experimental.strategy_lifecycle import (
     ALLOCATION_CONFIGS,
-    AllocationConfig,
-    AllocationResult,
     AllocationTier,
     LifecycleStage,
     StrategyLifecycleManager,
-    StrategyPerformance,
     StrategyState,
     TransitionEvent,
     create_lifecycle_manager,
@@ -464,9 +461,7 @@ class TestStatistics:
         assert "stage_distribution" in stats
         assert "tier_distribution" in stats
 
-    def test_get_strategies_by_stage(
-        self, manager: StrategyLifecycleManager
-    ) -> None:
+    def test_get_strategies_by_stage(self, manager: StrategyLifecycleManager) -> None:
         """测试按阶段获取策略."""
         manager.register_strategy("ppo_v1", "PPO策略", "rl")
         manager.register_strategy("lstm_v1", "LSTM策略", "dl")
@@ -619,9 +614,7 @@ class TestM18ExperimentalGate:
         allocation = manager.get_allocation("ppo_v1")
         assert allocation.config.max_capital_pct == 0.0
 
-    def test_incubation_stage_blocked(
-        self, manager: StrategyLifecycleManager
-    ) -> None:
+    def test_incubation_stage_blocked(self, manager: StrategyLifecycleManager) -> None:
         """测试孵化期策略被阻止."""
         state = manager.register_strategy("ppo_v1", "PPO策略", "rl")
         assert state.stage == LifecycleStage.INCUBATION
@@ -660,9 +653,7 @@ class TestM12DoubleConfirm:
 class TestM19RiskAttribution:
     """M19军规测试: 风险归因."""
 
-    def test_performance_tracking(
-        self, manager: StrategyLifecycleManager
-    ) -> None:
+    def test_performance_tracking(self, manager: StrategyLifecycleManager) -> None:
         """测试策略表现追踪."""
         manager.register_strategy("ppo_v1", "PPO策略", "rl")
 
@@ -714,16 +705,12 @@ class TestEdgeCases:
         result = manager.approve_transition("nonexistent", "approver")
         assert result is None
 
-    def test_unregister_nonexistent(
-        self, manager: StrategyLifecycleManager
-    ) -> None:
+    def test_unregister_nonexistent(self, manager: StrategyLifecycleManager) -> None:
         """测试注销不存在的策略."""
         result = manager.unregister_strategy("nonexistent")
         assert result is False
 
-    def test_empty_transition_history(
-        self, manager: StrategyLifecycleManager
-    ) -> None:
+    def test_empty_transition_history(self, manager: StrategyLifecycleManager) -> None:
         """测试空转换历史."""
         history = manager.get_transition_history("ppo_v1")
         assert history == []

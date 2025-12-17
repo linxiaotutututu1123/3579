@@ -101,9 +101,7 @@ class GateReport:
     def summary(self) -> str:
         """Generate summary string."""
         status = "PASS" if self.all_passed else "FAIL"
-        return (
-            f"CI Gate [{self.target_mode}]: {status} ({self.pass_count}/{len(self.checks)} passed)"
-        )
+        return f"CI Gate [{self.target_mode}]: {status} ({self.pass_count}/{len(self.checks)} passed)"
 
 
 class CIGate:
@@ -132,7 +130,9 @@ class CIGate:
         required: bool = True,
     ) -> None:
         """Add a gate check."""
-        self._checks.append(GateCheck(name=name, status=status, message=message, required=required))
+        self._checks.append(
+            GateCheck(name=name, status=status, message=message, required=required)
+        )
 
     def check_tests_pass(self, test_passed: bool) -> None:
         """Check if all tests passed."""
@@ -550,7 +550,9 @@ def parse_ruff_output(output: str) -> list[CIStepFailure]:
             rule_parts = rest.split(" ", 1)
             rule = rule_parts[0] if rule_parts else ""
             message = rule_parts[1] if len(rule_parts) > 1 else rest
-            failures.append(CIStepFailure(file=file_path, line=line_no, rule=rule, message=message))
+            failures.append(
+                CIStepFailure(file=file_path, line=line_no, rule=rule, message=message)
+            )
     return failures
 
 
@@ -574,7 +576,9 @@ def parse_mypy_output(output: str) -> list[CIStepFailure]:
                 rule = "error"
             elif ": note:" in line:
                 rule = "note"
-            failures.append(CIStepFailure(file=file_path, line=line_no, rule=rule, message=message))
+            failures.append(
+                CIStepFailure(file=file_path, line=line_no, rule=rule, message=message)
+            )
     return failures
 
 
@@ -590,7 +594,9 @@ def parse_pytest_output(output: str) -> list[CIStepFailure]:
                 test_path = parts[1].split("::")[0] if "::" in parts[1] else parts[1]
                 message = parts[2] if len(parts) > 2 else "test failed"
                 failures.append(
-                    CIStepFailure(file=test_path, line=0, rule="FAILED", message=message)
+                    CIStepFailure(
+                        file=test_path, line=0, rule="FAILED", message=message
+                    )
                 )
     return failures
 
@@ -639,7 +645,9 @@ STEP_HINTS: dict[str, dict[str, list[str]]] = {
 }
 
 
-def get_hints_for_step(step_name: str, failures: list[CIStepFailure], output: str) -> list[str]:
+def get_hints_for_step(
+    step_name: str, failures: list[CIStepFailure], output: str
+) -> list[str]:
     """Generate hints based on step name and failures."""
     hints: list[str] = []
     step_hints = STEP_HINTS.get(step_name, {})
@@ -925,7 +933,9 @@ class PolicyReport:
         evidence: dict[str, Any] | None = None,
     ) -> None:
         """Add a policy violation."""
-        self.violations.append(PolicyViolation(code=code, message=message, evidence=evidence or {}))
+        self.violations.append(
+            PolicyViolation(code=code, message=message, evidence=evidence or {})
+        )
         logger.error("POLICY_VIOLATION: [%s] %s", code, message)
 
     def to_dict(self) -> dict[str, Any]:

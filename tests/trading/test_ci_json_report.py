@@ -181,7 +181,9 @@ class TestCIStep:
 
     def test_to_dict_basic(self) -> None:
         """to_dict includes basic fields."""
-        step = CIStep(name="test", status=CIStepStatus.PASS, exit_code=0, duration_ms=100)
+        step = CIStep(
+            name="test", status=CIStepStatus.PASS, exit_code=0, duration_ms=100
+        )
         d = step.to_dict()
         assert d["name"] == "test"
         assert d["status"] == "PASS"

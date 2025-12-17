@@ -365,7 +365,9 @@ class MarginTrigger(BaseTrigger):
         margin_used = state.get("margin_used", 0.0)
 
         # 计算使用率
-        usage_ratio = margin_used / equity if equity > 0 else (1.0 if margin_used > 0 else 0.0)
+        usage_ratio = (
+            margin_used / equity if equity > 0 else (1.0 if margin_used > 0 else 0.0)
+        )
 
         margin_available = max(0.0, equity - margin_used)
 

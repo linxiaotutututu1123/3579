@@ -61,7 +61,9 @@ class TradingSessionsModel(BaseModel):
     """交易时段集合模型."""
 
     day: list[TradingSessionModel] = Field(default_factory=list, description="日盘时段")
-    night: list[TradingSessionModel] = Field(default_factory=list, description="夜盘时段")
+    night: list[TradingSessionModel] = Field(
+        default_factory=list, description="夜盘时段"
+    )
 
 
 class ProductModel(BaseModel):
@@ -110,7 +112,9 @@ class ExchangeConfigModel(BaseModel):
     night_session_end: dict[str, list[str]] = Field(
         default_factory=dict, description="夜盘收盘时间"
     )
-    products: dict[str, list[ProductModel]] = Field(default_factory=dict, description="品种列表")
+    products: dict[str, list[ProductModel]] = Field(
+        default_factory=dict, description="品种列表"
+    )
 
     def get_all_products(self) -> list[ProductModel]:
         """获取所有品种."""

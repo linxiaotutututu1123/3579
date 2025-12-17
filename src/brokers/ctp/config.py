@@ -342,7 +342,9 @@ def load_full_ctp_config(
     # 加载行情配置
     market_config = CtpMarketConfig(
         md_front_addr=os.environ.get("CTP_MD_FRONT_ADDR", connection_config.front_addr),
-        subscribe_symbols=_parse_symbol_list(os.environ.get("CTP_SUBSCRIBE_SYMBOLS", "")),
+        subscribe_symbols=_parse_symbol_list(
+            os.environ.get("CTP_SUBSCRIBE_SYMBOLS", "")
+        ),
         auto_reconnect=os.environ.get("CTP_AUTO_RECONNECT", "true").lower() == "true",
         reconnect_interval=float(os.environ.get("CTP_RECONNECT_INTERVAL", "5.0")),
         max_reconnect_attempts=int(os.environ.get("CTP_MAX_RECONNECT_ATTEMPTS", "3")),

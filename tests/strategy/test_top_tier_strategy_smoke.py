@@ -2,11 +2,16 @@ from __future__ import annotations
 
 import random
 
-from src.strategy.top_tier_trend_risk_parity import TopTierConfig, TopTierTrendRiskParityStrategy
+from src.strategy.top_tier_trend_risk_parity import (
+    TopTierConfig,
+    TopTierTrendRiskParityStrategy,
+)
 from src.strategy.types import Bar1m, MarketState
 
 
-def _generate_fake_bars(n: int, base_price: float = 100.0, seed: int = 42) -> list[Bar1m]:
+def _generate_fake_bars(
+    n: int, base_price: float = 100.0, seed: int = 42
+) -> list[Bar1m]:
     """Generate n fake 1-minute bars with random walk prices."""
     random.seed(seed)
     bars: list[Bar1m] = []

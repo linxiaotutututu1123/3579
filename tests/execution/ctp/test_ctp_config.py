@@ -111,7 +111,10 @@ class TestCtpConfigLoad:
 
     def test_load_require_complete_checks_all(self) -> None:
         """测试require_complete检查所有变量."""
-        with patch.dict("os.environ", {}, clear=True), pytest.raises(CtpConfigMissingError):
+        with (
+            patch.dict("os.environ", {}, clear=True),
+            pytest.raises(CtpConfigMissingError),
+        ):
             load_ctp_config(TradeEnvironment.PAPER, require_complete=True)
 
 
@@ -459,7 +462,11 @@ class TestCtpFullConfig:
             full_config = load_full_ctp_config(TradeEnvironment.SIM)
 
             assert full_config.market.md_front_addr == "tcp://md.simnow.ctp.local:10130"
-            assert full_config.market.subscribe_symbols == ["rb2501", "au2506", "cu2503"]
+            assert full_config.market.subscribe_symbols == [
+                "rb2501",
+                "au2506",
+                "cu2503",
+            ]
 
     def test_load_full_config_with_trade_config(self) -> None:
         """测试加载带交易配置."""

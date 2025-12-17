@@ -428,7 +428,11 @@ class PairExecutor:
         Returns:
             活动配对 ID 列表
         """
-        return [pair_id for pair_id, result in self._results.items() if not result.is_complete()]
+        return [
+            pair_id
+            for pair_id, result in self._results.items()
+            if not result.is_complete()
+        ]
 
     def check_imbalances(self) -> list[str]:
         """检查所有不平衡.

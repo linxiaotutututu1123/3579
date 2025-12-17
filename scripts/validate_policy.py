@@ -78,7 +78,9 @@ REQUIRED_SCENARIO_FILES = [
 # Schema Requirements
 # =============================================================================
 REQUIRED_SCHEMA_VERSION = 3
-UUID_PATTERN = re.compile(r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$")
+UUID_PATTERN = re.compile(
+    r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+)
 
 
 @dataclass
@@ -230,7 +232,9 @@ def validate_ci_report(path: Path, result: ValidationResult) -> None:
         # Normalize: accept relative or absolute path that resolves to same location
         # 军规级: 使用 POSIX 格式比较，确保跨平台一致性 (Windows \ → Linux /)
         if report_path:
-            actual_normalized = normalize_path_for_comparison(PROJECT_ROOT / report_path)
+            actual_normalized = normalize_path_for_comparison(
+                PROJECT_ROOT / report_path
+            )
             expected_normalized = normalize_path_for_comparison(expected_path)
             if actual_normalized != expected_normalized:
                 msg = f"CI report path must resolve to {expected_normalized}"
@@ -342,7 +346,9 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
         # 验证 report_path
         # 军规级: 使用 POSIX 格式比较，确保跨平台一致性 (Windows \ → Linux /)
         if report_path:
-            actual_normalized = normalize_path_for_comparison(PROJECT_ROOT / report_path)
+            actual_normalized = normalize_path_for_comparison(
+                PROJECT_ROOT / report_path
+            )
             expected_normalized = normalize_path_for_comparison(expected_report)
             if actual_normalized != expected_normalized:
                 msg = f"type={report_type} requires report_path in {expected_dir}"
@@ -350,13 +356,19 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
                     "POLICY.TYPE_PATH_MISMATCH",
                     f"{msg}, got: {report_path}",
                     str(path),
-                    {"type": report_type, "expected": expected_dir, "actual": report_path},
+                    {
+                        "type": report_type,
+                        "expected": expected_dir,
+                        "actual": report_path,
+                    },
                 )
 
         # 验证 events_jsonl_path
         # 军规级: 使用 POSIX 格式比较，确保跨平台一致性 (Windows \ → Linux /)
         if events_path:
-            actual_normalized = normalize_path_for_comparison(PROJECT_ROOT / events_path)
+            actual_normalized = normalize_path_for_comparison(
+                PROJECT_ROOT / events_path
+            )
             expected_normalized = normalize_path_for_comparison(expected_events)
             if actual_normalized != expected_normalized:
                 msg = f"type={report_type} requires events_jsonl in {expected_dir}"
@@ -364,7 +376,11 @@ def validate_sim_report(path: Path, result: ValidationResult) -> None:
                     "POLICY.TYPE_PATH_MISMATCH",
                     f"{msg}, got: {events_path}",
                     str(path),
-                    {"type": report_type, "expected": expected_dir, "actual": events_path},
+                    {
+                        "type": report_type,
+                        "expected": expected_dir,
+                        "actual": events_path,
+                    },
                 )
 
     # 最低活动阈值检查（军规级）
@@ -650,7 +666,9 @@ def main() -> int:
     if result.passed:
         print("[PASS] Policy validation PASSED")
         return EXIT_SUCCESS
-    print(f"[FAIL] Policy validation FAILED with {len(result.violations)} violation(s):")
+    print(
+        f"[FAIL] Policy validation FAILED with {len(result.violations)} violation(s):"
+    )
     for v in result.violations:
         print(f"  [{v.code}] {v.message}")
         if v.file:

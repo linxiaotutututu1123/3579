@@ -328,14 +328,19 @@ class TestCorrelation:
         """测试相关性随时间构建."""
         # 提交多轮变化的信号（需要有变化才能计算相关性）
         import random
+
         random.seed(42)  # 固定种子保证可重现
 
         for i in range(15):
             # 生成有变化的信号强度，但方向相同
             strength = 0.6 + 0.3 * (i % 3) / 2  # 在0.6-0.75之间变化
             signals = [
-                create_signal("kalman_arb", "rb2501", SignalDirection.LONG, strength, 0.9),
-                create_signal("lstm_trend", "rb2501", SignalDirection.LONG, strength, 0.9),
+                create_signal(
+                    "kalman_arb", "rb2501", SignalDirection.LONG, strength, 0.9
+                ),
+                create_signal(
+                    "lstm_trend", "rb2501", SignalDirection.LONG, strength, 0.9
+                ),
             ]
             federation_with_strategies.generate_signal("rb2501", signals)
 

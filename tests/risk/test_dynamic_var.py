@@ -134,9 +134,6 @@ class TestEVTVaR:
         assert result.method == VaRMethod.EVT_GPD
         assert result.var > 0
         # 厚尾分布VaR应该更大
-        hist_result = engine.calculate_var(
-            fat_tail_returns, VaRMethod.HISTORICAL, 0.99
-        )
         # EVT VaR可能大于或小于历史VaR，取决于拟合
 
     def test_evt_var_insufficient_samples(self, engine: DynamicVaREngine) -> None:
@@ -208,9 +205,7 @@ class TestLimitAdjustedVaR:
         assert result.var > 0
         assert result.metadata["limit_pct"] == 0.10
 
-    def test_limit_adjusted_var_with_extremes(
-        self, engine: DynamicVaREngine
-    ) -> None:
+    def test_limit_adjusted_var_with_extremes(self, engine: DynamicVaREngine) -> None:
         """测试包含极端收益的涨跌停调整."""
         # 包含超过涨跌停的收益
         returns = [-0.02] * 90 + [-0.15] * 10  # 10%的收益超过10%涨跌停
@@ -278,7 +273,10 @@ class TestLiquidityAdjustedVaR:
         )
 
         # 大仓位流动性成本更高
-        assert large_pos.metadata["impact_cost_pct"] > small_pos.metadata["impact_cost_pct"]
+        assert (
+            large_pos.metadata["impact_cost_pct"]
+            > small_pos.metadata["impact_cost_pct"]
+        )
 
     def test_liquidity_adjusted_var_multi_day(
         self, engine: DynamicVaREngine, normal_returns: list[float]
@@ -413,9 +411,7 @@ class TestStatistics:
         engine.semiparametric_var(normal_returns)
         assert engine.calculation_count == 2
 
-    def test_reset(
-        self, engine: DynamicVaREngine, normal_returns: list[float]
-    ) -> None:
+    def test_reset(self, engine: DynamicVaREngine, normal_returns: list[float]) -> None:
         """测试重置."""
         engine.evt_var(normal_returns)
         engine.reset()
@@ -521,7 +517,11 @@ class TestM6CircuitBreaker:
         result = engine.evt_var(returns, confidence=0.99)
 
         # 应触发告警
-        assert result.risk_level in [RiskLevel.WARNING, RiskLevel.DANGER, RiskLevel.CRITICAL]
+        assert result.risk_level in [
+            RiskLevel.WARNING,
+            RiskLevel.DANGER,
+            RiskLevel.CRITICAL,
+        ]
 
 
 # ============================================================

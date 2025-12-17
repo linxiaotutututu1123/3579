@@ -138,7 +138,9 @@ def check_coverage(
 
     # Check overall
     if overall < OVERALL_THRESHOLD:
-        violations.append(f"Overall coverage {overall:.1f}% < {OVERALL_THRESHOLD}% threshold")
+        violations.append(
+            f"Overall coverage {overall:.1f}% < {OVERALL_THRESHOLD}% threshold"
+        )
 
     # Check core domains
     core_modules = [m for m in modules if m.is_core]
@@ -150,7 +152,9 @@ def check_coverage(
                 )
             else:
                 # In grace period, just warn but don't fail
-                print(f"  ⚠ Core module {module.name}: {module.cover:.1f}% (target: 100%)")
+                print(
+                    f"  ⚠ Core module {module.name}: {module.cover:.1f}% (target: 100%)"
+                )
 
     return len(violations) == 0, violations
 

@@ -315,7 +315,9 @@ class TestThrottleGate:
         result = gate.check_and_record(now=1000.0)
         assert result.passed()
         # After check_and_record, verify order was recorded
-        assert gate.get_remaining_capacity(now=1000.0) == config.max_orders_per_minute - 1
+        assert (
+            gate.get_remaining_capacity(now=1000.0) == config.max_orders_per_minute - 1
+        )
 
     def test_throttle_remaining_capacity(self) -> None:
         """Test remaining capacity calculation."""

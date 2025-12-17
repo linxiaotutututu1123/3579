@@ -383,7 +383,9 @@ class TestEnvironmentIsolation:
         config = AppConfig(
             environment=Environment.PROD,
             debug=False,
-            database=DatabaseConfig(host="prod.db.example.com", name="v4pro_production"),
+            database=DatabaseConfig(
+                host="prod.db.example.com", name="v4pro_production"
+            ),
         )
 
         result = check_environment_isolation(Environment.PROD, config)

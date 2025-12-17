@@ -20,7 +20,9 @@ def main() -> int:
     snap = AccountSnapshot(**payload["snap"])
     positions = [PositionToClose(**p) for p in payload["positions"]]
     books = {k: BookTop(**v) for k, v in payload["books"].items()}
-    flatten_spec = FlattenSpec(**payload["flatten_spec"]) if "flatten_spec" in payload else None
+    flatten_spec = (
+        FlattenSpec(**payload["flatten_spec"]) if "flatten_spec" in payload else None
+    )
 
     fault_data = payload.get("fault", {})
     fault = FaultConfig(

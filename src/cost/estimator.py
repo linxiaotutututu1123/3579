@@ -177,7 +177,9 @@ class CostEstimator:
 
         # 冲击 = coefficient * sqrt(qty/adv) * tick_size * multiplier * qty
         participation = qty / adv
-        impact_ticks = self.IMPACT_COEFFICIENT * (participation**0.5) * 100  # 放大为 tick 数
+        impact_ticks = (
+            self.IMPACT_COEFFICIENT * (participation**0.5) * 100
+        )  # 放大为 tick 数
         impact: float = impact_ticks * tick_size * multiplier * qty
 
         return impact

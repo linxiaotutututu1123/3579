@@ -52,4 +52,6 @@ def test_abort_after_too_many_rejections_and_emit_missing_book() -> None:
         for e in risk_events
     )
     assert has_missing_book
-    assert any(e.type == RiskEventType.FLATTEN_ABORTED_TOO_MANY_REJECTIONS for e in risk_events)
+    assert any(
+        e.type == RiskEventType.FLATTEN_ABORTED_TOO_MANY_REJECTIONS for e in risk_events
+    )

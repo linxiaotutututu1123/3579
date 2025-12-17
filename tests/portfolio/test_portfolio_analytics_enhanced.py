@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from src.portfolio.aggregator import AggregatedPosition, PositionAggregator, PositionSnapshot
+from src.portfolio.aggregator import (
+    AggregatedPosition,
+    PositionAggregator,
+    PositionSnapshot,
+)
 from src.portfolio.analytics import PnLAttribution, PortfolioAnalytics, RiskMetrics
 from src.portfolio.manager import PortfolioManager
 
@@ -238,7 +242,11 @@ class TestPositionAggregatorEnhanced:
     def test_add_snapshot_with_metadata(self) -> None:
         """测试添加带元数据的快照."""
         agg = PositionAggregator()
-        data = {"positions": [], "total_realized_pnl": 100.0, "total_unrealized_pnl": 50.0}
+        data = {
+            "positions": [],
+            "total_realized_pnl": 100.0,
+            "total_unrealized_pnl": 50.0,
+        }
         metadata = {"source": "test", "version": 1}
 
         snapshot = agg.add_snapshot(data, metadata)

@@ -424,7 +424,9 @@ class TestSimReportSummary:
 
     def test_summary_fail(self) -> None:
         """Summary for failed report."""
-        report = SimReport(type="sim", scenarios_total=5, scenarios_passed=3, scenarios_failed=2)
+        report = SimReport(
+            type="sim", scenarios_total=5, scenarios_passed=3, scenarios_failed=2
+        )
         summary = report.summary()
         assert "FAIL" in summary
         assert "3/5" in summary

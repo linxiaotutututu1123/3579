@@ -259,7 +259,9 @@ class MaturityEvaluator:
         # 检查各维度
         for score in scores:
             if not score.is_passing:
-                blocking_reasons.append(f"{score.dimension} 得分 {score.score:.1%} < 60% 门槛")
+                blocking_reasons.append(
+                    f"{score.dimension} 得分 {score.score:.1%} < 60% 门槛"
+                )
 
         # 检查训练时间
         if history.training_days < self.MIN_TRAINING_DAYS:
@@ -304,7 +306,9 @@ class MaturityEvaluator:
         if sharpe >= self.SHARPE_EXCELLENT:
             sharpe_score = 1.0
         elif sharpe >= self.SHARPE_GOOD:
-            delta = (sharpe - self.SHARPE_GOOD) / (self.SHARPE_EXCELLENT - self.SHARPE_GOOD)
+            delta = (sharpe - self.SHARPE_GOOD) / (
+                self.SHARPE_EXCELLENT - self.SHARPE_GOOD
+            )
             sharpe_score = 0.8 + delta * 0.2
         elif sharpe >= self.SHARPE_PASS:
             delta = (sharpe - self.SHARPE_PASS) / (self.SHARPE_GOOD - self.SHARPE_PASS)
@@ -337,7 +341,9 @@ class MaturityEvaluator:
         # 综合得分
         total_score = sharpe_score * 0.4 + cv_score * 0.3 + monthly_consistency * 0.3
 
-        reason = f"夏普{sharpe:.2f}, 稳定性{cv_score:.1%}, 月度一致{monthly_consistency:.1%}"
+        reason = (
+            f"夏普{sharpe:.2f}, 稳定性{cv_score:.1%}, 月度一致{monthly_consistency:.1%}"
+        )
 
         return MaturityScore(
             dimension="收益稳定性",
@@ -369,7 +375,9 @@ class MaturityEvaluator:
         if max_dd <= self.MAX_DD_EXCELLENT:
             dd_score = 1.0
         elif max_dd <= self.MAX_DD_GOOD:
-            delta = (self.MAX_DD_GOOD - max_dd) / (self.MAX_DD_GOOD - self.MAX_DD_EXCELLENT)
+            delta = (self.MAX_DD_GOOD - max_dd) / (
+                self.MAX_DD_GOOD - self.MAX_DD_EXCELLENT
+            )
             dd_score = 0.8 + delta * 0.2
         elif max_dd <= self.MAX_DD_PASS:
             delta = (self.MAX_DD_PASS - max_dd) / (self.MAX_DD_PASS - self.MAX_DD_GOOD)
@@ -411,7 +419,9 @@ class MaturityEvaluator:
         if pf >= self.PF_EXCELLENT:
             pf_score = 1.0
         elif pf >= self.PF_GOOD:
-            pf_score = 0.8 + (pf - self.PF_GOOD) / (self.PF_EXCELLENT - self.PF_GOOD) * 0.2
+            pf_score = (
+                0.8 + (pf - self.PF_GOOD) / (self.PF_EXCELLENT - self.PF_GOOD) * 0.2
+            )
         elif pf >= self.PF_PASS:
             pf_score = 0.6 + (pf - self.PF_PASS) / (self.PF_GOOD - self.PF_PASS) * 0.2
         else:
@@ -419,7 +429,9 @@ class MaturityEvaluator:
         details["profit_factor_score"] = pf_score
 
         # 综合得分
-        total_score = dd_score * 0.35 + calmar_score * 0.25 + wr_score * 0.20 + pf_score * 0.20
+        total_score = (
+            dd_score * 0.35 + calmar_score * 0.25 + wr_score * 0.20 + pf_score * 0.20
+        )
 
         reason = f"最大回撤{max_dd:.1%}, 卡玛{calmar:.2f}, 胜率{win_rate:.1%}, 盈亏比{pf:.2f}"
 
@@ -467,12 +479,12 @@ class MaturityEvaluator:
         details["survival_score"] = survival_score
 
         # 综合得分
-        total_score = regime_coverage * 0.4 + regime_consistency * 0.3 + survival_score * 0.3
+        total_score = (
+            regime_coverage * 0.4 + regime_consistency * 0.3 + survival_score * 0.3
+        )
 
         covered = len(unique_regimes & expected_regimes)
-        reason = (
-            f"覆盖{covered}/5种市场状态, 一致性{regime_consistency:.1%}, 存活{survival_score:.1%}"
-        )
+        reason = f"覆盖{covered}/5种市场状态, 一致性{regime_consistency:.1%}, 存活{survival_score:.1%}"
 
         return MaturityScore(
             dimension="市场适应性",
@@ -524,11 +536,15 @@ class MaturityEvaluator:
 
         # 3. 数据多样性评分 (20%)
         # 检查是否覆盖了不同的市场周期
-        diversity_score = len(set(history.market_regimes)) / 5 if history.market_regimes else 0
+        diversity_score = (
+            len(set(history.market_regimes)) / 5 if history.market_regimes else 0
+        )
         details["diversity_score"] = min(1.0, diversity_score)
 
         # 综合得分
-        total_score = days_score * 0.5 + trades_score * 0.3 + details["diversity_score"] * 0.2
+        total_score = (
+            days_score * 0.5 + trades_score * 0.3 + details["diversity_score"] * 0.2
+        )
 
         reason = f"训练{days}天, {trades}笔交易, 多样性{details['diversity_score']:.1%}"
 
@@ -731,7 +747,9 @@ class MaturityEvaluator:
         mean_s = sum(signals) / n
         mean_r = sum(returns) / n
 
-        cov_sum = sum((s - mean_s) * (r - mean_r) for s, r in zip(signals, returns, strict=True))
+        cov_sum = sum(
+            (s - mean_s) * (r - mean_r) for s, r in zip(signals, returns, strict=True)
+        )
         cov = cov_sum / n
         std_s = math.sqrt(sum((s - mean_s) ** 2 for s in signals) / n)
         std_r = math.sqrt(sum((r - mean_r) ** 2 for r in returns) / n)

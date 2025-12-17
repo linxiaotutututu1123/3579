@@ -32,7 +32,9 @@ def test_correlation_id_propagates_from_risk_to_execution_events() -> None:
         risk=rm,
         executor=exe,
         snap=AccountSnapshot(equity=969_000.0, margin_used=0.0),
-        positions=[PositionToClose(symbol="AO", net_qty=1, today_qty=1, yesterday_qty=0)],
+        positions=[
+            PositionToClose(symbol="AO", net_qty=1, today_qty=1, yesterday_qty=0)
+        ],
         books={"AO": BookTop(best_bid=100.0, best_ask=101.0, tick=1.0)},
         flatten_spec=FlattenSpec(stage2_requotes=0, stage3_max_cross_levels=0),
         now_cb=lambda: 3.0,
@@ -42,7 +44,8 @@ def test_correlation_id_propagates_from_risk_to_execution_events() -> None:
     assert len(res.snapshot_hash) == 64
 
     kill_fired = any(
-        isinstance(e, RiskEvent) and e.type == RiskEventType.KILL_SWITCH_FIRED for e in res.events
+        isinstance(e, RiskEvent) and e.type == RiskEventType.KILL_SWITCH_FIRED
+        for e in res.events
     )
     assert kill_fired
 

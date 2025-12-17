@@ -148,7 +148,9 @@ class AutoOrderEngine:
         self._registry.register(ctx)
 
         # 创建状态机
-        fsm = OrderFSM(mode="tolerant", on_invalid_transition=self._on_invalid_transition)
+        fsm = OrderFSM(
+            mode="tolerant", on_invalid_transition=self._on_invalid_transition
+        )
         self._fsm_map[local_id] = fsm
 
         # 转为 SUBMITTING
@@ -329,7 +331,9 @@ class AutoOrderEngine:
         Returns:
             活动订单 ID 列表
         """
-        return [local_id for local_id, fsm in self._fsm_map.items() if not fsm.is_terminal()]
+        return [
+            local_id for local_id, fsm in self._fsm_map.items() if not fsm.is_terminal()
+        ]
 
     def _on_timeout(self, local_id: str, timeout_type: TimeoutType) -> None:
         """超时回调.
@@ -355,7 +359,9 @@ class AutoOrderEngine:
             fsm.transition(OrderEvent.CANCEL_TIMEOUT)
             self._emit_event(local_id, fsm.state, OrderEvent.CANCEL_TIMEOUT)
 
-    def _on_invalid_transition(self, state: OrderState, event: OrderEvent, reason: str) -> None:
+    def _on_invalid_transition(
+        self, state: OrderState, event: OrderEvent, reason: str
+    ) -> None:
         """非法转移回调.
 
         Args:
@@ -376,7 +382,9 @@ class AutoOrderEngine:
         if self._on_order_event:
             self._on_order_event(local_id, state, event)
 
-    def _update_timeout_on_event(self, local_id: str, event: OrderEvent, state: OrderState) -> None:
+    def _update_timeout_on_event(
+        self, local_id: str, event: OrderEvent, state: OrderState
+    ) -> None:
         """根据事件更新超时.
 
         Args:
@@ -405,7 +413,9 @@ class AutoOrderEngine:
             self._emit_event(local_id, fsm.state, OrderEvent.REJECT)
             self._finalize_order(local_id, fsm, error=error)
 
-    def _handle_partial_fill(self, local_id: str, fsm: OrderFSM, ctx: OrderContext) -> None:
+    def _handle_partial_fill(
+        self, local_id: str, fsm: OrderFSM, ctx: OrderContext
+    ) -> None:
         """处理部分成交（追价）.
 
         V2 Scenario: EXEC.PARTIAL.REPRICE
@@ -423,7 +433,9 @@ class AutoOrderEngine:
         fsm.transition(OrderEvent.CHASE)
         self._emit_event(local_id, fsm.state, OrderEvent.CHASE)
 
-    def _finalize_order(self, local_id: str, fsm: OrderFSM, error: str | None = None) -> None:
+    def _finalize_order(
+        self, local_id: str, fsm: OrderFSM, error: str | None = None
+    ) -> None:
         """完成订单.
 
         Args:

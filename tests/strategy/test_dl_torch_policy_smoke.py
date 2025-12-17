@@ -9,7 +9,9 @@ from src.strategy.dl_torch_policy import DEFAULT_MODEL_PATH, DlTorchPolicyStrate
 from src.strategy.types import Bar1m, MarketState
 
 
-def _generate_bars(n: int, base_price: float = 100.0, trend: float = 0.001) -> list[Bar1m]:
+def _generate_bars(
+    n: int, base_price: float = 100.0, trend: float = 0.001
+) -> list[Bar1m]:
     """Generate synthetic bar data with trend."""
     bars: list[Bar1m] = []
     price = base_price
@@ -32,7 +34,9 @@ def _generate_bars(n: int, base_price: float = 100.0, trend: float = 0.001) -> l
 
 def test_dl_torch_model_file_exists() -> None:
     """Model file should exist in repo."""
-    assert os.path.exists(DEFAULT_MODEL_PATH), f"Model file not found: {DEFAULT_MODEL_PATH}"
+    assert os.path.exists(DEFAULT_MODEL_PATH), (
+        f"Model file not found: {DEFAULT_MODEL_PATH}"
+    )
 
 
 def test_dl_torch_strategy_returns_valid_portfolio() -> None:

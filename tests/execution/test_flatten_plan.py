@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from src.execution.flatten_plan import BookTop, FlattenSpec, PositionToClose, build_flatten_intents
+from src.execution.flatten_plan import (
+    BookTop,
+    FlattenSpec,
+    PositionToClose,
+    build_flatten_intents,
+)
 from src.execution.order_types import Offset, Side
 
 
@@ -29,7 +34,9 @@ def test_flatten_plan_long_close_today_first_and_limit_only() -> None:
     assert min(prices) < max(prices)
 
 
-def test_flatten_plan_short_generates_buy_intents_and_more_aggressive_is_higher() -> None:
+def test_flatten_plan_short_generates_buy_intents_and_more_aggressive_is_higher() -> (
+    None
+):
     pos = PositionToClose(symbol="SA", net_qty=-4, today_qty=1, yesterday_qty=3)
     book = BookTop(best_bid=200.0, best_ask=201.0, tick=1.0)
     spec = FlattenSpec(stage2_requotes=1, stage3_max_cross_levels=2)

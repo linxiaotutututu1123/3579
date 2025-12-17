@@ -62,7 +62,9 @@ class TopTierTrendRiskParityStrategy(Strategy):
 
             closes = np.array([b["close"] for b in bars], dtype=np.float64)
             mom_values = self._compute_momentum(closes, cfg.mom_windows)
-            fused_signal = sum(w * m for w, m in zip(cfg.mom_weights, mom_values, strict=False))
+            fused_signal = sum(
+                w * m for w, m in zip(cfg.mom_weights, mom_values, strict=False)
+            )
 
             vol = self._compute_ewma_vol(closes, cfg.ewma_halflife, cfg.vol_floor)
 
@@ -71,17 +73,24 @@ class TopTierTrendRiskParityStrategy(Strategy):
             features[f"{sym}_mom"] = list(mom_values)
             features[f"{sym}_vol"] = vol
 
-        raw_targets = self._risk_parity_sizing(signals, vols, cfg.max_abs_qty_per_symbol)
+        raw_targets = self._risk_parity_sizing(
+            signals, vols, cfg.max_abs_qty_per_symbol
+        )
         smoothed_targets = self._smooth_targets(raw_targets, cfg.smoothing_alpha)
-        final_targets = {sym: int(round(smoothed_targets.get(sym, 0.0))) for sym in symbols}
+        final_targets = {
+            sym: int(round(smoothed_targets.get(sym, 0.0))) for sym in symbols
+        }
 
         for sym in symbols:
             final_targets[sym] = max(
-                -cfg.max_abs_qty_per_symbol, min(cfg.max_abs_qty_per_symbol, final_targets[sym])
+                -cfg.max_abs_qty_per_symbol,
+                min(cfg.max_abs_qty_per_symbol, final_targets[sym]),
             )
 
         features["raw_targets"] = {k: float(v) for k, v in raw_targets.items()}
-        features["smoothed_targets"] = {k: float(v) for k, v in smoothed_targets.items()}
+        features["smoothed_targets"] = {
+            k: float(v) for k, v in smoothed_targets.items()
+        }
         features_hash = stable_hash(features)
 
         return TargetPortfolio(
@@ -103,7 +112,9 @@ class TopTierTrendRiskParityStrategy(Strategy):
                 results.append(mom)
         return (results[0], results[1], results[2])
 
-    def _compute_ewma_vol(self, closes: np.ndarray, halflife: int, vol_floor: float) -> float:
+    def _compute_ewma_vol(
+        self, closes: np.ndarray, halflife: int, vol_floor: float
+    ) -> float:
         """Compute EWMA volatility of log returns."""
         if len(closes) < 2:
             return vol_floor

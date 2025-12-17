@@ -16,7 +16,9 @@ def _make_risk_manager(mode: RiskMode = RiskMode.NORMAL) -> RiskManager:
         cancel_all_cb=lambda: None,
         force_flatten_all_cb=lambda: None,
     )
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.on_day_start_0900(
+        AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid"
+    )
     rm.state.mode = mode
     return rm
 

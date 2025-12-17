@@ -25,7 +25,9 @@ def test_kill_switch_then_cooldown_then_recovery() -> None:
         now_cb=now_cb,
     )
 
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.on_day_start_0900(
+        AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid"
+    )
     assert rm.state.mode == RiskMode.NORMAL
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="cid")
@@ -62,7 +64,9 @@ def test_second_breach_locks_for_day() -> None:
         force_flatten_all_cb=flatten_all,
         now_cb=now_cb,
     )
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.on_day_start_0900(
+        AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid"
+    )
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="cid")
     assert rm.state.mode == RiskMode.COOLDOWN
@@ -92,7 +96,9 @@ def test_margin_gate_blocks_open_in_recovery() -> None:
         cancel_all_cb=cancel_all,
         force_flatten_all_cb=flatten_all,
     )
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.on_day_start_0900(
+        AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid"
+    )
 
     rm.state.mode = RiskMode.RECOVERY
     d = rm.can_open(AccountSnapshot(equity=1_000_000.0, margin_used=550_000.0))

@@ -272,7 +272,9 @@ class RiskAttributionEngine:
                 trade_id, symbol, pnl, features, model, baseline_features
             )
         if model_output is not None:
-            return self._attribute_with_gradient(trade_id, symbol, pnl, features, model_output)
+            return self._attribute_with_gradient(
+                trade_id, symbol, pnl, features, model_output
+            )
         return self._attribute_simple(trade_id, symbol, pnl, features)
 
     def attribute_loss(
@@ -371,7 +373,9 @@ class RiskAttributionEngine:
             primary_contribution = 0.0
 
         # 生成解释
-        explanation = self._generate_explanation(symbol, pnl, is_loss, factors, primary_factor)
+        explanation = self._generate_explanation(
+            symbol, pnl, is_loss, factors, primary_factor
+        )
 
         return AttributionResult(
             trade_id=trade_id,
@@ -463,7 +467,9 @@ class RiskAttributionEngine:
             primary_factor = FactorType.MOMENTUM
             primary_contribution = 0.0
 
-        explanation = self._generate_explanation(symbol, pnl, is_loss, factors, primary_factor)
+        explanation = self._generate_explanation(
+            symbol, pnl, is_loss, factors, primary_factor
+        )
 
         return AttributionResult(
             trade_id=trade_id,
@@ -581,7 +587,9 @@ class RiskAttributionEngine:
             primary_factor = FactorType.MOMENTUM
             primary_contribution = 0.0
 
-        explanation = self._generate_explanation(symbol, pnl, is_loss, factors, primary_factor)
+        explanation = self._generate_explanation(
+            symbol, pnl, is_loss, factors, primary_factor
+        )
 
         return AttributionResult(
             trade_id=trade_id,
@@ -616,7 +624,13 @@ class RiskAttributionEngine:
             描述字符串
         """
         direction = "正向" if contribution > 0 else "负向"
-        strength = "强" if abs(contribution) > 0.5 else "中" if abs(contribution) > 0.2 else "弱"
+        strength = (
+            "强"
+            if abs(contribution) > 0.5
+            else "中"
+            if abs(contribution) > 0.2
+            else "弱"
+        )
 
         descriptions = {
             FactorType.MOMENTUM: f"动量因子{direction}贡献({strength}): 收益率趋势影响",
@@ -671,7 +685,8 @@ class RiskAttributionEngine:
         secondary_str = ""
         if secondary_factors:
             secondary_names = [
-                factor_names.get(f.factor_type, f.factor_type.value) for f in secondary_factors[:2]
+                factor_names.get(f.factor_type, f.factor_type.value)
+                for f in secondary_factors[:2]
             ]
             secondary_str = f", 次要因素: {', '.join(secondary_names)}"
 

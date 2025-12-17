@@ -28,9 +28,15 @@ def test_closetoday_rejected_jumps_to_more_aggressive_close() -> None:
     # i1: CLOSE     @100 (should be skipped; not more aggressive)
     # i2: CLOSE     @99  (more aggressive; should be jumped to and succeed)
     intents = [
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSETODAY, price=100.0, qty=2),
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100.0, qty=2),
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=99.0, qty=2),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSETODAY, price=100.0, qty=2
+        ),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100.0, qty=2
+        ),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=99.0, qty=2
+        ),
     ]
 
     broker = DummyBroker([CloseTodayRejected("no CT"), OrderAck("ok-1")])
@@ -50,8 +56,12 @@ def test_closetoday_rejected_jumps_to_more_aggressive_close() -> None:
 
 def test_generic_reject_does_not_jump() -> None:
     intents = [
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSETODAY, price=100.0, qty=2),
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=99.0, qty=2),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSETODAY, price=100.0, qty=2
+        ),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=99.0, qty=2
+        ),
     ]
     broker = DummyBroker([OrderRejected("no"), OrderAck("ok-2")])
     exe = FlattenExecutor(broker)
@@ -66,9 +76,13 @@ def test_generic_reject_does_not_jump() -> None:
 
 def test_closetoday_rejected_without_more_aggressive_close_falls_through() -> None:
     intents = [
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSETODAY, price=100.0, qty=2),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSETODAY, price=100.0, qty=2
+        ),
         # only CLOSE at same price => not more aggressive => no jump destination
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100.0, qty=2),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100.0, qty=2
+        ),
     ]
     broker = DummyBroker([CloseTodayRejected("no CT"), OrderAck("ok-3")])
     exe = FlattenExecutor(broker)

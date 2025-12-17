@@ -217,7 +217,8 @@ class TrainingGate:
             remaining_days=remaining_days,
             reasons=reasons,
             report=report,
-            requires_manual_approval=self._config.require_manual_approval and not has_approval,
+            requires_manual_approval=self._config.require_manual_approval
+            and not has_approval,
         )
 
         # 6. 记录日志

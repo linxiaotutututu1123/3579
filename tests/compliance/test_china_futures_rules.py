@@ -331,7 +331,9 @@ class TestPriceComplianceCheck:
         result = checker.check_order(order, context)
         # 无价格违规
         price_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.PRICE_OUT_OF_LIMIT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.PRICE_OUT_OF_LIMIT
         ]
         assert len(price_violations) == 0
 
@@ -353,7 +355,9 @@ class TestPriceComplianceCheck:
         result = checker.check_order(order, context)
         assert result.is_compliant is False
         price_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.PRICE_OUT_OF_LIMIT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.PRICE_OUT_OF_LIMIT
         ]
         assert len(price_violations) == 1
         assert "涨停" in price_violations[0].message
@@ -376,7 +380,9 @@ class TestPriceComplianceCheck:
         result = checker.check_order(order, context)
         assert result.is_compliant is False
         price_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.PRICE_OUT_OF_LIMIT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.PRICE_OUT_OF_LIMIT
         ]
         assert len(price_violations) == 1
         assert "跌停" in price_violations[0].message
@@ -421,7 +427,9 @@ class TestVolumeComplianceCheck:
         )
         result = checker.check_order(order)
         volume_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.VOLUME_EXCEEDS_LIMIT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.VOLUME_EXCEEDS_LIMIT
         ]
         assert len(volume_violations) == 0
 
@@ -438,7 +446,9 @@ class TestVolumeComplianceCheck:
         )
         result = checker.check_order(order)
         volume_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.VOLUME_EXCEEDS_LIMIT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.VOLUME_EXCEEDS_LIMIT
         ]
         assert len(volume_violations) == 1
         assert volume_violations[0].severity == SeverityLevel.SEVERE
@@ -488,7 +498,9 @@ class TestLargeOrderConfirm:
         )
         result = checker.check_order(order)
         large_order_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.LARGE_ORDER_NO_CONFIRM
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.LARGE_ORDER_NO_CONFIRM
         ]
         assert len(large_order_violations) == 0
 
@@ -509,7 +521,9 @@ class TestLargeOrderConfirm:
         )
         result = checker.check_order(order)
         large_order_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.LARGE_ORDER_NO_CONFIRM
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.LARGE_ORDER_NO_CONFIRM
         ]
         assert len(large_order_violations) == 1
         assert large_order_violations[0].military_rule == "M12"
@@ -531,7 +545,9 @@ class TestLargeOrderConfirm:
         )
         result = checker.check_order(order)
         large_order_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.LARGE_ORDER_NO_CONFIRM
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.LARGE_ORDER_NO_CONFIRM
         ]
         assert len(large_order_violations) == 0
 
@@ -570,7 +586,9 @@ class TestPositionLimitCheck:
         )
         result = checker.check_order(order, context)
         position_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.POSITION_EXCEEDS_LIMIT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.POSITION_EXCEEDS_LIMIT
         ]
         assert len(position_violations) == 0
 
@@ -592,7 +610,9 @@ class TestPositionLimitCheck:
         )
         result = checker.check_order(order, context)
         position_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.POSITION_EXCEEDS_LIMIT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.POSITION_EXCEEDS_LIMIT
         ]
         assert len(position_violations) == 1
         assert "超过限额" in position_violations[0].message
@@ -615,7 +635,9 @@ class TestPositionLimitCheck:
         )
         result = checker.check_order(order, context)
         position_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.POSITION_EXCEEDS_LIMIT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.POSITION_EXCEEDS_LIMIT
         ]
         assert len(position_violations) == 0
 
@@ -655,7 +677,9 @@ class TestForbiddenProductCheck:
         )
         result = checker.check_order(order)
         forbidden_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.FORBIDDEN_PRODUCT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.FORBIDDEN_PRODUCT
         ]
         assert len(forbidden_violations) == 0
 
@@ -672,7 +696,9 @@ class TestForbiddenProductCheck:
         )
         result = checker.check_order(order)
         forbidden_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.FORBIDDEN_PRODUCT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.FORBIDDEN_PRODUCT
         ]
         assert len(forbidden_violations) == 1
         assert forbidden_violations[0].severity == SeverityLevel.FATAL
@@ -707,7 +733,9 @@ class TestTradingTimeCheck:
         context = MarketContext(is_trading_time=True)
         result = checker.check_order(order, context)
         time_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.TRADING_TIME_INVALID
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.TRADING_TIME_INVALID
         ]
         assert len(time_violations) == 0
 
@@ -724,7 +752,9 @@ class TestTradingTimeCheck:
         context = MarketContext(is_trading_time=False)
         result = checker.check_order(order, context)
         time_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.TRADING_TIME_INVALID
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.TRADING_TIME_INVALID
         ]
         assert len(time_violations) == 1
         assert time_violations[0].military_rule == "M15"
@@ -797,7 +827,9 @@ class TestTradingTimeCheck:
         )
         result = checker.check_order(order, context)
         night_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.NIGHT_SESSION_DISABLED
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.NIGHT_SESSION_DISABLED
         ]
         assert len(night_violations) == 1
 
@@ -827,7 +859,9 @@ class TestMarginCheck:
         )
         result = checker.check_order(order, context)
         margin_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.MARGIN_INSUFFICIENT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.MARGIN_INSUFFICIENT
         ]
         assert len(margin_violations) == 0
 
@@ -848,7 +882,9 @@ class TestMarginCheck:
         )
         result = checker.check_order(order, context)
         margin_violations = [
-            v for v in result.violations if v.violation_type == ViolationType.MARGIN_INSUFFICIENT
+            v
+            for v in result.violations
+            if v.violation_type == ViolationType.MARGIN_INSUFFICIENT
         ]
         assert len(margin_violations) == 1
         assert margin_violations[0].severity == SeverityLevel.FATAL

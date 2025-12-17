@@ -57,7 +57,9 @@ class TestUnivDominantBasic:
     RULE_ID = "UNIV.DOMINANT.BASIC"
     COMPONENT = "UniverseSelector"
 
-    def test_select_dominant_by_oi_volume_score(self, instrument_cache: InstrumentCache) -> None:
+    def test_select_dominant_by_oi_volume_score(
+        self, instrument_cache: InstrumentCache
+    ) -> None:
         """基于OI+Volume评分选择主力."""
         selector = UniverseSelector(instrument_cache)
 
@@ -93,7 +95,9 @@ class TestUnivSubdominantPairing:
     RULE_ID = "UNIV.SUBDOMINANT.PAIRING"
     COMPONENT = "UniverseSelector"
 
-    def test_subdominant_not_equal_dominant(self, instrument_cache: InstrumentCache) -> None:
+    def test_subdominant_not_equal_dominant(
+        self, instrument_cache: InstrumentCache
+    ) -> None:
         """次主力 != 主力."""
         selector = UniverseSelector(instrument_cache)
         oi = {"rb2501": 1000, "rb2505": 5000, "rb2510": 3000}
@@ -110,7 +114,9 @@ class TestUnivSubdominantPairing:
         )
         assert subdominant is not None, f"[{self.RULE_ID}] Subdominant should exist"
 
-    def test_subdominant_is_second_highest_score(self, instrument_cache: InstrumentCache) -> None:
+    def test_subdominant_is_second_highest_score(
+        self, instrument_cache: InstrumentCache
+    ) -> None:
         """次主力是评分第二高的合约."""
         selector = UniverseSelector(instrument_cache)
         # Score: rb2505=5000*0.6+3000*0.4=4200, rb2510=3000*0.6+2000*0.4=2600,
@@ -125,7 +131,9 @@ class TestUnivSubdominantPairing:
             f"[{self.RULE_ID}] Expected rb2510 as subdominant (2nd highest score)"
         )
 
-    def test_subdominant_in_subscribe_set(self, instrument_cache: InstrumentCache) -> None:
+    def test_subdominant_in_subscribe_set(
+        self, instrument_cache: InstrumentCache
+    ) -> None:
         """次主力合约在订阅集中."""
         selector = UniverseSelector(instrument_cache)
         oi = {"rb2501": 1000, "rb2505": 5000, "rb2510": 3000}
@@ -191,7 +199,9 @@ class TestUnivRollCooldown:
             f"[{self.RULE_ID}] Should switch after cooldown period (400s > {ROLL_COOLDOWN_S}s)"
         )
 
-    def test_no_switch_below_edge_threshold(self, instrument_cache: InstrumentCache) -> None:
+    def test_no_switch_below_edge_threshold(
+        self, instrument_cache: InstrumentCache
+    ) -> None:
         """未达到切换门槛时不切换."""
         selector = UniverseSelector(
             instrument_cache,

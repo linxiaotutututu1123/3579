@@ -42,7 +42,9 @@ def execute_close_then_open(
         close_events = executor.drain_events()
         all_exec_events.extend(close_events)
 
-        has_rejection = any(e.type == ExecutionEventType.ORDER_REJECTED for e in close_events)
+        has_rejection = any(
+            e.type == ExecutionEventType.ORDER_REJECTED for e in close_events
+        )
 
         if has_rejection:
             trading_events.append(
@@ -58,7 +60,11 @@ def execute_close_then_open(
                     type=TradingEventType.EXEC_BATCH_FINISHED,
                     ts=now_cb(),
                     correlation_id=correlation_id,
-                    data={"close_executed": True, "open_executed": False, "open_skipped": True},
+                    data={
+                        "close_executed": True,
+                        "open_executed": False,
+                        "open_skipped": True,
+                    },
                 )
             )
             return trading_events, all_exec_events

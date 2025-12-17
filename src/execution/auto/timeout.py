@@ -120,7 +120,9 @@ class TimeoutManager:
         """超时配置."""
         return self._config
 
-    def register_ack_timeout(self, local_id: str, now: float | None = None) -> TimeoutEntry:
+    def register_ack_timeout(
+        self, local_id: str, now: float | None = None
+    ) -> TimeoutEntry:
         """注册 Ack 超时.
 
         V2 Scenario: EXEC.TIMEOUT.ACK
@@ -144,7 +146,9 @@ class TimeoutManager:
         self._entries[(local_id, TimeoutType.ACK)] = entry
         return entry
 
-    def register_fill_timeout(self, local_id: str, now: float | None = None) -> TimeoutEntry:
+    def register_fill_timeout(
+        self, local_id: str, now: float | None = None
+    ) -> TimeoutEntry:
         """注册 Fill 超时.
 
         V2 Scenario: EXEC.TIMEOUT.FILL
@@ -168,7 +172,9 @@ class TimeoutManager:
         self._entries[(local_id, TimeoutType.FILL)] = entry
         return entry
 
-    def register_cancel_timeout(self, local_id: str, now: float | None = None) -> TimeoutEntry:
+    def register_cancel_timeout(
+        self, local_id: str, now: float | None = None
+    ) -> TimeoutEntry:
         """注册 Cancel 超时.
 
         Args:
@@ -241,7 +247,9 @@ class TimeoutManager:
 
         return expired
 
-    def get_entry(self, local_id: str, timeout_type: TimeoutType) -> TimeoutEntry | None:
+    def get_entry(
+        self, local_id: str, timeout_type: TimeoutType
+    ) -> TimeoutEntry | None:
         """获取超时条目.
 
         Args:

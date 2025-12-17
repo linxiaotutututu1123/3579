@@ -28,8 +28,12 @@ def test_executor_emits_events_and_drain_clears() -> None:
         return now["t"]
 
     intents = [
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSETODAY, price=100.0, qty=1),
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=99.0, qty=1),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSETODAY, price=100.0, qty=1
+        ),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=99.0, qty=1
+        ),
     ]
 
     broker = ScriptedBroker([CloseTodayRejected("no CT"), OrderAck("ok-1")])

@@ -156,7 +156,9 @@ class LegManager:
             imbalance_threshold: 不平衡阈值（手数）
         """
         self._legs: dict[str, Leg] = {}
-        self._pairs: dict[str, tuple[str, str]] = {}  # pair_id -> (near_leg_id, far_leg_id)
+        self._pairs: dict[
+            str, tuple[str, str]
+        ] = {}  # pair_id -> (near_leg_id, far_leg_id)
         self._imbalance_threshold = imbalance_threshold
 
     @property

@@ -422,11 +422,12 @@ class StrategyLifecycleManager:
         if state is None:
             return None
 
-        old_maturity = state.maturity_pct
         state.maturity_pct = max(0.0, min(1.0, maturity_pct))
 
         # 检查是否需要自动转换
-        should_auto = auto_transition if auto_transition is not None else self._auto_transition
+        should_auto = (
+            auto_transition if auto_transition is not None else self._auto_transition
+        )
         if should_auto:
             return self._check_and_transition(strategy_id, "maturity_update")
 
@@ -549,9 +550,9 @@ class StrategyLifecycleManager:
                 list(AllocationTier).index(new_tier)
                 - list(AllocationTier).index(state.allocation_tier)
             )
-            needs_approval = (
-                tier_diff >= self.MANUAL_APPROVAL_TIER_CHANGE
-                or (new_stage == LifecycleStage.PRODUCTION and self._require_approval_for_production)
+            needs_approval = tier_diff >= self.MANUAL_APPROVAL_TIER_CHANGE or (
+                new_stage == LifecycleStage.PRODUCTION
+                and self._require_approval_for_production
             )
 
             if needs_approval:
@@ -657,7 +658,9 @@ class StrategyLifecycleManager:
 
         return event
 
-    def _is_promotion(self, from_stage: LifecycleStage, to_stage: LifecycleStage) -> bool:
+    def _is_promotion(
+        self, from_stage: LifecycleStage, to_stage: LifecycleStage
+    ) -> bool:
         """检查是否为晋升."""
         stages = list(LifecycleStage)
         return stages.index(to_stage) > stages.index(from_stage) and to_stage not in [
@@ -666,7 +669,9 @@ class StrategyLifecycleManager:
             LifecycleStage.RETIRED,
         ]
 
-    def _is_demotion(self, from_stage: LifecycleStage, to_stage: LifecycleStage) -> bool:
+    def _is_demotion(
+        self, from_stage: LifecycleStage, to_stage: LifecycleStage
+    ) -> bool:
         """检查是否为降级."""
         return to_stage in [LifecycleStage.DEGRADED, LifecycleStage.SUSPENDED]
 
@@ -888,7 +893,9 @@ class StrategyLifecycleManager:
             转换事件列表
         """
         if strategy_id:
-            history = [e for e in self._transition_history if e.strategy_id == strategy_id]
+            history = [
+                e for e in self._transition_history if e.strategy_id == strategy_id
+            ]
         else:
             history = self._transition_history
 

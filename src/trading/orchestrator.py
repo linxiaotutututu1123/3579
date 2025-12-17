@@ -76,7 +76,10 @@ def handle_trading_tick(
             type=TradingEventType.SIGNAL_GENERATED,
             ts=now_cb(),
             correlation_id=cid,
-            data={"model_version": target.model_version, "features_hash": target.features_hash},
+            data={
+                "model_version": target.model_version,
+                "features_hash": target.features_hash,
+            },
         )
     )
 
@@ -102,7 +105,10 @@ def handle_trading_tick(
                 type=TradingEventType.TARGET_PORTFOLIO_CLAMPED,
                 ts=now_cb(),
                 correlation_id=cid,
-                data={"clamped_net_qty": _sorted_qty(clamped.target_net_qty), "audit": audit},
+                data={
+                    "clamped_net_qty": _sorted_qty(clamped.target_net_qty),
+                    "audit": audit,
+                },
             )
         )
 
@@ -148,7 +154,10 @@ def handle_trading_tick(
                 type=TradingEventType.ORDERS_SENT,
                 ts=now_cb(),
                 correlation_id=cid,
-                data={"close_count": len(close_intents), "open_count": len(open_intents)},
+                data={
+                    "close_count": len(close_intents),
+                    "open_count": len(open_intents),
+                },
             )
         )
 

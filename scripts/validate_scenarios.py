@@ -174,7 +174,9 @@ def parse_yaml_simple(content: str) -> dict[str, Any]:
     return scenarios
 
 
-def extract_all_scenarios(data: dict[str, Any]) -> list[tuple[str, str, str, list[str]]]:
+def extract_all_scenarios(
+    data: dict[str, Any],
+) -> list[tuple[str, str, str, list[str]]]:
     """提取所有场景 (id, name, phase, military_rules)."""
     scenarios = []
 
@@ -336,7 +338,9 @@ def validate_scenarios(strict: bool = True) -> ValidationReport:
 
     # 计算覆盖率
     if report.total_scenarios > 0:
-        report.coverage_percentage = (report.covered_scenarios / report.total_scenarios) * 100
+        report.coverage_percentage = (
+            report.covered_scenarios / report.total_scenarios
+        ) * 100
 
     # 确定状态
     if report.missing_scenarios == 0:
@@ -367,7 +371,9 @@ def print_report(report: ValidationReport) -> None:
         print("-" * 70)
         for result in report.results:
             if not result.covered:
-                rules = ", ".join(result.military_rules) if result.military_rules else "N/A"
+                rules = (
+                    ", ".join(result.military_rules) if result.military_rules else "N/A"
+                )
                 print(f"  [{result.phase}] {result.id}")
                 print(f"      名称: {result.name}")
                 print(f"      军规: {rules}")
@@ -381,7 +387,9 @@ def print_report(report: ValidationReport) -> None:
 def main() -> int:
     """主入口."""
     parser = argparse.ArgumentParser(description="军规级场景验证脚本")
-    parser.add_argument("--strict", action="store_true", help="严格模式(任何缺失即失败)")
+    parser.add_argument(
+        "--strict", action="store_true", help="严格模式(任何缺失即失败)"
+    )
     parser.add_argument("--report", type=Path, default=REPORT_PATH, help="报告输出路径")
     parser.add_argument("--quiet", action="store_true", help="静默模式")
     args = parser.parse_args()

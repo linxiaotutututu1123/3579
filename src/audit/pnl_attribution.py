@@ -89,7 +89,9 @@ class PnLAttribution:
         """
         self._run_id = run_id
         self._exec_id = exec_id
-        self._records: dict[tuple[str, str], PnLRecord] = {}  # (strategy_id, symbol) -> PnLRecord
+        self._records: dict[
+            tuple[str, str], PnLRecord
+        ] = {}  # (strategy_id, symbol) -> PnLRecord
 
     @property
     def run_id(self) -> str:

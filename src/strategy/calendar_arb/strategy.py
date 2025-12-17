@@ -501,7 +501,9 @@ class CalendarArbStrategy(Strategy):
 
         return half_life_days > self._config.max_half_life_days
 
-    def _check_cost_gate(self, z_score: float, near_price: float, far_price: float) -> bool:
+    def _check_cost_gate(
+        self, z_score: float, near_price: float, far_price: float
+    ) -> bool:
         """Check if entry cost exceeds edge.
 
         Scenario: ARB.COST.ENTRY_GATE

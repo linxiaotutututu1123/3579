@@ -34,20 +34,29 @@ from src.strategy.base import Strategy
 from src.strategy.dl.weights import clear_model_cache
 from src.strategy.ensemble_moe import EnsembleMoEStrategy
 from src.strategy.linear_ai import LinearAIStrategy
-from src.strategy.top_tier_trend_risk_parity import TopTierConfig, TopTierTrendRiskParityStrategy
+from src.strategy.top_tier_trend_risk_parity import (
+    TopTierConfig,
+    TopTierTrendRiskParityStrategy,
+)
 from src.strategy.types import Bar1m, MarketState, TargetPortfolio
 from src.trading.ci_gate import CIGate, GateCheckStatus, log_gate_report
 from src.trading.controls import TradeControls, TradeMode
 from src.trading.live_guard import LiveModeGuard
 from src.trading.orchestrator import handle_trading_tick
-from src.trading.reconcile import ReconcileStatus, log_reconcile_report, reconcile_positions
+from src.trading.reconcile import (
+    ReconcileStatus,
+    log_reconcile_report,
+    reconcile_positions,
+)
 
 
 if TYPE_CHECKING:
     pass
 
 
-def _generate_bars(n: int, base_price: float = 100.0, trend: float = 0.001) -> list[Bar1m]:
+def _generate_bars(
+    n: int, base_price: float = 100.0, trend: float = 0.001
+) -> list[Bar1m]:
     """Generate synthetic bar data with trend."""
     bars: list[Bar1m] = []
     price = base_price
@@ -71,7 +80,9 @@ def _generate_bars(n: int, base_price: float = 100.0, trend: float = 0.001) -> l
 class TestConfigCoverage:
     """Coverage tests for config module."""
 
-    def test_load_settings_without_dingtalk(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_load_settings_without_dingtalk(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Test load_settings without dingtalk webhook."""
         monkeypatch.delenv("DINGTALK_WEBHOOK", raising=False)
         monkeypatch.delenv("DINGTALK_SECRET", raising=False)
@@ -90,7 +101,9 @@ class TestBrokerProtocol:
                 raise NotImplementedError
 
         broker = TestBroker()
-        intent = OrderIntent(symbol="AO", side=Side.BUY, offset=Offset.OPEN, price=100.0, qty=1)
+        intent = OrderIntent(
+            symbol="AO", side=Side.BUY, offset=Offset.OPEN, price=100.0, qty=1
+        )
         with pytest.raises(NotImplementedError):
             broker.place_order(intent)
 
@@ -124,7 +137,9 @@ class TestCtpBrokerCoverage:
         # Simulate SDK available but not connected
         broker._ctp = object()  # Mock non-None SDK
         broker._connected = False
-        intent = OrderIntent(symbol="au2412", side=Side.BUY, offset=Offset.OPEN, qty=1, price=500.0)
+        intent = OrderIntent(
+            symbol="au2412", side=Side.BUY, offset=Offset.OPEN, qty=1, price=500.0
+        )
         with pytest.raises(OrderRejected, match="Not connected"):
             broker.place_order(intent)
 
@@ -139,7 +154,9 @@ class TestCtpBrokerCoverage:
         broker = CtpBroker(config)
         broker._ctp = object()  # Mock non-None SDK
         broker._connected = True
-        intent = OrderIntent(symbol="au2412", side=Side.BUY, offset=Offset.OPEN, qty=1, price=500.0)
+        intent = OrderIntent(
+            symbol="au2412", side=Side.BUY, offset=Offset.OPEN, qty=1, price=500.0
+        )
         ack = broker.place_order(intent)
         assert ack.order_id.startswith("CTP_")
 
@@ -149,28 +166,44 @@ class TestFlattenExecutorCoverage:
 
     def test_is_more_aggressive_different_sides(self) -> None:
         """_is_more_aggressive returns False for different sides."""
-        ref = OrderIntent(symbol="AO", side=Side.BUY, offset=Offset.CLOSE, price=100, qty=1)
-        cand = OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100, qty=1)
+        ref = OrderIntent(
+            symbol="AO", side=Side.BUY, offset=Offset.CLOSE, price=100, qty=1
+        )
+        cand = OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100, qty=1
+        )
         assert _is_more_aggressive(ref, cand) is False
 
     def test_is_more_aggressive_sell_more_aggressive(self) -> None:
         """_is_more_aggressive for sell side - lower price is more aggressive."""
-        ref = OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100, qty=1)
-        cand = OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=99, qty=1)
+        ref = OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100, qty=1
+        )
+        cand = OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=99, qty=1
+        )
         assert _is_more_aggressive(ref, cand) is True
 
     def test_is_more_aggressive_buy_more_aggressive(self) -> None:
         """_is_more_aggressive for buy side - higher price is more aggressive."""
-        ref = OrderIntent(symbol="AO", side=Side.BUY, offset=Offset.CLOSE, price=100, qty=1)
-        cand = OrderIntent(symbol="AO", side=Side.BUY, offset=Offset.CLOSE, price=101, qty=1)
+        ref = OrderIntent(
+            symbol="AO", side=Side.BUY, offset=Offset.CLOSE, price=100, qty=1
+        )
+        cand = OrderIntent(
+            symbol="AO", side=Side.BUY, offset=Offset.CLOSE, price=101, qty=1
+        )
         assert _is_more_aggressive(ref, cand) is True
 
     def test_find_next_more_aggressive_no_match(self) -> None:
         """_find_next_more_aggressive_close returns None when no match."""
         intents = [
-            OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100, qty=1),
+            OrderIntent(
+                symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100, qty=1
+            ),
         ]
-        result = _find_next_more_aggressive_close(intents, start_index=0, reference=intents[0])
+        result = _find_next_more_aggressive_close(
+            intents, start_index=0, reference=intents[0]
+        )
         assert result is None
 
 
@@ -216,7 +249,9 @@ class TestReplayCoverage:
         bars_1m = {"AO": _generate_bars(300)}
 
         cfg = RiskConfig()
-        risk = RiskManager(cfg, cancel_all_cb=lambda: None, force_flatten_all_cb=lambda: None)
+        risk = RiskManager(
+            cfg, cancel_all_cb=lambda: None, force_flatten_all_cb=lambda: None
+        )
         risk.on_day_start_0900(snap, correlation_id="test")
 
         strategy = LinearAIStrategy(symbols=["AO"])
@@ -264,7 +299,9 @@ class TestStrategyCoverage:
 
         # Test with very short bars (insufficient)
         short_bars = _generate_bars(10)
-        state = MarketState(prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars})
+        state = MarketState(
+            prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars}
+        )
         result = strategy.on_tick(state)
         assert result.target_net_qty["AO"] == 0
 
@@ -293,7 +330,9 @@ class TestStrategyCoverage:
 
         # Test with short bars for breakout signal
         short_bars = _generate_bars(25)  # Just above 20 min for breakout
-        state = MarketState(prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars})
+        state = MarketState(
+            prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars}
+        )
         result = strategy.on_tick(state)
         # Should return 0 due to insufficient window
         assert result.target_net_qty["AO"] == 0
@@ -310,7 +349,9 @@ class TestStrategyCoverage:
             }
             for i in range(300)
         ]
-        state = MarketState(prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": flat_bars})
+        state = MarketState(
+            prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": flat_bars}
+        )
         result = strategy.on_tick(state)
         assert isinstance(result.target_net_qty["AO"], int)
 
@@ -321,7 +362,9 @@ class TestStrategyCoverage:
 
         # Test with very short bars
         short_bars = _generate_bars(5)
-        state = MarketState(prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars})
+        state = MarketState(
+            prices={"AO": 100.0}, equity=1_000_000.0, bars_1m={"AO": short_bars}
+        )
         result = strategy.on_tick(state)
         assert result.target_net_qty["AO"] == 0
 
@@ -394,7 +437,9 @@ class TestTradingOrchestratorCoverage:
         current_net_qty = {"AO": 0}
 
         cfg = RiskConfig()
-        risk = RiskManager(cfg, cancel_all_cb=lambda: None, force_flatten_all_cb=lambda: None)
+        risk = RiskManager(
+            cfg, cancel_all_cb=lambda: None, force_flatten_all_cb=lambda: None
+        )
         risk.on_day_start_0900(snap, correlation_id="test")
 
         strategy = LinearAIStrategy(symbols=["AO"])
@@ -422,7 +467,9 @@ class TestRebalancerCoverage:
     def test_reduce_short_position(self) -> None:
         """Test reducing a short position (cover)."""
         current = {"AO": -2}
-        target = TargetPortfolio(target_net_qty={"AO": -1}, model_version="v1", features_hash="h")
+        target = TargetPortfolio(
+            target_net_qty={"AO": -1}, model_version="v1", features_hash="h"
+        )
         close_intents, open_intents = build_rebalance_intents(
             current_net_qty=current,
             target=target,
@@ -436,7 +483,9 @@ class TestRebalancerCoverage:
     def test_add_short_position(self) -> None:
         """Test adding to a short position."""
         current = {"AO": -1}
-        target = TargetPortfolio(target_net_qty={"AO": -2}, model_version="v1", features_hash="h")
+        target = TargetPortfolio(
+            target_net_qty={"AO": -2}, model_version="v1", features_hash="h"
+        )
         close_intents, open_intents = build_rebalance_intents(
             current_net_qty=current,
             target=target,
@@ -450,7 +499,9 @@ class TestRebalancerCoverage:
     def test_open_short_from_flat(self) -> None:
         """Test opening short from flat."""
         current = {"AO": 0}
-        target = TargetPortfolio(target_net_qty={"AO": -1}, model_version="v1", features_hash="h")
+        target = TargetPortfolio(
+            target_net_qty={"AO": -1}, model_version="v1", features_hash="h"
+        )
         close_intents, open_intents = build_rebalance_intents(
             current_net_qty=current,
             target=target,

@@ -59,7 +59,9 @@ def init_components(broker: Broker, risk_cfg: RiskConfig | None = None) -> Compo
         # placeholder: integrate with flatten runner later
         return
 
-    risk = RiskManager(cfg, cancel_all_cb=cancel_all, force_flatten_all_cb=force_flatten_all)
+    risk = RiskManager(
+        cfg, cancel_all_cb=cancel_all, force_flatten_all_cb=force_flatten_all
+    )
     flatten = FlattenExecutor(broker)
 
     return Components(settings=settings, risk=risk, flatten=flatten)
@@ -116,9 +118,12 @@ def run_f21(
 
         # Prepare trading inputs
         prices: dict[str, float] = {
-            sym: (book.best_bid + book.best_ask) / 2.0 for sym, book in tick.books.items()
+            sym: (book.best_bid + book.best_ask) / 2.0
+            for sym, book in tick.books.items()
         }
-        current_net_qty: dict[str, int] = {pos.symbol: pos.net_qty for pos in tick.positions}
+        current_net_qty: dict[str, int] = {
+            pos.symbol: pos.net_qty for pos in tick.positions
+        }
 
         requested_mode = (
             settings.trade_mode.upper()
@@ -126,7 +131,9 @@ def run_f21(
             else str(settings.trade_mode)
         )
         effective_mode = (
-            TradeMode.LIVE if requested_mode == TradeMode.LIVE.value else TradeMode.PAPER
+            TradeMode.LIVE
+            if requested_mode == TradeMode.LIVE.value
+            else TradeMode.PAPER
         )
         controls = TradeControls(mode=effective_mode)
 

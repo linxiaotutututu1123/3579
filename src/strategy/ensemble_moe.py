@@ -58,7 +58,9 @@ class EnsembleMoEStrategy(Strategy):
             w_trend, w_mr, w_br = self._compute_gating(regime)
 
             # Fused signal
-            final_signal = w_trend * trend_sig + w_mr * meanrev_sig + w_br * breakout_sig
+            final_signal = (
+                w_trend * trend_sig + w_mr * meanrev_sig + w_br * breakout_sig
+            )
 
             # Position sizing
             qty = int(round(math.tanh(final_signal) * self._max_abs_qty))

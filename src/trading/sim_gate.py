@@ -210,7 +210,9 @@ class SimReport:
         """Get exit code based on type and status."""
         if self.passed:
             return SimExitCode.SUCCESS
-        return SimExitCode.REPLAY_FAIL if self.type == "replay" else SimExitCode.SIM_FAIL
+        return (
+            SimExitCode.REPLAY_FAIL if self.type == "replay" else SimExitCode.SIM_FAIL
+        )
 
     def add_pass(self, scenario: str, rule_id: str = "", component: str = "") -> None:
         """Record a passed scenario."""

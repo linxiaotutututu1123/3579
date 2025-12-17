@@ -362,7 +362,9 @@ class StressTester:
         from datetime import datetime
 
         # 计算受影响持仓
-        affected_positions = self._get_affected_positions(positions, scenario.affected_products)
+        affected_positions = self._get_affected_positions(
+            positions, scenario.affected_products
+        )
 
         # 计算盈亏
         pnl = 0.0
@@ -460,7 +462,9 @@ class StressTester:
         failed = 0
 
         for scenario in scenarios:
-            result = self.run_scenario(scenario, positions, portfolio_value, margin_used)
+            result = self.run_scenario(
+                scenario, positions, portfolio_value, margin_used
+            )
             results.append(result)
 
             # 统计

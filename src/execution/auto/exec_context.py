@@ -173,7 +173,9 @@ class ExecContext:
             {symbol: delta_qty}
         """
         delta: dict[str, int] = {}
-        all_symbols = set(self.target_portfolio.keys()) | set(self.current_portfolio.keys())
+        all_symbols = set(self.target_portfolio.keys()) | set(
+            self.current_portfolio.keys()
+        )
 
         for symbol in all_symbols:
             target = self.target_portfolio.get(symbol, 0)

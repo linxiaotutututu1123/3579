@@ -92,7 +92,9 @@ class VaRCalculator:
         """
         self._default_confidence = default_confidence
         self._initial_seed = seed
-        self._seed = seed if seed is not None else int(time.time() * 1000000) % self._LCG_M
+        self._seed = (
+            seed if seed is not None else int(time.time() * 1000000) % self._LCG_M
+        )
 
     def reset_seed(self, seed: int | None = None) -> None:
         """Reset random seed for reproducibility.
@@ -114,7 +116,9 @@ class VaRCalculator:
         """Get current seed value for audit purposes."""
         return self._seed
 
-    def historical_var(self, returns: list[float], confidence: float | None = None) -> VaRResult:
+    def historical_var(
+        self, returns: list[float], confidence: float | None = None
+    ) -> VaRResult:
         """Calculate historical VaR.
 
         Uses empirical distribution of returns to estimate VaR.
@@ -157,7 +161,9 @@ class VaRCalculator:
             sample_size=n,
         )
 
-    def parametric_var(self, returns: list[float], confidence: float | None = None) -> VaRResult:
+    def parametric_var(
+        self, returns: list[float], confidence: float | None = None
+    ) -> VaRResult:
         """Calculate parametric (variance-covariance) VaR.
 
         Assumes normal distribution of returns.
@@ -274,7 +280,9 @@ class VaRCalculator:
             metadata={"simulations": simulations, "horizon": horizon},
         )
 
-    def expected_shortfall(self, returns: list[float], confidence: float | None = None) -> float:
+    def expected_shortfall(
+        self, returns: list[float], confidence: float | None = None
+    ) -> float:
         """Calculate Expected Shortfall (CVaR).
 
         Average of losses beyond VaR.
@@ -289,7 +297,9 @@ class VaRCalculator:
         result = self.historical_var(returns, confidence)
         return result.expected_shortfall
 
-    def _calculate_expected_shortfall(self, sorted_returns: list[float], var_index: int) -> float:
+    def _calculate_expected_shortfall(
+        self, sorted_returns: list[float], var_index: int
+    ) -> float:
         """Calculate expected shortfall from sorted returns.
 
         Args:
@@ -363,9 +373,9 @@ class VaRCalculator:
 
         if p < p_low:
             q = math.sqrt(-2 * math.log(p))
-            return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / (
-                (((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1
-            )
+            return (
+                ((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]
+            ) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
         if p <= p_high:
             q = p - 0.5
             r = q * q
@@ -375,9 +385,9 @@ class VaRCalculator:
                 / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1)
             )
         q = math.sqrt(-2 * math.log(1 - p))
-        return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / (
-            (((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1
-        )
+        return -(
+            ((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]
+        ) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
 
     def _norm_pdf(self, x: float) -> float:
         """Normal distribution probability density function.

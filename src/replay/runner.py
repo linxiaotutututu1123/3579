@@ -154,8 +154,12 @@ def run_replay_tick_mode2(
     current_net_qty: Mapping[str, int] = {pos.symbol: pos.net_qty for pos in positions}
 
     # Always use PAPER mode in replay to prevent accidental orders (even if LIVE requested)
-    requested_mode = trade_mode.upper() if isinstance(trade_mode, str) else trade_mode.value
-    effective_mode = TradeMode.PAPER if requested_mode == TradeMode.LIVE.value else TradeMode.PAPER
+    requested_mode = (
+        trade_mode.upper() if isinstance(trade_mode, str) else trade_mode.value
+    )
+    effective_mode = (
+        TradeMode.PAPER if requested_mode == TradeMode.LIVE.value else TradeMode.PAPER
+    )
     controls = TradeControls(mode=effective_mode)
 
     trading_result = handle_trading_tick(

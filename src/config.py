@@ -26,7 +26,9 @@ def load_settings() -> AppSettings:
     trade_mode = getenv("TRADE_MODE", "PAPER").strip().upper()
     strategy_name = getenv("STRATEGY_NAME", "top_tier").strip()
     strategy_symbols_str = getenv("STRATEGY_SYMBOLS", "AO,SA,LC").strip()
-    strategy_symbols = tuple(s.strip() for s in strategy_symbols_str.split(",") if s.strip())
+    strategy_symbols = tuple(
+        s.strip() for s in strategy_symbols_str.split(",") if s.strip()
+    )
 
     dingtalk = None
     if webhook:

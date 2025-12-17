@@ -277,7 +277,9 @@ class ChinaTradingCalendar:
             return False
 
         # 周六周日（非调休）前一天没有夜盘
-        return not (self.is_weekend(next_day) and not self.is_workday_override(next_day))
+        return not (
+            self.is_weekend(next_day) and not self.is_workday_override(next_day)
+        )
 
     def get_trading_day(
         self,

@@ -41,7 +41,9 @@ OVERALL_THRESHOLD = 85
 
 def log(msg: str, level: str = "INFO") -> None:
     ts = datetime.now(tz=UTC).strftime("%H:%M:%S")
-    prefix = {"INFO": "(i)", "WARN": "(!)", "ERROR": "(X)", "SUCCESS": "(V)"}.get(level, "*")
+    prefix = {"INFO": "(i)", "WARN": "(!)", "ERROR": "(X)", "SUCCESS": "(V)"}.get(
+        level, "*"
+    )
     print(f"({ts}) {prefix} ({level}) {msg}")
 
 
@@ -51,7 +53,9 @@ PYTHON_EXE = str(PROJECT_ROOT / ".venv" / "Scripts" / "python.exe")
 
 
 def run_cmd(cmd: str) -> tuple[int, str, str]:
-    r = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=PROJECT_ROOT)
+    r = subprocess.run(
+        cmd, shell=True, capture_output=True, text=True, cwd=PROJECT_ROOT
+    )
     return r.returncode, r.stdout, r.stderr
 
 

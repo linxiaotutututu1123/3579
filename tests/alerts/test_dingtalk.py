@@ -52,7 +52,9 @@ def test_send_markdown_with_secret_appends_signature() -> None:
 
 
 def test_send_markdown_with_secret_and_query_string() -> None:
-    cfg = DingTalkConfig(webhook_url="https://example.com/webhook?token=abc", secret="mysecret")
+    cfg = DingTalkConfig(
+        webhook_url="https://example.com/webhook?token=abc", secret="mysecret"
+    )
 
     with (
         patch("src.alerts.dingtalk.requests.post") as mock_post,

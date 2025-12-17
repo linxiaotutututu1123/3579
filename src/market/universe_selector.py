@@ -142,7 +142,9 @@ class UniverseSelector:
             # 主力选择（考虑冷却期）
             candidate_dominant = scored[0][0]
             current_dominant = (
-                self._current.dominant_by_product.get(product) if self._current else None
+                self._current.dominant_by_product.get(product)
+                if self._current
+                else None
             )
 
             # 检查冷却期和切换门槛
@@ -150,7 +152,9 @@ class UniverseSelector:
                 if self._is_in_cooldown(product, now_ts):
                     # 冷却期内，保持原主力
                     candidate_dominant = current_dominant
-                elif not self._meets_switch_edge(current_dominant, candidate_dominant, oi, vol):
+                elif not self._meets_switch_edge(
+                    current_dominant, candidate_dominant, oi, vol
+                ):
                     # 未达到切换门槛，保持原主力
                     candidate_dominant = current_dominant
                 else:
@@ -191,7 +195,9 @@ class UniverseSelector:
 
         try:
             # Parse YYYYMMDD format directly to date (avoids DTZ007)
-            today = date(int(trading_day[:4]), int(trading_day[4:6]), int(trading_day[6:8]))
+            today = date(
+                int(trading_day[:4]), int(trading_day[4:6]), int(trading_day[6:8])
+            )
         except (ValueError, IndexError):
             return instruments
 

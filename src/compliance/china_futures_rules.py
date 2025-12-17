@@ -116,7 +116,8 @@ class ComplianceCheckResult:
     def has_blocking_violations(self) -> bool:
         """是否有阻断性违规 (FATAL或SEVERE)."""
         return any(
-            v.severity in (SeverityLevel.FATAL, SeverityLevel.SEVERE) for v in self.violations
+            v.severity in (SeverityLevel.FATAL, SeverityLevel.SEVERE)
+            for v in self.violations
         )
 
 
@@ -351,7 +352,9 @@ class ChinaFuturesComplianceChecker:
         # 6. 检查持仓限额 (开仓时)
         if order.offset == "OPEN" and context.position_limit > 0:
             new_position = context.current_position + order.volume
-            max_allowed = int(context.position_limit * self._config.position_limit_ratio)
+            max_allowed = int(
+                context.position_limit * self._config.position_limit_ratio
+            )
             if new_position > max_allowed:
                 violations.append(
                     ComplianceViolation(
@@ -574,7 +577,9 @@ class ChinaFuturesComplianceChecker:
             "check_count": self._check_count,
             "violation_count": self._violation_count,
             "violation_rate": (
-                self._violation_count / self._check_count if self._check_count > 0 else 0.0
+                self._violation_count / self._check_count
+                if self._check_count > 0
+                else 0.0
             ),
             "checker_version": self.VERSION,
         }

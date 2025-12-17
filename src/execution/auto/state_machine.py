@@ -135,16 +135,34 @@ class OrderFSM:
         # PARTIAL_FILLED 状态
         (OrderState.PARTIAL_FILLED, OrderEvent.PARTIAL_FILL): OrderState.PARTIAL_FILLED,
         (OrderState.PARTIAL_FILLED, OrderEvent.FILL): OrderState.FILLED,
-        (OrderState.PARTIAL_FILLED, OrderEvent.CANCEL_REQUEST): OrderState.CANCEL_SUBMITTING,
-        (OrderState.PARTIAL_FILLED, OrderEvent.FILL_TIMEOUT): OrderState.CANCEL_SUBMITTING,
+        (
+            OrderState.PARTIAL_FILLED,
+            OrderEvent.CANCEL_REQUEST,
+        ): OrderState.CANCEL_SUBMITTING,
+        (
+            OrderState.PARTIAL_FILLED,
+            OrderEvent.FILL_TIMEOUT,
+        ): OrderState.CANCEL_SUBMITTING,
         (OrderState.PARTIAL_FILLED, OrderEvent.CHASE): OrderState.CHASE_PENDING,
         # CANCEL_SUBMITTING 状态
         (OrderState.CANCEL_SUBMITTING, OrderEvent.CANCEL_ACK): OrderState.CANCELLED,
-        (OrderState.CANCEL_SUBMITTING, OrderEvent.CANCEL_REJECT): OrderState.CANCEL_REJECTED,
-        (OrderState.CANCEL_SUBMITTING, OrderEvent.FILL): OrderState.FILLED,  # 撤单途中成交
-        (OrderState.CANCEL_SUBMITTING, OrderEvent.PARTIAL_FILL): OrderState.PARTIAL_CANCELLED,
+        (
+            OrderState.CANCEL_SUBMITTING,
+            OrderEvent.CANCEL_REJECT,
+        ): OrderState.CANCEL_REJECTED,
+        (
+            OrderState.CANCEL_SUBMITTING,
+            OrderEvent.FILL,
+        ): OrderState.FILLED,  # 撤单途中成交
+        (
+            OrderState.CANCEL_SUBMITTING,
+            OrderEvent.PARTIAL_FILL,
+        ): OrderState.PARTIAL_CANCELLED,
         (OrderState.CANCEL_SUBMITTING, OrderEvent.CANCEL_TIMEOUT): OrderState.QUERYING,
-        (OrderState.CANCEL_SUBMITTING, OrderEvent.STATUS_4): OrderState.ERROR,  # STATUS_4 无成交
+        (
+            OrderState.CANCEL_SUBMITTING,
+            OrderEvent.STATUS_4,
+        ): OrderState.ERROR,  # STATUS_4 无成交
         # QUERYING 状态
         (OrderState.QUERYING, OrderEvent.QUERY_RESULT): OrderState.PENDING,
         (OrderState.QUERYING, OrderEvent.FILL): OrderState.FILLED,
@@ -162,7 +180,8 @@ class OrderFSM:
         self,
         initial_state: OrderState = OrderState.CREATED,
         mode: str = "tolerant",
-        on_invalid_transition: Callable[[OrderState, OrderEvent, str], None] | None = None,
+        on_invalid_transition: Callable[[OrderState, OrderEvent, str], None]
+        | None = None,
     ) -> None:
         """初始化状态机.
 

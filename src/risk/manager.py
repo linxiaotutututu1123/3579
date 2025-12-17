@@ -86,7 +86,10 @@ class RiskManager:
         now_ts = self._now()
 
         if self.state.mode == RiskMode.COOLDOWN:
-            if self.state.cooldown_end_ts is not None and now_ts >= self.state.cooldown_end_ts:
+            if (
+                self.state.cooldown_end_ts is not None
+                and now_ts >= self.state.cooldown_end_ts
+            ):
                 self.state.mode = RiskMode.RECOVERY
                 self._events.append(
                     RiskEvent(

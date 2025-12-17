@@ -6,7 +6,9 @@ from src.strategy.linear_ai import LinearAIStrategy
 from src.strategy.types import Bar1m, MarketState
 
 
-def _generate_bars(n: int, base_price: float = 100.0, trend: float = 0.001) -> list[Bar1m]:
+def _generate_bars(
+    n: int, base_price: float = 100.0, trend: float = 0.001
+) -> list[Bar1m]:
     """Generate synthetic bar data with trend."""
     bars: list[Bar1m] = []
     price = base_price

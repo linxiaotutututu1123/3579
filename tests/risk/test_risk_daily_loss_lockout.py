@@ -32,7 +32,9 @@ def test_daily_loss_lockout_flow() -> None:
         now_cb=now_cb,
     )
 
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.on_day_start_0900(
+        AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid"
+    )
     assert rm.state.mode.value == RiskMode.NORMAL.value
     assert rm.state.kill_switch_fired_today is False
 
@@ -86,7 +88,9 @@ def test_callbacks_only_called_once_on_first_breach() -> None:
         now_cb=now_cb,
     )
 
-    rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid")
+    rm.on_day_start_0900(
+        AccountSnapshot(equity=1_000_000.0, margin_used=0.0), correlation_id="cid"
+    )
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0), correlation_id="cid")
     assert calls["cancel"] == 1

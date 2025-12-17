@@ -8,7 +8,12 @@ from dataclasses import dataclass
 
 from src.execution.events import ExecutionEvent
 from src.execution.flatten_executor import ExecutionRecord, FlattenExecutor
-from src.execution.flatten_plan import BookTop, FlattenSpec, PositionToClose, build_flatten_intents
+from src.execution.flatten_plan import (
+    BookTop,
+    FlattenSpec,
+    PositionToClose,
+    build_flatten_intents,
+)
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.manager import RiskManager
 from src.risk.state import AccountSnapshot
@@ -82,7 +87,9 @@ def handle_risk_update(
     exec_records: list[ExecutionRecord] = []
     exec_events: list[ExecutionEvent] = []
 
-    kill_fired = any(e.type == RiskEventType.KILL_SWITCH_FIRED for e in base_risk_events)
+    kill_fired = any(
+        e.type == RiskEventType.KILL_SWITCH_FIRED for e in base_risk_events
+    )
     if kill_fired and risk.try_start_flatten(correlation_id=correlation_id):
         spec = flatten_spec or FlattenSpec()
         rejections = 0
@@ -114,7 +121,12 @@ def handle_risk_update(
         risk.mark_flatten_done(correlation_id=correlation_id)
 
     all_risk_events = risk.pop_events()
-    events: list[Event] = [audit_event, *base_risk_events, *all_risk_events, *exec_events]
+    events: list[Event] = [
+        audit_event,
+        *base_risk_events,
+        *all_risk_events,
+        *exec_events,
+    ]
 
     return OrchestratorResult(
         correlation_id=correlation_id,

@@ -165,7 +165,9 @@ class TrainingProgress:
         lines.append("")
 
         # 趋势
-        trend_emoji = {"improving": "📈", "stable": "➡️", "declining": "📉"}.get(self.trend, "❓")
+        trend_emoji = {"improving": "📈", "stable": "➡️", "declining": "📉"}.get(
+            self.trend, "❓"
+        )
         lines.append(f"  趋势: {trend_emoji} {self.trend}")
         lines.append("")
 

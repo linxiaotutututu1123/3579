@@ -25,7 +25,9 @@ def test_flatten_runs_only_once_per_day_even_if_called_twice() -> None:
     # Second call while in progress should be skipped
     assert rm.try_start_flatten(correlation_id="second") is False
     events2 = rm.pop_events()
-    assert any(e.type == RiskEventType.FLATTEN_SKIPPED_ALREADY_IN_PROGRESS for e in events2)
+    assert any(
+        e.type == RiskEventType.FLATTEN_SKIPPED_ALREADY_IN_PROGRESS for e in events2
+    )
 
     # Mark flatten done
     rm.mark_flatten_done(correlation_id="done")
@@ -34,4 +36,6 @@ def test_flatten_runs_only_once_per_day_even_if_called_twice() -> None:
     # Third call after completion should also be skipped
     assert rm.try_start_flatten(correlation_id="third") is False
     events3 = rm.pop_events()
-    assert any(e.type == RiskEventType.FLATTEN_SKIPPED_ALREADY_IN_PROGRESS for e in events3)
+    assert any(
+        e.type == RiskEventType.FLATTEN_SKIPPED_ALREADY_IN_PROGRESS for e in events3
+    )

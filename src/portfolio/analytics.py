@@ -99,7 +99,9 @@ class PortfolioAnalytics:
         """
         self._manager = manager
 
-    def compute_risk_metrics(self, prices: dict[str, float] | None = None) -> RiskMetrics:
+    def compute_risk_metrics(
+        self, prices: dict[str, float] | None = None
+    ) -> RiskMetrics:
         """Compute portfolio risk metrics.
 
         Args:
@@ -209,7 +211,9 @@ class PortfolioAnalytics:
             total_unrealized=total_unrealized,
         )
 
-    def compute_sharpe_ratio(self, returns: list[float], risk_free_rate: float = 0.0) -> float:
+    def compute_sharpe_ratio(
+        self, returns: list[float], risk_free_rate: float = 0.0
+    ) -> float:
         """Compute Sharpe ratio from returns.
 
         Args:

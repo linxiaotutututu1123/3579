@@ -342,7 +342,9 @@ class TestVerifyReplayDeterminism:
             path_orig = Path(f1.name)
             path_replay = Path(f2.name)
 
-        decision_result, guardian_result = verify_replay_determinism(path_orig, path_replay)
+        decision_result, guardian_result = verify_replay_determinism(
+            path_orig, path_replay
+        )
         assert decision_result.is_match is True
         assert guardian_result.is_match is True
         path_orig.unlink()
@@ -359,7 +361,9 @@ class TestVerifyReplayDeterminism:
             path_orig = Path(f1.name)
             path_replay = Path(f2.name)
 
-        decision_result, guardian_result = verify_replay_determinism(path_orig, path_replay)
+        decision_result, guardian_result = verify_replay_determinism(
+            path_orig, path_replay
+        )
         assert decision_result.is_match is False
         path_orig.unlink()
         path_replay.unlink()

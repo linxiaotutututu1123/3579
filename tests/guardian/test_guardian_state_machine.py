@@ -128,14 +128,20 @@ class TestGuardianFSM:
         """测试转移回调."""
         transitions: list[tuple[GuardianMode, GuardianMode, str]] = []
 
-        def callback(from_mode: GuardianMode, to_mode: GuardianMode, event: str) -> None:
+        def callback(
+            from_mode: GuardianMode, to_mode: GuardianMode, event: str
+        ) -> None:
             transitions.append((from_mode, to_mode, event))
 
         fsm = GuardianFSM(on_transition=callback)
         fsm.transition("init_success")
 
         assert len(transitions) == 1
-        assert transitions[0] == (GuardianMode.INIT, GuardianMode.RUNNING, "init_success")
+        assert transitions[0] == (
+            GuardianMode.INIT,
+            GuardianMode.RUNNING,
+            "init_success",
+        )
 
     def test_force_mode(self) -> None:
         """测试强制模式设置."""

@@ -114,7 +114,9 @@ def safe_read_file(filepath: str, max_lines: int = 500) -> str | None:
         lines = content.splitlines()
         if len(lines) > max_lines:
             lines = lines[:max_lines]
-            lines.append(f"\n... (truncated, {len(lines)} of {len(content.splitlines())} lines)")
+            lines.append(
+                f"\n... (truncated, {len(lines)} of {len(content.splitlines())} lines)"
+            )
         return "\n".join(lines)
     except Exception:
         return None
@@ -192,7 +194,9 @@ def get_recent_test_failures() -> str:
             data = json.loads(content)
             if data:
                 failures = list(data.keys())[:10]
-                return "Recent test failures:\n" + "\n".join(f"  - {f}" for f in failures)
+                return "Recent test failures:\n" + "\n".join(
+                    f"  - {f}" for f in failures
+                )
         except Exception:
             pass
     return "(no recent test failures)"
@@ -204,7 +208,9 @@ def get_audit_summary() -> str:
     if not audit_dir.exists():
         return "(no audit logs)"
 
-    jsonl_files = sorted(audit_dir.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True)
+    jsonl_files = sorted(
+        audit_dir.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True
+    )
     if not jsonl_files:
         return "(no audit logs)"
 
@@ -268,7 +274,12 @@ def main() -> None:
         if content:
             lines.append(f"### {f}\n")
             ext = Path(f).suffix.lstrip(".")
-            lang = {"py": "python", "md": "markdown", "toml": "toml", "yml": "yaml"}.get(ext, "")
+            lang = {
+                "py": "python",
+                "md": "markdown",
+                "toml": "toml",
+                "yml": "yaml",
+            }.get(ext, "")
             lines.append(f"```{lang}")
             lines.append(content)
             lines.append("```\n")
@@ -287,7 +298,9 @@ def main() -> None:
 
     # Security notice
     lines.append("---")
-    lines.append("*Security: .env, secrets, credentials, CTP accounts are auto-filtered.*\n")
+    lines.append(
+        "*Security: .env, secrets, credentials, CTP accounts are auto-filtered.*\n"
+    )
 
     # Write output
     out.write_text("\n".join(lines), encoding="utf-8")

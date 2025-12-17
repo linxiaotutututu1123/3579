@@ -51,10 +51,14 @@ def test_close_orders_execute_before_open() -> None:
     executor = FlattenExecutor(broker)
 
     close_intents = [
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100.0, qty=1),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100.0, qty=1
+        ),
     ]
     open_intents = [
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.OPEN, price=100.0, qty=2),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.OPEN, price=100.0, qty=2
+        ),
     ]
 
     trading_events, exec_events = execute_close_then_open(
@@ -68,7 +72,9 @@ def test_close_orders_execute_before_open() -> None:
     assert broker.orders[0].intent.offset == Offset.CLOSE
     assert broker.orders[1].intent.offset == Offset.OPEN
 
-    batch_finished = [e for e in trading_events if e.type == TradingEventType.EXEC_BATCH_FINISHED]
+    batch_finished = [
+        e for e in trading_events if e.type == TradingEventType.EXEC_BATCH_FINISHED
+    ]
     assert len(batch_finished) == 1
     assert batch_finished[0].data["open_skipped"] is False
 
@@ -79,10 +85,14 @@ def test_close_rejection_skips_open_orders() -> None:
     executor = FlattenExecutor(broker)
 
     close_intents = [
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100.0, qty=1),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.CLOSE, price=100.0, qty=1
+        ),
     ]
     open_intents = [
-        OrderIntent(symbol="AO", side=Side.SELL, offset=Offset.OPEN, price=100.0, qty=2),
+        OrderIntent(
+            symbol="AO", side=Side.SELL, offset=Offset.OPEN, price=100.0, qty=2
+        ),
     ]
 
     trading_events, exec_events = execute_close_then_open(
@@ -95,12 +105,16 @@ def test_close_rejection_skips_open_orders() -> None:
     assert len(broker.orders) == 0
 
     skip_events = [
-        e for e in trading_events if e.type == TradingEventType.OPEN_SKIPPED_DUE_TO_CLOSE_FAILURE
+        e
+        for e in trading_events
+        if e.type == TradingEventType.OPEN_SKIPPED_DUE_TO_CLOSE_FAILURE
     ]
     assert len(skip_events) == 1
     assert skip_events[0].data["skipped_open_count"] == 1
 
-    batch_finished = [e for e in trading_events if e.type == TradingEventType.EXEC_BATCH_FINISHED]
+    batch_finished = [
+        e for e in trading_events if e.type == TradingEventType.EXEC_BATCH_FINISHED
+    ]
     assert len(batch_finished) == 1
     assert batch_finished[0].data["open_skipped"] is True
 

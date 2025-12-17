@@ -326,10 +326,14 @@ class LimitPriceGuard:
         """
         # 确定涨跌停幅度
         if limit_pct is None:
-            limit_pct = self.get_limit_pct(symbol) if symbol else self._config.default_limit_pct
+            limit_pct = (
+                self.get_limit_pct(symbol) if symbol else self._config.default_limit_pct
+            )
 
         # 确定tick_size
-        actual_tick_size = tick_size if tick_size is not None else self._config.tick_size
+        actual_tick_size = (
+            tick_size if tick_size is not None else self._config.tick_size
+        )
 
         # 计算原始涨跌停价格
         raw_limit_up = last_settle * (1 + limit_pct)

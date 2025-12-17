@@ -935,4 +935,6 @@ class TestStressTestSummaryFormat:
         )
 
         # passed + warning + failed = total
-        assert summary.passed + summary.warning + summary.failed == summary.total_scenarios
+        assert (
+            summary.passed + summary.warning + summary.failed == summary.total_scenarios
+        )

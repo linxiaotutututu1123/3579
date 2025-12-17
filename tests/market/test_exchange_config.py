@@ -313,7 +313,13 @@ class TestMilitaryRuleM15:
     def test_night_session_config_complete(self) -> None:
         """测试夜盘配置完整性."""
         # 有夜盘的交易所必须有夜盘开始时间
-        for exchange in [Exchange.SHFE, Exchange.DCE, Exchange.CZCE, Exchange.GFEX, Exchange.INE]:
+        for exchange in [
+            Exchange.SHFE,
+            Exchange.DCE,
+            Exchange.CZCE,
+            Exchange.GFEX,
+            Exchange.INE,
+        ]:
             config = get_exchange_config(exchange)
             assert config.night_session_start == "21:00"
             assert config.night_session_end != NightSessionEnd.NONE

@@ -110,7 +110,9 @@ def _lazy_import_ctp() -> Any:
 class CtpBroker(Broker):
     """CTP broker implementation with lazy SDK import."""
 
-    def __init__(self, config: CtpConfig, trade_mode: TradeMode = TradeMode.PAPER) -> None:
+    def __init__(
+        self, config: CtpConfig, trade_mode: TradeMode = TradeMode.PAPER
+    ) -> None:
         """
         Initialize CTP broker.
 
@@ -191,7 +193,9 @@ class CtpBroker(Broker):
         if self._ctp is None:
             if self._trade_mode == TradeMode.LIVE:
                 # LIVE mode without SDK is a hard error
-                raise CtpNotAvailableError("Cannot place order: CTP SDK not available in LIVE mode")
+                raise CtpNotAvailableError(
+                    "Cannot place order: CTP SDK not available in LIVE mode"
+                )
             # PAPER mock mode - generate fake order ID
             self._order_ref += 1
             order_id = f"MOCK_{self._order_ref:06d}"

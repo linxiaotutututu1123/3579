@@ -232,7 +232,9 @@ class MarginMonitor:
         self._level: MarginLevel = MarginLevel.SAFE
         self._status: MarginStatus = MarginStatus.HEALTHY
         self._previous_level: MarginLevel = MarginLevel.SAFE
-        self._snapshots: deque[MarginSnapshot] = deque(maxlen=self.config.max_snapshot_history)
+        self._snapshots: deque[MarginSnapshot] = deque(
+            maxlen=self.config.max_snapshot_history
+        )
         self._alerts: deque[MarginAlert] = deque(maxlen=100)
         self._last_update: datetime | None = None
 
@@ -455,7 +457,9 @@ class MarginMonitor:
 
         # 计算开仓后的保证金使用率
         projected_margin_used = self._margin_used + required_margin
-        projected_usage_ratio = projected_margin_used / self._equity if self._equity > 0 else 1.0
+        projected_usage_ratio = (
+            projected_margin_used / self._equity if self._equity > 0 else 1.0
+        )
 
         # 计算开仓后的等级
         projected_level = self._calculate_projected_level(projected_usage_ratio)
@@ -574,7 +578,9 @@ class MarginMonitor:
             "level": self._level.value,
             "status": self._status.value,
             "action_required": self.LEVEL_ACTIONS[self._level],
-            "last_update": (self._last_update.isoformat() if self._last_update else None),
+            "last_update": (
+                self._last_update.isoformat() if self._last_update else None
+            ),
             "alert_count": len(self._alerts),
         }
 
@@ -615,17 +621,23 @@ class MarginMonitor:
             # 紧急情况, 减仓到安全水平
             target_ratio = self.config.safe_threshold
             excess = self._usage_ratio - target_ratio
-            return min(1.0, excess / self._usage_ratio) if self._usage_ratio > 0 else 0.5
+            return (
+                min(1.0, excess / self._usage_ratio) if self._usage_ratio > 0 else 0.5
+            )
         if self._level == MarginLevel.DANGER:
             # 危险等级, 减仓到正常水平
             target_ratio = self.config.normal_threshold
             excess = self._usage_ratio - target_ratio
-            return min(0.5, excess / self._usage_ratio) if self._usage_ratio > 0 else 0.3
+            return (
+                min(0.5, excess / self._usage_ratio) if self._usage_ratio > 0 else 0.3
+            )
         if self._level == MarginLevel.WARNING:
             # 预警等级, 减仓到安全水平
             target_ratio = self.config.safe_threshold
             excess = self._usage_ratio - target_ratio
-            return min(0.3, excess / self._usage_ratio) if self._usage_ratio > 0 else 0.2
+            return (
+                min(0.3, excess / self._usage_ratio) if self._usage_ratio > 0 else 0.2
+            )
         return 0.0
 
     def reset(self) -> None:

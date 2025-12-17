@@ -488,7 +488,9 @@ class CtpApi:
                 logger.debug("订阅成功: %s", symbol)
 
             except Exception as e:
-                state = self._subscriptions.get(symbol) or SubscriptionState(symbol=symbol)
+                state = self._subscriptions.get(symbol) or SubscriptionState(
+                    symbol=symbol
+                )
                 state.status = SubscriptionStatus.FAILED
                 state.error = str(e)
                 self._subscriptions[symbol] = state
@@ -591,7 +593,9 @@ class CtpApi:
             "is_connected": self.is_connected,
             "is_authenticated": self.is_authenticated,
             "is_ready": self.is_ready,
-            "connected_at": self._connected_at.isoformat() if self._connected_at else None,
+            "connected_at": self._connected_at.isoformat()
+            if self._connected_at
+            else None,
             "authenticated_at": (
                 self._authenticated_at.isoformat() if self._authenticated_at else None
             ),

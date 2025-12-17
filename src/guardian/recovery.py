@@ -174,7 +174,9 @@ class ColdStartRecovery:
                 self._state.details[step.value] = details
             else:
                 self._state.status = RecoveryStatus.FAILED
-                self._state.errors.append(f"{step.value}: {details.get('error', 'unknown')}")
+                self._state.errors.append(
+                    f"{step.value}: {details.get('error', 'unknown')}"
+                )
                 self._state.end_time = time.time()
                 return self._state
 

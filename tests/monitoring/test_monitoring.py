@@ -26,7 +26,9 @@ class TestHealthChecker:
     def test_check_exception(self) -> None:
         """测试检查异常."""
         checker = HealthChecker()
-        checker.register_check("bad", lambda: (_ for _ in ()).throw(RuntimeError("fail")))
+        checker.register_check(
+            "bad", lambda: (_ for _ in ()).throw(RuntimeError("fail"))
+        )
         status = checker.check("bad")
         assert status.state == HealthState.UNHEALTHY
 

@@ -136,7 +136,9 @@ class TestChinaTradingCalendar:
         assert calendar.is_trading_day(date(2025, 1, 1)) is False
         assert calendar.is_trading_day(date(2025, 10, 1)) is False
 
-    def test_is_trading_day_workday_override(self, calendar: ChinaTradingCalendar) -> None:
+    def test_is_trading_day_workday_override(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试调休工作日是交易日."""
         # 2025-01-26 是周日但是调休工作日
         assert calendar.is_trading_day(date(2025, 1, 26)) is True
@@ -164,13 +166,17 @@ class TestNightSessionRules:
         # 2025-12-19 是周五
         assert calendar.has_night_session_on_day(date(2025, 12, 19)) is False
 
-    def test_has_night_session_before_holiday(self, calendar: ChinaTradingCalendar) -> None:
+    def test_has_night_session_before_holiday(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试节假日前一天没有夜盘."""
         # 2024-12-31 是周二，下一天2025-01-01是元旦假期
         # 所以2024-12-31没有夜盘
         assert calendar.has_night_session_on_day(date(2024, 12, 31)) is False
 
-    def test_has_night_session_non_trading_day(self, calendar: ChinaTradingCalendar) -> None:
+    def test_has_night_session_non_trading_day(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试非交易日没有夜盘."""
         # 2025-12-13 是周六
         assert calendar.has_night_session_on_day(date(2025, 12, 13)) is False
@@ -243,7 +249,9 @@ class TestTradingTimeCheck:
         dt = datetime(2025, 12, 16, 9, 30)
         assert calendar.is_trading_time(dt) is True
 
-    def test_is_trading_time_morning_break(self, calendar: ChinaTradingCalendar) -> None:
+    def test_is_trading_time_morning_break(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试早盘休息不是交易时间."""
         dt = datetime(2025, 12, 16, 10, 20)
         assert calendar.is_trading_time(dt) is False
@@ -263,13 +271,17 @@ class TestTradingTimeCheck:
         dt = datetime(2025, 12, 16, 14, 0)
         assert calendar.is_trading_time(dt) is True
 
-    def test_is_trading_time_night_session(self, calendar: ChinaTradingCalendar) -> None:
+    def test_is_trading_time_night_session(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试夜盘是交易时间（如果当日有夜盘）."""
         # 2025-12-15 是周一，有夜盘
         dt = datetime(2025, 12, 15, 21, 30)
         assert calendar.is_trading_time(dt) is True
 
-    def test_is_trading_time_night_session_friday(self, calendar: ChinaTradingCalendar) -> None:
+    def test_is_trading_time_night_session_friday(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试周五夜盘不是交易时间."""
         # 2025-12-19 是周五，没有夜盘
         dt = datetime(2025, 12, 19, 21, 30)
@@ -286,7 +298,9 @@ class TestTradingPeriodDetection:
         """创建测试用日历实例."""
         return ChinaTradingCalendar()
 
-    def test_get_trading_period_pre_market(self, calendar: ChinaTradingCalendar) -> None:
+    def test_get_trading_period_pre_market(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试盘前时段."""
         dt = datetime(2025, 12, 16, 8, 30)
         assert calendar.get_trading_period(dt) == TradingPeriod.PRE_MARKET
@@ -296,7 +310,9 @@ class TestTradingPeriodDetection:
         dt = datetime(2025, 12, 16, 9, 30)
         assert calendar.get_trading_period(dt) == TradingPeriod.MORNING_1
 
-    def test_get_trading_period_morning_break(self, calendar: ChinaTradingCalendar) -> None:
+    def test_get_trading_period_morning_break(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试早盘休息."""
         dt = datetime(2025, 12, 16, 10, 20)
         assert calendar.get_trading_period(dt) == TradingPeriod.MORNING_BREAK
@@ -306,7 +322,9 @@ class TestTradingPeriodDetection:
         dt = datetime(2025, 12, 16, 11, 0)
         assert calendar.get_trading_period(dt) == TradingPeriod.MORNING_2
 
-    def test_get_trading_period_lunch_break(self, calendar: ChinaTradingCalendar) -> None:
+    def test_get_trading_period_lunch_break(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试午休."""
         dt = datetime(2025, 12, 16, 12, 0)
         assert calendar.get_trading_period(dt) == TradingPeriod.LUNCH_BREAK
@@ -316,7 +334,9 @@ class TestTradingPeriodDetection:
         dt = datetime(2025, 12, 16, 14, 0)
         assert calendar.get_trading_period(dt) == TradingPeriod.AFTERNOON
 
-    def test_get_trading_period_after_market(self, calendar: ChinaTradingCalendar) -> None:
+    def test_get_trading_period_after_market(
+        self, calendar: ChinaTradingCalendar
+    ) -> None:
         """测试盘后."""
         dt = datetime(2025, 12, 16, 16, 0)
         assert calendar.get_trading_period(dt) == TradingPeriod.AFTER_MARKET

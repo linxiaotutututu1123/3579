@@ -55,7 +55,9 @@ def test_fault_injection_reject_all() -> None:
     res = run_replay_tick(
         risk=rm,
         snap=AccountSnapshot(equity=969_000.0, margin_used=0.0),
-        positions=[PositionToClose(symbol="AO", net_qty=1, today_qty=1, yesterday_qty=0)],
+        positions=[
+            PositionToClose(symbol="AO", net_qty=1, today_qty=1, yesterday_qty=0)
+        ],
         books={"AO": BookTop(best_bid=100.0, best_ask=101.0, tick=1.0)},
         flatten_spec=FlattenSpec(stage2_requotes=0, stage3_max_cross_levels=0),
         fault=FaultConfig(reject_all=True),

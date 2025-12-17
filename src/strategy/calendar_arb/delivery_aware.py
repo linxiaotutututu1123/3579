@@ -380,7 +380,9 @@ class DeliveryAwareCalendarArb:
         total_fee = fee_close + fee_open
 
         # 预估滑点
-        slippage_close = from_price * volume * multiplier * self._config.max_roll_slippage
+        slippage_close = (
+            from_price * volume * multiplier * self._config.max_roll_slippage
+        )
         slippage_open = to_price * volume * multiplier * self._config.max_roll_slippage
         total_slippage = slippage_close + slippage_open
 
@@ -572,7 +574,9 @@ class MainContractDetector:
         """
         # 获取该品种所有合约
         contracts = [
-            (sym, data) for sym, data in self._contract_data.items() if data["product"] == product
+            (sym, data)
+            for sym, data in self._contract_data.items()
+            if data["product"] == product
         ]
 
         if not contracts:

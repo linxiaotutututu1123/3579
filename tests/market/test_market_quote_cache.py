@@ -63,7 +63,9 @@ class TestMktStaleSoft:
         is_stale = cache.is_stale("rb2501", now_ts=1000004.0)
 
         # Assert - Evidence
-        assert is_stale is True, f"[{self.RULE_ID}] Should be stale at 4000ms > {QUOTE_STALE_MS}ms"
+        assert is_stale is True, (
+            f"[{self.RULE_ID}] Should be stale at 4000ms > {QUOTE_STALE_MS}ms"
+        )
 
     def test_stale_for_missing_symbol(self) -> None:
         """不存在的合约返回 stale."""
@@ -72,7 +74,9 @@ class TestMktStaleSoft:
         is_stale = cache.is_stale("nonexistent", now_ts=1000000.0)
 
         # Assert - Evidence
-        assert is_stale is True, f"[{self.RULE_ID}] Missing symbol should be treated as stale"
+        assert is_stale is True, (
+            f"[{self.RULE_ID}] Missing symbol should be treated as stale"
+        )
 
     def test_stale_detection_with_millisecond_timestamps(self) -> None:
         """毫秒时间戳正确检测."""
@@ -86,7 +90,9 @@ class TestMktStaleSoft:
         is_stale = cache.is_stale("rb2501", now_ts=1700000004000.0)
 
         # Assert - Evidence
-        assert is_stale is True, f"[{self.RULE_ID}] Millisecond timestamps should work correctly"
+        assert is_stale is True, (
+            f"[{self.RULE_ID}] Millisecond timestamps should work correctly"
+        )
 
 
 class TestMktStaleHard:

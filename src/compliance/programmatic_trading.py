@@ -384,9 +384,13 @@ class ComplianceThrottle:
         count_per_sec = self._count_in_window(timestamp, 1)
 
         # 计算使用率
-        usage_5s_pct = count_5s / self._config.limit_5s if self._config.limit_5s > 0 else 0
+        usage_5s_pct = (
+            count_5s / self._config.limit_5s if self._config.limit_5s > 0 else 0
+        )
         usage_daily_pct = (
-            self._daily_count / self._config.limit_daily if self._config.limit_daily > 0 else 0
+            self._daily_count / self._config.limit_daily
+            if self._config.limit_daily > 0
+            else 0
         )
 
         # 判断高频
@@ -403,7 +407,9 @@ class ComplianceThrottle:
         if level == ThrottleLevel.EXCEEDED and self._exceeded_until is None:
             from datetime import timedelta
 
-            self._exceeded_until = timestamp + timedelta(seconds=self._config.cooldown_seconds)
+            self._exceeded_until = timestamp + timedelta(
+                seconds=self._config.cooldown_seconds
+            )
 
         # 生成消息和可提交状态
         can_submit = level != ThrottleLevel.EXCEEDED

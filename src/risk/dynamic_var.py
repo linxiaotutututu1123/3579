@@ -378,17 +378,15 @@ class DynamicVaREngine:
             )
 
         # 截断收益率到涨跌停范围
-        truncated_returns = [
-            max(-limit_pct, min(limit_pct, r)) for r in returns
-        ]
+        truncated_returns = [max(-limit_pct, min(limit_pct, r)) for r in returns]
 
         # 计算截断后的VaR
-        base_result = self._base_calculator.historical_var(truncated_returns, confidence)
+        base_result = self._base_calculator.historical_var(
+            truncated_returns, confidence
+        )
 
         # 计算截断比例
-        truncated_count = sum(
-            1 for r in returns if abs(r) >= limit_pct
-        )
+        truncated_count = sum(1 for r in returns if abs(r) >= limit_pct)
         truncation_ratio = truncated_count / len(returns) if returns else 0
 
         # 如果截断比例高，VaR可能被低估，需要调整
@@ -472,7 +470,9 @@ class DynamicVaREngine:
         else:
             impact_cost = liquidity.impact_coefficient * position_value
 
-        liquidity_cost = (spread_cost + impact_cost) / position_value if position_value > 0 else 0
+        liquidity_cost = (
+            (spread_cost + impact_cost) / position_value if position_value > 0 else 0
+        )
 
         # 调整VaR
         # LVaR = VaR + 流动性成本
@@ -495,8 +495,12 @@ class DynamicVaREngine:
             metadata={
                 "base_var": round(base_result.var, 6),
                 "liquidity_cost": round(liquidity_cost, 6),
-                "spread_cost_pct": round(spread_cost / position_value, 6) if position_value > 0 else 0,
-                "impact_cost_pct": round(impact_cost / position_value, 6) if position_value > 0 else 0,
+                "spread_cost_pct": round(spread_cost / position_value, 6)
+                if position_value > 0
+                else 0,
+                "impact_cost_pct": round(impact_cost / position_value, 6)
+                if position_value > 0
+                else 0,
                 "liquidation_days": liquidation_days,
             },
         )
@@ -541,9 +545,7 @@ class DynamicVaREngine:
         elif method == VaRMethod.EVT_GPD:
             return self.evt_var(returns, confidence, kwargs.get("threshold_pct", 0.90))
         elif method == VaRMethod.SEMIPARAMETRIC:
-            return self.semiparametric_var(
-                returns, confidence, kwargs.get("bandwidth")
-            )
+            return self.semiparametric_var(returns, confidence, kwargs.get("bandwidth"))
         elif method == VaRMethod.LIMIT_ADJUSTED:
             return self.limit_adjusted_var(
                 returns, kwargs.get("limit_pct", 0.10), confidence
@@ -579,7 +581,9 @@ class DynamicVaREngine:
 
         # 矩估计
         mean_exc = sum(exceedances) / n
-        var_exc = sum((e - mean_exc) ** 2 for e in exceedances) / (n - 1) if n > 1 else 0
+        var_exc = (
+            sum((e - mean_exc) ** 2 for e in exceedances) / (n - 1) if n > 1 else 0
+        )
 
         if mean_exc <= 0:
             return GPDParameters(xi=0, beta=1, threshold=threshold, exceedances=n)
@@ -601,9 +605,7 @@ class DynamicVaREngine:
             xi=xi, beta=max(0.001, beta), threshold=threshold, exceedances=n
         )
 
-    def _evt_expected_shortfall(
-        self, var: float, gpd: GPDParameters
-    ) -> float:
+    def _evt_expected_shortfall(self, var: float, gpd: GPDParameters) -> float:
         """计算EVT期望尾部损失.
 
         参数:
@@ -748,9 +750,7 @@ class DynamicVaREngine:
         self._notify_risk(result)
         return result
 
-    def register_callback(
-        self, callback: Callable[[DynamicVaRResult], None]
-    ) -> None:
+    def register_callback(self, callback: Callable[[DynamicVaRResult], None]) -> None:
         """注册风险回调."""
         self._on_risk_callbacks.append(callback)
 

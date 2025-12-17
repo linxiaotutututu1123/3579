@@ -49,7 +49,9 @@ def _find_next_more_aggressive_close(
 
 
 class FlattenExecutor:
-    def __init__(self, broker: Broker, *, now_cb: Callable[[], float] = time.time) -> None:
+    def __init__(
+        self, broker: Broker, *, now_cb: Callable[[], float] = time.time
+    ) -> None:
         self._broker = broker
         self._now = now_cb
         self._events: list[ExecutionEvent] = []
@@ -71,7 +73,9 @@ class FlattenExecutor:
             ts = self._now()
             try:
                 ack: OrderAck = self._broker.place_order(intent)
-                rec = ExecutionRecord(intent=intent, ok=True, order_id=ack.order_id, note="placed")
+                rec = ExecutionRecord(
+                    intent=intent, ok=True, order_id=ack.order_id, note="placed"
+                )
                 records.append(rec)
                 self._events.append(
                     ExecutionEvent(

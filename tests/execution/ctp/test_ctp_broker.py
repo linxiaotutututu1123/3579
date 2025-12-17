@@ -126,7 +126,9 @@ class TestValidateCtpEnv:
         result = validate_ctp_env(TradeMode.PAPER)
         assert result is None
 
-    def test_live_mode_missing_vars_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_live_mode_missing_vars_raises(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """LIVE mode with missing vars raises CtpConfigError with clear message."""
         # Clear all CTP env vars
         for var in ("CTP_FRONT_ADDR", "CTP_BROKER_ID", "CTP_USER_ID", "CTP_PASSWORD"):
@@ -142,7 +144,9 @@ class TestValidateCtpEnv:
         assert "CTP_PASSWORD" in error_msg
         assert "LIVE mode" in error_msg
 
-    def test_live_mode_partial_vars_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_live_mode_partial_vars_raises(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """LIVE mode with partial vars raises and lists only missing ones."""
         monkeypatch.setenv("CTP_FRONT_ADDR", "tcp://127.0.0.1:10130")
         monkeypatch.setenv("CTP_BROKER_ID", "9999")
@@ -179,7 +183,9 @@ class TestValidateCtpEnv:
         assert result.app_id == ""  # Optional, defaults to empty
         assert result.auth_code == ""  # Optional, defaults to empty
 
-    def test_live_mode_optional_vars_included(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_live_mode_optional_vars_included(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """LIVE mode includes optional vars when set."""
         monkeypatch.setenv("CTP_FRONT_ADDR", "tcp://180.168.146.187:10130")
         monkeypatch.setenv("CTP_BROKER_ID", "9999")

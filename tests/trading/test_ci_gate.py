@@ -300,7 +300,11 @@ class TestGetExitCode:
     def test_risk_config_fail_returns_risk_config_fail(self) -> None:
         """Risk config failure returns RISK_CONFIG_FAIL."""
         report = GateReport(
-            checks=(GateCheck("risk_limits_configured", GateCheckStatus.FAIL, required=True),),
+            checks=(
+                GateCheck(
+                    "risk_limits_configured", GateCheckStatus.FAIL, required=True
+                ),
+            ),
             target_mode="LIVE",
         )
         assert get_exit_code(report) == ExitCode.RISK_CONFIG_FAIL
@@ -308,7 +312,9 @@ class TestGetExitCode:
     def test_broker_creds_fail_returns_broker_creds_fail(self) -> None:
         """Broker creds failure returns BROKER_CREDS_FAIL."""
         report = GateReport(
-            checks=(GateCheck("broker_credentials", GateCheckStatus.FAIL, required=True),),
+            checks=(
+                GateCheck("broker_credentials", GateCheckStatus.FAIL, required=True),
+            ),
             target_mode="LIVE",
         )
         assert get_exit_code(report) == ExitCode.BROKER_CREDS_FAIL
@@ -316,7 +322,9 @@ class TestGetExitCode:
     def test_model_weights_fail_returns_model_weights_fail(self) -> None:
         """Model weights failure returns MODEL_WEIGHTS_FAIL (军规级 v4.0)."""
         report = GateReport(
-            checks=(GateCheck("model_weights_exist", GateCheckStatus.FAIL, required=True),),
+            checks=(
+                GateCheck("model_weights_exist", GateCheckStatus.FAIL, required=True),
+            ),
             target_mode="LIVE",
         )
         assert get_exit_code(report) == ExitCode.MODEL_WEIGHTS_FAIL
@@ -324,7 +332,9 @@ class TestGetExitCode:
     def test_scenarios_complete_fail_returns_scenario_missing(self) -> None:
         """Scenarios complete failure returns SCENARIO_MISSING (军规级 v4.0)."""
         report = GateReport(
-            checks=(GateCheck("scenarios_complete", GateCheckStatus.FAIL, required=True),),
+            checks=(
+                GateCheck("scenarios_complete", GateCheckStatus.FAIL, required=True),
+            ),
             target_mode="LIVE",
         )
         assert get_exit_code(report) == ExitCode.SCENARIO_MISSING
@@ -332,7 +342,9 @@ class TestGetExitCode:
     def test_capability_present_fail_returns_capability_missing(self) -> None:
         """Capability present failure returns CAPABILITY_MISSING (军规级 v4.0)."""
         report = GateReport(
-            checks=(GateCheck("capability_present", GateCheckStatus.FAIL, required=True),),
+            checks=(
+                GateCheck("capability_present", GateCheckStatus.FAIL, required=True),
+            ),
             target_mode="LIVE",
         )
         assert get_exit_code(report) == ExitCode.CAPABILITY_MISSING
@@ -438,7 +450,9 @@ class TestCIStep:
 
     def test_to_dict_pass(self) -> None:
         """to_dict for PASS step."""
-        step = CIStep(name="test", status=CIStepStatus.PASS, exit_code=0, duration_ms=100)
+        step = CIStep(
+            name="test", status=CIStepStatus.PASS, exit_code=0, duration_ms=100
+        )
         d = step.to_dict()
         assert d["name"] == "test"
         assert d["status"] == "PASS"
@@ -868,7 +882,9 @@ class TestValidateReportSchema:
             path.write_text(json.dumps(data))
             report = validate_report_schema(str(path), report_type="replay")
             assert report.has_violations
-            assert any(v.code == "POLICY.CHECK_MODE_DISABLED" for v in report.violations)
+            assert any(
+                v.code == "POLICY.CHECK_MODE_DISABLED" for v in report.violations
+            )
 
 
 class TestCheckCommandWhitelist:

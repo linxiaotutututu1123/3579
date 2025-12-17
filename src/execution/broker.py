@@ -31,6 +31,8 @@ class NoopBroker(Broker):
     def __init__(self) -> None:
         self._counter = 0
 
-    def place_order(self, intent: OrderIntent) -> OrderAck:  # pragma: no cover - trivial
+    def place_order(
+        self, intent: OrderIntent
+    ) -> OrderAck:  # pragma: no cover - trivial
         self._counter += 1
         return OrderAck(order_id=f"noop-{self._counter}")
