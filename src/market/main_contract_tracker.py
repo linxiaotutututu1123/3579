@@ -25,12 +25,11 @@ V4 SPEC: §25 主力合约追踪, §26 合约切换机制
 
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar
-
-import contextlib
 
 
 if TYPE_CHECKING:
