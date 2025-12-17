@@ -247,6 +247,11 @@ class IntentIdGenerator:
     # 哈希前缀长度(16 字符 = 64 bit)
     HASH_PREFIX_LENGTH = 16
 
+    # client_order_id 参数范围限制
+    MAX_SLICE_INDEX = 9999
+    MAX_RETRY_COUNT = 99
+    CLIENT_ORDER_ID_PARTS = 3
+
     @classmethod
     def generate(
         cls,
