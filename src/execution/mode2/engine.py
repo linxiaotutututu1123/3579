@@ -763,8 +763,8 @@ class ExecutionEngine:
         if self._config.enable_audit and self._audit_callback:
             try:
                 self._audit_callback(event)
-            except Exception as e:
-                logger.error(f"审计回调失败: {e}")
+            except Exception:
+                logger.exception("审计回调失败")
 
     def _parse_slice_index(self, client_order_id: str) -> int:
         """解析分片索引.
