@@ -235,23 +235,26 @@ def log_gate_report(report: GateReport) -> None:
 
 
 # =============================================================================
-# 退出码约定（军规级）
+# 退出码约定（军规级 v4.0）
 # =============================================================================
 class ExitCode:
-    """Standard exit codes for CI gate.
+    """Standard exit codes for CI gate (军规级 v4.0).
 
-    Exit codes:
-        0 = All checks passed
-        1 = General error (unexpected)
-        2 = Format or Lint check failed
-        3 = Type check failed
-        4 = Test failed
-        5 = Coverage threshold not met
-        6 = Risk limits not configured
-        7 = Broker credentials invalid
-        8 = Replay failed (reserved for sim_gate)
-        9 = Sim failed (reserved for sim_gate)
-        12 = Policy violation (military-grade enforcement)
+    退出码体系:
+        0  = SUCCESS            全部通过
+        1  = GENERAL_ERROR      一般错误（未预期异常）
+        2  = FORMAT_LINT_FAIL   格式/Lint 失败
+        3  = TYPE_CHECK_FAIL    类型检查失败
+        4  = TEST_FAIL          测试失败
+        5  = COVERAGE_FAIL      覆盖率不足 (<85%)
+        6  = RISK_CONFIG_FAIL   风控配置缺失
+        7  = BROKER_CREDS_FAIL  Broker 凭证无效
+        8  = REPLAY_FAIL        Replay 验证失败
+        9  = SIM_FAIL           Sim 验证失败
+        10 = MODEL_WEIGHTS_FAIL 模型权重缺失/无效
+        11 = SCENARIO_MISSING   必需场景缺失
+        12 = POLICY_VIOLATION   军法处置（最高严重级别）
+        13 = CAPABILITY_MISSING 平台能力缺失
     """
 
     SUCCESS = 0
@@ -264,7 +267,10 @@ class ExitCode:
     BROKER_CREDS_FAIL = 7
     REPLAY_FAIL = 8
     SIM_FAIL = 9
+    MODEL_WEIGHTS_FAIL = 10
+    SCENARIO_MISSING = 11
     POLICY_VIOLATION = 12
+    CAPABILITY_MISSING = 13
 
 
 def get_exit_code(report: GateReport) -> int:
