@@ -346,15 +346,17 @@ class IntentIdGenerator:
             ValueError: 格式错误
         """
         parts = client_order_id.rsplit("_", 2)
-        if len(parts) != 3:
-            raise ValueError(f"client_order_id 格式错误: {client_order_id}")
+        if len(parts) != cls.CLIENT_ORDER_ID_PARTS:
+            msg = f"Invalid client_order_id format: {client_order_id}"
+            raise ValueError(msg)
 
         intent_id = parts[0]
         try:
             slice_index = int(parts[1])
             retry_count = int(parts[2])
         except ValueError as e:
-            raise ValueError(f"client_order_id 解析失败: {client_order_id}") from e
+            msg = f"Failed to parse client_order_id: {client_order_id}"
+            raise ValueError(msg) from e
 
         return intent_id, slice_index, retry_count
 
