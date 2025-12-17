@@ -1,6 +1,6 @@
 # V4PRO 中国期货交易系统升级计划
 
-> **文档版本**: v4.1 SUPREME DIRECTIVE
+> **文档版本**: v4.2 SUPREME DIRECTIVE
 > **生成日期**: 2025-12-17
 > **适用市场**: 中华人民共和国期货市场
 > **适用系统**: V4PRO 高可靠量化交易系统
@@ -812,21 +812,196 @@ class CostBreakdown:
 
 ---
 
-## §11 Phase 6: B类模型
+## §11 Phase 6: B类模型（深度学习与强化学习）
 
-### 11.1 文件清单
+### 11.1 模块架构总览
 
-| 文件 | 行数 | 功能 | 状态 |
-|------|------|------|------|
-| `src/strategy/dl/lstm_predictor.py` | ~400 | LSTM预测模型 | ⏸ 待新增 |
-| `src/strategy/dl/transformer_model.py` | ~500 | Transformer模型 | ⏸ 待新增 |
-| `src/strategy/dl/factor_miner.py` | ~350 | 因子挖掘器 | ⏸ 待新增 |
-| `src/strategy/rl/ppo_agent.py` | ~450 | PPO强化学习 | ⏸ 待新增 |
-| `src/strategy/rl/dqn_agent.py` | ~400 | DQN强化学习 | ⏸ 待新增 |
-| `src/strategy/rl/reward_function.py` | ~200 | 奖励函数设计 | ⏸ 待新增 |
-|---------|------|------|------|
+```
+src/strategy/
+├── dl/                              # 深度学习模块
+│   ├── __init__.py                  # 模块导出
+│   ├── models/                      # 模型结构
+│   │   ├── __init__.py
+│   │   ├── base.py                  # DL模型基类（含审计、种子控制）
+│   │   ├── lstm.py                  # LSTM模型（包含预测输出的场景规则）
+│   │   ├── transformer.py           # Transformer模型（注意力计算与位置编码）
+│   │   └── cnn.py                   # CNN模型
+│   ├── data/                        # 数据处理
+│   │   ├── __init__.py
+│   │   ├── sequence_handler.py      # 序列数据处理（序列长度验证）
+│   │   ├── dataset.py               # 数据集定义
+│   │   └── dataloader.py            # 数据加载器
+│   ├── factor/                      # 因子相关
+│   │   ├── __init__.py
+│   │   ├── factor_miner.py          # 因子挖掘（包含因子挖掘场景规则）
+│   │   ├── ic_calculator.py         # IC计算（包含IC计算规则）
+│   │   └── feature_selector.py      # 特征选择器
+│   ├── predictor/                   # 预测器
+│   │   ├── __init__.py
+│   │   ├── lstm_predictor.py        # LSTM预测器
+│   │   ├── transformer_predictor.py # Transformer预测器
+│   │   └── cnn_predictor.py         # CNN预测器
+│   ├── loss/                        # 损失函数
+│   │   ├── __init__.py
+│   │   └── loss_functions.py        # 损失函数定义
+│   ├── metrics/                     # 评估指标
+│   │   ├── __init__.py
+│   │   └── metrics.py               # 评估指标（准确率、夏普等）
+│   ├── optimizer/                   # 优化器
+│   │   ├── __init__.py
+│   │   └── optimizer.py             # 优化器封装
+│   ├── trainer/                     # 训练器
+│   │   ├── __init__.py
+│   │   └── trainer.py               # 模型训练器
+│   ├── scheduler/                   # 学习率调度
+│   │   ├── __init__.py
+│   │   └── scheduler.py             # 学习率调度器
+│   ├── early_stopping/              # 早停机制
+│   │   ├── __init__.py
+│   │   └── early_stopping.py        # 早停机制实现
+│   └── checkpoint/                  # 模型检查点
+│       ├── __init__.py
+│       └── checkpoint.py            # 模型检查点管理
+│
+├── rl/                              # 强化学习模块
+│   ├── __init__.py                  # 模块导出
+│   ├── config.py                    # RL配置文件
+│   ├── base.py                      # RL基类（含环境、记忆）
+│   ├── environment.py               # 交易环境（状态、动作、奖励）
+│   ├── memory.py                    # 经验回放内存
+│   ├── actor_critic.py              # Actor-Critic网络
+│   ├── ppo_model.py                 # PPO模型结构
+│   ├── dqn_model.py                 # DQN模型结构
+│   ├── dueling_dqn.py               # Dueling DQN模型
+│   ├── target_network.py            # 目标网络更新
+│   ├── exploration.py               # 探索策略（ε-greedy等）
+│   ├── reward_function.py           # 奖励函数设计（夏普/风险调整）
+│   ├── ppo_agent.py                 # PPO强化学习代理
+│   ├── actor_critic_agent.py        # Actor-Critic代理
+│   └── dqn_agent.py                 # DQN强化学习代理
+│
+├── cv/                              # 交叉验证模块
+│   ├── __init__.py                  # 模块导出
+│   ├── cv_config.py                 # 交叉验证配置
+│   ├── cv_splitter.py               # 交叉验证划分器（时序划分）
+│   ├── cv_runner.py                 # 交叉验证运行器
+│   ├── cv_evaluator.py              # 交叉验证评估器
+│   ├── cv_reporter.py               # 交叉验证报告生成器
+│   ├── cv_plotter.py                # 交叉验证结果可视化
+│   ├── cv_logger.py                 # 交叉验证日志记录
+│   ├── cv_data_handler.py           # 交叉验证数据处理
+│   └── cv_utils.py                  # 交叉验证工具函数
+│
+├── utils/                           # 工具函数模块
+│   ├── __init__.py
+│   ├── logger.py                    # 统一日志
+│   ├── visualizer.py                # 结果可视化
+│   ├── experiment_tracker.py        # 实验跟踪
+│   └── utils.py                     # 常用工具函数
+│
+└── common/                          # 公共工具模块
+    ├── __init__.py
+    ├── config.py                    # 配置解析工具
+    ├── logging.py                   # 日志记录器
+    └── utils.py                     # 常用工具函数
+```
 
-### 11.2 B类模型成熟度要求
+### 11.2 文件清单
+
+#### 11.2.1 深度学习模块 (DL)
+
+| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+|----------|----------|----------|----------|------|
+| `dl/__init__.py` | ~50 | 模块导出 | - | ⏸ 待新增 |
+| `dl/models/base.py` | ~200 | DL模型基类（审计、种子控制） | M3,M7,M18 | ⏸ 待新增 |
+| `dl/models/lstm.py` | ~350 | LSTM模型结构 | M7,M18 | ⏸ 待新增 |
+| `dl/models/transformer.py` | ~450 | Transformer模型（注意力+位置编码） | M7,M18 | ⏸ 待新增 |
+| `dl/models/cnn.py` | ~300 | CNN模型结构 | M18 | ⏸ 待新增 |
+| `dl/data/sequence_handler.py` | ~200 | 序列数据处理（长度验证） | M7 | ⏸ 待新增 |
+| `dl/data/dataset.py` | ~250 | 数据集定义 | M7 | ⏸ 待新增 |
+| `dl/data/dataloader.py` | ~150 | 数据加载器 | M7 | ⏸ 待新增 |
+| `dl/factor/factor_miner.py` | ~400 | 因子挖掘器 | M18,M19 | ⏸ 待新增 |
+| `dl/factor/ic_calculator.py` | ~200 | IC/IR计算器 | M19 | ⏸ 待新增 |
+| `dl/factor/feature_selector.py` | ~250 | 特征选择器 | M18 | ⏸ 待新增 |
+| `dl/predictor/lstm_predictor.py` | ~300 | LSTM预测器 | M7,M18 | ⏸ 待新增 |
+| `dl/predictor/transformer_predictor.py` | ~350 | Transformer预测器 | M7,M18 | ⏸ 待新增 |
+| `dl/predictor/cnn_predictor.py` | ~280 | CNN预测器 | M18 | ⏸ 待新增 |
+| `dl/loss/loss_functions.py` | ~200 | 损失函数（MSE/Huber/夏普） | M18 | ⏸ 待新增 |
+| `dl/metrics/metrics.py` | ~250 | 评估指标（准确率/夏普/回撤） | M18,M19 | ⏸ 待新增 |
+| `dl/optimizer/optimizer.py` | ~150 | 优化器封装（Adam/SGD） | - | ⏸ 待新增 |
+| `dl/trainer/trainer.py` | ~400 | 模型训练器 | M3,M18 | ⏸ 待新增 |
+| `dl/scheduler/scheduler.py` | ~150 | 学习率调度器 | - | ⏸ 待新增 |
+| `dl/early_stopping/early_stopping.py` | ~120 | 早停机制 | M18 | ⏸ 待新增 |
+| `dl/checkpoint/checkpoint.py` | ~200 | 模型检查点管理 | M3,M11 | ⏸ 待新增 |
+
+**DL模块小计: 21 文件, ~5150 行**
+
+#### 11.2.2 强化学习模块 (RL)
+
+| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+|----------|----------|----------|----------|------|
+| `rl/__init__.py` | ~60 | 模块导出 | - | ⏸ 待新增 |
+| `rl/config.py` | ~100 | RL配置参数 | M8 | ⏸ 待新增 |
+| `rl/base.py` | ~250 | RL基类（审计、种子、门禁） | M3,M7,M18 | ⏸ 待新增 |
+| `rl/environment.py` | ~400 | 交易环境（状态/动作/奖励） | M7,M18 | ⏸ 待新增 |
+| `rl/memory.py` | ~200 | 经验回放内存 | M7 | ⏸ 待新增 |
+| `rl/actor_critic.py` | ~300 | Actor-Critic网络结构 | M18 | ⏸ 待新增 |
+| `rl/ppo_model.py` | ~350 | PPO模型结构 | M18 | ⏸ 待新增 |
+| `rl/dqn_model.py` | ~300 | DQN模型结构 | M18 | ⏸ 待新增 |
+| `rl/dueling_dqn.py` | ~250 | Dueling DQN模型 | M18 | ⏸ 待新增 |
+| `rl/target_network.py` | ~150 | 目标网络更新 | M7 | ⏸ 待新增 |
+| `rl/exploration.py` | ~200 | 探索策略（ε-greedy/UCB） | M7,M18 | ⏸ 待新增 |
+| `rl/reward_function.py` | ~300 | 奖励函数设计 | M18,M19 | ⏸ 待新增 |
+| `rl/ppo_agent.py` | ~450 | PPO强化学习代理 | M3,M7,M18 | ⏸ 待新增 |
+| `rl/actor_critic_agent.py` | ~400 | Actor-Critic代理 | M3,M7,M18 | ⏸ 待新增 |
+| `rl/dqn_agent.py` | ~400 | DQN强化学习代理 | M3,M7,M18 | ⏸ 待新增 |
+
+**RL模块小计: 15 文件, ~4110 行**
+
+#### 11.2.3 交叉验证模块 (CV)
+
+| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+|----------|----------|----------|----------|------|
+| `cv/__init__.py` | ~40 | 模块导出 | - | ⏸ 待新增 |
+| `cv/cv_config.py` | ~100 | 交叉验证配置 | M8 | ⏸ 待新增 |
+| `cv/cv_splitter.py` | ~250 | 时序交叉验证划分器 | M7 | ⏸ 待新增 |
+| `cv/cv_runner.py` | ~300 | 交叉验证运行器 | M7,M18 | ⏸ 待新增 |
+| `cv/cv_evaluator.py` | ~250 | 交叉验证评估器 | M18,M19 | ⏸ 待新增 |
+| `cv/cv_reporter.py` | ~200 | 交叉验证报告生成器 | M3 | ⏸ 待新增 |
+| `cv/cv_plotter.py` | ~180 | 交叉验证结果可视化 | - | ⏸ 待新增 |
+| `cv/cv_logger.py` | ~120 | 交叉验证日志记录 | M3 | ⏸ 待新增 |
+| `cv/cv_data_handler.py` | ~200 | 交叉验证数据处理 | M7 | ⏸ 待新增 |
+| `cv/cv_utils.py` | ~100 | 交叉验证工具函数 | - | ⏸ 待新增 |
+
+**CV模块小计: 10 文件, ~1740 行**
+
+#### 11.2.4 工具模块 (utils/common)
+
+| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+|----------|----------|----------|----------|------|
+| `utils/__init__.py` | ~30 | 模块导出 | - | ⏸ 待新增 |
+| `utils/logger.py` | ~150 | 统一日志记录 | M3,M9 | ⏸ 待新增 |
+| `utils/visualizer.py` | ~250 | 结果可视化 | - | ⏸ 待新增 |
+| `utils/experiment_tracker.py` | ~200 | 实验跟踪（MLflow集成） | M3 | ⏸ 待新增 |
+| `utils/utils.py` | ~150 | 常用工具函数 | - | ⏸ 待新增 |
+| `common/__init__.py` | ~20 | 模块导出 | - | ⏸ 待新增 |
+| `common/config.py` | ~150 | 配置解析工具 | M8 | ⏸ 待新增 |
+| `common/logging.py` | ~100 | 日志记录器 | M3 | ⏸ 待新增 |
+| `common/utils.py` | ~100 | 常用工具函数 | - | ⏸ 待新增 |
+
+**工具模块小计: 9 文件, ~1150 行**
+
+#### 11.2.5 Phase 6 文件统计总表
+
+| 模块 | 文件数 | 预计行数 |
+|------|--------|----------|
+| DL 深度学习 | 21 | ~5150 |
+| RL 强化学习 | 15 | ~4110 |
+| CV 交叉验证 | 10 | ~1740 |
+| 工具模块 | 9 | ~1150 |
+| **总计** | **55** | **~12150** |
+
+### 11.3 B类模型成熟度要求
 
 | 维度 | 权重 | 及格线 | 良好线 | 优秀线 |
 |------|------|--------|--------|--------|
@@ -835,25 +1010,278 @@ class CostBreakdown:
 | 市场适应性 | 20% | 覆盖3状态 | 覆盖5状态 | 覆盖7状态 |
 | 训练充分度 | 20% | ≥90天 | ≥180天 | ≥365天 |
 | 一致性 | 10% | 相关≥0.6 | 相关≥0.7 | 相关≥0.8 |
-|------|------|--------|--------|--------|
 
-### 11.3 场景覆盖
+### 11.4 核心代码设计
 
-| Rule ID | 场景描述 | 军规 |
-|---------|----------|------|
-| `DL.LSTM.PREDICT` | LSTM预测输出 | M18 |
-| `DL.LSTM.SEQUENCE_LENGTH` | 序列长度正确 | M7 |
-| `DL.TRANSFORMER.ATTENTION` | 注意力计算正确 | M18 |
-| `DL.TRANSFORMER.POSITION_ENCODING` | 位置编码正确 | M7 |
-| `DL.FACTOR.MINE` | 因子挖掘正确 | M18 |
-| `DL.FACTOR.IC_CALCULATE` | IC计算正确 | M19 |
-| `RL.PPO.ACTION` | PPO动作选择 | M18 |
-| `RL.PPO.REWARD` | PPO奖励计算 | M18 |
-| `RL.DQN.QVALUE` | DQN Q值计算 | M18 |
-| `RL.DQN.EPSILON_DECAY` | ε衰减正确 | M18 |
-| `RL.REWARD.SHARPE_BASED` | 夏普奖励函数 | M18 |
-| `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励 | M18 |
-|---------|----------|------|
+#### 11.4.1 DL模型基类
+
+```python
+class DLModelBase:
+    """深度学习模型基类 (军规 M3, M7, M18)"""
+
+    BYPASS_FORBIDDEN = True  # 禁止绕过门禁
+
+    def __init__(self, seed: int = 42, device: str = "cpu"):
+        self.seed = seed
+        self.device = device
+        self._set_deterministic(seed)  # M7: 回放一致性
+        self._audit_writer = None
+
+    def _set_deterministic(self, seed: int) -> None:
+        """设置确定性随机种子 (军规 M7)"""
+        import random
+        import numpy as np
+        import torch
+
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+
+    def predict(self, inputs: Any) -> tuple[Any, dict]:
+        """预测方法 (必须返回审计信息, 军规 M3)"""
+        raise NotImplementedError
+
+    def can_go_live(self) -> tuple[bool, str]:
+        """检查是否可以上线 (军规 M18)"""
+        from src.strategy.experimental import MaturityEvaluator
+        evaluator = MaturityEvaluator()
+        result = evaluator.evaluate(self)
+        if result.total_score < 0.8:
+            return False, f"成熟度 {result.total_score:.1%} < 80%"
+        if any(s < 0.6 for s in result.dimension_scores.values()):
+            return False, "存在维度得分 < 60%"
+        return True, "通过门禁"
+```
+
+#### 11.4.2 RL代理基类
+
+```python
+class RLAgentBase:
+    """强化学习代理基类 (军规 M3, M7, M18)"""
+
+    BYPASS_FORBIDDEN = True  # 禁止绕过门禁
+
+    def __init__(
+        self,
+        state_dim: int,
+        action_dim: int,
+        seed: int = 42,
+    ):
+        self.state_dim = state_dim
+        self.action_dim = action_dim
+        self.seed = seed
+        self._set_deterministic(seed)  # M7: 回放一致性
+
+    def select_action(self, state: np.ndarray) -> tuple[int, dict]:
+        """选择动作 (必须返回审计信息, 军规 M3)"""
+        raise NotImplementedError
+
+    def update(self, batch: dict) -> dict:
+        """更新模型 (返回训练指标)"""
+        raise NotImplementedError
+
+    def compute_reward(
+        self,
+        pnl: float,
+        position: float,
+        risk_metrics: dict,
+    ) -> float:
+        """计算奖励 (军规 M18, M19)"""
+        # 夏普比率调整奖励
+        sharpe_reward = pnl / (risk_metrics.get("volatility", 1.0) + 1e-8)
+        # 风险惩罚
+        drawdown_penalty = -abs(risk_metrics.get("drawdown", 0)) * 0.5
+        # 持仓成本
+        position_cost = -abs(position) * 0.001
+        return sharpe_reward + drawdown_penalty + position_cost
+```
+
+#### 11.4.3 交叉验证时序划分器
+
+```python
+class TimeSeriesCVSplitter:
+    """时序交叉验证划分器 (军规 M7)"""
+
+    def __init__(
+        self,
+        n_splits: int = 5,
+        train_size: int | None = None,
+        test_size: int | None = None,
+        gap: int = 0,  # 训练集和测试集之间的间隔
+    ):
+        self.n_splits = n_splits
+        self.train_size = train_size
+        self.test_size = test_size
+        self.gap = gap
+
+    def split(
+        self,
+        X: np.ndarray,
+        y: np.ndarray | None = None,
+    ) -> Generator[tuple[np.ndarray, np.ndarray], None, None]:
+        """生成时序交叉验证划分"""
+        n_samples = len(X)
+        indices = np.arange(n_samples)
+
+        test_size = self.test_size or n_samples // (self.n_splits + 1)
+        train_size = self.train_size or test_size * 2
+
+        for i in range(self.n_splits):
+            test_start = n_samples - (self.n_splits - i) * test_size
+            test_end = test_start + test_size
+            train_end = test_start - self.gap
+            train_start = max(0, train_end - train_size)
+
+            yield indices[train_start:train_end], indices[test_start:test_end]
+```
+
+### 11.5 场景覆盖 (Phase 6)
+
+#### 11.5.1 深度学习场景 (DL)
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K01 | `DL.BASE.DETERMINISTIC` | DL模型确定性验证 | M7 | test_dl_base.py | ⏸ |
+| K02 | `DL.BASE.AUDIT_LOG` | DL模型审计日志 | M3 | test_dl_base.py | ⏸ |
+| K03 | `DL.BASE.MATURITY_GATE` | DL模型成熟度门禁 | M18 | test_dl_base.py | ⏸ |
+| K04 | `DL.LSTM.PREDICT` | LSTM预测输出正确 | M18 | test_lstm.py | ⏸ |
+| K05 | `DL.LSTM.SEQUENCE_LENGTH` | LSTM序列长度验证 | M7 | test_lstm.py | ⏸ |
+| K06 | `DL.LSTM.HIDDEN_STATE` | LSTM隐藏状态正确 | M7 | test_lstm.py | ⏸ |
+| K07 | `DL.TRANSFORMER.ATTENTION` | Transformer注意力计算 | M18 | test_transformer.py | ⏸ |
+| K08 | `DL.TRANSFORMER.POSITION_ENCODING` | Transformer位置编码 | M7 | test_transformer.py | ⏸ |
+| K09 | `DL.TRANSFORMER.MASK` | Transformer掩码正确 | M7 | test_transformer.py | ⏸ |
+| K10 | `DL.CNN.CONV_OUTPUT` | CNN卷积输出正确 | M18 | test_cnn.py | ⏸ |
+| K11 | `DL.DATA.SEQUENCE_VALID` | 序列数据验证 | M7 | test_data.py | ⏸ |
+| K12 | `DL.DATA.BATCH_LOAD` | 批次数据加载正确 | M7 | test_data.py | ⏸ |
+| K13 | `DL.FACTOR.MINE` | 因子挖掘正确 | M18 | test_factor.py | ⏸ |
+| K14 | `DL.FACTOR.IC_CALCULATE` | IC计算正确 | M19 | test_factor.py | ⏸ |
+| K15 | `DL.FACTOR.IR_CALCULATE` | IR计算正确 | M19 | test_factor.py | ⏸ |
+| K16 | `DL.FACTOR.FEATURE_SELECT` | 特征选择正确 | M18 | test_factor.py | ⏸ |
+| K17 | `DL.PREDICTOR.LSTM_OUTPUT` | LSTM预测器输出 | M18 | test_predictor.py | ⏸ |
+| K18 | `DL.PREDICTOR.TRANSFORMER_OUTPUT` | Transformer预测器输出 | M18 | test_predictor.py | ⏸ |
+| K19 | `DL.LOSS.MSE` | MSE损失计算正确 | - | test_loss.py | ⏸ |
+| K20 | `DL.LOSS.SHARPE` | 夏普损失计算正确 | M18 | test_loss.py | ⏸ |
+| K21 | `DL.METRICS.ACCURACY` | 准确率计算正确 | M19 | test_metrics.py | ⏸ |
+| K22 | `DL.METRICS.SHARPE` | 夏普比率计算正确 | M19 | test_metrics.py | ⏸ |
+| K23 | `DL.TRAINER.EPOCH` | 训练轮次执行正确 | M18 | test_trainer.py | ⏸ |
+| K24 | `DL.TRAINER.AUDIT_LOG` | 训练审计日志 | M3 | test_trainer.py | ⏸ |
+| K25 | `DL.EARLY_STOP.TRIGGER` | 早停触发正确 | M18 | test_early_stopping.py | ⏸ |
+| K26 | `DL.CHECKPOINT.SAVE` | 检查点保存正确 | M3,M11 | test_checkpoint.py | ⏸ |
+| K27 | `DL.CHECKPOINT.LOAD` | 检查点加载正确 | M11 | test_checkpoint.py | ⏸ |
+
+**DL场景小计: 27 场景**
+
+#### 11.5.2 强化学习场景 (RL)
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K28 | `RL.BASE.DETERMINISTIC` | RL代理确定性验证 | M7 | test_rl_base.py | ⏸ |
+| K29 | `RL.BASE.AUDIT_LOG` | RL代理审计日志 | M3 | test_rl_base.py | ⏸ |
+| K30 | `RL.BASE.MATURITY_GATE` | RL代理成熟度门禁 | M18 | test_rl_base.py | ⏸ |
+| K31 | `RL.ENV.STATE_SPACE` | 环境状态空间正确 | M7 | test_environment.py | ⏸ |
+| K32 | `RL.ENV.ACTION_SPACE` | 环境动作空间正确 | M7 | test_environment.py | ⏸ |
+| K33 | `RL.ENV.REWARD_CALC` | 环境奖励计算正确 | M18 | test_environment.py | ⏸ |
+| K34 | `RL.ENV.STEP` | 环境步进正确 | M7 | test_environment.py | ⏸ |
+| K35 | `RL.MEMORY.STORE` | 经验存储正确 | M7 | test_memory.py | ⏸ |
+| K36 | `RL.MEMORY.SAMPLE` | 经验采样正确 | M7 | test_memory.py | ⏸ |
+| K37 | `RL.PPO.ACTION` | PPO动作选择正确 | M18 | test_ppo.py | ⏸ |
+| K38 | `RL.PPO.REWARD` | PPO奖励计算正确 | M18 | test_ppo.py | ⏸ |
+| K39 | `RL.PPO.CLIP_RATIO` | PPO裁剪比率正确 | M18 | test_ppo.py | ⏸ |
+| K40 | `RL.PPO.UPDATE` | PPO更新正确 | M18 | test_ppo.py | ⏸ |
+| K41 | `RL.DQN.QVALUE` | DQN Q值计算正确 | M18 | test_dqn.py | ⏸ |
+| K42 | `RL.DQN.EPSILON_DECAY` | DQN ε衰减正确 | M18 | test_dqn.py | ⏸ |
+| K43 | `RL.DQN.TARGET_UPDATE` | DQN目标网络更新 | M7 | test_dqn.py | ⏸ |
+| K44 | `RL.DQN.REPLAY` | DQN经验回放正确 | M7 | test_dqn.py | ⏸ |
+| K45 | `RL.DUELING.ADVANTAGE` | Dueling DQN优势函数 | M18 | test_dueling_dqn.py | ⏸ |
+| K46 | `RL.AC.ACTOR_OUTPUT` | Actor网络输出正确 | M18 | test_actor_critic.py | ⏸ |
+| K47 | `RL.AC.CRITIC_OUTPUT` | Critic网络输出正确 | M18 | test_actor_critic.py | ⏸ |
+| K48 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数正确 | M18 | test_reward.py | ⏸ |
+| K49 | `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励正确 | M18,M19 | test_reward.py | ⏸ |
+| K50 | `RL.REWARD.DRAWDOWN_PENALTY` | 回撤惩罚正确 | M6 | test_reward.py | ⏸ |
+| K51 | `RL.EXPLORATION.EPSILON` | ε-greedy探索正确 | M7 | test_exploration.py | ⏸ |
+| K52 | `RL.EXPLORATION.UCB` | UCB探索正确 | M7 | test_exploration.py | ⏸ |
+
+**RL场景小计: 25 场景**
+
+#### 11.5.3 交叉验证场景 (CV)
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K53 | `CV.SPLIT.TIMESERIES` | 时序划分正确 | M7 | test_cv_splitter.py | ⏸ |
+| K54 | `CV.SPLIT.NO_LEAKAGE` | 无数据泄露 | M7 | test_cv_splitter.py | ⏸ |
+| K55 | `CV.SPLIT.GAP` | 间隔设置正确 | M7 | test_cv_splitter.py | ⏸ |
+| K56 | `CV.RUN.FOLD_EXECUTE` | 折叠执行正确 | M7 | test_cv_runner.py | ⏸ |
+| K57 | `CV.RUN.DETERMINISTIC` | 运行确定性 | M7 | test_cv_runner.py | ⏸ |
+| K58 | `CV.EVAL.METRICS` | 评估指标正确 | M19 | test_cv_evaluator.py | ⏸ |
+| K59 | `CV.EVAL.AGGREGATE` | 聚合结果正确 | M19 | test_cv_evaluator.py | ⏸ |
+| K60 | `CV.REPORT.GENERATE` | 报告生成正确 | M3 | test_cv_reporter.py | ⏸ |
+| K61 | `CV.LOG.RECORD` | 日志记录正确 | M3 | test_cv_logger.py | ⏸ |
+| K62 | `CV.DATA.HANDLE` | 数据处理正确 | M7 | test_cv_data.py | ⏸ |
+
+**CV场景小计: 10 场景**
+
+#### 11.5.4 Phase 6 场景统计
+
+| 类别 | 场景数 | 状态 |
+|------|--------|------|
+| DL 深度学习 | 27 | ⏸ 待实现 |
+| RL 强化学习 | 25 | ⏸ 待实现 |
+| CV 交叉验证 | 10 | ⏸ 待实现 |
+| **总计** | **62** | ⏸ |
+
+### 11.6 测试文件清单
+
+| 测试文件 | 测试目标 | 预计用例数 |
+|----------|----------|------------|
+| `tests/strategy/dl/test_dl_base.py` | DL基类 | ~15 |
+| `tests/strategy/dl/test_lstm.py` | LSTM模型 | ~20 |
+| `tests/strategy/dl/test_transformer.py` | Transformer模型 | ~25 |
+| `tests/strategy/dl/test_cnn.py` | CNN模型 | ~15 |
+| `tests/strategy/dl/test_data.py` | 数据处理 | ~20 |
+| `tests/strategy/dl/test_factor.py` | 因子模块 | ~25 |
+| `tests/strategy/dl/test_predictor.py` | 预测器 | ~20 |
+| `tests/strategy/dl/test_loss.py` | 损失函数 | ~10 |
+| `tests/strategy/dl/test_metrics.py` | 评估指标 | ~15 |
+| `tests/strategy/dl/test_trainer.py` | 训练器 | ~20 |
+| `tests/strategy/dl/test_early_stopping.py` | 早停机制 | ~10 |
+| `tests/strategy/dl/test_checkpoint.py` | 检查点 | ~15 |
+| `tests/strategy/rl/test_rl_base.py` | RL基类 | ~15 |
+| `tests/strategy/rl/test_environment.py` | 交易环境 | ~25 |
+| `tests/strategy/rl/test_memory.py` | 经验回放 | ~15 |
+| `tests/strategy/rl/test_ppo.py` | PPO代理 | ~25 |
+| `tests/strategy/rl/test_dqn.py` | DQN代理 | ~25 |
+| `tests/strategy/rl/test_dueling_dqn.py` | Dueling DQN | ~15 |
+| `tests/strategy/rl/test_actor_critic.py` | Actor-Critic | ~20 |
+| `tests/strategy/rl/test_reward.py` | 奖励函数 | ~20 |
+| `tests/strategy/rl/test_exploration.py` | 探索策略 | ~15 |
+| `tests/strategy/cv/test_cv_splitter.py` | CV划分器 | ~20 |
+| `tests/strategy/cv/test_cv_runner.py` | CV运行器 | ~15 |
+| `tests/strategy/cv/test_cv_evaluator.py` | CV评估器 | ~15 |
+| `tests/strategy/cv/test_cv_reporter.py` | CV报告器 | ~10 |
+| `tests/strategy/cv/test_cv_logger.py` | CV日志 | ~10 |
+| `tests/strategy/cv/test_cv_data.py` | CV数据 | ~10 |
+
+**测试文件总计: 27 文件, ~455 用例**
+
+### 11.7 工时估算
+
+| 子模块 | 开发工时 | 测试工时 | 文档工时 | 合计 |
+|--------|----------|----------|----------|------|
+| DL模型 (models/) | 24h | 12h | 4h | 40h |
+| DL数据 (data/) | 12h | 6h | 2h | 20h |
+| DL因子 (factor/) | 16h | 8h | 3h | 27h |
+| DL预测器 (predictor/) | 16h | 8h | 3h | 27h |
+| DL训练 (trainer/etc) | 16h | 8h | 3h | 27h |
+| RL基础 (base/env/memory) | 20h | 10h | 4h | 34h |
+| RL代理 (ppo/dqn/ac) | 32h | 16h | 6h | 54h |
+| RL奖励 (reward/explore) | 12h | 6h | 2h | 20h |
+| CV模块 | 20h | 10h | 4h | 34h |
+| 工具模块 | 12h | 6h | 2h | 20h |
+| **总计** | **180h** | **90h** | **33h** | **303h**
 
 ---
 
@@ -2128,12 +2556,23 @@ jobs:
 | Phase 3 策略降级 | 12 | ✅ |
 | Phase 4 回放验证 | 2 | ✅ |
 | Phase 5 成本层 | 8 | ✅ |
-| Phase 6 B类模型 | 12 | ⏸ |
+| Phase 6 B类模型 (DL) | 27 | ⏸ |
+| Phase 6 B类模型 (RL) | 25 | ⏸ |
+| Phase 6 B类模型 (CV) | 10 | ⏸ |
 | Phase 7 中国期货特化 | 23 | ⏸ |
 | Phase 8 智能策略 | 22 | 部分✅ |
 | Phase 9 合规监控 | 16 | 部分✅ |
 | Phase 10 组合风控 | 25 | 部分✅ |
-| **总计** | **165** | - |
+| **总计** | **215** | - |
+
+### 31.1.1 Phase 6 场景明细
+
+| 类别 | 场景范围 | 场景数 | 军规覆盖 |
+|------|----------|--------|----------|
+| DL 深度学习 | K01-K27 | 27 | M3,M7,M11,M18,M19 |
+| RL 强化学习 | K28-K52 | 25 | M3,M6,M7,M18,M19 |
+| CV 交叉验证 | K53-K62 | 10 | M3,M7,M19 |
+| **小计** | - | **62** | - |
 
 ### 31.2 军规覆盖统计
 
@@ -2178,7 +2617,92 @@ jobs:
 | scripts/ | 6 | ~900 |
 | tests/ | ~40 | ~5000 |
 
-### 32.2 待新增文件 (26个)
+### 32.2 待新增文件 - Phase 6 B类模型 (55个, ~12150行)
+
+#### 32.2.1 深度学习模块 (DL) - 21文件
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/strategy/dl/__init__.py` | 模块导出 | ~50 |
+| `src/strategy/dl/models/__init__.py` | 模型导出 | ~30 |
+| `src/strategy/dl/models/base.py` | DL模型基类 | ~200 |
+| `src/strategy/dl/models/lstm.py` | LSTM模型 | ~350 |
+| `src/strategy/dl/models/transformer.py` | Transformer模型 | ~450 |
+| `src/strategy/dl/models/cnn.py` | CNN模型 | ~300 |
+| `src/strategy/dl/data/__init__.py` | 数据导出 | ~20 |
+| `src/strategy/dl/data/sequence_handler.py` | 序列处理 | ~200 |
+| `src/strategy/dl/data/dataset.py` | 数据集定义 | ~250 |
+| `src/strategy/dl/data/dataloader.py` | 数据加载器 | ~150 |
+| `src/strategy/dl/factor/__init__.py` | 因子导出 | ~20 |
+| `src/strategy/dl/factor/factor_miner.py` | 因子挖掘 | ~400 |
+| `src/strategy/dl/factor/ic_calculator.py` | IC计算 | ~200 |
+| `src/strategy/dl/factor/feature_selector.py` | 特征选择 | ~250 |
+| `src/strategy/dl/predictor/__init__.py` | 预测器导出 | ~20 |
+| `src/strategy/dl/predictor/lstm_predictor.py` | LSTM预测器 | ~300 |
+| `src/strategy/dl/predictor/transformer_predictor.py` | Transformer预测器 | ~350 |
+| `src/strategy/dl/predictor/cnn_predictor.py` | CNN预测器 | ~280 |
+| `src/strategy/dl/loss/loss_functions.py` | 损失函数 | ~200 |
+| `src/strategy/dl/metrics/metrics.py` | 评估指标 | ~250 |
+| `src/strategy/dl/trainer/trainer.py` | 训练器 | ~400 |
+
+**DL小计: 21文件, ~4670行**
+
+#### 32.2.2 强化学习模块 (RL) - 15文件
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/strategy/rl/__init__.py` | 模块导出 | ~60 |
+| `src/strategy/rl/config.py` | RL配置 | ~100 |
+| `src/strategy/rl/base.py` | RL基类 | ~250 |
+| `src/strategy/rl/environment.py` | 交易环境 | ~400 |
+| `src/strategy/rl/memory.py` | 经验回放 | ~200 |
+| `src/strategy/rl/actor_critic.py` | AC网络 | ~300 |
+| `src/strategy/rl/ppo_model.py` | PPO模型 | ~350 |
+| `src/strategy/rl/dqn_model.py` | DQN模型 | ~300 |
+| `src/strategy/rl/dueling_dqn.py` | Dueling DQN | ~250 |
+| `src/strategy/rl/target_network.py` | 目标网络 | ~150 |
+| `src/strategy/rl/exploration.py` | 探索策略 | ~200 |
+| `src/strategy/rl/reward_function.py` | 奖励函数 | ~300 |
+| `src/strategy/rl/ppo_agent.py` | PPO代理 | ~450 |
+| `src/strategy/rl/actor_critic_agent.py` | AC代理 | ~400 |
+| `src/strategy/rl/dqn_agent.py` | DQN代理 | ~400 |
+
+**RL小计: 15文件, ~4110行**
+
+#### 32.2.3 交叉验证模块 (CV) - 10文件
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/strategy/cv/__init__.py` | 模块导出 | ~40 |
+| `src/strategy/cv/cv_config.py` | CV配置 | ~100 |
+| `src/strategy/cv/cv_splitter.py` | 时序划分器 | ~250 |
+| `src/strategy/cv/cv_runner.py` | CV运行器 | ~300 |
+| `src/strategy/cv/cv_evaluator.py` | CV评估器 | ~250 |
+| `src/strategy/cv/cv_reporter.py` | CV报告器 | ~200 |
+| `src/strategy/cv/cv_plotter.py` | CV可视化 | ~180 |
+| `src/strategy/cv/cv_logger.py` | CV日志 | ~120 |
+| `src/strategy/cv/cv_data_handler.py` | CV数据处理 | ~200 |
+| `src/strategy/cv/cv_utils.py` | CV工具 | ~100 |
+
+**CV小计: 10文件, ~1740行**
+
+#### 32.2.4 工具模块 - 9文件
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/strategy/utils/__init__.py` | 工具导出 | ~30 |
+| `src/strategy/utils/logger.py` | 统一日志 | ~150 |
+| `src/strategy/utils/visualizer.py` | 可视化 | ~250 |
+| `src/strategy/utils/experiment_tracker.py` | 实验跟踪 | ~200 |
+| `src/strategy/utils/utils.py` | 通用工具 | ~150 |
+| `src/strategy/common/__init__.py` | 公共导出 | ~20 |
+| `src/strategy/common/config.py` | 配置解析 | ~150 |
+| `src/strategy/common/logging.py` | 日志记录 | ~100 |
+| `src/strategy/common/utils.py` | 公共工具 | ~100 |
+
+**工具小计: 9文件, ~1150行**
+
+### 32.3 待新增文件 - 其他Phase (26个)
 
 | 文件路径 | 功能 | 预计行数 |
 |----------|------|----------|
@@ -2195,17 +2719,25 @@ jobs:
 | `src/risk/stress_test_china.py` | 中国期货压力测试 | ~350 |
 | `src/risk/attribution.py` | 风险归因 | ~300 |
 | `src/strategy/calendar_arb/delivery_aware.py` | 交割感知套利 | ~250 |
-| `src/strategy/dl/lstm_predictor.py` | LSTM预测模型 | ~400 |
-| `src/strategy/dl/transformer_model.py` | Transformer模型 | ~500 |
-| `src/strategy/dl/factor_miner.py` | 因子挖掘器 | ~350 |
-| `src/strategy/rl/ppo_agent.py` | PPO强化学习 | ~450 |
-| `src/strategy/rl/dqn_agent.py` | DQN强化学习 | ~400 |
-| `src/strategy/rl/reward_function.py` | 奖励函数设计 | ~200 |
 | `src/compliance/china_futures_rules.py` | 合规规则 | ~200 |
 | `src/compliance/programmatic_trading.py` | 程序化交易合规 | ~300 |
 | `src/compliance/throttle.py` | 合规节流器 | ~250 |
 | `src/compliance/algo_registration.py` | 算法备案 | ~200 |
-| 测试文件 | - | ~3000 |
+| 测试文件 (Phase 6) | DL/RL/CV测试 | ~5000 |
+| 测试文件 (其他Phase) | 其他测试 | ~3000 |
+
+### 32.4 文件统计总表
+
+| 类别 | 文件数 | 行数 |
+|------|--------|------|
+| 已完成源码 | 71 | ~12237 |
+| Phase 6 新增 (DL) | 21 | ~4670 |
+| Phase 6 新增 (RL) | 15 | ~4110 |
+| Phase 6 新增 (CV) | 10 | ~1740 |
+| Phase 6 新增 (工具) | 9 | ~1150 |
+| 其他Phase新增 | 17 | ~4200 |
+| 测试文件新增 | ~30 | ~8000 |
+| **总计** | **~173** | **~36107** |
 
 ---
 
@@ -2307,7 +2839,8 @@ jobs:
 | v2.0 | 2025-12-15 | CLAUDE上校 | 添加Phase 3-4 |
 | v3.0 | 2025-12-16 | CLAUDE上校 | 添加中国期货特化 |
 | v4.0 | 2025-12-16 | CLAUDE上校 | 军规级最高指示文件 |
-| **v4.1** | **2025-12-17** | **CLAUDE上校** | **Phase 5成本层验收完成，更新状态** |
+| v4.1 | 2025-12-17 | CLAUDE上校 | Phase 5成本层验收完成，更新状态 |
+| **v4.2** | **2025-12-17** | **CLAUDE上校** | **Phase 6 B类模型完整规划：DL(21文件/27场景)、RL(15文件/25场景)、CV(10文件/10场景)，总计55文件、62场景、~12150行代码** |
 
 ---
 
