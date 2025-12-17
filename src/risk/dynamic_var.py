@@ -31,6 +31,7 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar
 
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -532,36 +533,35 @@ class DynamicVaREngine:
             self._calculation_count += 1
             result = self._base_calculator.historical_var(returns, confidence)
             return self._wrap_result(result, method)
-        elif method == VaRMethod.PARAMETRIC:
+        if method == VaRMethod.PARAMETRIC:
             self._calculation_count += 1
             result = self._base_calculator.parametric_var(returns, confidence)
             return self._wrap_result(result, method)
-        elif method == VaRMethod.MONTE_CARLO:
+        if method == VaRMethod.MONTE_CARLO:
             self._calculation_count += 1
             result = self._base_calculator.monte_carlo_var(
                 returns, confidence, kwargs.get("simulations", 10000)
             )
             return self._wrap_result(result, method)
-        elif method == VaRMethod.EVT_GPD:
+        if method == VaRMethod.EVT_GPD:
             return self.evt_var(returns, confidence, kwargs.get("threshold_pct", 0.90))
-        elif method == VaRMethod.SEMIPARAMETRIC:
+        if method == VaRMethod.SEMIPARAMETRIC:
             return self.semiparametric_var(returns, confidence, kwargs.get("bandwidth"))
-        elif method == VaRMethod.LIMIT_ADJUSTED:
+        if method == VaRMethod.LIMIT_ADJUSTED:
             return self.limit_adjusted_var(
                 returns, kwargs.get("limit_pct", 0.10), confidence
             )
-        elif method == VaRMethod.LIQUIDITY_ADJUSTED:
+        if method == VaRMethod.LIQUIDITY_ADJUSTED:
             return self.liquidity_adjusted_var(
                 returns,
                 kwargs.get("position_value", 0),
                 kwargs.get("liquidity", LiquidityMetrics()),
                 confidence,
             )
-        else:
-            # 默认历史VaR
-            self._calculation_count += 1
-            result = self._base_calculator.historical_var(returns, confidence)
-            return self._wrap_result(result, VaRMethod.HISTORICAL)
+        # 默认历史VaR
+        self._calculation_count += 1
+        result = self._base_calculator.historical_var(returns, confidence)
+        return self._wrap_result(result, VaRMethod.HISTORICAL)
 
     def _estimate_gpd_params(
         self, exceedances: list[float], threshold: float
@@ -657,7 +657,7 @@ class DynamicVaREngine:
 
             if abs(cdf - target_p) < 1e-6:
                 break
-            elif cdf < target_p:
+            if cdf < target_p:
                 x_min = x_mid  # CDF太小，搜索右侧（更大的x）
             else:
                 x_max = x_mid  # CDF太大，搜索左侧（更小的x）
@@ -701,15 +701,14 @@ class DynamicVaREngine:
         if var >= self._var_limit:
             self._warning_count += 1
             return RiskLevel.CRITICAL
-        elif var >= self._var_limit * 0.9:
+        if var >= self._var_limit * 0.9:
             self._warning_count += 1
             return RiskLevel.DANGER
-        elif var >= self._var_limit * 0.7:
+        if var >= self._var_limit * 0.7:
             return RiskLevel.WARNING
-        elif var >= self._var_limit * 0.5:
+        if var >= self._var_limit * 0.5:
             return RiskLevel.NORMAL
-        else:
-            return RiskLevel.SAFE
+        return RiskLevel.SAFE
 
     def _wrap_result(
         self,
@@ -759,7 +758,7 @@ class DynamicVaREngine:
         for callback in self._on_risk_callbacks:
             try:
                 callback(result)
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass  # 回调错误不影响主流程
 
     def get_statistics(self) -> dict[str, Any]:

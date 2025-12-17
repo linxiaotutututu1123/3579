@@ -53,7 +53,6 @@ ignore = [
     "B008",     # 允许函数默认参数使用函数调用（FastAPI 依赖）
     "RUF002",   # 允许中文全角字符在 docstring 中
     "RUF003",   # 允许中文全角字符在注释中
-    "RUF034",   # 允许冗余条件（可读性）
     "RUF046",   # 允许 int(round(...))（明确意图）
     "RET504",   # 允许 return 前赋值（调试友好）
     "PLW0603",  # 允许 global 语句（状态管理需要）
@@ -119,11 +118,7 @@ strict_concatenate = true
 
 # 排除目录
 exclude = [
-    "^dist/",
-    "^build/",
-    "^\\.venv/",
-    "^artifacts/",
-    "^tests/",
+
 ]
 
 # 核心模块使用最严格模式
@@ -137,7 +132,7 @@ module = [
 strict = true
 disallow_any_unimported = true
 
-# 测试模块略微宽松
+# 测试模块最严格模式
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_decorators = false
@@ -194,7 +189,7 @@ omit = [
 
 [tool.coverage.report]
 # 核心域覆盖率阈值
-fail_under = 85
+fail_under = 100
 show_missing = true
 skip_covered = true
 exclude_lines = [

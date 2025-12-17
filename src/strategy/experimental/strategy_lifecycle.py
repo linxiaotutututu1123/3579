@@ -29,6 +29,7 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar
 
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -834,7 +835,7 @@ class StrategyLifecycleManager:
         for callback in self._on_transition_callbacks:
             try:
                 callback(event)
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass  # 回调错误不影响主流程
 
     def _notify_alert(self, strategy_id: str, message: str) -> None:
@@ -842,7 +843,7 @@ class StrategyLifecycleManager:
         for callback in self._on_alert_callbacks:
             try:
                 callback(strategy_id, message)
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass
 
     # ============================================================
@@ -943,15 +944,12 @@ def get_allocation_for_maturity(maturity_pct: float) -> AllocationConfig:
     返回:
         分配配置
     """
-    if maturity_pct < 0.40:
+    if maturity_pct < 0.40 or maturity_pct < 0.60:
         return ALLOCATION_CONFIGS[AllocationTier.ZERO]
-    elif maturity_pct < 0.60:
-        return ALLOCATION_CONFIGS[AllocationTier.ZERO]
-    elif maturity_pct < 0.80:
+    if maturity_pct < 0.80:
         return ALLOCATION_CONFIGS[AllocationTier.TRIAL]
-    elif maturity_pct < 0.90:
+    if maturity_pct < 0.90:
         return ALLOCATION_CONFIGS[AllocationTier.NORMAL]
-    elif maturity_pct < 0.95:
+    if maturity_pct < 0.95:
         return ALLOCATION_CONFIGS[AllocationTier.ENHANCED]
-    else:
-        return ALLOCATION_CONFIGS[AllocationTier.MAXIMUM]
+    return ALLOCATION_CONFIGS[AllocationTier.MAXIMUM]

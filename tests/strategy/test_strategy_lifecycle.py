@@ -251,7 +251,7 @@ class TestStateTransition:
         """测试自动晋升: 孵化期到发展期."""
         manager_no_approval.register_strategy("ppo_v1", "PPO策略", "rl")
 
-        event = manager_no_approval.update_maturity("ppo_v1", 0.85)
+        _ = manager_no_approval.update_maturity("ppo_v1", 0.85)
 
         state = manager_no_approval.get_strategy("ppo_v1")
         assert state is not None
@@ -267,7 +267,7 @@ class TestStateTransition:
         state.allocation_tier = AllocationTier.NORMAL
 
         # 更新差表现
-        event = manager_no_approval.update_performance(
+        _ = manager_no_approval.update_performance(
             "ppo_v1",
             sharpe_ratio=0.3,
             max_drawdown=0.18,
