@@ -63,17 +63,7 @@ ignore = [
     "T201",     # 脚本允许 print
 ]
 "src/execution/mode2/*" = [
-    "RUF002",   # 允许中文全角字符(括号/逗号)在文档字符串中使用
-    "RUF003",   # 允许中文全角字符在注释中使用
-    "PLR2004",  # 允许魔术数字(分片索引上限等已在文档中说明)
-    "TRY003",   # 允许详细的中文异常信息
-    "TRY300",   # 允许 try 块中 return
-    "TRY400",   # 允许 logging.error 而不是 logging.exception
-    "SIM102",   # 允许嵌套 if 语句(可读性更好)
-    "PLC0415",  # 允许非顶层 import(避免循环导入)
-    "DTZ005",   # 允许 datetime.now() 不带 tz(中国期货市场使用本地时间)
-    "PGH003",   # 允许通用 type: ignore
-    "E501",     # 允许长行(中文文档行容易超限)
+    "DTZ005",   # 允许 datetime.now() 不带 tz(中国期货市场使用本地时间，业务需求)
 ]
 
 [tool.ruff.lint.pylint]
