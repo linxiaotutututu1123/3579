@@ -38,6 +38,7 @@ class InstrumentInfo:
         multiplier: 合约乘数
         max_order_volume: 单笔最大手数
         position_limit: 持仓限额
+        is_main_contract: 是否为主力合约 (v4.1新增)
     """
 
     symbol: str
@@ -48,6 +49,7 @@ class InstrumentInfo:
     multiplier: int
     max_order_volume: int = 500
     position_limit: int = 10000
+    is_main_contract: bool = False
 
 
 class InstrumentCache:
@@ -97,6 +99,7 @@ class InstrumentCache:
                 multiplier=int(item["multiplier"]),
                 max_order_volume=int(item.get("max_order_volume", 500)),
                 position_limit=int(item.get("position_limit", 10000)),
+                is_main_contract=bool(item.get("is_main_contract", False)),
             )
             self._cache[info.symbol] = info
             if info.product not in self._by_product:

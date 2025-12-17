@@ -13,6 +13,7 @@ V2 SPEC: 第 4 章
 - 数据质量检测 (Quality)
 - 六大交易所配置 (ExchangeConfig) - Phase 7 新增
 - 夜盘交易日历 (TradingCalendar) - Phase 7 新增
+- 主力合约追踪器 (MainContractTracker) - v4.1 新增
 
 Required Scenarios (13+ 条):
 - INST.CACHE.LOAD
@@ -28,6 +29,8 @@ Required Scenarios (13+ 条):
 - MKT.QUALITY.OUTLIER
 - CHINA.EXCHANGE.CONFIG_LOAD (Phase 7)
 - CHINA.EXCHANGE.PRODUCT_MAP (Phase 7)
+- MAIN.CONTRACT.DETECT (v4.1)
+- MAIN.CONTRACT.SWITCH (v4.1)
 """
 
 from __future__ import annotations
@@ -50,6 +53,16 @@ from src.market.exchange_config import (
     has_night_session,
 )
 from src.market.instrument_cache import InstrumentCache, InstrumentInfo
+from src.market.main_contract_tracker import (
+    ContractMetrics,
+    ContractSwitchEvent,
+    MainContractTracker,
+    ProductState,
+    SwitchReason,
+    create_tracker,
+    extract_product,
+    is_main_month,
+)
 from src.market.quality import QualityChecker
 from src.market.quote_cache import BookTop, QuoteCache
 from src.market.subscriber import Subscriber
