@@ -656,11 +656,11 @@ class DynamicVaREngine:
             if abs(cdf - target_p) < 1e-6:
                 break
             elif cdf < target_p:
-                x_max = x_mid
+                x_min = x_mid  # CDF太小，搜索右侧（更大的x）
             else:
-                x_min = x_mid
+                x_max = x_mid  # CDF太大，搜索左侧（更小的x）
 
-        return -x_mid  # VaR是正值
+        return -x_mid  # VaR是正值（负收益的绝对值）
 
     def _kernel_cdf(
         self, sorted_returns: list[float], x: float, bandwidth: float
