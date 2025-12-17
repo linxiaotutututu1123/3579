@@ -100,6 +100,9 @@
 | **M19** | 风险归因 | 每笔亏损必须有归因分析 | 无法改进、重复犯错 | 归因报告 |
 | **M20** | 跨所一致 | 不同交易所逻辑必须一致 | 套利失败、对冲失效 | 跨所测试 |
 
+
+
+
 ### 1.3 军规违规处理
 
 ```
@@ -110,7 +113,7 @@
 │ FATAL  │ 资金损失风险   │ 立即停止交易 + 人工介入         │
 │ SEVERE │ 合规违规风险   │ 暂停相关策略 + 告警通知         │
 │ MAJOR  │ 功能异常       │ 记录日志 + 降级处理             │
-│ MINOR  │ 性能问题       │ 记录日志 + 后续优化             │
+│ MINOR  │ 性能问题       │ 记录日志 + 后续优化              │
 └────────┴────────────────┴─────────────────────────────────┘
 ```
 
@@ -122,10 +125,13 @@
 - [ ] M3: 审计日志完整性验证
 - [ ] M5: 成本门禁通过
 - [ ] M6: 风控阈值配置正确
+- [ ] M7: 回放一致性测试通过
 - [ ] M13: 涨跌停检查逻辑存在
 - [ ] M14: 平今平昨分离逻辑正确
 - [ ] M17: 报撤单频率检查存在
 - [ ] M18: 实验性策略门禁检查
+- [ ] M20: 跨所逻辑一致性验证
+- [ ] 所有单元测试通过，覆盖率不低于90%
 
 ---
 
@@ -146,6 +152,7 @@
 | Phase 8 | 智能策略 | 12 | 26 | ⏸ 待执行 | - |
 | Phase 9 | 合规监控 | 6 | 16 | ⏸ 待执行 | - |
 | Phase 10 | 组合风控 | 7 | 25 | ⏸ 待执行 | - |
+|-------|------|--------|--------|------|----------|
 
 ### 2.2 代码库锚点
 
@@ -183,6 +190,7 @@
 | Pytest | ✅ PASS (826 tests) | 2025-12-17 |
 | Coverage | 88.22% | 2025-12-17 |
 | Policy | ✅ PASS | 2025-12-17 |
+| Scenario | ✅ PASS (ALL) | 2025-12-17 |
 
 ### 2.4 已实现模块摘要
 
@@ -195,6 +203,7 @@
 | `src/strategy/experimental/` | 成熟度评估、训练门禁、进度监控 | M18 |
 | `src/strategy/calendar_arb/` | Kalman滤波、套利策略、降级链 | M4, M5, M7 |
 | `src/replay/` | 决策回放、哈希验证 | M7 |
+
 
 ---
 
@@ -333,6 +342,12 @@ CTP接口 ◀── 订单执行 ◀── 订单验证 ◀── 涨跌停检�
 | `INFRA.CONFIG.ENV_ISOLATE` | 环境隔离正确 | test_config.py |
 | `INFRA.LOG.FORMAT` | 日志格式正确 | test_logger.py |
 | `INFRA.LOG.LEVEL` | 日志级别正确 | test_logger.py |
+| `INFRA.POLICY.VALIDATE` | 策略符合政策 | test_validate_policy.py |
+| `INFRA.POLICY.REPORT` | 策略验证报告生成 | test_validate_policy.py |
+| `INFRA.SCRIPT.EXECUTE` | 脚本执行成功 | test_scripts.py |
+| `INFRA.SCRIPT.OUTPUT` | 脚本输出正确 | test_scripts.py |
+|---------|----------|----------|
+
 
 ---
 
@@ -349,6 +364,7 @@ CTP接口 ◀── 订单执行 ◀── 订单验证 ◀── 涨跌停检�
 | `src/market/snapshot.py` | ~150 | 行情快照 | ✅ |
 | `src/market/exchange_config.py` | ~300 | 交易所配置 | ⏸ 待新增 |
 | `src/market/trading_calendar.py` | ~250 | 夜盘交易日历 | ⏸ 待新增 |
+
 
 ### 6.2 InstrumentInfo 扩展字段
 
@@ -402,6 +418,40 @@ class InstrumentInfo:
 | `MKT.LIMIT.UPDATE_REALTIME` | 涨跌停实时更新 | M13 |
 | `MKT.SESSION.NIGHT_CALENDAR` | 夜盘日历正确 | M15 |
 | `MKT.SESSION.DAY_BOUNDARY` | 交易日边界正确 | M15 |
+| `MKT.EXCHANGE.CONFIG_LOAD` | 交易所配置加载 | M8 |
+| `MKT.EXCHANGE.CONFIG_VALIDATE` | 交易所配置验证 | M8 |
+| `MKT.EXCHANGE.CONFIG_ISOLATE` | 交易所配置隔离 | M8 |
+| `MKT.EXCHANGE.SESSION_DEFINE` | 交易时段定义正确 | M15 |
+| `MKT.EXCHANGE.NIGHT_SESSION_FLAG` | 夜盘标识正确 | M15 |
+| `MKT.EXCHANGE.FEE_STRUCTURE` | 手续费结构正确 | M20 |
+| `MKT.EXCHANGE.MARGIN_REQUIREMENT` | 保证金要求正确 | M16 |
+| `MKT.EXCHANGE.PRICE_LIMITS` | 涨跌停幅度正确 | M13 |
+| `MKT.EXCHANGE.DELIVERY_INFO` | 交割信息正确 | M14 |
+| `MKT.EXCHANGE.MAIN_CONTRACT_FLAG` | 主力合约标识正确 | M1 |
+| `MKT.EXCHANGE.LAST_TRADING_DAY` | 最后交易日正确 | M14 |
+| `MKT.EXCHANGE.TRADING_SESSIONS` | 交易时段列表正确 | M15 |
+| `MKT.EXCHANGE.FEE_TYPE` | 手续费类型正确 | M20 |
+| `MKT.EXCHANGE.FEE_CALCULATION` | 手续费计算正确 | M20 |
+| `MKT.EXCHANGE.MARGIN_CALCULATION` | 保证金计算正确 | M16 |
+| `MKT.EXCHANGE.PRICE_LIMIT_CALCULATION` | 涨跌停计算正确 | M13 |
+| `MKT.EXCHANGE.SESSION_HANDLING` | 交易时段处理正确 | M15 |
+| `MKT.EXCHANGE.NIGHT_SESSION_HANDLING` | 夜盘处理正确 | M15 |
+| `MKT.EXCHANGE.CONFIG_UPDATES` | 配置更新正确 | M8 |
+| `MKT.EXCHANGE.ERROR_HANDLING` | 错误处理正确 | M9 |
+| `MKT.EXCHANGE.LOGGING` | 日志记录正确 | M3 |
+| `MKT.EXCHANGE.PERFORMANCE` | 性能符合要求 | M10 |
+| `MKT.EXCHANGE.TEST_COVERAGE` | 测试覆盖率≥90% | M10 |
+| `MKT.EXCHANGE.DOCUMENTATION` | 文档齐全 | M11 |
+| `MKT.EXCHANGE.CODE_QUALITY` | 代码质量符合标准 | M10 |
+| `MKT.EXCHANGE.COMPLIANCE` | 符合监管要求 | M17 |
+| `MKT.EXCHANGE.UPGRADE_PATH` | 升级路径正确 | M11 |
+| `MKT.EXCHANGE.VERSION_COMPATIBILITY` | 版本兼容性正确 | M11 |
+| `MKT.EXCHANGE.INTEGRATION_TESTS` | 集成测试通过 | M11 |
+| `MKT.EXCHANGE.STRESS_TESTS` | 压力测试通过 | M10 |
+| `MKT.EXCHANGE.USER_GUIDE` | 用户指南齐全 | M11 |
+| `MKT.EXCHANGE.CHANGE_LOG` | 变更日志齐全 | M11 |
+| `MKT.EXCHANGE.RELEASE_NOTES` | 发布说明齐全 | M11 |
+| `MKT.EXCHANGE.SUPPORT_PROCESSES` | 支持流程完善 | M11 |
 
 ---
 
