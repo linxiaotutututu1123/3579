@@ -250,8 +250,7 @@ class MainContractTracker:
         if symbol not in state.contracts:
             state.contracts[symbol] = ContractMetrics(symbol=symbol)
 
-        metrics = state.contracts[symbol]
-        # 由于ContractMetrics不是frozen,可以直接更新
+        # 更新合约数据
         state.contracts[symbol] = ContractMetrics(
             symbol=symbol,
             volume=volume,
