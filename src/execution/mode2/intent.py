@@ -138,11 +138,14 @@ class OrderIntent:
             msg = f"target_qty must be positive, got: {self.target_qty}"
             raise ValueError(msg)
         if not self.strategy_id:
-            raise ValueError("strategy_id required (M1)")
+            msg = "strategy_id required (M1)"
+            raise ValueError(msg)
         if not self.decision_hash:
-            raise ValueError("decision_hash required (M3)")
+            msg = "decision_hash required (M3)"
+            raise ValueError(msg)
         if not self.instrument:
-            raise ValueError("instrument required")
+            msg = "instrument required"
+            raise ValueError(msg)
 
     @property
     def intent_id(self) -> str:
