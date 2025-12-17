@@ -165,7 +165,7 @@ class TestMaturityUpdate:
         manager_no_approval.register_strategy("ppo_v1", "PPO策略", "rl")
 
         # 更新到80%以上应触发转换
-        event = manager_no_approval.update_maturity("ppo_v1", 0.85)
+        _ = manager_no_approval.update_maturity("ppo_v1", 0.85)
 
         # 应从孵化期转到发展期
         state = manager_no_approval.get_strategy("ppo_v1")
