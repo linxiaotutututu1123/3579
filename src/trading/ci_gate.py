@@ -274,14 +274,15 @@ class ExitCode:
 
 
 def get_exit_code(report: GateReport) -> int:
-    """Determine exit code based on gate report.
+    """Determine exit code based on gate report (军规级 v4.0).
 
     Returns appropriate exit code based on first blocking failure.
+    按照军规级要求，退出码优先级严格按照定义顺序。
     """
     if report.all_passed:
         return ExitCode.SUCCESS
 
-    # Check failures in order of priority
+    # 按优先级检查失败 (军规级别)
     for check in report.blocking_failures:
         if check.name in ("format_pass", "lint_pass"):
             return ExitCode.FORMAT_LINT_FAIL
@@ -295,6 +296,12 @@ def get_exit_code(report: GateReport) -> int:
             return ExitCode.RISK_CONFIG_FAIL
         if check.name == "broker_credentials":
             return ExitCode.BROKER_CREDS_FAIL
+        if check.name == "model_weights_exist":
+            return ExitCode.MODEL_WEIGHTS_FAIL
+        if check.name == "scenarios_complete":
+            return ExitCode.SCENARIO_MISSING
+        if check.name == "capability_present":
+            return ExitCode.CAPABILITY_MISSING
 
     return ExitCode.GENERAL_ERROR
 
