@@ -322,6 +322,7 @@ CTP接口 ◀── 订单执行 ◀── 订单验证 ◀── 涨跌停检�
 | `src/app/logger.py` | ~100 | 日志配置 | ✅ |
 | `scripts/validate_policy.py` | ~200 | 策略验证脚本 | ✅ |
 | `scripts/sim_gate.py` | ~160 | 仿真门禁脚本 | ✅ |
+|---------|------|------|------|
 
 ### 5.2 场景覆盖
 
@@ -364,6 +365,7 @@ CTP接口 ◀── 订单执行 ◀── 订单验证 ◀── 涨跌停检�
 | `src/market/snapshot.py` | ~150 | 行情快照 | ✅ |
 | `src/market/exchange_config.py` | ~300 | 交易所配置 | ⏸ 待新增 |
 | `src/market/trading_calendar.py` | ~250 | 夜盘交易日历 | ⏸ 待新增 |
+|---------|------|------|------|
 
 
 ### 6.2 InstrumentInfo 扩展字段
@@ -452,6 +454,7 @@ class InstrumentInfo:
 | `MKT.EXCHANGE.CHANGE_LOG` | 变更日志齐全 | M11 |
 | `MKT.EXCHANGE.RELEASE_NOTES` | 发布说明齐全 | M11 |
 | `MKT.EXCHANGE.SUPPORT_PROCESSES` | 支持流程完善 | M11 |
+|---------|----------|------|
 
 ---
 
@@ -468,6 +471,8 @@ class InstrumentInfo:
 | `src/audit/correlation.py` | ~100 | 关联ID管理 | ✅ |
 | `src/audit/exporter.py` | ~150 | 审计导出器 | ✅ |
 | `src/audit/compressor.py` | ~100 | 审计压缩器 | ✅ |
+| `src/audit/retention.py` | ~130 | 审计保留策略 | ✅ |
+|---------|------|------|------|
 
 ### 7.2 审计事件Schema
 
@@ -482,6 +487,7 @@ class AuditEvent:
     run_id: str                    # 运行ID
     exec_id: str                   # 执行ID
 
+
     # 可选字段
     symbol: str | None = None      # 合约代码
     direction: str | None = None   # 方向: "LONG" | "SHORT"
@@ -493,6 +499,8 @@ class AuditEvent:
     risk_check: dict | None = None  # 风控检查结果 (M6)
     error: str | None = None       # 错误信息
     metadata: dict | None = None   # 扩展元数据
+    
+
 ```
 
 ### 7.3 场景覆盖
@@ -517,6 +525,8 @@ class AuditEvent:
 | `AUDIT.RETENTION.POLICY` | 保留策略正确 | M3 |
 | `AUDIT.SIGNAL_SOURCE.TRACK` | 信号来源追踪 | M1, M3 |
 | `AUDIT.COST.BREAKDOWN` | 成本明细记录 | M5, M3 |
+| `AUDIT.RISK.CHECK` | 风控检查记录 | M6, M3 |
+|---------|----------|------|
 
 ---
 
@@ -530,6 +540,7 @@ class AuditEvent:
 | `src/strategy/calendar_arb/kalman_beta.py` | ~200 | Kalman滤波估计 | ✅ |
 | `src/strategy/calendar_arb/strategy.py` | ~400 | 套利策略 | ✅ |
 | `src/strategy/calendar_arb/__init__.py` | ~30 | 模块导出 | ✅ |
+|---------|------|------|------|
 
 ### 8.2 降级链配置
 
@@ -563,6 +574,7 @@ class KalmanConfig:
     initial_variance: float = 1.0    # 初始方差
     beta_min: float = 0.5            # beta下界
     beta_max: float = 2.0            # beta上界
+
 ```
 
 ### 8.4 场景覆盖
@@ -581,6 +593,8 @@ class KalmanConfig:
 | `ARB.SIGNAL.EXPIRY_GATE` | 到期日门禁 | M15 |
 | `ARB.SIGNAL.CORRELATION_BREAK` | 相关性破裂检测 | M6 |
 | `ARB.COST.ENTRY_GATE` | 成本门禁检查 | M5 |
+| `ARB.COST.EXIT_GATE` | 成本门禁检查 | M5 |
+|---------|----------|------|
 
 ---
 
@@ -592,6 +606,7 @@ class KalmanConfig:
 |------|------|------|------|
 | `src/replay/verifier.py` | ~280 | 回放验证器 | ✅ |
 | `src/replay/__init__.py` | ~30 | 模块导出 | ✅ |
+|---------|------|------|------|
 
 ### 9.2 回放验证逻辑
 
@@ -612,6 +627,7 @@ class ReplayVerifier:
             passed=original_hash == replayed_hash,
             original_hash=original_hash,
             replayed_hash=replayed_hash,
+        
         )
 
     def verify_guardian_sequence(
@@ -620,7 +636,20 @@ class ReplayVerifier:
         replayed: list[GuardianAction],
     ) -> VerifyResult:
         """验证守护动作序列一致性"""
-        # ...
+
+        original_hash = self._compute_hash(original)
+        replayed_hash = self._compute_hash(replayed)
+        return VerifyResult(
+            passed=original_hash == replayed_hash,
+            original_hash=original_hash,
+            replayed_hash=replayed_hash,
+        )
+    def _compute_hash(self, sequence: list[Any]) -> str:
+        """计算序列的SHA256哈希值"""
+        hasher = hashlib.sha256()
+        for item in sequence:
+            hasher.update(repr(item).encode('utf-8'))
+        return hasher.hexdigest() 
 ```
 
 ### 9.3 场景覆盖
@@ -629,6 +658,8 @@ class ReplayVerifier:
 |---------|----------|------|
 | `REPLAY.DETERMINISTIC.DECISION` | 决策序列确定性 | M7 |
 | `REPLAY.DETERMINISTIC.GUARDIAN` | 守护动作确定性 | M7 |
+| `REPLAY.HASH.MATCH` | 哈希值匹配 | M7 |
+|---------|----------|------|
 
 ---
 
@@ -640,6 +671,8 @@ class ReplayVerifier:
 |------|------|------|------|
 | `src/cost/estimator.py` | ~328 | 成本估计器 | ✅ |
 | `src/cost/china_fee_calculator.py` | ~653 | 中国期货手续费 | ✅ |
+| `src/cost/__init__.py` | ~30 | 模块导出 | ✅ |
+|---------|------|------|------|
 
 ### 10.2 成本模型
 
@@ -671,6 +704,7 @@ class CostBreakdown:
 | CFFEX | IF | 按金额 | 0.23‱ | 0.23‱ | 3.45‱ |
 | GFEX | 碳酸锂 LC | 按金额 | 0.5‱ | 0.5‱ | 3‱ |
 | INE | 原油 SC | 按手 | 20元/手 | 20元/手 | 0 |
+|--------|----------|------------|------|------|------|
 
 ### 10.4 场景覆盖
 
@@ -684,6 +718,7 @@ class CostBreakdown:
 | `COST.FEE.BY_VALUE` | 按金额收费计算 | M5 |
 | `COST.FEE.CLOSE_TODAY` | 平今手续费计算 | M14 |
 | `COST.FEE.EXCHANGE_CONFIG` | 交易所配置正确 | M20 |
+|---------|----------|------|
 
 ---
 
@@ -699,6 +734,7 @@ class CostBreakdown:
 | `src/strategy/rl/ppo_agent.py` | ~450 | PPO强化学习 | ⏸ 待新增 |
 | `src/strategy/rl/dqn_agent.py` | ~400 | DQN强化学习 | ⏸ 待新增 |
 | `src/strategy/rl/reward_function.py` | ~200 | 奖励函数设计 | ⏸ 待新增 |
+|---------|------|------|------|
 
 ### 11.2 B类模型成熟度要求
 
@@ -709,6 +745,7 @@ class CostBreakdown:
 | 市场适应性 | 20% | 覆盖3状态 | 覆盖5状态 | 覆盖7状态 |
 | 训练充分度 | 20% | ≥90天 | ≥180天 | ≥365天 |
 | 一致性 | 10% | 相关≥0.6 | 相关≥0.7 | 相关≥0.8 |
+|------|------|--------|--------|--------|
 
 ### 11.3 场景覆盖
 
@@ -726,6 +763,7 @@ class CostBreakdown:
 | `RL.DQN.EPSILON_DECAY` | ε衰减正确 | M18 |
 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数 | M18 |
 | `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励 | M18 |
+|---------|----------|------|
 
 ---
 
@@ -745,6 +783,7 @@ class CostBreakdown:
 | `src/strategy/calendar_arb/delivery_aware.py` | ~250 | 交割感知套利 | ⏸ 待新增 |
 | `src/compliance/china_futures_rules.py` | ~200 | 合规规则 | ⏸ 待新增 |
 | `src/compliance/programmatic_trading.py` | ~300 | 程序化交易合规 | ⏸ 待新增 |
+|---------|------|------|------|
 
 ### 12.2 六大交易所配置
 
@@ -812,6 +851,10 @@ EXCHANGE_CONFIG = {
 | `CHINA.ARB.POSITION_TRANSFER` | 移仓换月逻辑 | M15 |
 | `CHINA.COMPLIANCE.RULE_CHECK` | 合规规则检查 | M17 |
 | `CHINA.COMPLIANCE.REPORT_FREQUENCY` | 报撤单频率检查 | M17 |
+| `CHINA.PROGRAMMATIC.ORDER_LIMIT` | 程序化下单限额 | M17 | |
+| `CHINA.PROGRAMMATIC.POSITION_LIMIT` | 程序化持仓
+|限额 | M17 |
+|---------|----------|------|
 
 ---
 
@@ -831,6 +874,7 @@ EXCHANGE_CONFIG = {
 | `src/strategy/experimental/training_gate.py` | ~375 | 训练门禁 | ✅ |
 | `src/strategy/experimental/training_monitor.py` | ~615 | 训练监控 | ✅ |
 | `src/strategy/experimental/__init__.py` | ~65 | 模块导出 | ✅ |
+|---------|------|------|------|
 
 ### 13.2 执行算法设计
 
@@ -874,6 +918,10 @@ class VWAPAlgo:
         self.volume_profile = volume_profile
         self.start_time = start_time
         self.end_time = end_time
+        self.current_index = 0
+        self.slice_volumes = [
+            int(total_volume * vp) for vp in volume_profile
+        ]
 
     def get_next_slice(self, current_time: str) -> OrderSlice:
         """根据成交量分布获取下一个切片订单"""
@@ -890,10 +938,12 @@ class ComplianceThrottle:
     REPORT_CANCEL_LIMIT_5S = 50    # 5秒内报撤单上限
     HIGH_FREQ_LIMIT_PER_SEC = 300  # 高频交易阈值 (笔/秒)
     HIGH_FREQ_LIMIT_DAILY = 20000  # 高频交易阈值 (笔/日)
+    HIGH_FREQ_LIMIT_PER_MIN = 18000  # 高频交易阈值 (笔/分)
 
     def __init__(self):
         self._order_history: deque = deque(maxlen=10000)
         self._5s_window: deque = deque()
+        self._1min_window: deque = deque()
         self._daily_count: int = 0
 
     def can_submit(self) -> tuple[bool, str]:
@@ -903,8 +953,19 @@ class ComplianceThrottle:
         while self._5s_window and now - self._5s_window[0] > 5:
             self._5s_window.popleft()
 
+        # 检查1分钟窗口
+        while self._1min_window and now - self._1min_window[0] > 60:
+            self._1min_window.popleft()
         if len(self._5s_window) >= self.REPORT_CANCEL_LIMIT_5S:
             return False, "5秒报撤单频率超限"
+        if len(self._1min_window) >= self.HIGH_FREQ_LIMIT_PER_MIN:
+            return False, "1分钟高频交易频率超限"
+
+        # 检查日内总量
+        # 这里假设有一个方法或机制来更新_daily_count
+        # 例如，每次提交订单时调用 self._daily_count += 1
+        self._5s_window.append(now)        self._1min_window.append(now)
+        self._daily_count += 1
 
         if self._daily_count >= self.HIGH_FREQ_LIMIT_DAILY:
             return False, "日内报撤单总量超限"
@@ -938,6 +999,7 @@ class ComplianceThrottle:
 | `EXP.GATE.MANUAL_APPROVAL` | 需人工审批 | M12, M18 |
 | `EXP.MONITOR.PROGRESS` | 进度监控正确 | M18 |
 | `EXP.MONITOR.ALERT` | 告警生成正确 | M9 |
+|---------|----------|------|
 
 ---
 
@@ -953,6 +1015,8 @@ class ComplianceThrottle:
 | `src/compliance/algo_registration.py` | ~200 | 算法备案 | ⏸ 待新增 |
 | `src/monitoring/health.py` | ~220 | 健康检查 | ✅ |
 | `src/monitoring/metrics.py` | ~328 | Prometheus指标 | ✅ |
+| `src/monitoring/alerts.py` | ~250 | 告警管理 | ✅ |
+|---------|------|------|------|
 
 ### 14.2 2025年程序化交易新规
 
@@ -967,7 +1031,7 @@ class ComplianceThrottle:
 │ 4. 压力测试：每月极端行情模拟 (原油跳空10%等)                        │
 │ 5. 人工复核：大额订单≤30秒二次确认                                   │
 │ 6. 报撤单频率：5秒50笔预警阈值                                       │
-│ 7. 高频交易定义：单账户每秒≥300笔 或 单日≥20000笔                    │
+│ 7. 高频交易定义：单账户每秒≥300笔 或 单日≥20000笔                  │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -991,6 +1055,7 @@ class ComplianceThrottle:
 | `MONITOR.METRICS.PROMETHEUS` | Prometheus导出 | M9 |
 | `MONITOR.ALERT.THRESHOLD` | 阈值告警 | M9 |
 | `MONITOR.ALERT.CHANNEL` | 告警渠道 | M9 |
+|---------|----------|------|
 
 ---
 
@@ -1007,6 +1072,7 @@ class ComplianceThrottle:
 | `src/risk/var_calculator.py` | ~362 | VaR计算器 | ✅ |
 | `src/risk/var_enhanced.py` | ~400 | 增强VaR | ⏸ 待新增 |
 | `src/risk/attribution.py` | ~300 | 风险归因 | ⏸ 待新增 |
+|---------|------|------|------|
 
 ### 15.2 VaR增强方法
 
@@ -1080,6 +1146,7 @@ class EnhancedVaRCalculator(VaRCalculator):
 | `RISK.STRESS.SCENARIO` | 压力测试场景 | M6 |
 | `RISK.STRESS.RESULT` | 压力测试结果 | M6 |
 | `RISK.KILLSWITCH.TRIGGER` | 熔断触发 | M6 |
+|---------|----------|------|
 
 ---
 
@@ -1095,6 +1162,7 @@ class EnhancedVaRCalculator(VaRCalculator):
 | 中国金融期货交易所 | CFFEX | 2006 | 股指、国债 | 仅日盘 |
 | 广州期货交易所 | GFEX | 2021 | 碳酸锂、工业硅 | 日盘+夜盘 |
 | 上海国际能源交易中心 | INE | 2013 | 原油、低硫燃料油 | 日盘+夜盘 |
+|--------|------|----------|----------|----------|
 
 ### 16.2 品种分类
 
@@ -1127,6 +1195,9 @@ PRODUCT_CATEGORIES = {
     "新能源": {
         "GFEX": ["lc"],  # 碳酸锂
     },
+    "国债": {
+        "CFFEX": ["T", "TF", "TS"],
+    },
 }
 ```
 
@@ -1143,6 +1214,7 @@ PRODUCT_CATEGORIES = {
 | 早盘第二节 | 10:30 - 11:30 | 60分钟 |
 | 午休 | 11:30 - 13:30 | 120分钟 |
 | 午盘 | 13:30 - 15:00 | 90分钟 |
+|------|------|------|
 
 ### 17.2 夜盘交易时段
 
@@ -1151,6 +1223,10 @@ PRODUCT_CATEGORIES = {
 | 23:00 | 农产品、软商品 | DCE, CZCE |
 | 01:00 | 黑色系、能化 | SHFE, DCE, CZCE |
 | 02:30 | 贵金属、有色金属 | SHFE |
+| 无夜盘 | 股指、国债 | CFFEX |
+| 02:30 | 碳酸锂、工业硅 | GFEX |
+| 02:30 | 原油、低硫燃料油 | INE |
+|----------|------|--------|
 
 ### 17.3 夜盘交易日归属
 
@@ -1176,6 +1252,12 @@ PRODUCT_CATEGORIES = {
 | 国债期货 | ±2% | ±3% | - |
 | 商品期货 | 3%-8% | +2% | +3% |
 | 贵金属 | 6%-8% | +4% | - |
+| 能化 | 5%-9% | +3% | +4% |
+| 农产品 | 4%-7% | +3% | +4% |
+| 黑色系 | 5%-8% | +3% | +4% |
+| 有色金属 | 6%-10% | +4% | - |
+| 新能源 | 8%-13% | +5% | - |
+|----------|----------|--------------|--------|
 
 ### 18.2 2025年春节期间调整 (示例)
 
@@ -1186,6 +1268,9 @@ PRODUCT_CATEGORIES = {
 | 金/银 | 13% | 15% |
 | 螺纹钢/热卷 | 8% | 10% |
 | 天然橡胶/纸浆 | 9% | 11% |
+| 原油/低硫燃料油 | 12% | 14% |
+| 豆粕/玉米/棉花 | 7% | 9
+| |---------|------------|--------------|
 
 ### 18.3 涨跌停价格检查
 
@@ -1220,6 +1305,9 @@ def check_limit_price(
 | 交易保证金 | 开仓时缴纳，维持持仓 |
 | 结算保证金 | 结算时调整 |
 | 追加保证金 | 权益不足时追缴 |
+| 投机保证金 | 投机交易的保证金要求 |
+| 套保保证金 | 套期保值交易的保证金要求 |
+|------|------|
 
 ### 19.2 保证金水平
 
@@ -1280,6 +1368,7 @@ class MarginMonitor:
 | 按金额 | 成交金额 × 费率 | 铜: 0.5‱ |
 | 按手 | 成交手数 × 固定费用 | 螺纹钢: 1元/手 |
 | 混合 | 两者取高 | 部分品种 |
+|------|----------|------|
 
 ### 20.2 平今手续费
 
@@ -1291,6 +1380,7 @@ class MarginMonitor:
 | CFFEX | 大幅加倍 | 15倍 |
 | GFEX | 加倍收取 | 3-6倍 |
 | INE | 部分免收 | 0-1倍 |
+|--------|----------|------|
 
 ### 20.3 手续费计算器
 
@@ -1328,7 +1418,16 @@ class ChinaFeeCalculator:
 
         else:
             # 混合: 取两者较高值
-            # ...
+
+            fee_by_value = self.calculate(
+                instrument, price, volume, direction
+            )
+            fee_by_fixed = self.calculate(
+                instrument, price, volume, direction
+            )
+            return max(fee_by_value, fee_by_fixed)
+
+
 ```
 
 ---
@@ -1344,6 +1443,8 @@ class ChinaFeeCalculator:
 | 压力测试 | 每月极端行情模拟 | 压力测试模块 |
 | 人工复核 | 大额订单确认 | 双重确认机制 |
 | 应急处置 | 熔断机制 | 风控熔断 |
+| 错误防范 | 防止下单错误 | 下单校验 |
+|------|------|----------|
 
 ### 21.2 高频交易判定
 
@@ -1371,6 +1472,11 @@ THROTTLE_LEVELS = {
         "daily_limit": 18000,
         "action": "发送预警，降低频率",
     },
+    ThrottleLevel.DANGER: {
+        "5s_limit": 45,
+        "daily_limit": 19000,
+        "action": "限制新订单，审查交易行为",
+    },
     ThrottleLevel.CRITICAL: {
         "5s_limit": 48,
         "daily_limit": 19500,
@@ -1395,6 +1501,7 @@ THROTTLE_LEVELS = {
 | 历史模拟法 | 简单直观 | 依赖历史 | 一般市场 |
 | 参数法 | 计算快速 | 假设正态 | 快速估计 |
 | 蒙特卡洛法 | 灵活准确 | 计算慢 | 复杂组合 |
+|------|------|------|----------|
 
 ### 22.2 增强VaR方法 (待新增)
 
@@ -1404,6 +1511,7 @@ THROTTLE_LEVELS = {
 | 半参数法 | 核密度 + GPD | 厚尾分布 |
 | 涨跌停调整 | 截断效应修正 | 中国期货 |
 | 流动性调整 | 平仓成本建模 | 大额头寸 |
+|------|------|----------|
 
 ### 22.3 EVT-GPD实现
 
@@ -1465,6 +1573,7 @@ def evt_var(
 | 2021年动力煤调控 | 2021-10 | ZC | -10%/日 | 3天 |
 | 2022年碳酸锂暴跌 | 2022-11 | LC | -15%/日 | 5天 |
 | 2024年碳酸锂继续下跌 | 2024-03 | LC | -8%/日 | 10天 |
+|------|------|------|------|----------|
 
 ### 23.2 压力测试配置
 
@@ -1491,11 +1600,19 @@ STRESS_SCENARIOS = [
         probability=0.01,
     ),
     StressScenario(
+        name="BLACK_IRON_RISE_2016",
+        description="2016年黑色系暴涨场景",
+        price_shock=0.06,
+        duration_days=3,
+        affected_products=["RB", "HC", "I"],
+        probability=0.02,
+    ),
+    StressScenario(
         name="OIL_NEGATIVE_2020",
         description="2020年原油负价场景",
         price_shock=-0.15,
         duration_days=1,
-        affected_products=["sc", "fu", "lu"],
+        affected_products=["SC", "FU", "LU"],
         probability=0.001,
     ),
     # ... 更多场景
@@ -1509,7 +1626,7 @@ STRESS_SCENARIOS = [
 ### 24.1 成熟度评估系统
 
 ```
-实验性策略训练成熟度评估系统 (已实现 ✅)
+实验性策略训练成熟度评估系统
 
 核心门槛:
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -1530,6 +1647,7 @@ STRESS_SCENARIOS = [
 | 市场适应性 | 20% | 状态覆盖、一致性、存活率 |
 | 训练充分度 | 20% | 训练天数、训练次数、样本多样性 |
 | 一致性 | 10% | 信号相关、滚动一致性 |
+|------|------|----------|
 
 ### 24.3 成熟度等级
 
@@ -1542,6 +1660,20 @@ class MaturityLevel(Enum):
     GROWING = "成长期"      # 40-60%
     MATURING = "成熟期"     # 60-80%
     MATURE = "完全成熟"     # 80-100%
+
+def assess_maturity(scores: dict) -> float:
+    """计算总体成熟度得分"""
+
+    weights = {
+        "收益稳定性": 0.25,
+        "风险控制": 0.25,
+        "市场适应性": 0.20,
+        "训练充分度": 0.20,
+        "一致性": 0.10,
+    }
+
+    total_score = sum(scores[dim] * weights[dim] for dim in weights)
+    return total_score   
 ```
 
 ---
@@ -1552,6 +1684,9 @@ class MaturityLevel(Enum):
 
 ```
 命名格式: audit_{run_id}_{date}.jsonl
+说明:
+- run_id: 年月日+四位序号 (如202512160001)
+- date: 年月日 (如20251216)
 
 示例:
 audit_202512160001_20251216.jsonl
@@ -1564,6 +1699,7 @@ audit_202512160001_20251216.jsonl
 | 原始日志 | 30天 | 无 |
 | 压缩日志 | 365天 | GZIP |
 | 归档日志 | 永久 | Parquet |
+|------|----------|------|
 
 ### 25.3 必记录事件
 
@@ -1578,6 +1714,8 @@ audit_202512160001_20251216.jsonl
 | `MARGIN_WARNING` | 保证金预警 | usage_ratio, level |
 | `LIMIT_PRICE_HIT` | 涨跌停触发 | symbol, limit_type |
 | `STRATEGY_FALLBACK` | 策略降级 | from_strategy, to_strategy |
+| `SYSTEM_ALERT` | 系统告警 | alert_type, severity |
+|----------|----------|----------|
 
 ---
 
@@ -1595,13 +1733,48 @@ exchange:
     enabled: true
     trading_hours: [[09:00, 10:15], [10:30, 11:30], [13:30, 15:00]]
     night_session: [21:00, 02:30]
-
+    dce:
+    enabled: true
+    trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+    night_session: [21:00, 01:00]
+  czce:
+    enabled: true
+    trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+    night_session: [21:00, 01:00]
+  cffex:
+      enabled: true
+      trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+      night_session: [21:00, 01:00]
+   gfex:
+      enabled: true
+      trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+      night_session: [21:00, 02:30]
+    ine:
+      enabled: true
+      trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+      night_session: [21:00, 02:30]
 risk:
   max_drawdown_pct: 0.05
   max_position_value: 10000000
   margin_warning_level: 0.7
   margin_danger_level: 0.85
-
+    throttle_levels:
+        normal:
+        5s_limit: 30
+        daily_limit: 15000
+        warning:
+        5s_limit: 40
+        daily_limit: 18000
+        danger:
+        5s_limit: 45
+        daily_limit: 19000
+        critical:
+        5s_limit: 48
+        daily_limit: 19500
+        exceeded:
+        5s_limit: 50
+        daily_limit: 20000
+        
 strategy:
   calendar_arb:
     enabled: true
@@ -1614,6 +1787,11 @@ compliance:
   report_cancel_limit_5s: 50
   high_freq_limit_daily: 20000
   large_order_threshold: 100
+
+
+logging:  
+  level: INFO
+  audit_log_path: ./logs/audit/
 ```
 
 ### 26.2 环境隔离
@@ -1623,6 +1801,7 @@ compliance:
 | dev | config.dev.yml | simnow | dev_db |
 | test | config.test.yml | simnow | test_db |
 | prod | config.prod.yml | 生产前置 | prod_db |
+|------|----------|---------|--------|
 
 ---
 
@@ -1638,6 +1817,14 @@ compliance:
 | 订单拒绝 | 6 | 5 | 2 | 60 | 重试 + 告警 |
 | 保证金不足 | 9 | 2 | 2 | 36 | 实时监控 + 预警 |
 | 涨跌停封板 | 7 | 6 | 1 | 42 | 价格检查 + 撤单 |
+| 高频报撤单 | 8 | 4 | 3 | 96 | 节流器 + 告警 |
+| 系统资源耗尽 | 9 | 2 | 4 | 72 |
+| 监控 + 扩容 |
+| 数据库连接失败 | 8 | 3 | 3 | 72 | 重
+|试 + 备用连接 |
+| 日志写入失败 | 6 | 4 | 4 | 96 |
+| 本地缓存 + 告警 |
+|----------|--------|----------|----------|-----|----------|
 
 ### 27.2 RPN计算
 
@@ -1647,7 +1834,7 @@ RPN = 严重度 × 发生概率 × 检测难度
 RPN等级:
 - < 50: 低风险，监控即可
 - 50-100: 中风险，需要缓解措施
-- > 100: 高风险，必须优先处理
+- > 100: 高风险，必须优先处理（如策略异常、高频报撤单、日志写入失败）
 ```
 
 ---
