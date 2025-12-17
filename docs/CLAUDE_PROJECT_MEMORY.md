@@ -125,7 +125,8 @@
 1. `docs/V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md`
 2. `docs/CLAUDE_PROJECT_MEMORY.md` (本文件)
 3. 以及所有的前缀是V4PRO的文件
-4. 
+4. 每次完成一个任务都要对所有的相关文件进行更新和版本更新，确保所有文件内容和状态一致，前缀是V4PRO的文件。
+5. 所有跟V4PRO项目相关的文件名字前缀必须是V4PRO，方便检索和归档。之前不是V4PRO前缀的文件必须重命名。
 
 ---
 
