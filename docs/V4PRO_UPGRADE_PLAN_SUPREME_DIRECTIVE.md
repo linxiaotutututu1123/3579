@@ -177,12 +177,12 @@
 
 | 门禁 | 状态 | 最后检查时间 |
 |------|------|--------------|
-| Ruff Check | ✅ PASS | 2025-12-16 |
-| Ruff Format | ✅ PASS | 2025-12-16 |
-| Mypy | ✅ PASS | 2025-12-16 |
-| Pytest | ✅ PASS (765 tests) | 2025-12-16 |
-| Coverage | 88.22% | 2025-12-16 |
-| Policy | ✅ PASS | 2025-12-16 |
+| Ruff Check | ✅ PASS | 2025-12-17 |
+| Ruff Format | ✅ PASS | 2025-12-17 |
+| Mypy | ✅ PASS | 2025-12-17 |
+| Pytest | ✅ PASS (826 tests) | 2025-12-17 |
+| Coverage | 88.22% | 2025-12-17 |
+| Policy | ✅ PASS | 2025-12-17 |
 
 ### 2.4 已实现模块摘要
 
