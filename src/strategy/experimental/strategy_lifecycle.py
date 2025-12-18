@@ -554,9 +554,20 @@ class StrategyLifecycleManager:
                 list(AllocationTier).index(new_tier)
                 - list(AllocationTier).index(state.allocation_tier)
             )
-            needs_approval = tier_diff >= self.MANUAL_APPROVAL_TIER_CHANGE or (
-                new_stage == LifecycleStage.PRODUCTION
-                and self._require_approval_for_production
+            # 军规: 暂停/退役是安全机制，必须立即执行，不需要审批
+            is_safety_transition = new_stage in [
+                LifecycleStage.SUSPENDED,
+                LifecycleStage.RETIRED,
+            ]
+            needs_approval = (
+                not is_safety_transition
+                and (
+                    tier_diff >= self.MANUAL_APPROVAL_TIER_CHANGE
+                    or (
+                        new_stage == LifecycleStage.PRODUCTION
+                        and self._require_approval_for_production
+                    )
+                )
             )
 
             if needs_approval:
