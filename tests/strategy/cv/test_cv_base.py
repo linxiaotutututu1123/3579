@@ -315,9 +315,10 @@ class TestWalkForwardAnchored:
 
         splits = list(cv.split(150))
 
-        # 验证测试集在最后
+        # 验证测试集在最后 (test_end是最后一个索引,从0开始)
         for split in splits:
-            assert split.test_end == 150
+            # 测试集应包含最后的样本
+            assert 149 in split.test_indices  # 最后一个索引是149
 
 
 class TestPurgedKFoldBasic:
