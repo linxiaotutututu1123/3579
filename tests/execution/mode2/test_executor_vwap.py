@@ -187,11 +187,12 @@ class TestVWAPCatchUp:
         intent = create_test_intent(target_qty=40)
 
         plan_id = executor.make_plan(intent)
+        schedule = executor.get_schedule(plan_id)
 
-        # 模拟执行所有分片
+        # 模拟执行所有分片(使用时间表中的时间)
         filled = 0
-        for _ in range(4):
-            action = executor.next_action(plan_id, time.time())
+        for s in schedule:
+            action = executor.next_action(plan_id, s["scheduled_time"])
             if action is None or action.action_type != ExecutorActionType.PLACE_ORDER:
                 continue
 
@@ -245,13 +246,14 @@ class TestVWAPExecutorIntegration:
         intent = create_test_intent(target_qty=30)
 
         plan_id = executor.make_plan(intent)
+        schedule = executor.get_schedule(plan_id)
 
         # 验证初始状态
         assert executor.get_status(plan_id) == ExecutorStatus.PENDING
 
-        # 执行所有分片
-        for _ in range(3):
-            action = executor.next_action(plan_id, time.time())
+        # 执行所有分片(使用时间表中的时间)
+        for s in schedule:
+            action = executor.next_action(plan_id, s["scheduled_time"])
             if action is None:
                 continue
 

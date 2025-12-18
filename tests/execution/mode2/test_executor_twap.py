@@ -261,13 +261,13 @@ class TestTWAPPartialFill:
         intent = create_test_intent(target_qty=40)
 
         plan_id = executor.make_plan(intent)
+        schedule = executor.get_schedule(plan_id)
 
         filled_total = 0
-        start_time = time.time()
 
-        # 执行所有分片
-        for i in range(4):
-            action = executor.next_action(plan_id, start_time + i * 0.025)
+        # 执行所有分片(使用时间表中的时间)
+        for s in schedule:
+            action = executor.next_action(plan_id, s["scheduled_time"])
             if action is None or action.action_type != ExecutorActionType.PLACE_ORDER:
                 continue
 
