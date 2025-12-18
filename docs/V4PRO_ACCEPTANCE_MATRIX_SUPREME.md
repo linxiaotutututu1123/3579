@@ -657,9 +657,9 @@
 | K61 | `CV.LOG.RECORD` | 日志记录正确 | M3 | test_cv_logger.py | ✅ |
 | K62 | `CV.DATA.HANDLE` | 数据处理正确 | M7 | test_cv_data.py | ✅ |
 
-**CV场景小计: 10 场景 (0 ✅, 10 ⏸)**
+**CV场景小计: 10 场景 (10 ✅)**
 
-**Phase K 总计: 62 场景 (0 ✅, 62 ⏸)**
+**Phase K 总计: 62 场景 (62 ✅)**
 
 ---
 
