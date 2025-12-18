@@ -594,13 +594,22 @@ class TestRLEnvRewardShape:
             slippage_ticks=0,
             max_position=10,
         )
-        # 使用平稳价格避免PnL干扰
-        bars = _generate_bars(200, trend=0.0)
+        # 使用完全静态价格避免PnL干扰
+        static_bars: list[Bar1m] = []
+        for i in range(200):
+            static_bars.append({
+                "ts": 1700000000.0 + i * 60,
+                "open": 4000.0,
+                "high": 4000.0,
+                "low": 4000.0,
+                "close": 4000.0,
+                "volume": 1000.0,
+            })
 
-        env = TradingEnv(config, bars)
+        env = TradingEnv(config, static_bars)
         env.reset()
 
-        # 小仓位
+        # 小仓位 (1手)
         env.step(TradingAction.BUY)
         _, reward_small, _, _ = env.step(TradingAction.HOLD)
 
@@ -610,10 +619,11 @@ class TestRLEnvRewardShape:
             env.step(TradingAction.BUY)
         _, reward_large, _, _ = env.step(TradingAction.HOLD)
 
-        # 大仓位的风险惩罚应更大(奖励更低)
+        # 大仓位的风险惩罚应更大(奖励更低/更负)
         # 因为risk_penalty = (position/max_position)^2 * factor
         # 小仓位: (1/10)^2 * 10 = 0.1
         # 大仓位: (9/10)^2 * 10 = 8.1
+        # 静态价格下PnL=0,所以只有风险惩罚
         assert reward_large < reward_small
 
     def test_cost_penalty(self) -> None:
