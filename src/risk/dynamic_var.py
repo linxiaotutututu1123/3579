@@ -559,10 +559,11 @@ class DynamicVaREngine:
                 kwargs.get("liquidity", LiquidityMetrics()),
                 confidence,
             )
-        # 默认历史VaR
+        # 所有 VaRMethod 枚举值已处理，此处不可达
+        # 使用 HISTORICAL 作为类型安全的兜底（防止未来新增枚举值未处理）
         self._calculation_count += 1
         result = self._base_calculator.historical_var(returns, confidence)
-        return self._wrap_result(result, VaRMethod.HISTORICAL)
+        return self._wrap_result(result, VaRMethod.HISTORICAL)  # pragma: no cover
 
     def _estimate_gpd_params(
         self, exceedances: list[float], threshold: float
