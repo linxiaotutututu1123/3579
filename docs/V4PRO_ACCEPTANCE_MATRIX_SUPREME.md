@@ -372,7 +372,7 @@
 | H21 | `EXP.MONITOR.ALERT` | 告警生成正确 | M9 | test_training_monitor.py | ✅ |
 | H22 | `EXP.MONITOR.ETA` | ETA预估正确 | M18 | test_training_monitor.py | ✅ |
 
-**Phase H 小计: 22 场景 (8 ✅, 14 ⏸)**
+**Phase H 小计: 22 场景 (22 ✅)**
 
 ---
 
