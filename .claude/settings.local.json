@@ -30,7 +30,8 @@
       "Bash(git add:*)",
       "Bash(done)",
       "Bash(xargs:*)",
-      "SlashCommand(/sc:help)"
+      "SlashCommand(/sc:help)",
+      "SlashCommand(/sc:design:*)"
     ]
   }
 }
