@@ -337,14 +337,15 @@ class TestVWAPExecutorIntegration:
 
     def test_progress_with_avg_price(self) -> None:
         """测试进度包含平均价格."""
-        config = VWAPConfig(volume_profile=[0.5, 0.5])
+        config = VWAPConfig(volume_profile=[0.5, 0.5], duration_seconds=0.1)
         executor = VWAPExecutor(config)
         intent = create_test_intent(target_qty=20)
 
         plan_id = executor.make_plan(intent)
+        schedule = executor.get_schedule(plan_id)
 
         # 第一个分片成交价4000
-        action1 = executor.next_action(plan_id, time.time())
+        action1 = executor.next_action(plan_id, schedule[0]["scheduled_time"])
         assert action1 is not None
         event1 = OrderEvent(
             client_order_id=action1.client_order_id or "",
@@ -355,7 +356,7 @@ class TestVWAPExecutorIntegration:
         executor.on_event(plan_id, event1)
 
         # 第二个分片成交价4100
-        action2 = executor.next_action(plan_id, time.time())
+        action2 = executor.next_action(plan_id, schedule[1]["scheduled_time"])
         assert action2 is not None
         event2 = OrderEvent(
             client_order_id=action2.client_order_id or "",
