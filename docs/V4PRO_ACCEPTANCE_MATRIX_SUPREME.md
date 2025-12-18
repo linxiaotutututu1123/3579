@@ -568,7 +568,7 @@
 | K26 | `DL.CHECKPOINT.SAVE` | 检查点保存正确 | M3,M11 | test_checkpoint.py | ✅ |
 | K27 | `DL.CHECKPOINT.LOAD` | 检查点加载正确 | M11 | test_checkpoint.py | ✅ |
 
-**DL场景小计: 27 场景 (0 ✅, 27 ⏸)**
+**DL场景小计: 27 场景 (27 ✅)**
 
 ### K.12 RL基础场景
 
@@ -640,7 +640,7 @@
 | K51 | `RL.EXPLORATION.EPSILON` | ε-greedy探索正确 | M7 | test_exploration.py | ✅ |
 | K52 | `RL.EXPLORATION.UCB` | UCB探索正确 | M7 | test_exploration.py | ✅ |
 
-**RL场景小计: 25 场景 (0 ✅, 25 ⏸)**
+**RL场景小计: 25 场景 (25 ✅)**
 
 ### K.21 交叉验证场景
 
