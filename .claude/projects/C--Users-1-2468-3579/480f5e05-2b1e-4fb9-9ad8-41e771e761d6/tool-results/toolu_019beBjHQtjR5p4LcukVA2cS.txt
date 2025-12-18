@@ -1,0 +1,21 @@
+C:\Users\1\2468\3579\src\risk\dynamic_var.py:42:class VaRMethod(Enum):
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-43-    """VaR计算方法枚举."""
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-44-
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-45-    HISTORICAL = "historical"  # 历史模拟法
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-46-    PARAMETRIC = "parametric"  # 参数法
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-47-    MONTE_CARLO = "monte_carlo"  # 蒙特卡洛
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-48-    EVT_GPD = "evt_gpd"  # 极值理论GPD
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-49-    SEMIPARAMETRIC = "semiparametric"  # 半参数法
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-50-    LIMIT_ADJUSTED = "limit_adjusted"  # 涨跌停调整
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-51-    LIQUIDITY_ADJUSTED = "liquidity_adjusted"  # 流动性调整
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-52-
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-53-
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-54-class RiskLevel(Enum):
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-55-    """风险等级枚举."""
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-56-
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-57-    SAFE = "安全"  # VaR < 阈值 * 0.5
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-58-    NORMAL = "正常"  # VaR < 阈值 * 0.7
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-59-    WARNING = "预警"  # VaR < 阈值 * 0.9
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-60-    DANGER = "危险"  # VaR < 阈值
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-61-    CRITICAL = "临界"  # VaR >= 阈值
+C:\Users\1\2468\3579\src\risk\dynamic_var.py-62-

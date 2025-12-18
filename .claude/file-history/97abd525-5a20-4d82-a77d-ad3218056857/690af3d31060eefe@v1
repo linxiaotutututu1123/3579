@@ -1,0 +1,548 @@
+"""
+risk_control/engine.py
+风控引擎核心模块。
+
+核心功能：
+- #15 止损保护（单笔/日内/总回撤）
+- #16 持仓监控（限制检查）
+- #17 资金监控（保证金/可用资金）
+
+# RISK: 风控引擎故障导致风险敞口
+# 缓解措施: 故障时默认拒绝所有订单
+
+Author: AI Quant Team
+Version: 1.0.0
+"""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+from dataclasses import dataclass, field
+from datetime import datetime, date, timezone
+from decimal import Decimal
+from typing import Callable, Awaitable, Final
+from collections import defaultdict
+
+from .models import (
+    Position,
+    Order,
+    Account,
+    Direction,
+    RiskLevel,
+    RiskEvent,
+)
+from .limits import RiskControlConfig
+from .order_validator import OrderValidator, OrderValidationResult
+
+__all__: list[str] = [
+    "RiskAction",
+    "RiskCheckResult",
+    "RiskControlEngine",
+]
+
+# WHY: 类型别名
+AlertCallback = Callable[[RiskEvent], Awaitable[None]]
+ClosePositionCallback = Callable[[str, int, str], Awaitable[bool]]
+
+
+@dataclass
+class RiskAction:
+    """
+    风控动作。
+
+    Attributes:
+        action_type: 动作类型
+        symbol: 相关合约
+        volume: 数量
+        reason: 原因
+    """
+    action_type: str  # close_position / reduce_position / stop_trading / alert
+    symbol: str = ""
+    volume: int = 0
+    reason: str = ""
+
+
+@dataclass
+class RiskCheckResult:
+    """
+    风控检查结果。
+
+    Attributes:
+        passed: 是否通过
+        level: 风险等级
+        message: 消息
+        actions: 需要执行的动作
+    """
+    passed: bool
+    level: RiskLevel = RiskLevel.INFO
+    message: str = ""
+    actions: list[RiskAction] = field(default_factory=list)
+
+
+class RiskControlEngine:
+    """
+    风控引擎。
+
+    全自动交易系统的核心风控组件，实时监控并执行风控策略。
+
+    功能：
+    1. 订单预检（下单前）
+    2. 持仓监控（实时）
+    3. 资金监控（实时）
+    4. 止损执行（触发时）
+
+    Example:
+        >>> engine = RiskControlEngine(config)
+        >>> engine.set_alert_callback(send_dingtalk_alert)
+        >>> engine.set_close_callback(close_position)
+        >>>
+        >>> # 下单前检查
+        >>> result = await engine.check_order(order, current_price)
+        >>> if not result.passed:
+        ...     return  # 订单被拦截
+        >>>
+        >>> # 更新持仓后检查
+        >>> await engine.on_position_update(position)
+    """
+
+    # WHY: 检查间隔
+    _CHECK_INTERVAL: Final[float] = 1.0  # 秒
+
+    def __init__(self, config: RiskControlConfig) -> None:
+        """
+        初始化风控引擎。
+
+        Args:
+            config: 风控配置
+        """
+        self._config = config
+        self._logger = logging.getLogger("risk_control.engine")
+
+        # === 状态追踪 ===
+        self._positions: dict[str, Position] = {}
+        self._account: Account = Account()
+        self._orders: dict[str, Order] = {}
+
+        # === 盈亏追踪 ===
+        self._daily_pnl: Decimal = Decimal("0")
+        self._peak_equity: Decimal = Decimal("0")
+        self._current_drawdown: Decimal = Decimal("0")
+        self._last_reset_date: date | None = None
+
+        # === 止损状态 ===
+        self._trading_halted: bool = False
+        self._halt_reason: str = ""
+
+        # === 回调 ===
+        self._alert_callback: AlertCallback | None = None
+        self._close_callback: ClosePositionCallback | None = None
+
+        # === 订单验证器 ===
+        self._order_validator = OrderValidator(config)
+
+        # === 事件日志 ===
+        self._risk_events: list[RiskEvent] = []
+
+        # === 监控任务 ===
+        self._monitor_task: asyncio.Task | None = None
+
+        self._logger.info("风控引擎初始化完成")
+
+    # =========================================================================
+    # 回调设置
+    # =========================================================================
+
+    def set_alert_callback(self, callback: AlertCallback) -> None:
+        """设置告警回调（如钉钉通知）。"""
+        self._alert_callback = callback
+
+    def set_close_callback(self, callback: ClosePositionCallback) -> None:
+        """设置平仓回调。"""
+        self._close_callback = callback
+
+    # =========================================================================
+    # 订单检查 (#15/#16/#19)
+    # =========================================================================
+
+    async def check_order(
+        self,
+        order: Order,
+        current_price: Decimal,
+    ) -> RiskCheckResult:
+        """
+        订单预检。
+
+        Args:
+            order: 待检查订单
+            current_price: 当前市场价格
+
+        Returns:
+            检查结果
+        """
+        # WHY: 交易暂停时拒绝所有订单
+        if self._trading_halted:
+            return RiskCheckResult(
+                passed=False,
+                level=RiskLevel.CRITICAL,
+                message=f"交易已暂停: {self._halt_reason}",
+            )
+
+        # WHY: 获取当前持仓
+        current_position = self._get_position_volume(order.symbol, order.direction)
+
+        # WHY: 订单验证器检查
+        validation = self._order_validator.validate(
+            order, current_price, current_position
+        )
+
+        if not validation.is_valid:
+            event = validation.to_risk_event(order)
+            await self._emit_event(event)
+            return RiskCheckResult(
+                passed=False,
+                level=validation.risk_level,
+                message=validation.message,
+            )
+
+        # WHY: 总持仓限制检查
+        total_check = self._check_total_position(order)
+        if not total_check.passed:
+            return total_check
+
+        return RiskCheckResult(passed=True, message="订单检查通过")
+
+    def _get_position_volume(self, symbol: str, direction: Direction) -> int:
+        """获取指定合约指定方向的持仓数量。"""
+        position = self._positions.get(symbol)
+        if position and position.direction == direction:
+            return position.volume
+        return 0
+
+    def _check_total_position(self, order: Order) -> RiskCheckResult:
+        """检查总持仓限制。"""
+        limits = self._config.position_limit
+
+        # WHY: 计算当前总持仓
+        total_long = sum(
+            p.volume for p in self._positions.values()
+            if p.direction == Direction.LONG
+        )
+        total_short = sum(
+            p.volume for p in self._positions.values()
+            if p.direction == Direction.SHORT
+        )
+
+        # WHY: 检查方向持仓限制
+        if order.direction == Direction.LONG:
+            if total_long + order.volume > limits.max_long_position:
+                return RiskCheckResult(
+                    passed=False,
+                    level=RiskLevel.WARNING,
+                    message=f"多头持仓超限: {total_long + order.volume} > {limits.max_long_position}",
+                )
+        else:
+            if total_short + order.volume > limits.max_short_position:
+                return RiskCheckResult(
+                    passed=False,
+                    level=RiskLevel.WARNING,
+                    message=f"空头持仓超限: {total_short + order.volume} > {limits.max_short_position}",
+                )
+
+        # WHY: 检查总持仓限制
+        total = total_long + total_short + order.volume
+        if total > limits.max_total_position:
+            return RiskCheckResult(
+                passed=False,
+                level=RiskLevel.WARNING,
+                message=f"总持仓超限: {total} > {limits.max_total_position}",
+            )
+
+        return RiskCheckResult(passed=True)
+
+    # =========================================================================
+    # 持仓更新 (#15/#16)
+    # =========================================================================
+
+    async def on_position_update(self, position: Position) -> None:
+        """
+        持仓更新回调。
+
+        Args:
+            position: 更新后的持仓
+        """
+        self._positions[position.symbol] = position
+
+        # WHY: 检查单笔止损
+        await self._check_single_stop_loss(position)
+
+    async def _check_single_stop_loss(self, position: Position) -> None:
+        """检查单笔止损。"""
+        if self._account.equity <= 0:
+            return
+
+        # WHY: 计算亏损比例
+        loss_pct = -position.unrealized_pnl / self._account.equity * 100
+
+        max_loss = self._config.stop_loss.max_single_loss_pct
+
+        if loss_pct > max_loss:
+            event = RiskEvent(
+                event_type="SINGLE_STOP_LOSS",
+                level=RiskLevel.CRITICAL,
+                message=f"单笔亏损触发止损: {position.symbol} 亏损 {loss_pct:.2f}% > {max_loss}%",
+                symbol=position.symbol,
+                action_taken="close_position",
+                context={"loss_pct": str(loss_pct), "pnl": str(position.unrealized_pnl)},
+            )
+            await self._emit_event(event)
+
+            # WHY: 执行平仓
+            await self._close_position(position.symbol, position.volume, "单笔止损")
+
+    # =========================================================================
+    # 账户更新 (#17)
+    # =========================================================================
+
+    async def on_account_update(self, account: Account) -> None:
+        """
+        账户更新回调。
+
+        Args:
+            account: 更新后的账户信息
+        """
+        self._account = account
+
+        # WHY: 更新峰值权益（用于计算回撤）
+        if account.equity > self._peak_equity:
+            self._peak_equity = account.equity
+
+        # WHY: 计算当前回撤
+        if self._peak_equity > 0:
+            self._current_drawdown = (
+                (self._peak_equity - account.equity) / self._peak_equity * 100
+            )
+
+        # WHY: 重置日内盈亏
+        self._reset_daily_pnl_if_needed()
+
+        # WHY: 执行各项检查
+        await self._check_daily_stop_loss()
+        await self._check_total_drawdown()
+        await self._check_margin_limit()
+
+    def _reset_daily_pnl_if_needed(self) -> None:
+        """每日重置日内盈亏。"""
+        today = date.today()
+        if self._last_reset_date != today:
+            self._daily_pnl = Decimal("0")
+            self._last_reset_date = today
+            self._logger.info(f"日内盈亏已重置: {today}")
+
+    async def _check_daily_stop_loss(self) -> None:
+        """检查日内止损 (#15)。"""
+        if self._account.equity <= 0:
+            return
+
+        # WHY: 计算日内亏损比例
+        daily_loss_pct = -self._daily_pnl / self._account.equity * 100
+
+        max_daily = self._config.stop_loss.max_daily_loss_pct
+
+        if daily_loss_pct > max_daily:
+            event = RiskEvent(
+                event_type="DAILY_STOP_LOSS",
+                level=RiskLevel.EMERGENCY,
+                message=f"日内亏损触发止损: {daily_loss_pct:.2f}% > {max_daily}%",
+                action_taken="halt_trading",
+                context={"daily_pnl": str(self._daily_pnl)},
+            )
+            await self._emit_event(event)
+
+            # WHY: 暂停交易 + 设置冷却期
+            self._halt_trading(f"日内亏损 {daily_loss_pct:.2f}%")
+            self._order_validator.set_cooldown(
+                self._config.stop_loss.cooldown_minutes
+            )
+
+    async def _check_total_drawdown(self) -> None:
+        """检查总回撤 (#15)。"""
+        max_drawdown = self._config.stop_loss.max_total_drawdown_pct
+
+        if self._current_drawdown > max_drawdown:
+            event = RiskEvent(
+                event_type="TOTAL_DRAWDOWN",
+                level=RiskLevel.EMERGENCY,
+                message=f"总回撤触发止损: {self._current_drawdown:.2f}% > {max_drawdown}%",
+                action_taken="close_all_positions",
+                context={
+                    "peak_equity": str(self._peak_equity),
+                    "current_equity": str(self._account.equity),
+                },
+            )
+            await self._emit_event(event)
+
+            # WHY: 平掉所有仓位
+            await self._close_all_positions("总回撤超限")
+
+    async def _check_margin_limit(self) -> None:
+        """检查保证金限制 (#17)。"""
+        limits = self._config.account_limit
+        risk_degree = self._account.risk_degree
+
+        # WHY: 强平线检查
+        if risk_degree >= limits.margin_force_close_pct:
+            event = RiskEvent(
+                event_type="MARGIN_FORCE_CLOSE",
+                level=RiskLevel.EMERGENCY,
+                message=f"风险度触发强平线: {risk_degree:.1f}% >= {limits.margin_force_close_pct}%",
+                action_taken="reduce_position",
+            )
+            await self._emit_event(event)
+
+            # WHY: 自动减仓
+            if limits.enable_auto_reduce:
+                await self._reduce_positions(limits.auto_reduce_pct)
+
+        # WHY: 警戒线检查
+        elif risk_degree >= limits.margin_warning_pct:
+            event = RiskEvent(
+                event_type="MARGIN_WARNING",
+                level=RiskLevel.WARNING,
+                message=f"风险度触发警戒线: {risk_degree:.1f}% >= {limits.margin_warning_pct}%",
+                action_taken="alert",
+            )
+            await self._emit_event(event)
+
+        # WHY: 可用资金检查
+        if self._account.available < limits.min_available:
+            event = RiskEvent(
+                event_type="LOW_AVAILABLE",
+                level=RiskLevel.WARNING,
+                message=f"可用资金不足: {self._account.available} < {limits.min_available}",
+                action_taken="alert",
+            )
+            await self._emit_event(event)
+
+    # =========================================================================
+    # 风控动作
+    # =========================================================================
+
+    def _halt_trading(self, reason: str) -> None:
+        """暂停交易。"""
+        self._trading_halted = True
+        self._halt_reason = reason
+        self._logger.critical(f"交易已暂停: {reason}")
+
+    def resume_trading(self) -> None:
+        """恢复交易。"""
+        self._trading_halted = False
+        self._halt_reason = ""
+        self._order_validator.clear_cooldown()
+        self._logger.info("交易已恢复")
+
+    async def _close_position(
+        self,
+        symbol: str,
+        volume: int,
+        reason: str,
+    ) -> None:
+        """平仓指定合约。"""
+        self._logger.warning(f"执行平仓: {symbol} x {volume}, 原因: {reason}")
+
+        if self._close_callback:
+            try:
+                success = await self._close_callback(symbol, volume, reason)
+                if success:
+                    self._logger.info(f"平仓成功: {symbol}")
+                else:
+                    self._logger.error(f"平仓失败: {symbol}")
+            except Exception as e:
+                self._logger.error(f"平仓异常: {e}")
+
+    async def _close_all_positions(self, reason: str) -> None:
+        """平掉所有仓位。"""
+        self._halt_trading(reason)
+
+        for symbol, position in self._positions.items():
+            if position.volume > 0:
+                await self._close_position(symbol, position.volume, reason)
+
+    async def _reduce_positions(self, reduce_pct: Decimal) -> None:
+        """按比例减仓。"""
+        self._logger.warning(f"执行减仓: {reduce_pct}%")
+
+        for symbol, position in self._positions.items():
+            if position.volume > 0:
+                reduce_volume = int(position.volume * reduce_pct / 100)
+                if reduce_volume > 0:
+                    await self._close_position(symbol, reduce_volume, "自动减仓")
+
+    # =========================================================================
+    # 事件处理
+    # =========================================================================
+
+    async def _emit_event(self, event: RiskEvent) -> None:
+        """发送风控事件。"""
+        self._risk_events.append(event)
+        self._logger.log(
+            self._get_log_level(event.level),
+            f"[{event.event_type}] {event.message}",
+        )
+
+        # WHY: 触发告警回调
+        if self._alert_callback and event.level in (
+            RiskLevel.CRITICAL,
+            RiskLevel.EMERGENCY,
+        ):
+            try:
+                await self._alert_callback(event)
+            except Exception as e:
+                self._logger.error(f"告警回调异常: {e}")
+
+    def _get_log_level(self, risk_level: RiskLevel) -> int:
+        """转换风险等级为日志等级。"""
+        mapping = {
+            RiskLevel.INFO: logging.INFO,
+            RiskLevel.WARNING: logging.WARNING,
+            RiskLevel.CRITICAL: logging.ERROR,
+            RiskLevel.EMERGENCY: logging.CRITICAL,
+        }
+        return mapping.get(risk_level, logging.INFO)
+
+    # =========================================================================
+    # 状态查询
+    # =========================================================================
+
+    @property
+    def is_trading_halted(self) -> bool:
+        """交易是否暂停。"""
+        return self._trading_halted
+
+    @property
+    def current_drawdown(self) -> Decimal:
+        """当前回撤。"""
+        return self._current_drawdown
+
+    @property
+    def daily_pnl(self) -> Decimal:
+        """日内盈亏。"""
+        return self._daily_pnl
+
+    @property
+    def risk_events(self) -> list[RiskEvent]:
+        """风控事件列表。"""
+        return self._risk_events.copy()
+
+    def get_status(self) -> dict:
+        """获取风控状态摘要。"""
+        return {
+            "enabled": self._config.enabled,
+            "trading_halted": self._trading_halted,
+            "halt_reason": self._halt_reason,
+            "daily_pnl": str(self._daily_pnl),
+            "current_drawdown": f"{self._current_drawdown:.2f}%",
+            "risk_degree": f"{self._account.risk_degree:.1f}%",
+            "position_count": len(self._positions),
+            "event_count": len(self._risk_events),
+        }

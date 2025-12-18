@@ -1,0 +1,632 @@
+     1→"""中国六大期货交易所配置模块 (军规级 v4.0).
+     2→
+     3→本模块提供中国六大期货交易所的完整配置信息，包括：
+     4→- 交易所基本信息
+     5→- 交易时段配置（含夜盘）
+     6→- 品种分类与映射
+     7→- 交易所特定规则
+     8→
+     9→军规覆盖:
+    10→- M15: 夜盘跨日处理 - 提供夜盘时段配置
+    11→- M20: 跨所一致 - 统一的交易所配置接口
+    12→
+    13→场景覆盖:
+    14→- CHINA.EXCHANGE.CONFIG_LOAD: 配置加载正确
+    15→- CHINA.EXCHANGE.PRODUCT_MAP: 品种映射正确
+    16→
+    17→示例:
+    18→    >>> from src.market.exchange_config import Exchange, get_exchange_for_product
+    19→    >>> exchange = get_exchange_for_product("rb")
+    20→    >>> print(exchange)
+    21→    Exchange.SHFE
+    22→"""
+    23→
+    24→from __future__ import annotations
+    25→
+    26→from dataclasses import dataclass, field
+    27→from enum import Enum
+    28→from typing import ClassVar
+    29→
+    30→
+    31→class Exchange(Enum):
+    32→    """中国六大期货交易所枚举.
+    33→
+    34→    属性:
+    35→        SHFE: 上海期货交易所
+    36→        DCE: 大连商品交易所
+    37→        CZCE: 郑州商品交易所
+    38→        CFFEX: 中国金融期货交易所
+    39→        GFEX: 广州期货交易所
+    40→        INE: 上海国际能源交易中心
+    41→    """
+    42→
+    43→    SHFE = "上海期货交易所"
+    44→    DCE = "大连商品交易所"
+    45→    CZCE = "郑州商品交易所"
+    46→    CFFEX = "中国金融期货交易所"
+    47→    GFEX = "广州期货交易所"
+    48→    INE = "上海国际能源交易中心"
+    49→
+    50→
+    51→class NightSessionEnd(Enum):
+    52→    """夜盘结束时间分类.
+    53→
+    54→    属性:
+    55→        T_23_00: 23:00结束（农产品、软商品）
+    56→        T_01_00: 01:00结束（黑色系、能化）
+    57→        T_02_30: 02:30结束（贵金属、有色金属）
+    58→        NONE: 无夜盘（股指期货、国债期货）
+    59→    """
+    60→
+    61→    T_23_00 = "23:00"
+    62→    T_01_00 = "01:00"
+    63→    T_02_30 = "02:30"
+    64→    NONE = "无夜盘"
+    65→
+    66→
+    67→@dataclass(frozen=True)
+    68→class TradingSession:
+    69→    """交易时段配置.
+    70→
+    71→    属性:
+    72→        start: 开始时间 (HH:MM格式)
+    73→        end: 结束时间 (HH:MM格式)
+    74→        name: 时段名称
+    75→    """
+    76→
+    77→    start: str
+    78→    end: str
+    79→    name: str = ""
+    80→
+    81→
+    82→@dataclass
+    83→class ExchangeConfig:
+    84→    """交易所配置信息.
+    85→
+    86→    属性:
+    87→        exchange: 交易所枚举
+    88→        name: 交易所全称
+    89→        code: 交易所代码
+    90→        trading_sessions: 日盘交易时段列表
+    91→        night_session_start: 夜盘开始时间
+    92→        night_session_end: 夜盘结束分类
+    93→        settlement_time: 结算时间
+    94→        products: 该交易所的品种列表
+    95→    """
+    96→
+    97→    exchange: Exchange
+    98→    name: str
+    99→    code: str
+   100→    trading_sessions: list[TradingSession] = field(default_factory=list)
+   101→    night_session_start: str = "21:00"
+   102→    night_session_end: NightSessionEnd = NightSessionEnd.NONE
+   103→    settlement_time: str = "15:15"
+   104→    products: list[str] = field(default_factory=list)
+   105→
+   106→
+   107→# ============================================================================
+   108→# 日盘标准交易时段（所有交易所通用）
+   109→# ============================================================================
+   110→DAY_SESSIONS: list[TradingSession] = [
+   111→    TradingSession("09:00", "10:15", "早盘第一节"),
+   112→    TradingSession("10:30", "11:30", "早盘第二节"),
+   113→    TradingSession("13:30", "15:00", "午盘"),
+   114→]
+   115→
+   116→# CFFEX特殊时段（股指期货）
+   117→CFFEX_INDEX_SESSIONS: list[TradingSession] = [
+   118→    TradingSession("09:30", "11:30", "早盘"),
+   119→    TradingSession("13:00", "15:00", "午盘"),
+   120→]
+   121→
+   122→# CFFEX国债期货时段
+   123→CFFEX_BOND_SESSIONS: list[TradingSession] = [
+   124→    TradingSession("09:15", "11:30", "早盘"),
+   125→    TradingSession("13:00", "15:15", "午盘"),
+   126→]
+   127→
+   128→
+   129→# ============================================================================
+   130→# 六大交易所配置
+   131→# ============================================================================
+   132→EXCHANGE_CONFIGS: dict[Exchange, ExchangeConfig] = {
+   133→    Exchange.SHFE: ExchangeConfig(
+   134→        exchange=Exchange.SHFE,
+   135→        name="上海期货交易所",
+   136→        code="SHFE",
+   137→        trading_sessions=DAY_SESSIONS,
+   138→        night_session_start="21:00",
+   139→        night_session_end=NightSessionEnd.T_02_30,
+   140→        settlement_time="15:15",
+   141→        products=[
+   142→            # 有色金属
+   143→            "cu",  # 铜
+   144→            "al",  # 铝
+   145→            "zn",  # 锌
+   146→            "pb",  # 铅
+   147→            "ni",  # 镍
+   148→            "sn",  # 锡
+   149→            "ao",  # 氧化铝
+   150→            # 贵金属
+   151→            "au",  # 黄金
+   152→            "ag",  # 白银
+   153→            # 黑色系
+   154→            "rb",  # 螺纹钢
+   155→            "hc",  # 热轧卷板
+   156→            "ss",  # 不锈钢
+   157→            "wr",  # 线材
+   158→            # 能源化工
+   159→            "bu",  # 沥青
+   160→            "ru",  # 天然橡胶
+   161→            "sp",  # 纸浆
+   162→            "nr",  # 20号胶
+   163→            "fu",  # 燃料油
+   164→        ],
+   165→    ),
+   166→    Exchange.DCE: ExchangeConfig(
+   167→        exchange=Exchange.DCE,
+   168→        name="大连商品交易所",
+   169→        code="DCE",
+   170→        trading_sessions=DAY_SESSIONS,
+   171→        night_session_start="21:00",
+   172→        night_session_end=NightSessionEnd.T_23_00,
+   173→        settlement_time="15:15",
+   174→        products=[
+   175→            # 农产品
+   176→            "c",  # 玉米
+   177→            "cs",  # 玉米淀粉
+   178→            "a",  # 豆一
+   179→            "b",  # 豆二
+   180→            "m",  # 豆粕
+   181→            "y",  # 豆油
+   182→            "p",  # 棕榈油
+   183→            "jd",  # 鸡蛋
+   184→            "lh",  # 生猪
+   185→            "rr",  # 粳米
+   186→            # 化工
+   187→            "l",  # 塑料
+   188→            "v",  # PVC
+   189→            "pp",  # 聚丙烯
+   190→            "eg",  # 乙二醇
+   191→            "eb",  # 苯乙烯
+   192→            "pg",  # LPG
+   193→            # 黑色系
+   194→            "i",  # 铁矿石
+   195→            "j",  # 焦炭
+   196→            "jm",  # 焦煤
+   197→            # 其他
+   198→            "fb",  # 纤维板
+   199→            "bb",  # 胶合板
+   200→        ],
+   201→    ),
+   202→    Exchange.CZCE: ExchangeConfig(
+   203→        exchange=Exchange.CZCE,
+   204→        name="郑州商品交易所",
+   205→        code="CZCE",
+   206→        trading_sessions=DAY_SESSIONS,
+   207→        night_session_start="21:00",
+   208→        night_session_end=NightSessionEnd.T_23_00,
+   209→        settlement_time="15:15",
+   210→        products=[
+   211→            # 农产品
+   212→            "WH",  # 强麦
+   213→            "PM",  # 普麦
+   214→            "RI",  # 早籼稻
+   215→            "LR",  # 晚籼稻
+   216→            "JR",  # 粳稻
+   217→            "CF",  # 棉花
+   218→            "CY",  # 棉纱
+   219→            "SR",  # 白糖
+   220→            "OI",  # 菜籽油
+   221→            "RM",  # 菜籽粕
+   222→            "RS",  # 油菜籽
+   223→            "AP",  # 苹果
+   224→            "CJ",  # 红枣
+   225→            "PK",  # 花生
+   226→            # 化工
+   227→            "MA",  # 甲醇
+   228→            "TA",  # PTA
+   229→            "SA",  # 纯碱
+   230→            "UR",  # 尿素
+   231→            "PF",  # 短纤
+   232→            "FG",  # 玻璃
+   233→            "ZC",  # 动力煤（已停止交易）
+   234→            # 其他
+   235→            "SM",  # 锰硅
+   236→            "SF",  # 硅铁
+   237→        ],
+   238→    ),
+   239→    Exchange.CFFEX: ExchangeConfig(
+   240→        exchange=Exchange.CFFEX,
+   241→        name="中国金融期货交易所",
+   242→        code="CFFEX",
+   243→        trading_sessions=CFFEX_INDEX_SESSIONS,
+   244→        night_session_start="",
+   245→        night_session_end=NightSessionEnd.NONE,
+   246→        settlement_time="15:15",
+   247→        products=[
+   248→            # 股指期货
+   249→            "IF",  # 沪深300股指期货
+   250→            "IH",  # 上证50股指期货
+   251→            "IC",  # 中证500股指期货
+   252→            "IM",  # 中证1000股指期货
+   253→            # 国债期货
+   254→            "T",  # 10年期国债期货
+   255→            "TF",  # 5年期国债期货
+   256→            "TS",  # 2年期国债期货
+   257→            "TL",  # 30年期国债期货
+   258→        ],
+   259→    ),
+   260→    Exchange.GFEX: ExchangeConfig(
+   261→        exchange=Exchange.GFEX,
+   262→        name="广州期货交易所",
+   263→        code="GFEX",
+   264→        trading_sessions=DAY_SESSIONS,
+   265→        night_session_start="21:00",
+   266→        night_session_end=NightSessionEnd.T_23_00,
+   267→        settlement_time="15:15",
+   268→        products=[
+   269→            "lc",  # 碳酸锂
+   270→            "si",  # 工业硅
+   271→        ],
+   272→    ),
+   273→    Exchange.INE: ExchangeConfig(
+   274→        exchange=Exchange.INE,
+   275→        name="上海国际能源交易中心",
+   276→        code="INE",
+   277→        trading_sessions=DAY_SESSIONS,
+   278→        night_session_start="21:00",
+   279→        night_session_end=NightSessionEnd.T_02_30,
+   280→        settlement_time="15:15",
+   281→        products=[
+   282→            "sc",  # 原油
+   283→            "lu",  # 低硫燃料油
+   284→            "bc",  # 国际铜
+   285→            "nr",  # 20号胶（与SHFE共享）
+   286→            "ec",  # 集运指数（欧线）
+   287→        ],
+   288→    ),
+   289→}
+   290→
+   291→
+   292→# ============================================================================
+   293→# 品种分类
+   294→# ============================================================================
+   295→PRODUCT_CATEGORIES: dict[str, dict[str, list[str]]] = {
+   296→    "金属": {
+   297→        "SHFE": ["cu", "al", "zn", "pb", "ni", "sn", "ao"],
+   298→        "GFEX": ["si"],
+   299→        "INE": ["bc"],
+   300→    },
+   301→    "贵金属": {
+   302→        "SHFE": ["au", "ag"],
+   303→    },
+   304→    "黑色系": {
+   305→        "SHFE": ["rb", "hc", "ss", "wr"],
+   306→        "DCE": ["i", "j", "jm"],
+   307→        "CZCE": ["SM", "SF"],
+   308→    },
+   309→    "能源化工": {
+   310→        "SHFE": ["bu", "ru", "sp", "nr", "fu"],
+   311→        "DCE": ["l", "v", "pp", "eg", "eb", "pg"],
+   312→        "CZCE": ["MA", "TA", "SA", "UR", "PF", "FG"],
+   313→        "INE": ["sc", "lu"],
+   314→        "GFEX": ["lc"],
+   315→    },
+   316→    "农产品": {
+   317→        "DCE": ["c", "cs", "a", "b", "m", "y", "p", "jd", "lh", "rr", "fb", "bb"],
+   318→        "CZCE": [
+   319→            "WH",
+   320→            "PM",
+   321→            "RI",
+   322→            "LR",
+   323→            "JR",
+   324→            "CF",
+   325→            "CY",
+   326→            "SR",
+   327→            "OI",
+   328→            "RM",
+   329→            "RS",
+   330→            "AP",
+   331→            "CJ",
+   332→            "PK",
+   333→        ],
+   334→    },
+   335→    "金融": {
+   336→        "CFFEX": ["IF", "IH", "IC", "IM", "T", "TF", "TS", "TL"],
+   337→    },
+   338→}
+   339→
+   340→
+   341→# ============================================================================
+   342→# 品种到交易所的映射缓存
+   343→# ============================================================================
+   344→class ProductExchangeMapper:
+   345→    """品种到交易所映射器.
+   346→
+   347→    提供品种代码到交易所的快速查找功能。
+   348→
+   349→    类变量:
+   350→        _cache: 品种到交易所的映射缓存
+   351→        _initialized: 缓存是否已初始化
+   352→    """
+   353→
+   354→    _cache: ClassVar[dict[str, Exchange]] = {}
+   355→    _initialized: ClassVar[bool] = False
+   356→
+   357→    @classmethod
+   358→    def _init_cache(cls) -> None:
+   359→        """初始化品种到交易所的映射缓存."""
+   360→        if cls._initialized:
+   361→            return
+   362→
+   363→        for exchange, config in EXCHANGE_CONFIGS.items():
+   364→            for product in config.products:
+   365→                # 统一转换为小写进行存储
+   366→                cls._cache[product.lower()] = exchange
+   367→
+   368→        cls._initialized = True
+   369→
+   370→    @classmethod
+   371→    def get_exchange(cls, product: str) -> Exchange | None:
+   372→        """根据品种代码获取交易所.
+   373→
+   374→        参数:
+   375→            product: 品种代码（如 "rb", "IF", "sc"）
+   376→
+   377→        返回:
+   378→            对应的交易所枚举，未找到返回None
+   379→        """
+   380→        cls._init_cache()
+   381→        return cls._cache.get(product.lower())
+   382→
+   383→    @classmethod
+   384→    def get_all_products(cls) -> list[str]:
+   385→        """获取所有已配置的品种代码.
+   386→
+   387→        返回:
+   388→            所有品种代码列表
+   389→        """
+   390→        cls._init_cache()
+   391→        return list(cls._cache.keys())
+   392→
+   393→
+   394→# ============================================================================
+   395→# 便捷函数
+   396→# ============================================================================
+   397→def get_exchange_for_product(product: str) -> Exchange | None:
+   398→    """根据品种代码获取交易所.
+   399→
+   400→    参数:
+   401→        product: 品种代码（如 "rb", "IF", "sc"）
+   402→
+   403→    返回:
+   404→        对应的交易所枚举，未找到返回None
+   405→
+   406→    示例:
+   407→        >>> get_exchange_for_product("rb")
+   408→        Exchange.SHFE
+   409→        >>> get_exchange_for_product("IF")
+   410→        Exchange.CFFEX
+   411→    """
+   412→    return ProductExchangeMapper.get_exchange(product)
+   413→
+   414→
+   415→def get_exchange_config(exchange: Exchange) -> ExchangeConfig:
+   416→    """获取交易所配置.
+   417→
+   418→    参数:
+   419→        exchange: 交易所枚举
+   420→
+   421→    返回:
+   422→        交易所配置对象
+   423→
+   424→    异常:
+   425→        KeyError: 交易所未配置
+   426→    """
+   427→    return EXCHANGE_CONFIGS[exchange]
+   428→
+   429→
+   430→def get_trading_sessions(exchange: Exchange) -> list[TradingSession]:
+   431→    """获取交易所的日盘交易时段.
+   432→
+   433→    参数:
+   434→        exchange: 交易所枚举
+   435→
+   436→    返回:
+   437→        交易时段列表
+   438→    """
+   439→    return EXCHANGE_CONFIGS[exchange].trading_sessions
+   440→
+   441→
+   442→def has_night_session(exchange: Exchange) -> bool:
+   443→    """判断交易所是否有夜盘.
+   444→
+   445→    参数:
+   446→        exchange: 交易所枚举
+   447→
+   448→    返回:
+   449→        是否有夜盘
+   450→    """
+   451→    return EXCHANGE_CONFIGS[exchange].night_session_end != NightSessionEnd.NONE
+   452→
+   453→
+   454→def get_night_session_end(exchange: Exchange) -> NightSessionEnd:
+   455→    """获取交易所夜盘结束时间分类.
+   456→
+   457→    参数:
+   458→        exchange: 交易所枚举
+   459→
+   460→    返回:
+   461→        夜盘结束时间分类
+   462→    """
+   463→    return EXCHANGE_CONFIGS[exchange].night_session_end
+   464→
+   465→
+   466→def get_products_by_exchange(exchange: Exchange) -> list[str]:
+   467→    """获取交易所的所有品种.
+   468→
+   469→    参数:
+   470→        exchange: 交易所枚举
+   471→
+   472→    返回:
+   473→        品种代码列表
+   474→    """
+   475→    return EXCHANGE_CONFIGS[exchange].products
+   476→
+   477→
+   478→def get_products_by_category(category: str) -> dict[str, list[str]]:
+   479→    """根据品种分类获取品种列表.
+   480→
+   481→    参数:
+   482→        category: 品种分类（如 "金属", "农产品"）
+   483→
+   484→    返回:
+   485→        交易所到品种列表的映射
+   486→
+   487→    异常:
+   488→        KeyError: 分类不存在
+   489→    """
+   490→    return PRODUCT_CATEGORIES[category]
+   491→
+   492→
+   493→def get_all_exchanges() -> list[Exchange]:
+   494→    """获取所有交易所列表.
+   495→
+   496→    返回:
+   497→        交易所枚举列表
+   498→    """
+   499→    return list(Exchange)
+   500→
+   501→
+   502→def get_exchange_by_code(code: str) -> Exchange | None:
+   503→    """根据交易所代码获取交易所枚举.
+   504→
+   505→    参数:
+   506→        code: 交易所代码（如 "SHFE", "DCE"）
+   507→
+   508→    返回:
+   509→        交易所枚举，未找到返回None
+   510→    """
+   511→    code_upper = code.upper()
+   512→    for exchange, config in EXCHANGE_CONFIGS.items():
+   513→        if config.code == code_upper:
+   514→            return exchange
+   515→    return None
+   516→
+   517→
+   518→# ============================================================================
+   519→# 夜盘品种配置（不同夜盘结束时间）
+   520→# ============================================================================
+   521→NIGHT_SESSION_PRODUCTS: dict[NightSessionEnd, list[str]] = {
+   522→    NightSessionEnd.T_23_00: [
+   523→        # DCE农产品
+   524→        "c",
+   525→        "cs",
+   526→        "a",
+   527→        "b",
+   528→        "m",
+   529→        "y",
+   530→        "p",
+   531→        "jd",
+   532→        "lh",
+   533→        "rr",
+   534→        # DCE化工
+   535→        "l",
+   536→        "v",
+   537→        "pp",
+   538→        "eg",
+   539→        "eb",
+   540→        "pg",
+   541→        # DCE黑色
+   542→        "i",
+   543→        "j",
+   544→        "jm",
+   545→        # CZCE农产品
+   546→        "CF",
+   547→        "CY",
+   548→        "SR",
+   549→        "OI",
+   550→        "RM",
+   551→        "AP",
+   552→        "CJ",
+   553→        "PK",
+   554→        # CZCE化工
+   555→        "MA",
+   556→        "TA",
+   557→        "SA",
+   558→        "UR",
+   559→        "PF",
+   560→        "FG",
+   561→        # GFEX
+   562→        "lc",
+   563→        "si",
+   564→    ],
+   565→    NightSessionEnd.T_01_00: [
+   566→        # SHFE黑色
+   567→        "rb",
+   568→        "hc",
+   569→        "ss",
+   570→        # SHFE能化
+   571→        "bu",
+   572→        "ru",
+   573→        "sp",
+   574→        "fu",
+   575→    ],
+   576→    NightSessionEnd.T_02_30: [
+   577→        # SHFE有色金属
+   578→        "cu",
+   579→        "al",
+   580→        "zn",
+   581→        "pb",
+   582→        "ni",
+   583→        "sn",
+   584→        "ao",
+   585→        # SHFE贵金属
+   586→        "au",
+   587→        "ag",
+   588→        # INE
+   589→        "sc",
+   590→        "lu",
+   591→        "bc",
+   592→        "nr",
+   593→    ],
+   594→    NightSessionEnd.NONE: [
+   595→        # CFFEX（无夜盘）
+   596→        "IF",
+   597→        "IH",
+   598→        "IC",
+   599→        "IM",
+   600→        "T",
+   601→        "TF",
+   602→        "TS",
+   603→        "TL",
+   604→    ],
+   605→}
+   606→
+   607→
+   608→def get_night_session_end_for_product(product: str) -> NightSessionEnd:
+   609→    """根据品种获取夜盘结束时间分类.
+   610→
+   611→    参数:
+   612→        product: 品种代码
+   613→
+   614→    返回:
+   615→        夜盘结束时间分类
+   616→    """
+   617→    product_lower = product.lower()
+   618→    product_upper = product.upper()
+   619→
+   620→    for end_time, products in NIGHT_SESSION_PRODUCTS.items():
+   621→        if product_lower in [p.lower() for p in products]:
+   622→            return end_time
+   623→        if product_upper in products:
+   624→            return end_time
+   625→
+   626→    # 默认返回无夜盘
+   627→    return NightSessionEnd.NONE
+   628→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

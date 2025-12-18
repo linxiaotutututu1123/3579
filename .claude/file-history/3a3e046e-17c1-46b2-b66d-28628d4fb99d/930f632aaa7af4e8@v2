@@ -1,0 +1,261 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""量化交易系统入口
+
+提供命令行接口和系统启动功能。
+"""
+
+import asyncio
+import argparse
+import logging
+import signal
+import sys
+from typing import Optional
+
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
+
+
+def setup_logging(level: str = "INFO", log_file: Optional[str] = None) -> None:
+    """配置日志系统
+
+    Args:
+        level: 日志级别
+        log_file: 日志文件路径（可选）
+    """
+    log_level = getattr(logging, level.upper(), logging.INFO)
+
+    handlers = [logging.StreamHandler(sys.stdout)]
+    if log_file:
+        handlers.append(logging.FileHandler(log_file, encoding='utf-8'))
+
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=handlers,
+        force=True
+    )
+
+
+async def run_gateway_demo() -> None:
+    """运行网关演示"""
+    from src import (
+        GatewayFactory, GatewayConfig, CtpConfig,
+        EventType, RiskManager, SimpleMovingAverageStrategy,
+        StrategyParams
+    )
+    from decimal import Decimal
+
+    logger.info("Starting gateway demo...")
+
+    # 创建配置（使用模拟配置）
+    config = {
+        "name": "DemoGateway",
+        "type": "ctp",
+        "enabled": True,
+        "ctp": {
+            "front_addr": "tcp://180.168.146.187:10131",
+            "broker_id": "9999",
+            "user_id": "demo",
+            "password": "demo123"
+        }
+    }
+
+    # 创建网关
+    gateway = GatewayFactory.create_gateway(config)
+    logger.info(f"Created gateway: {gateway}")
+
+    # 创建风险管理器
+    risk_manager = RiskManager(
+        max_position_value=Decimal("500000"),
+        max_drawdown_pct=Decimal("0.05"),
+        max_daily_loss=Decimal("20000")
+    )
+    logger.info(f"Risk manager initialized")
+
+    # 创建策略
+    strategy_params = StrategyParams(
+        name="DemoSMA",
+        symbols=["rb2401", "cu2401"],
+        capital=Decimal("100000")
+    )
+    strategy = SimpleMovingAverageStrategy(
+        params=strategy_params,
+        fast_period=5,
+        slow_period=20
+    )
+
+    # 设置信号处理
+    def on_signal(sig):
+        logger.info(f"Signal received: {sig}")
+        # 检查风险
+        allowed, reason = risk_manager.check_order_risk(
+            symbol=sig.symbol,
+            direction=sig.signal_type.value,
+            price=sig.price,
+            volume=sig.volume
+        )
+        if allowed:
+            logger.info(f"Order allowed: {sig.symbol} {sig.signal_type.value}")
+        else:
+            logger.warning(f"Order rejected: {reason}")
+
+    strategy.add_signal_handler(on_signal)
+    strategy.start()
+
+    # 注册事件处理
+    async def on_tick(event):
+        logger.debug(f"Tick event: {event}")
+
+    gateway.on_event(EventType.TICK_DATA.value, on_tick)
+
+    try:
+        # 连接网关
+        connected = await gateway.connect()
+        if connected:
+            logger.info("Gateway connected successfully")
+
+            # 订阅行情
+            result = await gateway.subscribe(["rb2401", "cu2401"])
+            logger.info(f"Subscription result: {result}")
+
+            # 运行一段时间
+            logger.info("Running for 10 seconds...")
+            await asyncio.sleep(10)
+        else:
+            logger.warning("Gateway connection failed or disabled")
+
+    except KeyboardInterrupt:
+        logger.info("Interrupted by user")
+    finally:
+        # 清理
+        strategy.stop()
+        await gateway.disconnect()
+        logger.info("Gateway demo finished")
+
+
+async def run_test_mode() -> None:
+    """运行测试模式"""
+    logger.info("Running in test mode...")
+
+    # 验证导入
+    try:
+        from src import (
+            TickData, KLineData, KLinePeriod,
+            GatewayFactory, GatewayStatus,
+            RiskManager, RiskLevel,
+            BaseStrategy, Signal, SignalType
+        )
+        logger.info("All imports successful")
+
+        # 简单测试
+        from datetime import datetime
+        from decimal import Decimal
+
+        tick = TickData(
+            symbol="rb2401",
+            exchange="SHFE",
+            datetime=datetime.now(),
+            local_datetime=datetime.now(),
+            last_price=Decimal("3500"),
+            volume=1000,
+            turnover=Decimal("3500000"),
+            open_interest=50000,
+            bid_price_1=Decimal("3499"),
+            ask_price_1=Decimal("3501"),
+            bid_volume_1=10,
+            ask_volume_1=15
+        )
+        logger.info(f"Created TickData: {tick}")
+
+        risk_mgr = RiskManager()
+        allowed, reason = risk_mgr.check_order_risk(
+            symbol="rb2401",
+            direction="buy",
+            price=Decimal("3500"),
+            volume=10
+        )
+        logger.info(f"Risk check: allowed={allowed}, reason={reason}")
+
+        logger.info("Test mode completed successfully")
+
+    except ImportError as e:
+        logger.error(f"Import error: {e}")
+        sys.exit(1)
+
+
+def main() -> None:
+    """主函数"""
+    parser = argparse.ArgumentParser(
+        description="量化交易系统",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+示例:
+  python main.py --test          运行测试模式
+  python main.py --demo          运行网关演示
+  python main.py --log-level DEBUG  设置日志级别
+        """
+    )
+
+    parser.add_argument(
+        '--test', '-t',
+        action='store_true',
+        help='运行测试模式，验证所有模块导入'
+    )
+    parser.add_argument(
+        '--demo', '-d',
+        action='store_true',
+        help='运行网关演示'
+    )
+    parser.add_argument(
+        '--log-level', '-l',
+        default='INFO',
+        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
+        help='日志级别（默认: INFO）'
+    )
+    parser.add_argument(
+        '--log-file',
+        help='日志文件路径'
+    )
+    parser.add_argument(
+        '--version', '-v',
+        action='store_true',
+        help='显示版本信息'
+    )
+
+    args = parser.parse_args()
+
+    # 配置日志
+    setup_logging(args.log_level, args.log_file)
+
+    if args.version:
+        from src import __version__
+        print(f"Quant System v{__version__}")
+        return
+
+    # 设置信号处理
+    def signal_handler(sig, frame):
+        logger.info("Received shutdown signal")
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    # 运行对应模式
+    if args.test:
+        asyncio.run(run_test_mode())
+    elif args.demo:
+        asyncio.run(run_gateway_demo())
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,83 @@
+# =============================================================================
+# V4PRO 实盘环境配置 (Live Environment)
+# =============================================================================
+# 军规级 v4.0 | 环境隔离 M8
+# 用途: 实盘交易
+# 警告: 修改此文件需要双人审批 (M12)
+# =============================================================================
+
+environment: live
+description: "实盘环境 - 真实交易"
+
+# 模式控制
+mode:
+  check_mode: false     # 实盘环境禁用CHECK_MODE
+  live_trading: true    # 允许实盘交易
+  sim_trading: false    # 禁止仿真逻辑
+
+# Broker配置 (从环境变量读取敏感信息)
+broker:
+  type: ctp
+  front_addr: "${CTP_TRADE_FRONT}"
+  broker_id: "${CTP_BROKER_ID}"
+  investor_id: "${CTP_INVESTOR_ID}"
+  password: "${CTP_PASSWORD}"
+  auth_code: "${CTP_AUTH_CODE}"
+  app_id: "${CTP_APP_ID}"
+  connect_timeout: 30
+
+# 行情配置
+market:
+  source: ctp
+  front_addr: "${CTP_MD_FRONT}"
+  reconnect_interval: 10
+  stale_timeout: 30     # 行情过期超时(秒)
+
+# 风控配置 (军规M6/M16必须配置)
+risk:
+  max_position: 100     # 最大持仓(手)
+  max_daily_loss: 100000 # 单日最大亏损(元)
+  kill_switch: true     # 熔断开关(必须启用)
+  margin_warning: 0.6   # 保证金预警线(60%)
+  margin_critical: 0.8  # 保证金临界线(80%)
+  max_order_value: 500000 # 单笔最大金额(元)
+
+# 合规配置 (军规M17)
+compliance:
+  throttle_5s: 50       # 5秒报撤单预警阈值
+  throttle_daily: 20000 # 日内报撤单上限
+  large_order_threshold: 100000 # 大额订单阈值(元)
+  require_confirmation: true    # 大额订单需确认
+
+# 日志配置
+logging:
+  level: INFO
+  file: logs/live.log
+  console: false
+
+# 数据库配置
+database:
+  type: postgresql
+  host: "${DB_HOST}"
+  port: "${DB_PORT}"
+  name: "${DB_NAME}"
+  user: "${DB_USER}"
+  password: "${DB_PASSWORD}"
+
+# 审计配置 (军规M3必须启用)
+audit:
+  enabled: true
+  path: artifacts/live/audit.jsonl
+  fsync: true           # 必须启用fsync保证写入
+  rotation: daily       # 日志轮转
+  retention_days: 365   # 保留365天
+
+# 告警配置
+alerts:
+  dingtalk:
+    enabled: true
+    webhook: "${DINGTALK_WEBHOOK}"
+  email:
+    enabled: true
+    smtp_host: "${SMTP_HOST}"
+    recipients: "${ALERT_EMAILS}"

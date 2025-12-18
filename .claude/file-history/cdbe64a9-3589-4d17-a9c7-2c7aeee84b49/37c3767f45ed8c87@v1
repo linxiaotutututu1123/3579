@@ -1,0 +1,173 @@
+import itertools
+from typing import List, Tuple, Optional
+
+class IslandPuzzle:
+    def __init__(self):
+        self.terrain = ['🌲', '💧', '🏔️', '🏜️']
+        self.grid_size = 4
+        self.solutions = []
+
+    def is_valid_placement(self, grid: List[List[str]], row: int, col: int, terrain: str) -> bool:
+        """Check if placing terrain at (row, col) follows all rules"""
+        # Check row constraint (no duplicates)
+        if terrain in grid[row]:
+            return False
+
+        # Check column constraint (no duplicates)
+        for r in range(self.grid_size):
+            if grid[r][col] == terrain:
+                return False
+
+        # Check mountain-water adjacency
+        if terrain == '🏔️':
+            for dr in [-1, 0, 1]:
+                for dc in [-1, 0, 1]:
+                    if dr == 0 and dc == 0:
+                        continue
+                    nr, nc = row + dr, col + dc
+                    if 0 <= nr < self.grid_size and 0 <= nc < self.grid_size:
+                        if grid[nr][nc] == '💧':
+                            return False
+        elif terrain == '💧':
+            for dr in [-1, 0, 1]:
+                for dc in [-1, 0, 1]:
+                    if dr == 0 and dc == 0:
+                        continue
+                    nr, nc = row + dr, col + dc
+                    if 0 <= nr < self.grid_size and 0 <= nc < self.grid_size:
+                        if grid[nr][nc] == '🏔️':
+                            return False
+
+        return True
+
+    def check_diagonal_constraint(self, grid: List[List[str]]) -> bool:
+        """Check no diagonal line of 3+ same terrain"""
+        # Check main diagonal lines
+        for offset in range(-self.grid_size, self.grid_size):
+            diagonal = []
+            for i in range(self.grid_size):
+                j = i + offset
+                if 0 <= j < self.grid_size:
+                    diagonal.append(grid[i][j])
+
+            # Check for 3+ in a row
+            for i in range(len(diagonal) - 2):
+                if diagonal[i] == diagonal[i+1] == diagonal[i+2]:
+                    return False
+
+        # Check anti-diagonal lines
+        for offset in range(2 * self.grid_size):
+            diagonal = []
+            for i in range(self.grid_size):
+                j = offset - i
+                if 0 <= j < self.grid_size:
+                    diagonal.append(grid[i][j])
+
+            # Check for 3+ in a row
+            for i in range(len(diagonal) - 2):
+                if diagonal[i] == diagonal[i+1] == diagonal[i+2]:
+                    return False
+
+        return True
+
+    def check_center_square(self, grid: List[List[str]]) -> bool:
+        """Check center 2x2 has one of each terrain"""
+        center = []
+        for r in [1, 2]:
+            for c in [1, 2]:
+                center.append(grid[r][c])
+        return len(set(center)) == 4
+
+    def is_complete_solution(self, grid: List[List[str]]) -> bool:
+        """Check if grid satisfies all constraints"""
+        # Check all rows have unique terrains
+        for row in grid:
+            if len(set(row)) != self.grid_size:
+                return False
+
+        # Check all columns have unique terrains
+        for col in range(self.grid_size):
+            column = [grid[row][col] for row in range(self.grid_size)]
+            if len(set(column)) != self.grid_size:
+                return False
+
+        # Check diagonal constraint
+        if not self.check_diagonal_constraint(grid):
+            return False
+
+        # Check center square
+        if not self.check_center_square(grid):
+            return False
+
+        return True
+
+    def solve(self) -> List[List[List[str]]]:
+        """Find all valid solutions"""
+        grid = [['' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
+        self.solve_recursive(grid, 0, 0)
+        return self.solutions
+
+    def solve_recursive(self, grid: List[List[str]], row: int, col: int) -> None:
+        """Recursive backtracking solver"""
+        # Move to next position
+        if col == self.grid_size:
+            col = 0
+            row += 1
+
+        # If filled entire grid, check if valid
+        if row == self.grid_size:
+            if self.is_complete_solution(grid):
+                self.solutions.append([r[:] for r in grid])
+            return
+
+        # Try each terrain type
+        for terrain in self.terrain:
+            if self.is_valid_placement(grid, row, col, terrain):
+                grid[row][col] = terrain
+
+                # Continue exploring to find all solutions
+                self.solve_recursive(grid, row, col + 1)
+
+                # Backtrack
+                grid[row][col] = ''
+
+    def print_solution(self, solution: List[List[str]]) -> None:
+        """Print a solution grid"""
+        for row in solution:
+            print(' '.join(row))
+        print()
+
+# Demonstration of solving the puzzle
+def main():
+    solver = IslandPuzzle()
+    print("🏝️  Solving the Island Terrain Puzzle...")
+    print("Rules:")
+    print("1. Each row and column must have exactly one of each terrain type")
+    print("2. No diagonal line of 3+ same terrain types")
+    print("3. Mountains can't be adjacent to water")
+    print("4. The center 2x2 square contains one of each terrain")
+    print("\n" + "="*50 + "\n")
+
+    solutions = solver.solve()
+    print(f"Found {len(solutions)} valid solutions!\n")
+
+    if solutions:
+        print("Sample solution:")
+        solver.print_solution(solutions[0])
+
+        # Visual representation with terrain names
+        terrain_names = {
+            '🌲': 'Forest',
+            '💧': 'Water',
+            '🏔️': 'Mountain',
+            '🏜️': 'Desert'
+        }
+
+        print("Terrain map:")
+        for row in solutions[0]:
+            terrain_line = [terrain_names[t] for t in row]
+            print(' | '.join(f"{terrain:>8}" for terrain in terrain_line))
+            print('-' * 40)
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,459 @@
+"""
+K线数据模型
+
+提供K线（OHLCV）数据的标准化模型定义和操作方法。
+"""
+
+from pydantic import BaseModel, Field, field_validator, ConfigDict, model_validator
+from datetime import datetime, timedelta
+from decimal import Decimal
+from typing import Optional, Dict, Any, List, ClassVar
+from enum import Enum
+import json
+
+
+class KLinePeriod(Enum):
+    """K线周期枚举
+
+    定义常用的K线周期，值为分钟数。
+    """
+    MINUTE_1 = 1
+    MINUTE_5 = 5
+    MINUTE_15 = 15
+    MINUTE_30 = 30
+    HOUR_1 = 60
+    HOUR_4 = 240
+    DAY_1 = 1440
+    WEEK_1 = 10080
+
+    @classmethod
+    def from_minutes(cls, minutes: int) -> 'KLinePeriod':
+        """根据分钟数获取K线周期
+
+        Args:
+            minutes: 分钟数
+
+        Returns:
+            KLinePeriod: K线周期枚举值
+
+        Raises:
+            ValueError: 当分钟数不对应任何周期时
+        """
+        for period in cls:
+            if period.value == minutes:
+                return period
+        raise ValueError(f"不支持的K线周期: {minutes}分钟")
+
+    def to_timedelta(self) -> timedelta:
+        """转换为timedelta对象
+
+        Returns:
+            timedelta: 周期对应的时间间隔
+        """
+        return timedelta(minutes=self.value)
+
+    def __str__(self) -> str:
+        """返回周期的可读字符串"""
+        labels = {
+            1: "1分钟",
+            5: "5分钟",
+            15: "15分钟",
+            30: "30分钟",
+            60: "1小时",
+            240: "4小时",
+            1440: "日线",
+            10080: "周线"
+        }
+        return labels.get(self.value, f"{self.value}分钟")
+
+
+# 常量定义
+MAX_PRICE = Decimal("1e18")  # 最大价格限制
+MAX_VOLUME = 1000000000000  # 最大成交量限制
+
+
+class KLineData(BaseModel):
+    """K线数据模型
+
+    提供标准化的OHLCV数据结构，支持数据验证和各种计算属性。
+
+    Attributes:
+        symbol: 合约代码
+        exchange: 交易所代码
+        period: K线周期
+        open_time: 开盘时间
+        close_time: 收盘时间
+        open_price: 开盘价
+        high_price: 最高价
+        low_price: 最低价
+        close_price: 收盘价
+        volume: 成交量
+        turnover: 成交额
+        open_interest: 持仓量
+    """
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        str_strip_whitespace=True,
+    )
+
+    # 类变量
+    PRICE_PRECISION: ClassVar[int] = 10  # 价格精度
+
+    # 合约基本信息
+    symbol: str = Field(..., min_length=1, max_length=16, description="合约代码，如'rb2401'")
+    exchange: str = Field(..., min_length=1, max_length=8, description="交易所代码，如'SHFE'")
+    period: KLinePeriod = Field(..., description="K线周期")
+
+    # 时间戳信息
+    open_time: datetime = Field(..., description="开盘时间")
+    close_time: datetime = Field(..., description="收盘时间")
+
+    # 价格信息 (OHLC)
+    open_price: Decimal = Field(..., description="开盘价")
+    high_price: Decimal = Field(..., description="最高价")
+    low_price: Decimal = Field(..., description="最低价")
+    close_price: Decimal = Field(..., description="收盘价")
+
+    # 成交信息
+    volume: int = Field(..., ge=0, description="成交量")
+    turnover: Decimal = Field(default=Decimal("0"), ge=0, description="成交额")
+    open_interest: int = Field(default=0, ge=0, description="持仓量")
+
+    # 数据质量信息
+    source: str = Field(default="generated", max_length=32, description="数据来源")
+    is_complete: bool = Field(default=True, description="K线是否完整（已闭合）")
+    tick_count: int = Field(default=0, ge=0, description="构成此K线的Tick数量")
+
+    @field_validator('open_price', 'high_price', 'low_price', 'close_price', mode='before')
+    @classmethod
+    def validate_price(cls, v: Any) -> Decimal:
+        """验证价格有效性
+
+        Args:
+            v: 待验证的价格值
+
+        Returns:
+            Decimal: 验证后的价格值
+
+        Raises:
+            ValueError: 当价格无效时
+        """
+        if v is None:
+            raise ValueError("价格不能为空")
+
+        price = Decimal(str(v))
+
+        if price <= 0:
+            raise ValueError("价格必须为正数")
+
+        if price > MAX_PRICE:
+            raise ValueError(f"价格超过最大限制: {MAX_PRICE}")
+
+        return price
+
+    @field_validator('volume', mode='before')
+    @classmethod
+    def validate_volume(cls, v: Any) -> int:
+        """验证成交量有效性
+
+        Args:
+            v: 待验证的成交量值
+
+        Returns:
+            int: 验证后的成交量值
+
+        Raises:
+            ValueError: 当成交量无效时
+        """
+        if v is None:
+            return 0
+
+        volume = int(v)
+
+        if volume < 0:
+            raise ValueError("成交量不能为负数")
+
+        if volume > MAX_VOLUME:
+            raise ValueError(f"成交量超过最大限制: {MAX_VOLUME}")
+
+        return volume
+
+    @field_validator('open_time', 'close_time', mode='before')
+    @classmethod
+    def validate_datetime(cls, v: Any) -> datetime:
+        """验证时间戳有效性
+
+        Args:
+            v: 待验证的时间戳
+
+        Returns:
+            datetime: 验证后的时间戳
+
+        Raises:
+            ValueError: 当时间戳无效时
+        """
+        if isinstance(v, str):
+            try:
+                return datetime.fromisoformat(v)
+            except ValueError:
+                raise ValueError("时间戳格式无效，请使用ISO格式")
+
+        if isinstance(v, datetime):
+            if v.year < 2000 or v.year > 2100:
+                raise ValueError(f"时间戳年份超出合理范围(2000-2100): {v.year}")
+            return v
+
+        raise ValueError(f"不支持的时间戳类型: {type(v).__name__}")
+
+    @model_validator(mode='after')
+    def validate_ohlc_relationship(self) -> 'KLineData':
+        """验证OHLC价格关系
+
+        确保最高价 >= 开盘价、收盘价 >= 最低价
+
+        Returns:
+            KLineData: 验证后的对象
+
+        Raises:
+            ValueError: 当OHLC关系不正确时
+        """
+        if self.high_price < self.open_price:
+            raise ValueError(f"最高价({self.high_price})不能小于开盘价({self.open_price})")
+
+        if self.high_price < self.close_price:
+            raise ValueError(f"最高价({self.high_price})不能小于收盘价({self.close_price})")
+
+        if self.low_price > self.open_price:
+            raise ValueError(f"最低价({self.low_price})不能大于开盘价({self.open_price})")
+
+        if self.low_price > self.close_price:
+            raise ValueError(f"最低价({self.low_price})不能大于收盘价({self.close_price})")
+
+        if self.high_price < self.low_price:
+            raise ValueError(f"最高价({self.high_price})不能小于最低价({self.low_price})")
+
+        return self
+
+    # 计算属性
+    @property
+    def price_change(self) -> Decimal:
+        """价格变化（收盘价 - 开盘价）"""
+        return self.close_price - self.open_price
+
+    @property
+    def price_change_rate(self) -> Decimal:
+        """价格变化率（百分比）"""
+        if self.open_price == 0:
+            return Decimal('0')
+        return (self.price_change / self.open_price) * 100
+
+    @property
+    def price_range(self) -> Decimal:
+        """价格振幅（最高价 - 最低价）"""
+        return self.high_price - self.low_price
+
+    @property
+    def price_range_rate(self) -> Decimal:
+        """价格振幅率（百分比）"""
+        if self.low_price == 0:
+            return Decimal('0')
+        return (self.price_range / self.low_price) * 100
+
+    @property
+    def is_bullish(self) -> bool:
+        """是否为阳线（收盘价 > 开盘价）"""
+        return self.close_price > self.open_price
+
+    @property
+    def is_bearish(self) -> bool:
+        """是否为阴线（收盘价 < 开盘价）"""
+        return self.close_price < self.open_price
+
+    @property
+    def is_doji(self) -> bool:
+        """是否为十字星（收盘价 ≈ 开盘价）"""
+        threshold = self.price_range * Decimal('0.1')  # 振幅的10%
+        return abs(self.price_change) <= threshold
+
+    @property
+    def body_size(self) -> Decimal:
+        """实体大小（开盘价与收盘价之差的绝对值）"""
+        return abs(self.price_change)
+
+    @property
+    def upper_shadow(self) -> Decimal:
+        """上影线长度"""
+        body_high = max(self.open_price, self.close_price)
+        return self.high_price - body_high
+
+    @property
+    def lower_shadow(self) -> Decimal:
+        """下影线长度"""
+        body_low = min(self.open_price, self.close_price)
+        return body_low - self.low_price
+
+    @property
+    def average_price(self) -> Decimal:
+        """均价（OHLC平均值）"""
+        return (self.open_price + self.high_price + self.low_price + self.close_price) / 4
+
+    @property
+    def typical_price(self) -> Decimal:
+        """典型价格（(最高+最低+收盘)/3）"""
+        return (self.high_price + self.low_price + self.close_price) / 3
+
+    @property
+    def vwap(self) -> Decimal:
+        """成交量加权平均价（近似值）"""
+        if self.volume == 0:
+            return self.average_price
+        if self.turnover > 0:
+            return self.turnover / self.volume
+        return self.average_price
+
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典格式
+
+        Returns:
+            Dict[str, Any]: K线数据字典
+        """
+        data = self.model_dump()
+        data['period'] = self.period.value
+        data['open_time'] = self.open_time.isoformat()
+        data['close_time'] = self.close_time.isoformat()
+        data['open_price'] = float(self.open_price)
+        data['high_price'] = float(self.high_price)
+        data['low_price'] = float(self.low_price)
+        data['close_price'] = float(self.close_price)
+        data['turnover'] = float(self.turnover)
+        return data
+
+    def to_json(self) -> str:
+        """转换为JSON字符串
+
+        Returns:
+            str: JSON字符串
+        """
+        return json.dumps(self.to_dict(), ensure_ascii=False)
+
+    def to_ohlcv_tuple(self) -> tuple:
+        """转换为OHLCV元组
+
+        Returns:
+            tuple: (open_time, open, high, low, close, volume)
+        """
+        return (
+            self.open_time,
+            float(self.open_price),
+            float(self.high_price),
+            float(self.low_price),
+            float(self.close_price),
+            self.volume
+        )
+
+    @classmethod
+    def from_ticks(
+        cls,
+        ticks: List[Dict[str, Any]],
+        symbol: str,
+        exchange: str,
+        period: KLinePeriod,
+        open_time: datetime,
+        source: str = "aggregated"
+    ) -> 'KLineData':
+        """从Tick数据聚合生成K线
+
+        Args:
+            ticks: Tick数据列表
+            symbol: 合约代码
+            exchange: 交易所代码
+            period: K线周期
+            open_time: K线开盘时间
+            source: 数据来源
+
+        Returns:
+            KLineData: 聚合后的K线数据
+
+        Raises:
+            ValueError: 当Tick数据为空时
+        """
+        if not ticks:
+            raise ValueError("Tick数据不能为空")
+
+        # 提取价格和成交量
+        prices = [Decimal(str(t.get('last_price', t.get('price', 0)))) for t in ticks]
+        volumes = [int(t.get('volume', 0)) for t in ticks]
+        turnovers = [Decimal(str(t.get('turnover', 0))) for t in ticks]
+
+        # 计算OHLCV
+        open_price = prices[0]
+        close_price = prices[-1]
+        high_price = max(prices)
+        low_price = min(prices)
+
+        # 成交量和成交额取最后一个（累计值）或求和
+        total_volume = volumes[-1] if volumes else 0
+        total_turnover = turnovers[-1] if turnovers else Decimal("0")
+
+        # 持仓量取最后一个
+        open_interest = int(ticks[-1].get('open_interest', 0))
+
+        # 计算收盘时间
+        close_time = open_time + period.to_timedelta()
+
+        return cls(
+            symbol=symbol,
+            exchange=exchange,
+            period=period,
+            open_time=open_time,
+            close_time=close_time,
+            open_price=open_price,
+            high_price=high_price,
+            low_price=low_price,
+            close_price=close_price,
+            volume=total_volume,
+            turnover=total_turnover,
+            open_interest=open_interest,
+            source=source,
+            is_complete=True,
+            tick_count=len(ticks)
+        )
+
+    def update_with_tick(self, tick: Dict[str, Any]) -> 'KLineData':
+        """使用新的Tick数据更新K线
+
+        Args:
+            tick: Tick数据字典
+
+        Returns:
+            KLineData: 更新后的新K线对象（不修改原对象）
+        """
+        price = Decimal(str(tick.get('last_price', tick.get('price', self.close_price))))
+
+        return KLineData(
+            symbol=self.symbol,
+            exchange=self.exchange,
+            period=self.period,
+            open_time=self.open_time,
+            close_time=self.close_time,
+            open_price=self.open_price,
+            high_price=max(self.high_price, price),
+            low_price=min(self.low_price, price),
+            close_price=price,
+            volume=int(tick.get('volume', self.volume)),
+            turnover=Decimal(str(tick.get('turnover', self.turnover))),
+            open_interest=int(tick.get('open_interest', self.open_interest)),
+            source=self.source,
+            is_complete=False,
+            tick_count=self.tick_count + 1
+        )
+
+    def __repr__(self) -> str:
+        """返回K线的字符串表示"""
+        return (f"KLineData(symbol='{self.symbol}', period={self.period}, "
+                f"O={self.open_price}, H={self.high_price}, "
+                f"L={self.low_price}, C={self.close_price}, V={self.volume})")
+
+
+__all__ = ['KLineData', 'KLinePeriod']

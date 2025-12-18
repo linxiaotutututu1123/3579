@@ -1,0 +1,22 @@
+[
+  {
+    "content": "扩展多维收益归因模块 (src/risk/attribution.py)",
+    "status": "in_progress",
+    "activeForm": "扩展多维收益归因模块"
+  },
+  {
+    "content": "实施实验策略门禁闭环",
+    "status": "pending",
+    "activeForm": "实施门禁闭环"
+  },
+  {
+    "content": "实施夜盘全链路集成",
+    "status": "pending",
+    "activeForm": "实施夜盘集成"
+  },
+  {
+    "content": "运行全量测试验证",
+    "status": "pending",
+    "activeForm": "运行测试验证"
+  }
+]

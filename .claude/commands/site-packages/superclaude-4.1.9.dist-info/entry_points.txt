@@ -1,0 +1,5 @@
+[console_scripts]
+superclaude = superclaude.cli.main:main
+
+[pytest11]
+superclaude = superclaude.pytest_plugin

@@ -1,0 +1,122 @@
+"""
+market_gateway/logging_config.py
+日志配置与敏感信息过滤模块。
+
+功能：
+- 敏感信息自动脱敏（密码、token等）
+- 结构化日志输出
+- 审计日志记录
+
+# RISK: 新增敏感字段可能遗漏
+# 缓解措施: 定期审计日志，发现泄露及时添加
+
+Author: AI Quant Team
+Version: 2.0.0
+"""
+
+import logging
+import re
+import json
+from datetime import datetime, timezone
+from typing import Final, Any
+from pathlib import Path
+
+__all__: list[str] = [
+    "SensitiveFilter",
+    "AuditLogger",
+    "setup_gateway_logging",
+    "get_gateway_logger",
+]
+
+# WHY: 敏感字段正则模式，统一管理便于维护
+SENSITIVE_PATTERNS: Final[list[tuple[re.Pattern[str], str]]] = [
+    # 密码相关
+    (re.compile(r'[Pp]assword["\']?\s*[:=]\s*["\']?[^"\'\s,}]+'), 'password=***'),
+    (re.compile(r'[Pp]wd["\']?\s*[:=]\s*["\']?[^"\'\s,}]+'), 'pwd=***'),
+    # Token 相关
+    (re.compile(r'[Tt]oken["\']?\s*[:=]\s*["\']?[^"\'\s,}]+'), 'token=***'),
+    (re.compile(r'[Aa]uth[_]?[Cc]ode["\']?\s*[:=]\s*["\']?[^"\'\s,}]+'), 'auth_code=***'),
+    # API 密钥
+    (re.compile(r'[Aa]pi[_]?[Kk]ey["\']?\s*[:=]\s*["\']?[^"\'\s,}]+'), 'api_key=***'),
+    (re.compile(r'[Ss]ecret["\']?\s*[:=]\s*["\']?[^"\'\s,}]+'), 'secret=***'),
+    # CTP 特定
+    (re.compile(r'[Bb]roker[_]?[Ii]d["\']?\s*[:=]\s*["\']?[^"\'\s,}]+'), 'broker_id=***'),
+    (re.compile(r'[Ii]nvestor[_]?[Ii]d["\']?\s*[:=]\s*["\']?[^"\'\s,}]+'), 'investor_id=***'),
+]
+
+
+class SensitiveFilter(logging.Filter):
+    """
+    敏感信息过滤器。
+
+    自动脱敏日志中的敏感字段，防止密码等信息泄露。
+
+    Example:
+        >>> logger = logging.getLogger("test")
+        >>> logger.addFilter(SensitiveFilter())
+        >>> logger.info("Login with password=secret123")
+        # 输出: Login with password=***
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """
+        过滤日志记录中的敏感信息。
+
+        Args:
+            record: 日志记录
+
+        Returns:
+            始终返回 True（不丢弃日志，只脱敏）
+        """
+        # WHY: 处理 msg 字段
+        if isinstance(record.msg, str):
+            record.msg = self._sanitize(record.msg)
+
+        # WHY: 处理 args 中的字符串参数
+        if record.args:
+            if isinstance(record.args, dict):
+                record.args = {
+                    k: self._sanitize(str(v)) if isinstance(v, str) else v
+                    for k, v in record.args.items()
+                }
+            elif isinstance(record.args, tuple):
+                record.args = tuple(
+                    self._sanitize(str(arg)) if isinstance(arg, str) else arg
+                    for arg in record.args
+                )
+
+        return True
+
+    def _sanitize(self, text: str) -> str:
+        """脱敏文本中的敏感信息。"""
+        for pattern, replacement in SENSITIVE_PATTERNS:
+            text = pattern.sub(replacement, text)
+        return text
+
+
+class StructuredFormatter(logging.Formatter):
+    """
+    结构化日志格式化器（JSON 格式）。
+
+    输出格式：
+    {"timestamp": "...", "level": "INFO", "logger": "...", "message": "..."}
+    """
+
+    def format(self, record: logging.LogRecord) -> str:
+        """格式化日志记录为 JSON。"""
+        log_data = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+
+        # WHY: 添加异常信息
+        if record.exc_info:
+            log_data["exception"] = self.formatException(record.exc_info)
+
+        # WHY: 添加额外字段
+        if hasattr(record, "extra_fields"):
+            log_data.update(record.extra_fields)
+
+        return json.dumps(log_data, ensure_ascii=False)

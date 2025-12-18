@@ -1,0 +1,45 @@
+"""行情网关模块包"""
+
+from .base import MarketGateway, GatewayStatus, ConnectionInfo
+from .ctp_gateway import CtpMarketGateway
+from .factory import GatewayFactory
+from .events import (
+    EventType,
+    BaseEvent,
+    ConnectionEvent,
+    SubscriptionEvent,
+    TickDataEvent,
+    AlertEvent
+)
+from .exceptions import (
+    GatewayError,
+    ConfigError,
+    ConnectionError,
+    SubscriptionError,
+    AuthenticationError,
+    DataValidationError
+)
+
+__all__ = [
+    # 基类和工厂
+    'MarketGateway',
+    'GatewayStatus',
+    'ConnectionInfo',
+    'GatewayFactory',
+    # CTP网关
+    'CtpMarketGateway',
+    # 事件
+    'EventType',
+    'BaseEvent',
+    'ConnectionEvent',
+    'SubscriptionEvent',
+    'TickDataEvent',
+    'AlertEvent',
+    # 异常
+    'GatewayError',
+    'ConfigError',
+    'ConnectionError',
+    'SubscriptionError',
+    'AuthenticationError',
+    'DataValidationError',
+]

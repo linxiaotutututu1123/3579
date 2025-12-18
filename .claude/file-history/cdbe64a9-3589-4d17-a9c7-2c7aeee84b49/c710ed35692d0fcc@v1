@@ -1,0 +1,92 @@
+{
+    // ==================== 推荐扩展列表 ====================
+    "recommendations": [
+        // ==================== AI助手 ====================
+        "anthropic.claude-code",
+        "openai.chatgpt",
+
+        // ==================== Python开发 ====================
+        "ms-python.python",
+        "ms-python.flake8",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-python.debugpy",
+        "detachhead.basedpyright",
+
+        // ==================== 代码编辑增强 ====================
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "streetsidesoftware.code-spell-checker",
+        "gruntfuggly.todo-tree",
+        "oderwat.indent-rainbow",
+        "coenraads.bracket-pair-colorizer-2",
+
+        // ==================== 主题和图标 ====================
+        "pkief.material-icon-theme",
+        "zhuangtongfa.material-theme",
+        "ms-vscode.theme-quietlight",
+        "ahmadawais.shades-of-purple",
+
+        // ==================== 版本控制 ====================
+        "eamodio.gitlens",
+        "mhutchie.git-graph",
+        "donjayamanne.githistory",
+        "github.vscode-pull-request-github",
+
+        // ==================== 生产力工具 ====================
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-markdown",
+        "yzhang.markdown-all-in-one",
+        "shd101wyy.markdown-preview-enhanced",
+        "ms-vscode.live-server",
+
+        // ==================== 测试工具 ====================
+        "hbenl.vscode-test-explorer",
+        "ms-vscode.vscode-testing-encoder-service",
+
+        // ==================== 数据处理 ====================
+        "me-dutour-mathieu.vscode-json-formatter",
+        "grapecity.gc-excelviewer",
+        "RandomFractalsInc.vscode-data-preview",
+
+        // ==================== 数据库 ====================
+        "ms-mssql.mssql",
+        "ms-vscode.vscode-sqlite",
+        "cweijan.vscode-redis-client",
+
+        // ==================== 容器和云 ====================
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode-remote.remote-wsl",
+        "ms-vscode.vscode-docker",
+        "ms-azuretools.vscode-azurefunctions",
+
+        // ==================== 中文支持 ====================
+        "ms-ceintl.vscode-language-pack-zh-hans",
+        "ms-vscode.cpptools",
+        "vsciot-vscode.vscode-arduino",
+
+        // ==================== 安全 ====================
+        "davidanson.vscode-markdownlint",
+        "snyk-security.vscode-vuln-cost",
+        "ms-vscode.vscode-dependencies",
+
+        // ==================== 项目管理 ====================
+        "alefragnani.bookmarks",
+        "christian-kohler.path-intellisense",
+        "christian-kohler.npm-intellisense",
+        "visualstudioexptteam.vscodeintellicode",
+
+        // ==================== 快捷键增强 ====================
+        "altock.clipboard-history",
+        "chrisantedorch.split-terminal-3",
+        "gruntfuggly.active-tab-in-terminal",
+        "IBM.output-colorizer"
+    ],
+    "unwantedRecommendations": [
+        // ==================== 不推荐的扩展 ====================
+        "hoovercj.vscode-power-mode",
+        "gruntfuggly.todo-tree",
+        "HookyQR.beautify"
+    ]
+}

@@ -1,0 +1,124 @@
+"""
+market_gateway/exceptions.py
+行情网关异常定义模块（重构版）。
+
+重构改进：
+- 使用 ErrorCode 枚举替代魔法数字
+- context 自动脱敏 + 大小限制
+- 只读 context 防止多线程污染
+- 显式异常链支持（cause 参数）
+
+# RISK: 异常创建性能开销
+# 缓解措施: 脱敏操作为 O(n)，n 为 context 字段数，通常 <10
+
+Author: AI Quant Team
+Version: 2.0.0
+"""
+
+from types import MappingProxyType
+from typing import Any, Final
+
+from .error_codes import ErrorCode, ERROR_CODE_DESCRIPTIONS
+from ._sensitive import sanitize_context, REDACTED_PLACEHOLDER
+
+__all__: list[str] = [
+    "GatewayException",
+    "ConnectionException",
+    "AuthenticationException",
+    "ConnectionTimeoutException",
+    "ReconnectExhaustedException",
+    "DataException",
+    "InvalidTickDataException",
+    "DataValidationException",
+    "SubscriptionException",
+    "SubscriptionLimitExceededException",
+    "SymbolNotFoundException",
+]
+
+
+class GatewayException(Exception):
+    """
+    网关基础异常，所有网关相关异常的父类。
+
+    Attributes:
+        message: 人类可读的错误描述
+        error_code: ErrorCode 枚举，机器可读
+        context: 只读上下文字典（已脱敏）
+        cause: 原始异常（异常链）
+
+    Example:
+        正确用法：
+        >>> raise GatewayException(
+        ...     "连接失败",
+        ...     error_code=ErrorCode.CONNECTION_FAILED,
+        ...     context={"host": "127.0.0.1"},
+        ... )
+
+        带异常链：
+        >>> try:
+        ...     sdk.connect()
+        ... except TimeoutError as e:
+        ...     raise GatewayException("超时", cause=e) from e
+    """
+
+    # WHY: __slots__ 减少内存占用，提升属性访问速度
+    __slots__ = ("message", "error_code", "_context", "cause")
+
+    def __init__(
+        self,
+        message: str,
+        error_code: ErrorCode = ErrorCode.UNKNOWN,
+        context: dict[str, Any] | None = None,
+        cause: BaseException | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.message: Final[str] = message
+        self.error_code: Final[ErrorCode] = error_code
+        self.cause: Final[BaseException | None] = cause
+        # WHY: 先脱敏再转为只读，双重防护
+        sanitized = sanitize_context(context)
+        self._context: Final[MappingProxyType[str, Any]] = MappingProxyType(
+            sanitized
+        )
+
+    @property
+    def context(self) -> MappingProxyType[str, Any]:
+        """只读上下文访问器。"""
+        return self._context
+
+    @property
+    def error_description(self) -> str:
+        """获取错误码对应的描述文本。"""
+        return ERROR_CODE_DESCRIPTIONS.get(self.error_code, "未知错误")
+
+    def __repr__(self) -> str:
+        """调试友好的字符串表示（敏感信息已脱敏）。"""
+        # WHY: 包含所有关键信息便于日志分析
+        return (
+            f"{self.__class__.__name__}("
+            f"message={self.message!r}, "
+            f"error_code={self.error_code.name}({self.error_code.value}), "
+            f"context={dict(self._context)}, "
+            f"cause={self.cause!r})"
+        )
+
+    def __str__(self) -> str:
+        """用户友好的字符串表示。"""
+        return f"[{self.error_code.name}] {self.message}"
+
+    def to_dict(self) -> dict[str, Any]:
+        """
+        序列化为字典，用于 JSON 日志或 API 响应。
+
+        Returns:
+            包含异常信息的字典（已脱敏）
+        """
+        return {
+            "exception_type": self.__class__.__name__,
+            "message": self.message,
+            "error_code": self.error_code.value,
+            "error_name": self.error_code.name,
+            "error_description": self.error_description,
+            "context": dict(self._context),
+            "cause": repr(self.cause) if self.cause else None,
+        }

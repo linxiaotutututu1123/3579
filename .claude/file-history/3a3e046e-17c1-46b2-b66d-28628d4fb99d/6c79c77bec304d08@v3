@@ -1,0 +1,15 @@
+"""配置模块包
+
+提供系统配置相关的组件，包括：
+- 网关配置模型
+- CTP连接配置
+- K线配置
+"""
+
+from .gateway_config import GatewayConfig, CtpConfig, KLineConfig
+
+__all__ = [
+    'GatewayConfig',
+    'CtpConfig',
+    'KLineConfig',
+]

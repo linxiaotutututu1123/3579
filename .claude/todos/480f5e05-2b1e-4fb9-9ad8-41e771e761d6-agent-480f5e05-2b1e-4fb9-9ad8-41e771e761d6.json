@@ -1,0 +1,37 @@
+[
+  {
+    "content": "修复 dynamic_var.py 不可达代码",
+    "status": "completed",
+    "activeForm": "Fixing unreachable code"
+  },
+  {
+    "content": "修复 CTP broker 测试",
+    "status": "completed",
+    "activeForm": "Fixing CTP broker tests"
+  },
+  {
+    "content": "修复 strategy_lifecycle 测试",
+    "status": "completed",
+    "activeForm": "Fixing lifecycle tests"
+  },
+  {
+    "content": "清理 RUF002/RUF003 警告",
+    "status": "completed",
+    "activeForm": "Cleaning up warnings"
+  },
+  {
+    "content": "设计系统架构 (基于 docs 文件夹)",
+    "status": "completed",
+    "activeForm": "Designing system architecture"
+  },
+  {
+    "content": "安全分析 src/",
+    "status": "completed",
+    "activeForm": "Security analysis of src/"
+  },
+  {
+    "content": "制定测试方案 - 一对一遍历97个测试文件",
+    "status": "in_progress",
+    "activeForm": "Creating 1:1 test plans for 97 files"
+  }
+]

@@ -1,0 +1,61 @@
+"""
+market_gateway/base.py
+网关抽象基类定义。
+
+设计原则：
+- 定义统一的网关接口契约
+- 支持 CTP/SimNow/IB 等多种实现
+- 生命周期管理：connect → subscribe → on_tick → disconnect
+- 异步优先：使用 asyncio 实现
+
+# RISK: 子类可能未正确实现抽象方法
+# 缓解措施: 使用 ABC 强制实现，单元测试覆盖
+
+Author: AI Quant Team
+Version: 1.0.0
+"""
+
+from abc import ABC, abstractmethod
+from enum import Enum, auto
+from typing import Callable, Awaitable, Final
+from datetime import datetime, timezone
+import asyncio
+import logging
+
+from .models import TickData, DepthData, BarData
+from .config import GatewayConfig
+from .exceptions import GatewayException
+
+__all__: list[str] = [
+    "GatewayState",
+    "AbstractGateway",
+    "TickCallback",
+    "DepthCallback",
+    "BarCallback",
+    "StateCallback",
+]
+
+# WHY: 类型别名提升代码可读性
+TickCallback = Callable[[TickData], Awaitable[None]]
+DepthCallback = Callable[[DepthData], Awaitable[None]]
+BarCallback = Callable[[BarData], Awaitable[None]]
+StateCallback = Callable[["GatewayState", "GatewayState"], Awaitable[None]]
+
+
+class GatewayState(Enum):
+    """
+    网关状态枚举。
+
+    状态转换图：
+    DISCONNECTED → CONNECTING → CONNECTED → SUBSCRIBING → RUNNING
+                 ↘         ↙                          ↓
+                   RECONNECTING ←←←←←←←←←←←←←←←← ERROR
+    """
+    DISCONNECTED = auto()  # 未连接
+    CONNECTING = auto()    # 连接中
+    CONNECTED = auto()     # 已连接（未订阅）
+    SUBSCRIBING = auto()   # 订阅中
+    RUNNING = auto()       # 运行中（正常接收数据）
+    RECONNECTING = auto()  # 重连中
+    ERROR = auto()         # 错误状态
+    STOPPED = auto()       # 已停止

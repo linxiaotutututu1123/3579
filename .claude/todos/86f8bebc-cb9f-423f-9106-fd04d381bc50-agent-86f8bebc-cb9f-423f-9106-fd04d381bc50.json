@@ -1,0 +1,17 @@
+[
+  {
+    "content": "Analyze the diagonal constraint bug",
+    "status": "completed",
+    "activeForm": "Analyzed the diagonal constraint bug"
+  },
+  {
+    "content": "Fix the diagonal constraint logic",
+    "status": "completed",
+    "activeForm": "Fixed the diagonal constraint logic"
+  },
+  {
+    "content": "Test the fixed solver",
+    "status": "pending",
+    "activeForm": "Testing the fixed solver"
+  }
+]

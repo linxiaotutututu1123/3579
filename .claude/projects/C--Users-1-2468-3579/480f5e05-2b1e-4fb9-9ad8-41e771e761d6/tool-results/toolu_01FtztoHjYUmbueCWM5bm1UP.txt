@@ -1,0 +1,54 @@
+   550→            return self.semiparametric_var(returns, confidence, kwargs.get("bandwidth"))
+   551→        if method == VaRMethod.LIMIT_ADJUSTED:
+   552→            return self.limit_adjusted_var(
+   553→                returns, kwargs.get("limit_pct", 0.10), confidence
+   554→            )
+   555→        if method == VaRMethod.LIQUIDITY_ADJUSTED:
+   556→            return self.liquidity_adjusted_var(
+   557→                returns,
+   558→                kwargs.get("position_value", 0),
+   559→                kwargs.get("liquidity", LiquidityMetrics()),
+   560→                confidence,
+   561→            )
+   562→        # 默认历史VaR
+   563→        self._calculation_count += 1
+   564→        result = self._base_calculator.historical_var(returns, confidence)
+   565→        return self._wrap_result(result, VaRMethod.HISTORICAL)
+   566→
+   567→    def _estimate_gpd_params(
+   568→        self, exceedances: list[float], threshold: float
+   569→    ) -> GPDParameters:
+   570→        """估计GPD参数 (矩估计法).
+   571→
+   572→        参数:
+   573→            exceedances: 超阈值样本
+   574→            threshold: 阈值
+   575→
+   576→        返回:
+   577→            GPD参数
+   578→        """
+   579→        n = len(exceedances)
+   580→        if n < 2:
+   581→            return GPDParameters(xi=0, beta=1, threshold=threshold, exceedances=n)
+   582→
+   583→        # 矩估计
+   584→        mean_exc = sum(exceedances) / n
+   585→        var_exc = (
+   586→            sum((e - mean_exc) ** 2 for e in exceedances) / (n - 1) if n > 1 else 0
+   587→        )
+   588→
+   589→        if mean_exc <= 0:
+   590→            return GPDParameters(xi=0, beta=1, threshold=threshold, exceedances=n)
+   591→
+   592→        # xi = 0.5 * (1 - mean^2 / var)
+   593→        # beta = 0.5 * mean * (1 + mean^2 / var)
+   594→        if var_exc > 0:
+   595→            ratio = mean_exc * mean_exc / var_exc
+   596→            xi = 0.5 * (1 - ratio)
+   597→            beta = 0.5 * mean_exc * (1 + ratio)
+   598→        else:
+   599→            xi = 0
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

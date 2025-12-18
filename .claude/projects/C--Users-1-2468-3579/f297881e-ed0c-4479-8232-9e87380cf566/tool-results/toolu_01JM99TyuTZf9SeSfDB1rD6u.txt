@@ -1,0 +1,15 @@
+The file C:\Users\1\2468\3579\docs\V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+   582→---
+   583→
+   584→## §10 Phase 5: 成本层
+   585→
+   586→### 10.1 文件清单
+   587→
+   588→| 文件 | 行数 | 功能 | 状态 |
+   589→|------|------|------|------|
+   590→| `src/cost/estimator.py` | ~328 | 成本估计器 | ✅ |
+   591→| `src/cost/china_fee_calculator.py` | ~653 | 中国期货手续费 | ✅ |
+   592→
+   593→### 10.2 成本模型
+   594→
+   595→```python

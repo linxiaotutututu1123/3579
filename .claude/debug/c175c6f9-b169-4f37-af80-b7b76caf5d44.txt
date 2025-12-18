@@ -1,0 +1,101 @@
+2025-12-08T07:48:41.358Z [DEBUG] Watching for changes in setting files C:\Users\1\.claude\settings.json...
+2025-12-08T07:48:41.375Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2025-12-08T07:48:41.381Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2025-12-08T07:48:41.381Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2025-12-08T07:48:41.381Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2025-12-08T07:48:41.381Z [DEBUG] [LSP SERVER MANAGER] initialize() called
+2025-12-08T07:48:41.381Z [DEBUG] [LSP SERVER MANAGER] Calling getAllLspServers()
+2025-12-08T07:48:41.389Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2025-12-08T07:48:41.391Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.62152.1765180121391
+2025-12-08T07:48:41.391Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T07:48:41.393Z [DEBUG] Temp file written successfully, size: 1643 bytes
+2025-12-08T07:48:41.393Z [DEBUG] Applied original permissions to temp file
+2025-12-08T07:48:41.393Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.62152.1765180121391 to C:\Users\1\.claude.json
+2025-12-08T07:48:41.393Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T07:48:41.393Z [DEBUG] Total LSP servers loaded: 0
+2025-12-08T07:48:41.393Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2025-12-08T07:48:41.393Z [DEBUG] LSP manager initialized with 0 servers
+2025-12-08T07:48:41.393Z [DEBUG] LSP server manager initialized successfully
+2025-12-08T07:48:41.393Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2025-12-08T07:48:41.397Z [DEBUG] Loading skills from directories: managed=C:\ProgramData\ClaudeCode\.claude\skills, user=C:\Users\1\.claude\skills, project=C:\Users\1\AppData\Roaming\npm\.claude\skills
+2025-12-08T07:48:41.397Z [DEBUG] >>>>> getPluginSkills CALLED <<<<<
+2025-12-08T07:48:41.718Z [DEBUG] installed_plugins.json doesn't exist yet at C:\Users\1\.claude\plugins\installed_plugins.json, returning empty object
+2025-12-08T07:48:41.745Z [DEBUG] Creating shell snapshot for bash (C:\Program Files\Git\bin\bash.exe)
+2025-12-08T07:48:41.746Z [DEBUG] Looking for shell config file: C:\Users\1\.bashrc
+2025-12-08T07:48:41.746Z [DEBUG] Shell config file not found: C:\Users\1\.bashrc, creating snapshot with Claude Code defaults only
+2025-12-08T07:48:41.746Z [DEBUG] Snapshots directory: C:\Users\1\.claude\shell-snapshots
+2025-12-08T07:48:41.754Z [DEBUG] Creating snapshot at: C:\Users\1\.claude\shell-snapshots\snapshot-bash-1765180121746-hqol3i.sh
+2025-12-08T07:48:41.754Z [DEBUG] Shell binary exists: true
+2025-12-08T07:48:41.754Z [DEBUG] Execution timeout: 10000ms
+2025-12-08T07:48:41.757Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\c175c6f9-b169-4f37-af80-b7b76caf5d44-agent-c175c6f9-b169-4f37-af80-b7b76caf5d44.json.tmp.62152.1765180121757
+2025-12-08T07:48:41.760Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-08T07:48:41.760Z [DEBUG] Renaming C:\Users\1\.claude\todos\c175c6f9-b169-4f37-af80-b7b76caf5d44-agent-c175c6f9-b169-4f37-af80-b7b76caf5d44.json.tmp.62152.1765180121757 to C:\Users\1\.claude\todos\c175c6f9-b169-4f37-af80-b7b76caf5d44-agent-c175c6f9-b169-4f37-af80-b7b76caf5d44.json
+2025-12-08T07:48:41.760Z [DEBUG] File C:\Users\1\.claude\todos\c175c6f9-b169-4f37-af80-b7b76caf5d44-agent-c175c6f9-b169-4f37-af80-b7b76caf5d44.json written atomically
+2025-12-08T07:48:41.761Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2025-12-08T07:48:41.762Z [DEBUG] Total plugin skills loaded: 0
+2025-12-08T07:48:41.762Z [DEBUG] Total plugin commands loaded: 0
+2025-12-08T07:48:41.762Z [DEBUG] Registered 0 hooks from 0 plugins
+2025-12-08T07:48:41.860Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, duplicates removed: 0)
+2025-12-08T07:48:41.860Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills
+2025-12-08T07:48:41.860Z [DEBUG] Total plugin agents loaded: 0
+2025-12-08T07:48:41.867Z [DEBUG] Git remote URL: null
+2025-12-08T07:48:41.868Z [DEBUG] No git remote URL found
+2025-12-08T07:48:41.868Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2025-12-08T07:48:41.902Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=C:\Users\1\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\vendor\ripgrep\x64-win32\rg.exe)
+2025-12-08T07:48:42.395Z [DEBUG] Shell snapshot created successfully (338 bytes)
+2025-12-08T13:48:56.183Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.62152.1765201736183
+2025-12-08T13:48:56.183Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T13:48:56.185Z [DEBUG] Temp file written successfully, size: 2054 bytes
+2025-12-08T13:48:56.185Z [DEBUG] Applied original permissions to temp file
+2025-12-08T13:48:56.185Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.62152.1765201736183 to C:\Users\1\.claude.json
+2025-12-08T13:48:56.185Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T13:48:56.227Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.62152.1765201736227
+2025-12-08T13:48:56.228Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T13:48:56.230Z [DEBUG] Temp file written successfully, size: 2054 bytes
+2025-12-08T13:48:56.230Z [DEBUG] Applied original permissions to temp file
+2025-12-08T13:48:56.230Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.62152.1765201736227 to C:\Users\1\.claude.json
+2025-12-08T13:48:56.230Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T13:48:56.233Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.62152.1765201736233
+2025-12-08T13:48:56.233Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T13:48:56.234Z [DEBUG] Temp file written successfully, size: 2054 bytes
+2025-12-08T13:48:56.234Z [DEBUG] Applied original permissions to temp file
+2025-12-08T13:48:56.234Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.62152.1765201736233 to C:\Users\1\.claude.json
+2025-12-08T13:48:56.234Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T13:48:56.239Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2025-12-08T13:48:56.239Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T13:48:56.239Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2025-12-08T13:48:56.272Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.62152.1765201736272
+2025-12-08T13:48:56.272Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T13:48:56.273Z [DEBUG] Temp file written successfully, size: 1946 bytes
+2025-12-08T13:48:56.273Z [DEBUG] Applied original permissions to temp file
+2025-12-08T13:48:56.273Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.62152.1765201736272 to C:\Users\1\.claude.json
+2025-12-08T13:48:56.274Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T13:48:56.277Z [DEBUG] performStartupChecks called
+2025-12-08T13:48:56.277Z [DEBUG] Starting background plugin installations
+2025-12-08T13:48:56.277Z [DEBUG] performBackgroundPluginInstallations called
+2025-12-08T13:48:56.284Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.62152.1765201736284
+2025-12-08T13:48:56.284Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T13:48:56.286Z [DEBUG] Temp file written successfully, size: 2054 bytes
+2025-12-08T13:48:56.286Z [DEBUG] Applied original permissions to temp file
+2025-12-08T13:48:56.286Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.62152.1765201736284 to C:\Users\1\.claude.json
+2025-12-08T13:48:56.286Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T13:48:56.286Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-08T13:48:56.287Z [DEBUG] Setting installation status: 0 marketplaces, 0 installable plugins, 0 uninstallable plugins
+2025-12-08T13:48:56.287Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2025-12-08T13:48:56.289Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2025-12-08T13:48:56.289Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T13:48:56.289Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2025-12-08T13:48:56.292Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.62152.1765201736292
+2025-12-08T13:48:56.292Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T13:48:56.294Z [DEBUG] Temp file written successfully, size: 2054 bytes
+2025-12-08T13:48:56.294Z [DEBUG] Applied original permissions to temp file
+2025-12-08T13:48:56.294Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.62152.1765201736292 to C:\Users\1\.claude.json
+2025-12-08T13:48:56.294Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T13:48:56.310Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2025-12-08T13:48:56.310Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T13:48:56.310Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2025-12-08T13:48:56.954Z [DEBUG] Stream started - received first chunk
+2025-12-08T13:48:57.031Z [DEBUG] Stream started - received first chunk
+2025-12-08T13:48:58.387Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2025-12-08T13:48:58.387Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T13:48:58.387Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)

@@ -1,0 +1,32 @@
+[
+  {
+    "content": "阅读Phase 1行情层所有源代码文件",
+    "status": "in_progress",
+    "activeForm": "阅读Phase 1行情层所有源代码文件"
+  },
+  {
+    "content": "检查Phase 1的12个场景测试覆盖情况",
+    "status": "pending",
+    "activeForm": "检查Phase 1的12个场景测试覆盖情况"
+  },
+  {
+    "content": "验证军规M1/M7/M9/M10/M11/M15覆盖",
+    "status": "pending",
+    "activeForm": "验证军规M1/M7/M9/M10/M11/M15覆盖"
+  },
+  {
+    "content": "检查待新增文件exchange_config.py和trading_calendar.py",
+    "status": "pending",
+    "activeForm": "检查待新增文件exchange_config.py和trading_calendar.py"
+  },
+  {
+    "content": "运行门禁检查(ruff/mypy/pytest)",
+    "status": "pending",
+    "activeForm": "运行门禁检查(ruff/mypy/pytest)"
+  },
+  {
+    "content": "生成军规级Phase 1检查报告和实施方案",
+    "status": "pending",
+    "activeForm": "生成军规级Phase 1检查报告和实施方案"
+  }
+]

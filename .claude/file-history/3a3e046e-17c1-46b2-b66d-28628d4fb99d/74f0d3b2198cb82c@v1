@@ -1,0 +1,161 @@
+"""网关工厂实现
+
+提供统一的网关创建接口，支持多种类型的行情网关。
+"""
+
+import logging
+from typing import Dict, Any, Optional, Type, List
+from .base import MarketGateway
+from .ctp_gateway import CtpMarketGateway
+from .exceptions import ConfigError
+
+logger = logging.getLogger(__name__)
+
+
+class GatewayFactory:
+    """网关工厂类
+
+    根据配置创建不同类型的行情网关实例。
+    支持动态注册新的网关类型。
+
+    使用示例:
+        # 创建CTP网关
+        config = {"name": "my_gateway", "type": "ctp", ...}
+        gateway = GatewayFactory.create_gateway(config)
+
+        # 注册自定义网关类型
+        GatewayFactory.register_gateway_type("custom", CustomGateway)
+    """
+
+    # 支持的网关类型映射
+    _gateway_types: Dict[str, Type[MarketGateway]] = {
+        "ctp": CtpMarketGateway,
+        # 可以在这里添加其他类型的网关
+        # "ib": IbMarketGateway,
+        # "binance": BinanceMarketGateway,
+    }
+
+    @classmethod
+    def create_gateway(cls, config: Dict[str, Any]) -> MarketGateway:
+        """根据配置创建网关实例
+
+        Args:
+            config: 网关配置字典，必须包含 'type' 字段
+
+        Returns:
+            MarketGateway: 网关实例
+
+        Raises:
+            ValueError: 当配置缺少 'type' 字段或网关类型不支持时
+            ConfigError: 当配置验证失败时
+        """
+        # 检查必需的type字段
+        if "type" not in config:
+            error_msg = "Gateway configuration must include 'type' field"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        gateway_type = config["type"].lower()
+
+        # 查找对应的网关类
+        gateway_class = cls._gateway_types.get(gateway_type)
+        if gateway_class is None:
+            supported = ", ".join(cls._gateway_types.keys())
+            error_msg = f"Unsupported gateway type: '{gateway_type}'. Supported types: {supported}"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        try:
+            # 创建网关实例
+            gateway = gateway_class(config)
+            logger.info(f"Created {gateway_type} gateway: {config.get('name', 'unnamed')}")
+            return gateway
+
+        except ConfigError:
+            # 直接抛出配置错误
+            raise
+        except Exception as e:
+            logger.error(f"Failed to create {gateway_type} gateway: {str(e)}")
+            raise ConfigError(f"Gateway creation failed: {str(e)}")
+
+    @classmethod
+    def register_gateway_type(
+        cls,
+        gateway_type: str,
+        gateway_class: Type[MarketGateway]
+    ) -> None:
+        """注册新的网关类型
+
+        Args:
+            gateway_type: 网关类型名称（大小写不敏感）
+            gateway_class: 网关类，必须是 MarketGateway 的子类
+
+        Raises:
+            TypeError: 当 gateway_class 不是 MarketGateway 的子类时
+            ValueError: 当 gateway_type 为空时
+        """
+        if not gateway_type or not gateway_type.strip():
+            raise ValueError("Gateway type cannot be empty")
+
+        if not isinstance(gateway_class, type) or not issubclass(gateway_class, MarketGateway):
+            raise TypeError(
+                f"gateway_class must be a subclass of MarketGateway, "
+                f"got {type(gateway_class).__name__}"
+            )
+
+        type_lower = gateway_type.lower().strip()
+        cls._gateway_types[type_lower] = gateway_class
+        logger.info(f"Registered gateway type: {type_lower}")
+
+    @classmethod
+    def unregister_gateway_type(cls, gateway_type: str) -> bool:
+        """取消注册网关类型
+
+        Args:
+            gateway_type: 网关类型名称
+
+        Returns:
+            bool: 是否成功取消注册
+        """
+        type_lower = gateway_type.lower().strip()
+        if type_lower in cls._gateway_types:
+            del cls._gateway_types[type_lower]
+            logger.info(f"Unregistered gateway type: {type_lower}")
+            return True
+        return False
+
+    @classmethod
+    def get_supported_types(cls) -> List[str]:
+        """获取支持的网关类型列表
+
+        Returns:
+            List[str]: 支持的网关类型名称列表
+        """
+        return list(cls._gateway_types.keys())
+
+    @classmethod
+    def is_type_supported(cls, gateway_type: str) -> bool:
+        """检查网关类型是否支持
+
+        Args:
+            gateway_type: 网关类型名称
+
+        Returns:
+            bool: 是否支持该类型
+        """
+        return gateway_type.lower().strip() in cls._gateway_types
+
+    @classmethod
+    def get_gateway_class(cls, gateway_type: str) -> Optional[Type[MarketGateway]]:
+        """获取网关类
+
+        Args:
+            gateway_type: 网关类型名称
+
+        Returns:
+            Type[MarketGateway]: 网关类，如果不存在则返回None
+        """
+        return cls._gateway_types.get(gateway_type.lower().strip())
+
+
+__all__ = ['GatewayFactory']

@@ -1,0 +1,57 @@
+[
+  {
+    "content": "F0: 准备工作 - 切换分支并运行基线检查",
+    "status": "completed",
+    "activeForm": "执行 F0 准备工作"
+  },
+  {
+    "content": "F1: 增加 Offset.OPEN",
+    "status": "completed",
+    "activeForm": "添加 Offset.OPEN"
+  },
+  {
+    "content": "F2: 风控对齐 max_margin_recovery=0.50 + lockout 测试",
+    "status": "completed",
+    "activeForm": "修复风控配置和添加 lockout 测试"
+  },
+  {
+    "content": "F3: Strategy 类型与接口（含 bars_1m）",
+    "status": "completed",
+    "activeForm": "添加 Strategy 接口"
+  },
+  {
+    "content": "F4: 顶级策略 v1 + smoke test",
+    "status": "completed",
+    "activeForm": "添加顶级策略"
+  },
+  {
+    "content": "F5: Constraints 约束与风控落地 + tests",
+    "status": "completed",
+    "activeForm": "添加 Constraints"
+  },
+  {
+    "content": "F6: Rebalancer + cross-zero 拆单 tests",
+    "status": "completed",
+    "activeForm": "添加 Rebalancer"
+  },
+  {
+    "content": "F7: Trading Events + TradeControls",
+    "status": "completed",
+    "activeForm": "添加 Trading Events"
+  },
+  {
+    "content": "F8: 串行执行（先平后开）+ tests",
+    "status": "completed",
+    "activeForm": "添加串行执行"
+  },
+  {
+    "content": "F9: Trading Orchestrator + PAPER 测试",
+    "status": "completed",
+    "activeForm": "添加 Trading Orchestrator"
+  },
+  {
+    "content": "F10: 配置接入 + StrategyFactory + replay mode2 入口",
+    "status": "in_progress",
+    "activeForm": "添加配置和 mode2 入口"
+  }
+]

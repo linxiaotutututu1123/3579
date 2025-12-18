@@ -1,0 +1,42 @@
+[
+  {
+    "content": "Add Advanced Analysis GUI panel to desktop version",
+    "status": "in_progress",
+    "activeForm": "Adding Advanced Analysis GUI panel to desktop version"
+  },
+  {
+    "content": "Integrate ChartCanvas for wavelength/sensitivity visualization",
+    "status": "pending",
+    "activeForm": "Integrating ChartCanvas for wavelength/sensitivity visualization"
+  },
+  {
+    "content": "Add parameter optimization dialog",
+    "status": "pending",
+    "activeForm": "Adding parameter optimization dialog"
+  },
+  {
+    "content": "Add batch evaluation interface",
+    "status": "pending",
+    "activeForm": "Adding batch evaluation interface"
+  },
+  {
+    "content": "Add comparison analysis feature",
+    "status": "pending",
+    "activeForm": "Adding comparison analysis feature"
+  },
+  {
+    "content": "Create advanced analysis screen for mobile app",
+    "status": "pending",
+    "activeForm": "Creating advanced analysis screen for mobile app"
+  },
+  {
+    "content": "Add charts and visualizations to mobile app",
+    "status": "pending",
+    "activeForm": "Adding charts and visualizations to mobile app"
+  },
+  {
+    "content": "Rebuild EXE with all new features",
+    "status": "pending",
+    "activeForm": "Rebuilding EXE with all new features"
+  }
+]

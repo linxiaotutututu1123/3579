@@ -1,0 +1,1158 @@
+"""CTP行情网关单元测试 - Sprint 2 测试驱动开发
+
+使用pytest和unittest.mock模拟pyctp库的回调函数，
+验证CtpMarketGateway类的各项功能。
+
+测试原则：
+1. 每个测试遵循Arrange-Act-Assert结构
+2. 使用mock隔离外部依赖（pyctp SDK）
+3. 测试覆盖率目标>90%
+4. 性能测试使用pytest-benchmark（目标<1ms/次）
+
+场景覆盖（任务1.2要求）：
+1. 正常行情推送（验证TickData转换）
+2. 断线重连（模拟断线3次，验证指数退避间隔）
+3. 异常数据过滤（price=-1, volume=0）
+4. 重复订阅幂等性
+5. 配置错误（错误服务器地址）
+
+作者: Claude Code
+日期: 2024
+"""
+
+import asyncio
+import copy
+import time
+import pytest
+from decimal import Decimal
+from datetime import datetime
+from unittest.mock import AsyncMock, Mock, patch, MagicMock
+
+from src.models.tick_data import TickData
+from src.market_gateway.base import GatewayStatus
+from src.market_gateway.exceptions import (
+    ConnectionError,
+    ConfigError,
+    SubscriptionError,
+    ConnectionTimeoutError
+)
+from src.market_gateway.ctp_gateway import (
+    CtpMarketGateway,
+    CTP_INVALID_PRICE,
+    MAX_DATA_QUEUE_SIZE,
+    RECONNECT_ALERT_THRESHOLD
+)
+
+
+# ==============================================================================
+# 测试常量定义
+# ==============================================================================
+# 为什么定义常量：避免魔法数字，提高测试可维护性
+TEST_SYMBOL = "rb2401"  # 测试用合约代码
+TEST_SYMBOL_2 = "cu2401"  # 第二个测试合约
+TEST_EXCHANGE = "SHFE"  # 测试用交易所（上海期货交易所）
+TEST_PRICE = Decimal("3000.0")  # 测试用价格
+TEST_VOLUME = 1000  # 测试用成交量
+PERFORMANCE_TARGET_MS = 1  # 性能目标（毫秒）
+PERFORMANCE_TARGET_US = 1000  # 性能目标（微秒）
+
+
+# ==============================================================================
+# Fixtures - 测试数据和对象工厂
+# ==============================================================================
+
+class TestCtpMarketGatewayFixtures:
+    """测试Fixtures定义
+
+    集中管理所有测试所需的fixtures，确保测试数据一致性
+    """
+
+    @pytest.fixture
+    def mock_config(self):
+        """模拟配置对象 - 有效配置
+
+        为什么使用fixture：提供可重用的测试数据，避免重复代码
+
+        Returns:
+            Dict: 模拟的网关配置字典，包含所有必需字段
+        """
+        # Arrange: CTP连接配置
+        ctp_config = {
+            "front_addr": "tcp://180.168.146.187:10131",  # 有效的前置地址格式
+            "broker_id": "9999",  # 测试经纪商ID
+            "user_id": "test_user",
+            "password": "test_password",
+            "connect_timeout": 10,  # 连接超时（秒）
+            "heartbeat_interval": 30  # 心跳间隔（秒）
+        }
+
+        # Arrange: 网关主配置
+        gateway_config = {
+            "name": "TestGateway",
+            "enabled": True,
+            "ctp": ctp_config,
+            "max_reconnect_attempts": 3,  # 最大重连次数
+            "max_backoff_seconds": 60,  # 最大退避时间
+            "initial_backoff_seconds": 1,  # 初始退避时间
+            "max_subscriptions": 500  # 最大订阅数量
+        }
+
+        return gateway_config
+
+    @pytest.fixture
+    def sample_ctp_tick_data(self):
+        """模拟CTP格式的Tick数据 - 有效数据
+
+        为什么使用fixture：提供标准化的测试数据，确保测试一致性
+        模拟CTP SDK返回的深度行情数据结构
+
+        Returns:
+            Dict: 模拟的CTP Tick数据字典，包含所有行情字段
+        """
+        return {
+            # 合约信息
+            "InstrumentID": TEST_SYMBOL,
+            "ExchangeID": TEST_EXCHANGE,
+            # 价格信息
+            "LastPrice": float(TEST_PRICE),  # 最新价
+            "OpenPrice": 2980.0,  # 开盘价
+            "HighestPrice": 3050.0,  # 最高价
+            "LowestPrice": 2970.0,  # 最低价
+            "PreClosePrice": 2990.0,  # 昨收价
+            "PreSettlementPrice": 2985.0,  # 昨结算价
+            # 成交信息
+            "Volume": TEST_VOLUME,  # 成交量
+            "Turnover": 3000000.0,  # 成交额
+            "OpenInterest": 5000,  # 持仓量
+            # 买卖盘（五档行情，这里只用一档）
+            "BidPrice1": float(TEST_PRICE - Decimal("1.0")),  # 买一价
+            "AskPrice1": float(TEST_PRICE + Decimal("1.0")),  # 卖一价
+            "BidVolume1": 10,  # 买一量
+            "AskVolume1": 15,  # 卖一量
+            # 涨跌停价
+            "UpperLimitPrice": 3200.0,  # 涨停价
+            "LowerLimitPrice": 2800.0,  # 跌停价
+            # 时间戳
+            "UpdateTime": "15:00:00",  # 更新时间 HH:MM:SS
+            "UpdateMillisec": 500,  # 毫秒
+            "TradingDay": "20231201",  # 交易日
+            "ActionDay": "20231201"  # 自然日
+        }
+
+    @pytest.fixture
+    def mock_gateway(self, mock_config):
+        """模拟网关实例 - 已连接状态
+
+        为什么使用fixture：提供预配置的网关实例，简化测试设置
+        模拟CTP API以隔离外部依赖
+
+        Args:
+            mock_config: 注入的模拟配置
+
+        Yields:
+            CtpMarketGateway: 模拟的网关实例（已连接状态）
+        """
+        # Arrange: 创建网关实例
+        gateway = CtpMarketGateway(mock_config)
+
+        # Arrange: 模拟事件队列（避免真实事件处理）
+        gateway._event_queue = AsyncMock()
+
+        # RISK: 模拟API可能无法完全反映真实行为
+        # 为什么模拟API：隔离外部依赖，确保测试稳定性
+        gateway.api = Mock()
+        gateway.api.SubscribeMarketData = Mock(return_value=0)  # CTP返回0表示成功
+        gateway.api.UnSubscribeMarketData = Mock(return_value=0)
+        gateway.api.ReqUserLogin = Mock(return_value=0)
+        gateway.api.Release = Mock()
+
+        # Arrange: 模拟已连接状态，使subscribe等方法能正常工作
+        gateway.connected = True
+        gateway.logged_in = True
+        gateway.status = GatewayStatus.CONNECTED
+
+        yield gateway
+
+        # Teardown: 清理资源
+        gateway.subscribed_symbols.clear()
+
+    @pytest.fixture
+    def disconnected_gateway(self, mock_config):
+        """模拟网关实例 - 断开状态
+
+        用于测试重连逻辑
+
+        Yields:
+            CtpMarketGateway: 模拟的网关实例（断开状态）
+        """
+        gateway = CtpMarketGateway(mock_config)
+        gateway._event_queue = AsyncMock()
+        gateway.api = Mock()
+
+        # 断开状态
+        gateway.connected = False
+        gateway.logged_in = False
+        gateway.status = GatewayStatus.DISCONNECTED
+        gateway.should_reconnect = True
+        gateway.reconnect_attempts = 0
+
+        yield gateway
+
+
+# ==============================================================================
+# 测试类 - 场景1: 正常行情推送
+# ==============================================================================
+
+class TestCtpMarketGateway(TestCtpMarketGatewayFixtures):
+    """CtpMarketGateway核心功能测试类
+
+    测试覆盖范围（任务1.2要求）：
+    1. 正常行情数据处理
+    2. 断线重连机制
+    3. 异常数据过滤
+    4. 重复订阅幂等性
+    5. 配置错误处理
+    6. 性能基准测试
+    """
+
+    # ==========================================================================
+    # 场景1: 正常行情推送（验证TickData转换）
+    # ==========================================================================
+
+    @pytest.mark.asyncio
+    async def test_normal_tick_data_conversion(self, mock_gateway, sample_ctp_tick_data):
+        """测试正常行情推送 - 验证TickData转换
+
+        测试目的：验证有效的CTP Tick数据能正确转换为标准TickData对象
+
+        Arrange: 准备有效的CTP Tick数据和模拟网关
+        Act: 调用on_tick方法处理数据
+        Assert: 验证TickData对象创建成功且字段正确
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        ctp_data = sample_ctp_tick_data
+
+        # ==================== Act ====================
+        result = await gateway.on_tick(ctp_data)
+
+        # ==================== Assert ====================
+        # 验证返回类型
+        assert isinstance(result, TickData), "应该返回TickData对象"
+
+        # 验证合约信息
+        assert result.symbol == TEST_SYMBOL, f"合约代码应为{TEST_SYMBOL}"
+        assert result.exchange == TEST_EXCHANGE, f"交易所应为{TEST_EXCHANGE}"
+
+        # 验证价格信息
+        assert result.last_price == TEST_PRICE, f"最新价应为{TEST_PRICE}"
+        assert result.bid_price_1 == TEST_PRICE - Decimal("1.0"), "买一价应为2999.0"
+        assert result.ask_price_1 == TEST_PRICE + Decimal("1.0"), "卖一价应为3001.0"
+
+        # 验证成交信息
+        assert result.volume == TEST_VOLUME, f"成交量应为{TEST_VOLUME}"
+
+        # 验证数据有效性
+        assert result.is_valid is True, "数据应为有效状态"
+
+    @pytest.mark.asyncio
+    async def test_tick_data_conversion_with_decimal_precision(self, mock_gateway):
+        """测试Tick数据转换 - 验证Decimal精度保持
+
+        Arrange: 准备带小数的价格数据
+        Act: 转换为TickData
+        Assert: 验证Decimal精度没有丢失
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        precise_price = 3000.55  # 带小数的价格
+        ctp_data = {
+            "InstrumentID": TEST_SYMBOL,
+            "ExchangeID": TEST_EXCHANGE,
+            "LastPrice": precise_price,
+            "Volume": 100,
+            "Turnover": 300055.0,
+            "OpenInterest": 1000,
+            "BidPrice1": 3000.50,
+            "AskPrice1": 3000.60,
+            "BidVolume1": 5,
+            "AskVolume1": 8,
+            "UpdateTime": "10:30:00",
+            "UpdateMillisec": 123,
+            "TradingDay": "20231201",
+            "ActionDay": "20231201"
+        }
+
+        # ==================== Act ====================
+        result = await gateway.on_tick(ctp_data)
+
+        # ==================== Assert ====================
+        assert result is not None, "应该成功转换"
+        assert result.last_price == Decimal("3000.55"), "价格精度应保持"
+        assert result.bid_price_1 == Decimal("3000.50"), "买一价精度应保持"
+
+    @pytest.mark.asyncio
+    async def test_tick_statistics_increment(self, mock_gateway, sample_ctp_tick_data):
+        """测试Tick统计计数递增
+
+        Arrange: 准备网关和tick数据
+        Act: 多次处理tick数据
+        Assert: 验证统计计数正确递增
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        initial_received = gateway._stats['ticks_received']
+        initial_processed = gateway._stats['ticks_processed']
+
+        # ==================== Act ====================
+        await gateway.on_tick(sample_ctp_tick_data)
+        await gateway.on_tick(sample_ctp_tick_data)
+
+        # ==================== Assert ====================
+        # 注意：第二次可能因为乱序检测被过滤
+        assert gateway._stats['ticks_received'] == initial_received + 2
+
+    # ==========================================================================
+    # 场景2: 断线重连（模拟断线3次，验证指数退避间隔）
+    # ==========================================================================
+
+    @pytest.mark.asyncio
+    async def test_reconnect_exponential_backoff(self, mock_gateway):
+        """测试断线重连 - 验证指数退避间隔
+
+        测试目的：验证网关在连接断开时能够按照指数退避策略进行重连
+        退避序列：1s -> 2s -> 4s -> 8s -> ...
+
+        Arrange: 模拟连接断开，设置mock使前2次连接失败
+        Act: 触发重连机制
+        Assert: 验证重连尝试次数和时间间隔符合指数退避策略
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        gateway.status = GatewayStatus.DISCONNECTED
+        gateway.connected = False
+        gateway.logged_in = False
+        gateway.should_reconnect = True
+        gateway.reconnect_attempts = 0
+
+        # 记录连接尝试次数
+        connect_attempts = 0
+
+        # RISK: 重连逻辑错误可能导致无限循环
+        # 为什么模拟连接方法：控制重连行为，确保测试可预测
+        async def mock_connect():
+            nonlocal connect_attempts
+            connect_attempts += 1
+            if connect_attempts < 3:
+                # 前2次失败
+                raise ConnectionError(f"Connection failed (attempt {connect_attempts})")
+            # 第3次成功
+            gateway.connected = True
+            gateway.logged_in = True
+            gateway.status = GatewayStatus.CONNECTED
+            return True
+
+        gateway.connect = mock_connect
+
+        # 记录sleep调用的参数
+        sleep_calls = []
+
+        async def mock_sleep(seconds):
+            sleep_calls.append(seconds)
+
+        # ==================== Act ====================
+        with patch('asyncio.sleep', side_effect=mock_sleep):
+            reconnect_result = await gateway.reconnect()
+
+        # ==================== Assert ====================
+        # 验证最终重连成功
+        assert reconnect_result is True, "重连应该成功"
+
+        # 验证连接尝试次数
+        assert connect_attempts == 3, "应该尝试连接3次"
+
+        # 验证指数退避时间间隔
+        assert len(sleep_calls) == 2, "应该调用sleep 2次（第3次成功无需等待）"
+        assert sleep_calls[0] == 1, "第一次退避应为1秒"
+        assert sleep_calls[1] == 2, "第二次退避应为2秒（指数增长）"
+
+    @pytest.mark.asyncio
+    async def test_reconnect_max_attempts_reached(self, mock_config):
+        """测试重连 - 达到最大重连次数
+
+        Arrange: 设置max_reconnect_attempts=3，所有连接都失败
+        Act: 触发重连
+        Assert: 验证在3次后停止重连并返回False
+        """
+        # ==================== Arrange ====================
+        gateway = CtpMarketGateway(mock_config)
+        gateway._event_queue = AsyncMock()
+        gateway.status = GatewayStatus.DISCONNECTED
+        gateway.connected = False
+        gateway.should_reconnect = True
+        gateway.reconnect_attempts = 0
+
+        # 所有连接尝试都失败
+        async def always_fail_connect():
+            raise ConnectionError("Always fails")
+
+        gateway.connect = always_fail_connect
+
+        # ==================== Act ====================
+        with patch('asyncio.sleep', new_callable=AsyncMock):
+            result = await gateway.reconnect()
+
+        # ==================== Assert ====================
+        assert result is False, "应该重连失败"
+        assert gateway.reconnect_attempts == 3, "应该尝试3次"
+        assert gateway.status == GatewayStatus.ERROR, "状态应为ERROR"
+
+    @pytest.mark.asyncio
+    async def test_reconnect_disabled(self, mock_gateway):
+        """测试重连 - 重连被禁用
+
+        Arrange: 设置should_reconnect=False
+        Act: 尝试重连
+        Assert: 验证直接返回False，不进行任何连接尝试
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        gateway.should_reconnect = False
+        connect_called = False
+
+        async def track_connect():
+            nonlocal connect_called
+            connect_called = True
+            return True
+
+        gateway.connect = track_connect
+
+        # ==================== Act ====================
+        result = await gateway.reconnect()
+
+        # ==================== Assert ====================
+        assert result is False, "应该返回False"
+        assert connect_called is False, "不应该调用connect"
+
+    @pytest.mark.asyncio
+    async def test_reconnect_resubscribes_symbols(self, mock_gateway):
+        """测试重连 - 自动重新订阅合约
+
+        Arrange: 网关已订阅合约，然后断开
+        Act: 重连成功
+        Assert: 验证之前订阅的合约被重新订阅
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        # 先订阅一些合约
+        gateway.subscribed_symbols = {"rb2401", "cu2401"}
+        original_symbols = gateway.subscribed_symbols.copy()
+
+        gateway.status = GatewayStatus.DISCONNECTED
+        gateway.connected = False
+        gateway.logged_in = False
+        gateway.should_reconnect = True
+        gateway.reconnect_attempts = 0
+
+        # 记录subscribe调用
+        subscribed_symbols = []
+
+        async def mock_connect():
+            gateway.connected = True
+            gateway.logged_in = True
+            gateway.status = GatewayStatus.CONNECTED
+            return True
+
+        async def mock_subscribe(symbols):
+            subscribed_symbols.extend(symbols)
+            for s in symbols:
+                gateway.subscribed_symbols.add(s)
+            return {s: True for s in symbols}
+
+        gateway.connect = mock_connect
+        gateway.subscribe = mock_subscribe
+
+        # ==================== Act ====================
+        with patch('asyncio.sleep', new_callable=AsyncMock):
+            result = await gateway.reconnect()
+
+        # ==================== Assert ====================
+        assert result is True
+        assert set(subscribed_symbols) == original_symbols, "应该重新订阅所有原有合约"
+
+    # ==========================================================================
+    # 场景3: 异常数据过滤（price=-1, volume=0）
+    # ==========================================================================
+
+    @pytest.mark.asyncio
+    async def test_invalid_data_filtering_negative_price(self, mock_gateway):
+        """测试异常数据过滤 - 负价格 (price=-1)
+
+        Arrange: 准备无效的CTP Tick数据（价格为负数）
+        Act: 调用on_tick方法处理数据
+        Assert: 验证无效数据被过滤，返回None
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        invalid_tick_data = {
+            "InstrumentID": TEST_SYMBOL,
+            "ExchangeID": TEST_EXCHANGE,
+            "LastPrice": -1,  # 无效价格：负数
+            "Volume": TEST_VOLUME,
+            "Turnover": 3000000.0,
+            "OpenInterest": 5000,
+            "BidPrice1": 2999.0,
+            "AskPrice1": 3001.0,
+            "BidVolume1": 10,
+            "AskVolume1": 15,
+            "UpdateTime": "15:00:00",
+            "UpdateMillisec": 500,
+            "TradingDay": "20231201",
+            "ActionDay": "20231201"
+        }
+
+        # ==================== Act ====================
+        result = await gateway.on_tick(invalid_tick_data)
+
+        # ==================== Assert ====================
+        assert result is None, "负价格数据应该被过滤"
+        assert gateway._stats['ticks_filtered'] > 0, "过滤计数应该增加"
+
+    @pytest.mark.asyncio
+    async def test_invalid_data_filtering_zero_price(self, mock_gateway):
+        """测试异常数据过滤 - 零价格 (price=0)
+
+        Arrange: 准备价格为0的CTP Tick数据
+        Act: 调用on_tick方法处理数据
+        Assert: 验证无效数据被过滤
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        invalid_tick_data = {
+            "InstrumentID": TEST_SYMBOL,
+            "ExchangeID": TEST_EXCHANGE,
+            "LastPrice": 0,  # 无效价格：零
+            "Volume": TEST_VOLUME,
+            "Turnover": 0,
+            "OpenInterest": 5000,
+            "UpdateTime": "15:00:00",
+            "UpdateMillisec": 500,
+            "TradingDay": "20231201",
+            "ActionDay": "20231201"
+        }
+
+        # ==================== Act ====================
+        result = await gateway.on_tick(invalid_tick_data)
+
+        # ==================== Assert ====================
+        assert result is None, "零价格数据应该被过滤"
+
+    @pytest.mark.asyncio
+    async def test_invalid_data_filtering_ctp_invalid_price(self, mock_gateway):
+        """测试异常数据过滤 - CTP无效价格标识 (DBL_MAX)
+
+        CTP使用 DBL_MAX (1.7976931348623157e+308) 表示无效价格
+
+        Arrange: 准备使用CTP_INVALID_PRICE的数据
+        Act: 调用on_tick方法
+        Assert: 验证数据被过滤
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        invalid_tick_data = {
+            "InstrumentID": TEST_SYMBOL,
+            "ExchangeID": TEST_EXCHANGE,
+            "LastPrice": CTP_INVALID_PRICE,  # CTP的无效价格标识
+            "Volume": TEST_VOLUME,
+            "Turnover": 3000000.0,
+            "OpenInterest": 5000,
+            "UpdateTime": "15:00:00",
+            "UpdateMillisec": 500,
+            "TradingDay": "20231201",
+            "ActionDay": "20231201"
+        }
+
+        # ==================== Act ====================
+        result = await gateway.on_tick(invalid_tick_data)
+
+        # ==================== Assert ====================
+        assert result is None, "CTP无效价格标识数据应该被过滤"
+
+    @pytest.mark.asyncio
+    async def test_invalid_data_filtering_negative_volume(self, mock_gateway):
+        """测试异常数据过滤 - 负成交量
+
+        Arrange: 准备成交量为负数的数据
+        Act: 调用on_tick方法
+        Assert: 验证数据被过滤
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        invalid_tick_data = {
+            "InstrumentID": TEST_SYMBOL,
+            "ExchangeID": TEST_EXCHANGE,
+            "LastPrice": float(TEST_PRICE),
+            "Volume": -100,  # 无效成交量：负数
+            "Turnover": 3000000.0,
+            "OpenInterest": 5000,
+            "UpdateTime": "15:00:00",
+            "UpdateMillisec": 500,
+            "TradingDay": "20231201",
+            "ActionDay": "20231201"
+        }
+
+        # ==================== Act ====================
+        result = await gateway.on_tick(invalid_tick_data)
+
+        # ==================== Assert ====================
+        assert result is None, "负成交量数据应该被过滤"
+
+    @pytest.mark.asyncio
+    async def test_invalid_data_filtering_missing_required_field(self, mock_gateway):
+        """测试异常数据过滤 - 缺少必要字段
+
+        Arrange: 准备缺少LastPrice字段的数据
+        Act: 调用on_tick方法
+        Assert: 验证数据被过滤
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        invalid_tick_data = {
+            "InstrumentID": TEST_SYMBOL,
+            "ExchangeID": TEST_EXCHANGE,
+            # 缺少 LastPrice
+            "Volume": TEST_VOLUME,
+            "Turnover": 3000000.0,
+            "OpenInterest": 5000,
+            "UpdateTime": "15:00:00",
+            "UpdateMillisec": 500,
+            "TradingDay": "20231201",
+            "ActionDay": "20231201"
+        }
+
+        # ==================== Act ====================
+        result = await gateway.on_tick(invalid_tick_data)
+
+        # ==================== Assert ====================
+        assert result is None, "缺少必要字段的数据应该被过滤"
+
+    @pytest.mark.asyncio
+    async def test_invalid_data_filtering_missing_timestamp(self, mock_gateway):
+        """测试异常数据过滤 - 缺少时间戳
+
+        Arrange: 准备缺少UpdateTime和TradingDay的数据
+        Act: 调用on_tick方法
+        Assert: 验证数据被过滤
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        invalid_tick_data = {
+            "InstrumentID": TEST_SYMBOL,
+            "ExchangeID": TEST_EXCHANGE,
+            "LastPrice": float(TEST_PRICE),
+            "Volume": TEST_VOLUME,
+            "Turnover": 3000000.0,
+            "OpenInterest": 5000,
+            # 缺少 UpdateTime 和 TradingDay
+        }
+
+        # ==================== Act ====================
+        result = await gateway.on_tick(invalid_tick_data)
+
+        # ==================== Assert ====================
+        assert result is None, "缺少时间戳的数据应该被过滤"
+
+    # ==========================================================================
+    # 场景4: 重复订阅幂等性
+    # ==========================================================================
+
+    @pytest.mark.asyncio
+    async def test_duplicate_subscription_idempotency(self, mock_gateway):
+        """测试重复订阅幂等性 - 多次订阅相同合约
+
+        Arrange: 准备模拟网关和合约列表
+        Act: 多次订阅同一合约
+        Assert: 验证订阅结果一致，不会重复订阅
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        symbols = [TEST_SYMBOL, TEST_SYMBOL_2]
+
+        # ==================== Act ====================
+        result1 = await gateway.subscribe(symbols)
+        result2 = await gateway.subscribe(symbols)  # 重复订阅
+
+        # ==================== Assert ====================
+        # 两次订阅结果应该一致（都成功）
+        assert result1 == result2, "重复订阅结果应一致"
+
+        # 验证订阅列表中不重复
+        assert len(gateway.subscribed_symbols) == len(symbols), "订阅数量应等于合约数量"
+        assert all(symbol in gateway.subscribed_symbols for symbol in symbols)
+
+    @pytest.mark.asyncio
+    async def test_partial_duplicate_subscription(self, mock_gateway):
+        """测试部分重复订阅幂等性
+
+        Arrange: 先订阅一部分合约
+        Act: 再订阅包含已订阅合约的新列表
+        Assert: 只有新合约被订阅，已订阅的不重复处理
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        first_symbols = [TEST_SYMBOL]
+        second_symbols = [TEST_SYMBOL, TEST_SYMBOL_2]  # 包含已订阅的rb2401
+
+        # ==================== Act ====================
+        result1 = await gateway.subscribe(first_symbols)
+        result2 = await gateway.subscribe(second_symbols)
+
+        # ==================== Assert ====================
+        assert result1[TEST_SYMBOL] is True
+        assert result2[TEST_SYMBOL] is True
+        assert result2[TEST_SYMBOL_2] is True
+        assert len(gateway.subscribed_symbols) == 2, "应该只有2个订阅"
+
+    @pytest.mark.asyncio
+    async def test_subscription_not_connected(self, mock_config):
+        """测试未连接时订阅 - 应该抛出异常
+
+        Arrange: 创建未连接的网关
+        Act: 尝试订阅
+        Assert: 验证抛出SubscriptionError
+        """
+        # ==================== Arrange ====================
+        gateway = CtpMarketGateway(mock_config)
+        gateway.connected = False
+        gateway.logged_in = False
+
+        # ==================== Act & Assert ====================
+        with pytest.raises(SubscriptionError) as exc_info:
+            await gateway.subscribe([TEST_SYMBOL])
+
+        assert "not connected" in str(exc_info.value).lower()
+
+    @pytest.mark.asyncio
+    async def test_empty_subscription_list(self, mock_gateway):
+        """测试空订阅列表
+
+        Arrange: 准备空的合约列表
+        Act: 调用subscribe
+        Assert: 返回空结果，不抛出异常
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+
+        # ==================== Act ====================
+        result = await gateway.subscribe([])
+
+        # ==================== Assert ====================
+        assert result == {}, "空列表应返回空结果"
+
+    # ==========================================================================
+    # 场景5: 配置错误（错误服务器地址）
+    # ==========================================================================
+
+    @pytest.mark.asyncio
+    async def test_config_error_invalid_address_format(self, mock_config):
+        """测试配置错误 - 无效的服务器地址格式
+
+        Arrange: 准备错误的配置（无效服务器地址）
+        Act: 尝试初始化网关
+        Assert: 验证抛出ConfigError
+        """
+        # ==================== Arrange ====================
+        invalid_config = copy.deepcopy(mock_config)
+        invalid_config["ctp"]["front_addr"] = "invalid_address"  # 无效地址格式
+
+        # ==================== Act & Assert ====================
+        with pytest.raises(ConfigError):
+            CtpMarketGateway(invalid_config)
+
+    @pytest.mark.asyncio
+    async def test_config_error_missing_ctp_section(self, mock_config):
+        """测试配置错误 - 缺少CTP配置节
+
+        Arrange: 删除ctp配置节
+        Act: 尝试初始化网关
+        Assert: 验证抛出ConfigError
+        """
+        # ==================== Arrange ====================
+        invalid_config = copy.deepcopy(mock_config)
+        del invalid_config["ctp"]
+
+        # ==================== Act & Assert ====================
+        with pytest.raises(ConfigError):
+            CtpMarketGateway(invalid_config)
+
+    @pytest.mark.asyncio
+    async def test_config_error_missing_broker_id(self, mock_config):
+        """测试配置错误 - 缺少broker_id
+
+        Arrange: 删除broker_id字段
+        Act: 尝试初始化网关
+        Assert: 验证抛出ConfigError
+        """
+        # ==================== Arrange ====================
+        invalid_config = copy.deepcopy(mock_config)
+        del invalid_config["ctp"]["broker_id"]
+
+        # ==================== Act & Assert ====================
+        with pytest.raises(ConfigError):
+            CtpMarketGateway(invalid_config)
+
+    @pytest.mark.asyncio
+    async def test_config_with_http_address(self, mock_config):
+        """测试配置错误 - HTTP协议地址（应该是TCP）
+
+        Arrange: 使用http://开头的地址
+        Act: 尝试初始化网关
+        Assert: 验证抛出ConfigError
+        """
+        # ==================== Arrange ====================
+        invalid_config = copy.deepcopy(mock_config)
+        invalid_config["ctp"]["front_addr"] = "http://180.168.146.187:10131"
+
+        # ==================== Act & Assert ====================
+        with pytest.raises(ConfigError):
+            CtpMarketGateway(invalid_config)
+
+    # ==========================================================================
+    # 场景6: 性能基准测试（目标 <1ms/次）
+    # ==========================================================================
+
+    @pytest.mark.benchmark
+    def test_tick_processing_performance(self, mock_gateway, sample_ctp_tick_data, benchmark):
+        """测试Tick数据处理性能 - 目标<1ms/次
+
+        使用pytest-benchmark测试on_tick方法的处理性能
+
+        Arrange: 准备有效的CTP Tick数据和模拟网关
+        Act: 使用benchmark重复测试on_tick方法性能
+        Assert: 验证平均处理时间小于1ms
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        ctp_data = sample_ctp_tick_data.copy()
+
+        # ==================== Act ====================
+        # 为避免乱序检测，每次使用不同的时间戳
+        counter = [0]
+
+        def process_tick():
+            counter[0] += 1
+            data = ctp_data.copy()
+            # 修改时间以避免乱序检测
+            data["UpdateTime"] = f"15:{counter[0] // 60:02d}:{counter[0] % 60:02d}"
+            return asyncio.run(gateway.on_tick(data))
+
+        result = benchmark(process_tick)
+
+        # ==================== Assert ====================
+        assert isinstance(result, TickData), "应该返回有效的TickData"
+        # benchmark会自动报告性能统计，这里只验证功能正确性
+
+    @pytest.mark.benchmark
+    def test_data_cleaning_performance(self, mock_gateway, sample_ctp_tick_data, benchmark):
+        """测试数据清洗性能
+
+        单独测试_clean_tick_data方法的性能
+
+        Arrange: 准备CTP数据
+        Act: 重复调用_clean_tick_data
+        Assert: 验证性能在可接受范围内
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        ctp_data = sample_ctp_tick_data
+
+        # ==================== Act & Assert ====================
+        def clean_data():
+            return gateway._clean_tick_data(ctp_data)
+
+        result = benchmark(clean_data)
+        assert result is not None, "清洗后应返回有效数据"
+
+
+# ==============================================================================
+# 额外测试 - 边界条件和特殊场景
+# ==============================================================================
+
+class TestCtpMarketGatewayEdgeCases(TestCtpMarketGatewayFixtures):
+    """边界条件和特殊场景测试"""
+
+    @pytest.mark.asyncio
+    async def test_out_of_order_tick_detection(self, mock_gateway, sample_ctp_tick_data):
+        """测试乱序Tick检测
+
+        Arrange: 发送两条tick，第二条时间戳更早
+        Act: 处理两条tick
+        Assert: 第二条被丢弃，统计计数正确
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+
+        # 第一条：15:00:01
+        tick1 = sample_ctp_tick_data.copy()
+        tick1["UpdateTime"] = "15:00:01"
+
+        # 第二条：15:00:00（更早，应该被丢弃）
+        tick2 = sample_ctp_tick_data.copy()
+        tick2["UpdateTime"] = "15:00:00"
+
+        # ==================== Act ====================
+        result1 = await gateway.on_tick(tick1)
+        result2 = await gateway.on_tick(tick2)
+
+        # ==================== Assert ====================
+        assert result1 is not None, "第一条应该成功处理"
+        assert result2 is None, "乱序数据应该被丢弃"
+        assert gateway._stats['ticks_out_of_order'] >= 1, "乱序计数应该增加"
+
+    @pytest.mark.asyncio
+    async def test_gateway_stats_reset(self, mock_gateway, sample_ctp_tick_data):
+        """测试统计信息重置
+
+        Arrange: 处理一些tick
+        Act: 重置统计
+        Assert: 所有计数归零
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        await gateway.on_tick(sample_ctp_tick_data)
+
+        # ==================== Act ====================
+        gateway.reset_stats()
+
+        # ==================== Assert ====================
+        assert gateway._stats['ticks_received'] == 0
+        assert gateway._stats['ticks_processed'] == 0
+        assert gateway._stats['errors'] == 0
+
+    @pytest.mark.asyncio
+    async def test_get_stats_returns_copy(self, mock_gateway):
+        """测试get_stats返回的是副本而非引用
+
+        Arrange: 获取统计信息
+        Act: 修改返回值
+        Assert: 原始数据不受影响
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        original_received = gateway._stats['ticks_received']
+
+        # ==================== Act ====================
+        stats = gateway.get_stats()
+        stats['ticks_received'] = 99999
+
+        # ==================== Assert ====================
+        assert gateway._stats['ticks_received'] == original_received
+
+    @pytest.mark.asyncio
+    async def test_tick_cache_lru_behavior(self, mock_gateway):
+        """测试Tick缓存LRU行为
+
+        Arrange: 发送多个不同合约的tick
+        Act: 获取最新tick
+        Assert: 缓存正确存储和检索
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+
+        tick1 = {
+            "InstrumentID": "rb2401",
+            "ExchangeID": "SHFE",
+            "LastPrice": 3000.0,
+            "Volume": 100,
+            "Turnover": 300000.0,
+            "OpenInterest": 1000,
+            "UpdateTime": "10:00:00",
+            "UpdateMillisec": 0,
+            "TradingDay": "20231201",
+            "ActionDay": "20231201"
+        }
+
+        tick2 = {
+            "InstrumentID": "cu2401",
+            "ExchangeID": "SHFE",
+            "LastPrice": 65000.0,
+            "Volume": 50,
+            "Turnover": 3250000.0,
+            "OpenInterest": 500,
+            "UpdateTime": "10:00:00",
+            "UpdateMillisec": 0,
+            "TradingDay": "20231201",
+            "ActionDay": "20231201"
+        }
+
+        # ==================== Act ====================
+        await gateway.on_tick(tick1)
+        await gateway.on_tick(tick2)
+
+        # ==================== Assert ====================
+        rb_tick = gateway.get_latest_tick("rb2401")
+        cu_tick = gateway.get_latest_tick("cu2401")
+
+        assert rb_tick is not None, "rb2401应该在缓存中"
+        assert cu_tick is not None, "cu2401应该在缓存中"
+        assert rb_tick.last_price == Decimal("3000")
+        assert cu_tick.last_price == Decimal("65000")
+
+    @pytest.mark.asyncio
+    async def test_unsubscribe_symbols(self, mock_gateway):
+        """测试取消订阅
+
+        Arrange: 先订阅合约
+        Act: 取消订阅
+        Assert: 订阅列表正确更新
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        symbols = [TEST_SYMBOL, TEST_SYMBOL_2]
+        await gateway.subscribe(symbols)
+
+        # ==================== Act ====================
+        result = await gateway.unsubscribe([TEST_SYMBOL])
+
+        # ==================== Assert ====================
+        assert result[TEST_SYMBOL] is True
+        assert TEST_SYMBOL not in gateway.subscribed_symbols
+        assert TEST_SYMBOL_2 in gateway.subscribed_symbols
+
+    @pytest.mark.asyncio
+    async def test_is_healthy_when_connected(self, mock_gateway):
+        """测试健康检查 - 已连接状态
+
+        Arrange: 网关已连接
+        Act: 检查健康状态
+        Assert: 返回True
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        gateway.status = GatewayStatus.CONNECTED
+        gateway.connected = True
+        gateway.logged_in = True
+
+        # ==================== Act ====================
+        is_healthy = gateway.is_healthy()
+
+        # ==================== Assert ====================
+        assert is_healthy is True
+
+    @pytest.mark.asyncio
+    async def test_is_healthy_when_disconnected(self, mock_gateway):
+        """测试健康检查 - 断开状态
+
+        Arrange: 网关断开
+        Act: 检查健康状态
+        Assert: 返回False
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        gateway.status = GatewayStatus.DISCONNECTED
+        gateway.connected = False
+
+        # ==================== Act ====================
+        is_healthy = gateway.is_healthy()
+
+        # ==================== Assert ====================
+        assert is_healthy is False
+
+
+# ==============================================================================
+# CTP回调函数测试
+# ==============================================================================
+
+class TestCtpCallbacks(TestCtpMarketGatewayFixtures):
+    """CTP SDK回调函数测试"""
+
+    def test_on_front_connected_callback(self, mock_gateway):
+        """测试OnFrontConnected回调
+
+        Arrange: 网关未连接状态
+        Act: 触发OnFrontConnected回调
+        Assert: connected状态变为True
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        gateway.connected = False
+
+        # ==================== Act ====================
+        gateway.OnFrontConnected()
+
+        # ==================== Assert ====================
+        assert gateway.connected is True
+
+    def test_on_front_disconnected_callback(self, mock_gateway):
+        """测试OnFrontDisconnected回调
+
+        Arrange: 网关已连接
+        Act: 触发OnFrontDisconnected回调
+        Assert: 状态变为断开，触发重连
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        gateway.should_reconnect = False  # 禁用自动重连避免异步问题
+
+        # ==================== Act ====================
+        gateway.OnFrontDisconnected(0x1001)  # 网络读取失败
+
+        # ==================== Assert ====================
+        assert gateway.connected is False
+        assert gateway.logged_in is False
+        assert gateway.status == GatewayStatus.DISCONNECTED
+
+    def test_on_rsp_user_login_success(self, mock_gateway):
+        """测试OnRspUserLogin回调 - 登录成功
+
+        Arrange: 准备成功的响应信息
+        Act: 触发回调
+        Assert: 状态更新为已登录
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+        gateway.logged_in = False
+
+        mock_rsp_info = Mock()
+        mock_rsp_info.ErrorID = 0  # 成功
+
+        # ==================== Act ====================
+        gateway.OnRspUserLogin(None, mock_rsp_info, 1, True)
+
+        # ==================== Assert ====================
+        assert gateway.logged_in is True
+        assert gateway.status == GatewayStatus.CONNECTED
+
+    def test_on_rsp_user_login_failure(self, mock_gateway):
+        """测试OnRspUserLogin回调 - 登录失败
+
+        Arrange: 准备失败的响应信息
+        Act: 触发回调
+        Assert: 状态更新为错误
+        """
+        # ==================== Arrange ====================
+        gateway = mock_gateway
+
+        mock_rsp_info = Mock()
+        mock_rsp_info.ErrorID = 1  # 失败
+        mock_rsp_info.ErrorMsg = "认证失败"
+
+        # ==================== Act ====================
+        gateway.OnRspUserLogin(None, mock_rsp_info, 1, True)
+
+        # ==================== Assert ====================
+        assert gateway.status == GatewayStatus.ERROR
+
+
+# ==============================================================================
+# 入口点
+# ==============================================================================
+
+__all__ = [
+    'TestCtpMarketGateway',
+    'TestCtpMarketGatewayEdgeCases',
+    'TestCtpCallbacks'
+]
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--benchmark-disable"])

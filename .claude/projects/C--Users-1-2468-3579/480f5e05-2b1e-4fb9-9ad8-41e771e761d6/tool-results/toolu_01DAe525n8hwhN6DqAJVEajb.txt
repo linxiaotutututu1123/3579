@@ -1,0 +1,141 @@
+     1→from __future__ import annotations
+     2→
+     3→import hashlib
+     4→import time
+     5→import uuid
+     6→from collections.abc import Callable, Mapping, Sequence
+     7→from dataclasses import dataclass
+     8→
+     9→from src.execution.events import ExecutionEvent
+    10→from src.execution.flatten_executor import ExecutionRecord, FlattenExecutor
+    11→from src.execution.flatten_plan import (
+    12→    BookTop,
+    13→    FlattenSpec,
+    14→    PositionToClose,
+    15→    build_flatten_intents,
+    16→)
+    17→from src.risk.events import RiskEvent, RiskEventType
+    18→from src.risk.manager import RiskManager
+    19→from src.risk.state import AccountSnapshot
+    20→from src.trading.utils import stable_json
+    21→
+    22→
+    23→NowCb = Callable[[], float]
+    24→Event = RiskEvent | ExecutionEvent
+    25→
+    26→
+    27→@dataclass(frozen=True)
+    28→class OrchestratorResult:
+    29→    correlation_id: str
+    30→    snapshot_hash: str
+    31→    events: list[Event]
+    32→    execution_records: list[ExecutionRecord]
+    33→
+    34→
+    35→def _hash_snapshot(
+    36→    *,
+    37→    snap: AccountSnapshot,
+    38→    positions: Sequence[PositionToClose],
+    39→    books: Mapping[str, BookTop],
+    40→) -> str:
+    41→    pos_data = [
+    42→        {
+    43→            "symbol": p.symbol,
+    44→            "net_qty": p.net_qty,
+    45→            "today_qty": p.today_qty,
+    46→            "yesterday_qty": p.yesterday_qty,
+    47→        }
+    48→        for p in sorted(positions, key=lambda x: x.symbol)
+    49→    ]
+    50→    book_data = {
+    51→        sym: {"best_bid": b.best_bid, "best_ask": b.best_ask, "tick": b.tick}
+    52→        for sym, b in sorted(books.items(), key=lambda kv: kv[0])
+    53→    }
+    54→    payload = {
+    55→        "snap": {"equity": snap.equity, "margin_used": snap.margin_used},
+    56→        "positions": pos_data,
+    57→        "books": book_data,
+    58→    }
+    59→    raw = stable_json(payload).encode("utf-8")
+    60→    return hashlib.sha256(raw).hexdigest()
+    61→
+    62→
+    63→def handle_risk_update(
+    64→    *,
+    65→    risk: RiskManager,
+    66→    executor: FlattenExecutor,
+    67→    snap: AccountSnapshot,
+    68→    positions: Sequence[PositionToClose],
+    69→    books: Mapping[str, BookTop],
+    70→    flatten_spec: FlattenSpec | None = None,
+    71→    now_cb: NowCb = time.time,
+    72→    max_rejections: int = 10,  # HG-5
+    73→) -> OrchestratorResult:
+    74→    correlation_id = uuid.uuid4().hex
+    75→    snapshot_hash = _hash_snapshot(snap=snap, positions=positions, books=books)
+    76→
+    77→    risk.update(snap, correlation_id=correlation_id)
+    78→    base_risk_events = risk.pop_events()
+    79→
+    80→    audit_event = RiskEvent(
+    81→        type=RiskEventType.AUDIT_SNAPSHOT,
+    82→        ts=now_cb(),
+    83→        correlation_id=correlation_id,
+    84→        data={"snapshot_hash": snapshot_hash},
+    85→    )
+    86→
+    87→    exec_records: list[ExecutionRecord] = []
+    88→    exec_events: list[ExecutionEvent] = []
+    89→
+    90→    kill_fired = any(
+    91→        e.type == RiskEventType.KILL_SWITCH_FIRED for e in base_risk_events
+    92→    )
+    93→    if kill_fired and risk.try_start_flatten(correlation_id=correlation_id):
+    94→        spec = flatten_spec or FlattenSpec()
+    95→        rejections = 0
+    96→
+    97→        for pos in positions:
+    98→            book = books.get(pos.symbol)
+    99→            if book is None:
+   100→                risk.emit(
+   101→                    event_type=RiskEventType.DATA_QUALITY_MISSING_BOOK,
+   102→                    correlation_id=correlation_id,
+   103→                    data={"symbol": pos.symbol},
+   104→                )
+   105→                continue
+   106→
+   107→            intents = build_flatten_intents(pos=pos, book=book, spec=spec)
+   108→            recs = executor.execute(intents, correlation_id=correlation_id)
+   109→            exec_records.extend(recs)
+   110→
+   111→            rejections += sum(1 for r in recs if not r.ok)
+   112→            if rejections >= max_rejections:
+   113→                risk.emit(
+   114→                    event_type=RiskEventType.FLATTEN_ABORTED_TOO_MANY_REJECTIONS,
+   115→                    correlation_id=correlation_id,
+   116→                    data={"rejections": rejections, "max_rejections": max_rejections},
+   117→                )
+   118→                break
+   119→
+   120→        exec_events = executor.drain_events()
+   121→        risk.mark_flatten_done(correlation_id=correlation_id)
+   122→
+   123→    all_risk_events = risk.pop_events()
+   124→    events: list[Event] = [
+   125→        audit_event,
+   126→        *base_risk_events,
+   127→        *all_risk_events,
+   128→        *exec_events,
+   129→    ]
+   130→
+   131→    return OrchestratorResult(
+   132→        correlation_id=correlation_id,
+   133→        snapshot_hash=snapshot_hash,
+   134→        events=events,
+   135→        execution_records=exec_records,
+   136→    )
+   137→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

@@ -1,0 +1,97 @@
+[
+  {
+    "content": "查看现有代码结构，了解当前实现状态",
+    "status": "completed",
+    "activeForm": "已查看现有代码结构"
+  },
+  {
+    "content": "修复Python代码执行问题，确保能够正常运行",
+    "status": "in_progress",
+    "activeForm": "正在修复代码执行问题"
+  },
+  {
+    "content": "修复日志编码问题，确保Unicode字符正确显示",
+    "status": "pending",
+    "activeForm": "修复日志编码问题"
+  },
+  {
+    "content": "修复Sellmeier方程中n²为负值的问题",
+    "status": "pending",
+    "activeForm": "修复Sellmeier方程负值问题"
+  },
+  {
+    "content": "修复菲涅尔计算中DivisionUndefined错误",
+    "status": "pending",
+    "activeForm": "修复菲涅尔计算错误"
+  },
+  {
+    "content": "修复Decimal和float类型混用问题",
+    "status": "completed",
+    "activeForm": "已修复Decimal类型混用问题"
+  },
+  {
+    "content": "验证基准钻石参数设置，确保最完美的钻石获得满分",
+    "status": "pending",
+    "activeForm": "验证基准钻石参数"
+  },
+  {
+    "content": "升级Sellmeier方程，增加更多波长点和更高精度",
+    "status": "pending",
+    "activeForm": "升级Sellmeier方程"
+  },
+  {
+    "content": "增强光线追踪算法，提高蒙特卡洛模拟精度",
+    "status": "pending",
+    "activeForm": "增强光线追踪算法"
+  },
+  {
+    "content": "优化高精度数学函数，提高计算精度",
+    "status": "pending",
+    "activeForm": "优化数学函数精度"
+  },
+  {
+    "content": "增加更全面的光学模型（偏振、干涉、衍射等）",
+    "status": "pending",
+    "activeForm": "增加全面光学模型"
+  },
+  {
+    "content": "改进色散计算模型，使用更精确的色散公式",
+    "status": "pending",
+    "activeForm": "改进色散计算模型"
+  },
+  {
+    "content": "增强表面粗糙度建模，提高真实感",
+    "status": "pending",
+    "activeForm": "增强表面粗糙度建模"
+  },
+  {
+    "content": "优化多次反射分析，考虑更多反射路径",
+    "status": "pending",
+    "activeForm": "优化多次反射分析"
+  },
+  {
+    "content": "增强波长相关吸收模型",
+    "status": "pending",
+    "activeForm": "增强波长相关吸收模型"
+  },
+  {
+    "content": "实现全部计算核心和所有功能，确保模型百分百全能实现",
+    "status": "pending",
+    "activeForm": "实现全部计算核心"
+  },
+  {
+    "content": "UI界面全中文汉化，确保用户友好",
+    "status": "pending",
+    "activeForm": "UI界面中文汉化"
+  },
+  {
+    "content": "为代码重新写注解和介绍，作者署名林小兔",
+    "status": "pending",
+    "activeForm": "编写注解和介绍"
+  },
+  {
+    "content": "改进GUI可视化功能，提供更丰富的展示",
+    "status": "pending",
+    "activeForm": "改进GUI可视化"
+  }
+]

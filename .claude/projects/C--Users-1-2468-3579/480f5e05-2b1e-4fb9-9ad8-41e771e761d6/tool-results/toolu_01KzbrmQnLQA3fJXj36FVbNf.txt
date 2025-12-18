@@ -1,0 +1,4 @@
+src\risk\dynamic_var.py:563: error: Statement is unreachable  [unreachable]
+            self._calculation_count += 1
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Found 1 error in 1 file (checked 142 source files)

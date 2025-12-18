@@ -1,0 +1,310 @@
+Exit code 1
+RUF002 Docstring contains ambiguous `，` (FULLWIDTH COMMA). Did you mean `,` (COMMA)?
+ --> src\app\config.py:3:10
+  |
+1 | """应用配置模块 (军规级 v4.0).
+2 |
+3 | 提供应用级配置管理，包括:
+  |                   ^^
+4 | - 配置数据类定义
+5 | - 环境变量加载
+  |
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+   --> src\app\config.py:247:9
+    |
+246 |           # PROD环境特殊验证
+247 | /         if self.environment == Environment.PROD:
+248 | |             if self.debug:
+    | |__________________________^
+249 |                   errors.append("PROD环境不允许开启debug模式")
+    |
+help: Combine `if` statements using `and`
+
+RUF002 Docstring contains ambiguous `，` (FULLWIDTH COMMA). Did you mean `,` (COMMA)?
+   --> src\app\config.py:308:26
+    |
+307 |     参数:
+308 |         environment: 运行环境，为None则从环境变量读取
+    |                              ^^
+309 |         require_complete: 是否要求配置完整
+    |
+
+PERF401 Use a list comprehension to create a transformed list
+   --> src\app\config.py:336:17
+    |
+334 |         for var in REQUIRED_PROD_ENV_VARS:
+335 |             if not os.environ.get(var):
+336 |                 missing_vars.append(var)
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^
+337 |
+338 |         if missing_vars:
+    |
+help: Replace for loop with list comprehension
+
+TRY003 Avoid specifying long messages outside the exception class
+   --> src\app\config.py:339:19
+    |
+338 |           if missing_vars:
+339 |               raise ConfigMissingError(
+    |  ___________________^
+340 | |                 f"缺失必需的环境变量: {', '.join(missing_vars)}。"
+341 | |                 f"请在{environment.value}模式下设置这些环境变量。"
+342 | |             )
+    | |_____________^
+343 |
+344 |       # 加载数据库配置
+    |
+
+TRY003 Avoid specifying long messages outside the exception class
+   --> src\app\config.py:386:19
+    |
+384 |         errors = config.validate()
+385 |         if errors:
+386 |             raise ConfigValidationError(f"配置验证失败: {'; '.join(errors)}")
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+387 |
+388 |     logger.info(
+    |
+
+PLC0415 `import` should be at the top-level of a file
+   --> src\app\config.py:409:5
+    |
+407 |         ConfigLoadError: 文件加载失败
+408 |     """
+409 |     import yaml
+    |     ^^^^^^^^^^^
+410 |
+411 |     filepath = Path(filepath)
+    |
+
+TRY003 Avoid specifying long messages outside the exception class
+   --> src\app\config.py:414:15
+    |
+413 |     if not filepath.exists():
+414 |         raise ConfigLoadError(f"配置文件不存在: {filepath}")
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+415 |
+416 |     try:
+    |
+
+TRY003 Avoid specifying long messages outside the exception class
+   --> src\app\config.py:420:15
+    |
+418 |             data = yaml.safe_load(f)
+419 |     except Exception as e:
+420 |         raise ConfigLoadError(f"配置文件解析失败: {e}") from e
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+421 |
+422 |     if not data:
+    |
+
+RUF002 Docstring contains ambiguous `，` (FULLWIDTH COMMA). Did you mean `,` (COMMA)?
+   --> src\app\config.py:484:16
+    |
+482 |     """检查环境隔离是否正确.
+483 |
+484 |     确保配置与预期环境匹配，防止误操作。
+    |                           ^^
+485 |
+486 |     参数:
+    |
+
+TRY003 Avoid specifying long messages outside the exception class
+  --> src\app\live_entry.py:44:11
+   |
+42 |   def _missing_fetch_tick() -> LiveTickData:
+43 |       """Placeholder for live tick fetcher - must be implemented for real trading."""
+44 |       raise RuntimeError(
+   |  ___________^
+45 | |         "fetch_tick not implemented. "
+46 | |         "Implement a live tick source (e.g., CTP market data) to enable trading."
+47 | |     )
+   | |_____^
+   |
+
+TRY003 Avoid specifying long messages outside the exception class
+  --> src\app\live_entry.py:54:15
+   |
+52 |       if missing:
+53 |           joined = ", ".join(missing)
+54 |           raise RuntimeError(
+   |  _______________^
+55 | |             "Missing required CTP environment variables for LIVE mode: "
+56 | |             f"{joined}. Set them before running 3579-live."
+57 | |         )
+   | |_________^
+   |
+
+PLC0415 `import` should be at the top-level of a file
+  --> src\app\live_entry.py:64:9
+   |
+63 |     try:
+64 |         from src.runner import run_f21
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+65 |     except Exception as e:  # pragma: no cover
+66 |         raise RuntimeError(
+   |
+
+TRY003 Avoid specifying long messages outside the exception class
+  --> src\app\live_entry.py:66:15
+   |
+64 |           from src.runner import run_f21
+65 |       except Exception as e:  # pragma: no cover
+66 |           raise RuntimeError(
+   |  _______________^
+67 | |             "F21 entrypoint not available. Implement src.runner.run_f21() first."
+68 | |         ) from e
+   | |_________^
+69 |
+70 |       if not callable(run_f21):
+   |
+
+TRY004 Prefer `TypeError` exception for invalid type
+  --> src\app\live_entry.py:71:9
+   |
+70 |     if not callable(run_f21):
+71 |         raise RuntimeError("Implement src.runner.run_f21() first.")
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+... [326870 characters truncated] ...
+
+                  ^^
+259 |             "schema_version": self.schema_version,
+260 |             "type": self.type,
+    |
+
+RUF003 Comment contains ambiguous `）` (FULLWIDTH RIGHT PARENTHESIS). Did you mean `)` (RIGHT PARENTHESIS)?
+   --> src\trading\sim_gate.py:258:26
+    |
+257 |         return {
+258 |             # 强制顶层字段（缺一不可）
+    |                                     ^^
+259 |             "schema_version": self.schema_version,
+260 |             "type": self.type,
+    |
+
+RUF003 Comment contains ambiguous `：` (FULLWIDTH COLON). Did you mean `:` (COLON)?
+   --> src\trading\sim_gate.py:267:18
+    |
+265 |             "run_id": self.run_id,
+266 |             "exec_id": self.exec_id,
+267 |             # 军规级：artifacts 路径必须与 type 匹配
+    |                     ^^
+268 |             "artifacts": {
+269 |                 "report_path": str(paths["report"]),
+    |
+
+RUF003 Comment contains ambiguous `（` (FULLWIDTH LEFT PARENTHESIS). Did you mean `(` (LEFT PARENTHESIS)?
+   --> src\trading\sim_gate.py:274:19
+    |
+272 |             },
+273 |             "context_manifest_sha": self.context_manifest_sha,
+274 |             # 场景统计（单一字段，无重复）
+    |                       ^^
+275 |             "scenarios": {
+276 |                 "total": self.scenarios_total,
+    |
+
+RUF003 Comment contains ambiguous `，` (FULLWIDTH COMMA). Did you mean `,` (COMMA)?
+   --> src\trading\sim_gate.py:274:24
+    |
+272 |             },
+273 |             "context_manifest_sha": self.context_manifest_sha,
+274 |             # 场景统计（单一字段，无重复）
+    |                                 ^^
+275 |             "scenarios": {
+276 |                 "total": self.scenarios_total,
+    |
+
+RUF003 Comment contains ambiguous `）` (FULLWIDTH RIGHT PARENTHESIS). Did you mean `)` (RIGHT PARENTHESIS)?
+   --> src\trading\sim_gate.py:274:28
+    |
+272 |             },
+273 |             "context_manifest_sha": self.context_manifest_sha,
+274 |             # 场景统计（单一字段，无重复）
+    |                                         ^^
+275 |             "scenarios": {
+276 |                 "total": self.scenarios_total,
+    |
+
+RUF003 Comment contains ambiguous `（` (FULLWIDTH LEFT PARENTHESIS). Did you mean `(` (LEFT PARENTHESIS)?
+   --> src\trading\sim_gate.py:403:6
+    |
+402 | # =============================================================================
+403 | # 退出码（军规级）
+    |         ^^
+404 | # =============================================================================
+405 | class SimExitCode:
+    |
+
+RUF003 Comment contains ambiguous `）` (FULLWIDTH RIGHT PARENTHESIS). Did you mean `)` (RIGHT PARENTHESIS)?
+   --> src\trading\sim_gate.py:403:10
+    |
+402 | # =============================================================================
+403 | # 退出码（军规级）
+    |                 ^^
+404 | # =============================================================================
+405 | class SimExitCode:
+    |
+
+RUF003 Comment contains ambiguous `（` (FULLWIDTH LEFT PARENTHESIS). Did you mean `(` (LEFT PARENTHESIS)?
+   --> src\trading\sim_gate.py:432:30
+    |
+431 | # =============================================================================
+432 | # V2 Required Scenarios 加载与校验（军规级）
+    |                                   ^^
+433 | # =============================================================================
+    |
+
+RUF003 Comment contains ambiguous `）` (FULLWIDTH RIGHT PARENTHESIS). Did you mean `)` (RIGHT PARENTHESIS)?
+   --> src\trading\sim_gate.py:432:34
+    |
+431 | # =============================================================================
+432 | # V2 Required Scenarios 加载与校验（军规级）
+    |                                           ^^
+433 | # =============================================================================
+    |
+
+PLC0415 `import` should be at the top-level of a file
+   --> src\trading\sim_gate.py:448:5
+    |
+446 |         Parsed YAML content
+447 |     """
+448 |     import yaml
+    |     ^^^^^^^^^^^
+449 |
+450 |     path = Path(yaml_path)
+    |
+
+PERF401 Use `list.extend` to create a transformed list
+   --> src\trading\sim_gate.py:503:13
+    |
+501 |       for failure in report.failures:
+502 |           if not failure.rule_id or failure.rule_id.startswith("UNKNOWN."):
+503 | /             violations.append(
+504 | |                 {
+505 | |                     "type": "MISSING_RULE_ID",
+506 | |                     "scenario": failure.scenario,
+507 | |                     "message": "Failure missing proper rule_id",
+508 | |                 }
+509 | |             )
+    | |_____________^
+510 |
+511 |       return violations
+    |
+help: Replace for loop with list.extend
+
+RUF003 Comment contains ambiguous `：` (FULLWIDTH COLON). Did you mean `:` (COLON)?
+   --> src\trading\sim_gate.py:538:10
+    |
+536 |     gate = SimGate(sim_type="replay")
+537 |
+538 |     # 军规级：默认使用正确的 type 路径
+    |             ^^
+539 |     if output_path is None:
+540 |         output_path = str(FIXED_PATHS["replay_report"])
+    |
+
+Found 929 errors.
+[*] 1 fixable with the `--fix` option (12 hidden fixes can be enabled with the `--unsafe-fixes` option).

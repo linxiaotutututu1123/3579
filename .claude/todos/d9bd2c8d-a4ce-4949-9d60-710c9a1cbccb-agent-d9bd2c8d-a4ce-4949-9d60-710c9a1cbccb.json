@@ -1,0 +1,47 @@
+[
+  {
+    "content": "覆盖 config.py:26 (dingtalk 配置)",
+    "status": "in_progress",
+    "activeForm": "覆盖 config.py:26"
+  },
+  {
+    "content": "覆盖 broker.py:25 (NotImplementedError)",
+    "status": "pending",
+    "activeForm": "覆盖 broker.py:25"
+  },
+  {
+    "content": "覆盖 flatten_executor.py:24,27,39,41,43,45 (辅助函数)",
+    "status": "pending",
+    "activeForm": "覆盖 flatten_executor.py"
+  },
+  {
+    "content": "覆盖 flatten_plan.py:26,28 (验证逻辑)",
+    "status": "pending",
+    "activeForm": "覆盖 flatten_plan.py"
+  },
+  {
+    "content": "覆盖 main.py:22 (if __name__)",
+    "status": "pending",
+    "activeForm": "覆盖 main.py:22"
+  },
+  {
+    "content": "覆盖 orchestrator.py:104 (book is None)",
+    "status": "pending",
+    "activeForm": "覆盖 orchestrator.py:104"
+  },
+  {
+    "content": "覆盖 risk/manager.py:65,121",
+    "status": "pending",
+    "activeForm": "覆盖 risk/manager.py"
+  },
+  {
+    "content": "覆盖 risk/state.py:31,44",
+    "status": "pending",
+    "activeForm": "覆盖 risk/state.py"
+  },
+  {
+    "content": "覆盖 runner.py:33,37 (回调函数)",
+    "status": "pending",
+    "activeForm": "覆盖 runner.py"
+  }
+]

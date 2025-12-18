@@ -1,0 +1,21 @@
+The file C:\Users\1\2468\3579\src\risk\dynamic_var.py has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+   551→        if method == VaRMethod.LIMIT_ADJUSTED:
+   552→            return self.limit_adjusted_var(
+   553→                returns, kwargs.get("limit_pct", 0.10), confidence
+   554→            )
+   555→        if method == VaRMethod.LIQUIDITY_ADJUSTED:
+   556→            return self.liquidity_adjusted_var(
+   557→                returns,
+   558→                kwargs.get("position_value", 0),
+   559→                kwargs.get("liquidity", LiquidityMetrics()),
+   560→                confidence,
+   561→            )
+   562→        # 所有 VaRMethod 枚举值已处理，此处不可达
+   563→        # 使用 HISTORICAL 作为类型安全的兜底（防止未来新增枚举值未处理）
+   564→        self._calculation_count += 1
+   565→        result = self._base_calculator.historical_var(returns, confidence)
+   566→        return self._wrap_result(result, VaRMethod.HISTORICAL)  # pragma: no cover
+   567→
+   568→    def _estimate_gpd_params(
+   569→        self, exceedances: list[float], threshold: float
+   570→    ) -> GPDParameters:

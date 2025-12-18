@@ -1,0 +1,422 @@
+"""
+risk_control/order_validator.py
+异常订单检测模块 (#19 无异常订单检测)。
+
+检测类型：
+- 价格异常（乌龙指）
+- 数量异常
+- 频率异常
+- 时段异常
+- 重复订单
+
+# RISK: 检测规则过严可能阻断正常交易
+# 缓解措施: 可配置阈值 + dry_run 模式
+
+Author: AI Quant Team
+Version: 1.0.0
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
+from decimal import Decimal
+from enum import Enum
+from typing import Final
+from collections import deque
+
+from .models import Order, Direction, OrderType, RiskLevel, RiskEvent
+from .limits import RiskControlConfig
+from .trading_session import is_trading_time
+
+__all__: list[str] = [
+    "OrderRejectReason",
+    "OrderValidationResult",
+    "OrderValidator",
+]
+
+
+class OrderRejectReason(str, Enum):
+    """订单拒绝原因。"""
+    PRICE_TOO_HIGH = "price_too_high"          # 价格过高
+    PRICE_TOO_LOW = "price_too_low"            # 价格过低
+    VOLUME_TOO_LARGE = "volume_too_large"      # 数量过大
+    VOLUME_ZERO = "volume_zero"                # 数量为零
+    OUTSIDE_TRADING_HOURS = "outside_trading"  # 非交易时段
+    DUPLICATE_ORDER = "duplicate_order"        # 重复订单
+    RATE_LIMIT_EXCEEDED = "rate_limit"         # 频率超限
+    POSITION_LIMIT = "position_limit"          # 持仓超限
+    SYMBOL_DISABLED = "symbol_disabled"        # 合约禁止交易
+    COOLDOWN_PERIOD = "cooldown_period"        # 冷却期内
+
+
+@dataclass
+class OrderValidationResult:
+    """
+    订单验证结果。
+
+    Attributes:
+        is_valid: 是否通过验证
+        reject_reason: 拒绝原因（如果被拒绝）
+        message: 详细信息
+        risk_level: 风险等级
+    """
+    is_valid: bool
+    reject_reason: OrderRejectReason | None = None
+    message: str = ""
+    risk_level: RiskLevel = RiskLevel.INFO
+
+    def to_risk_event(self, order: Order) -> RiskEvent:
+        """转换为风控事件。"""
+        return RiskEvent(
+            event_type="ORDER_REJECTED",
+            level=self.risk_level,
+            message=self.message,
+            symbol=order.symbol,
+            action_taken="order_blocked",
+            context={
+                "order_id": order.order_id,
+                "reason": self.reject_reason.value if self.reject_reason else "",
+                "price": str(order.price),
+                "volume": order.volume,
+            },
+        )
+
+
+# WHY: 默认配置常量
+DEFAULT_PRICE_DEVIATION_PCT: Final[Decimal] = Decimal("3.0")  # 价格偏离 3%
+DEFAULT_MAX_ORDER_RATE: Final[int] = 10  # 每秒最大订单数
+DEFAULT_DUPLICATE_WINDOW_SECONDS: Final[int] = 5  # 重复检测窗口
+
+
+class OrderValidator:
+    """
+    订单验证器。
+
+    执行多维度订单合法性检查，防止乌龙指等异常订单。
+
+    检查流程：
+    1. 基础检查（数量、价格非空）
+    2. 交易时段检查
+    3. 价格偏离检查（相对现价）
+    4. 数量限制检查
+    5. 频率限制检查
+    6. 重复订单检查
+    7. 合约级别检查
+
+    Example:
+        >>> validator = OrderValidator(config)
+        >>> result = validator.validate(order, current_price=Decimal("5000"))
+        >>> if not result.is_valid:
+        ...     print(f"订单被拒绝: {result.message}")
+    """
+
+    def __init__(self, config: RiskControlConfig) -> None:
+        """
+        初始化订单验证器。
+
+        Args:
+            config: 风控配置
+        """
+        self._config = config
+        # WHY: 订单频率追踪（滑动窗口）
+        self._order_timestamps: deque[datetime] = deque(maxlen=1000)
+        # WHY: 最近订单缓存（用于重复检测）
+        self._recent_orders: deque[tuple[str, str, int, Decimal]] = deque(maxlen=100)
+        # WHY: 冷却期结束时间
+        self._cooldown_until: datetime | None = None
+
+    def set_cooldown(self, minutes: int) -> None:
+        """
+        设置冷却期。
+
+        Args:
+            minutes: 冷却时间（分钟）
+        """
+        self._cooldown_until = datetime.now(timezone.utc) + timedelta(minutes=minutes)
+
+    def clear_cooldown(self) -> None:
+        """清除冷却期。"""
+        self._cooldown_until = None
+
+    def is_in_cooldown(self) -> bool:
+        """是否在冷却期内。"""
+        if self._cooldown_until is None:
+            return False
+        return datetime.now(timezone.utc) < self._cooldown_until
+
+    def validate(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int = 0,
+    ) -> OrderValidationResult:
+        """
+        验证订单。
+
+        Args:
+            order: 待验证订单
+            current_price: 当前市场价格
+            current_position: 当前持仓数量
+
+        Returns:
+            验证结果
+        """
+        # WHY: 风控未启用时直接通过
+        if not self._config.enabled:
+            return OrderValidationResult(is_valid=True)
+
+        # WHY: 按顺序执行各项检查
+        checks = [
+            self._check_basic,
+            self._check_cooldown,
+            self._check_trading_hours,
+            self._check_symbol_disabled,
+            self._check_price_deviation,
+            self._check_volume_limit,
+            self._check_position_limit,
+            self._check_rate_limit,
+            self._check_duplicate,
+        ]
+
+        for check in checks:
+            result = check(order, current_price, current_position)
+            if not result.is_valid:
+                # WHY: dry_run 模式下记录但不阻断
+                if self._config.dry_run:
+                    result.is_valid = True
+                    result.message = f"[DRY_RUN] {result.message}"
+                return result
+
+        # WHY: 记录订单（用于频率和重复检测）
+        self._record_order(order)
+
+        return OrderValidationResult(is_valid=True, message="验证通过")
+
+    def _check_basic(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """基础检查。"""
+        if order.volume <= 0:
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=OrderRejectReason.VOLUME_ZERO,
+                message=f"订单数量必须大于0: {order.volume}",
+                risk_level=RiskLevel.WARNING,
+            )
+
+        if order.price <= 0 and order.order_type == OrderType.LIMIT:
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=OrderRejectReason.PRICE_TOO_LOW,
+                message=f"限价单价格必须大于0: {order.price}",
+                risk_level=RiskLevel.WARNING,
+            )
+
+        return OrderValidationResult(is_valid=True)
+
+    def _check_cooldown(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """冷却期检查。"""
+        if self.is_in_cooldown():
+            remaining = (self._cooldown_until - datetime.now(timezone.utc)).seconds
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=OrderRejectReason.COOLDOWN_PERIOD,
+                message=f"冷却期内禁止下单，剩余 {remaining} 秒",
+                risk_level=RiskLevel.WARNING,
+            )
+        return OrderValidationResult(is_valid=True)
+
+    def _check_trading_hours(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """交易时段检查。"""
+        if not is_trading_time(order.symbol):
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=OrderRejectReason.OUTSIDE_TRADING_HOURS,
+                message=f"非交易时段: {order.symbol}",
+                risk_level=RiskLevel.WARNING,
+            )
+        return OrderValidationResult(is_valid=True)
+
+    def _check_symbol_disabled(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """合约禁用检查。"""
+        symbol_config = self._config.get_symbol_config(order.symbol)
+        if symbol_config and symbol_config.disabled:
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=OrderRejectReason.SYMBOL_DISABLED,
+                message=f"合约 {order.symbol} 已禁止交易",
+                risk_level=RiskLevel.CRITICAL,
+            )
+        return OrderValidationResult(is_valid=True)
+
+    def _check_price_deviation(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """价格偏离检查（乌龙指防护）。"""
+        # WHY: 市价单不检查价格
+        if order.order_type == OrderType.MARKET:
+            return OrderValidationResult(is_valid=True)
+
+        if current_price <= 0:
+            return OrderValidationResult(is_valid=True)
+
+        # WHY: 获取合约级别配置
+        symbol_config = self._config.get_symbol_config(order.symbol)
+        limit_pct = (
+            symbol_config.price_limit_pct
+            if symbol_config
+            else DEFAULT_PRICE_DEVIATION_PCT
+        )
+
+        deviation = abs(order.price - current_price) / current_price * 100
+
+        if deviation > limit_pct:
+            # WHY: 区分买高卖低
+            if order.price > current_price:
+                reason = OrderRejectReason.PRICE_TOO_HIGH
+                msg = f"买入价格过高: {order.price} vs 现价 {current_price} (偏离 {deviation:.1f}%)"
+            else:
+                reason = OrderRejectReason.PRICE_TOO_LOW
+                msg = f"卖出价格过低: {order.price} vs 现价 {current_price} (偏离 {deviation:.1f}%)"
+
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=reason,
+                message=msg,
+                risk_level=RiskLevel.CRITICAL,
+            )
+
+        return OrderValidationResult(is_valid=True)
+
+    def _check_volume_limit(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """数量限制检查。"""
+        # WHY: 优先使用合约级别配置
+        symbol_config = self._config.get_symbol_config(order.symbol)
+        max_volume = (
+            symbol_config.max_order_volume
+            if symbol_config and symbol_config.max_order_volume
+            else self._config.position_limit.max_order_volume
+        )
+
+        if order.volume > max_volume:
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=OrderRejectReason.VOLUME_TOO_LARGE,
+                message=f"单笔数量 {order.volume} 超过限制 {max_volume}",
+                risk_level=RiskLevel.CRITICAL,
+            )
+
+        return OrderValidationResult(is_valid=True)
+
+    def _check_position_limit(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """持仓限制检查。"""
+        # WHY: 获取合约级别配置
+        symbol_config = self._config.get_symbol_config(order.symbol)
+        max_position = (
+            symbol_config.max_position
+            if symbol_config and symbol_config.max_position
+            else self._config.position_limit.max_position_per_symbol
+        )
+
+        # WHY: 计算下单后预计持仓
+        projected_position = current_position + order.volume
+
+        if projected_position > max_position:
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=OrderRejectReason.POSITION_LIMIT,
+                message=f"预计持仓 {projected_position} 超过限制 {max_position}",
+                risk_level=RiskLevel.WARNING,
+            )
+
+        return OrderValidationResult(is_valid=True)
+
+    def _check_rate_limit(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """频率限制检查。"""
+        now = datetime.now(timezone.utc)
+        window_start = now - timedelta(seconds=1)
+
+        # WHY: 统计过去1秒内的订单数
+        recent_count = sum(
+            1 for ts in self._order_timestamps
+            if ts > window_start
+        )
+
+        if recent_count >= DEFAULT_MAX_ORDER_RATE:
+            return OrderValidationResult(
+                is_valid=False,
+                reject_reason=OrderRejectReason.RATE_LIMIT_EXCEEDED,
+                message=f"订单频率超限: {recent_count}/秒 >= {DEFAULT_MAX_ORDER_RATE}/秒",
+                risk_level=RiskLevel.WARNING,
+            )
+
+        return OrderValidationResult(is_valid=True)
+
+    def _check_duplicate(
+        self,
+        order: Order,
+        current_price: Decimal,
+        current_position: int,
+    ) -> OrderValidationResult:
+        """重复订单检查。"""
+        now = datetime.now(timezone.utc)
+        window_start = now - timedelta(seconds=DEFAULT_DUPLICATE_WINDOW_SECONDS)
+
+        # WHY: 检查是否存在相同的订单（合约+方向+数量+价格）
+        order_key = (order.symbol, order.direction.value, order.volume, order.price)
+
+        for recent in self._recent_orders:
+            if recent == order_key:
+                return OrderValidationResult(
+                    is_valid=False,
+                    reject_reason=OrderRejectReason.DUPLICATE_ORDER,
+                    message=f"检测到重复订单: {order.symbol} {order.direction.value} {order.volume}@{order.price}",
+                    risk_level=RiskLevel.WARNING,
+                )
+
+        return OrderValidationResult(is_valid=True)
+
+    def _record_order(self, order: Order) -> None:
+        """记录订单（用于频率和重复检测）。"""
+        now = datetime.now(timezone.utc)
+        self._order_timestamps.append(now)
+        self._recent_orders.append(
+            (order.symbol, order.direction.value, order.volume, order.price)
+        )

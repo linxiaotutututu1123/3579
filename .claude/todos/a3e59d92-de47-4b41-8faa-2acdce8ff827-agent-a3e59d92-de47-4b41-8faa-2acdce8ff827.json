@@ -1,0 +1,42 @@
+[
+  {
+    "content": "阅读PHASE 1行情层现有代码文件",
+    "status": "completed",
+    "activeForm": "阅读PHASE 1行情层现有代码文件"
+  },
+  {
+    "content": "检查PHASE 1的12个场景覆盖情况",
+    "status": "completed",
+    "activeForm": "检查PHASE 1的12个场景覆盖情况"
+  },
+  {
+    "content": "检查InstrumentInfo扩展字段实现",
+    "status": "in_progress",
+    "activeForm": "检查InstrumentInfo扩展字段实现"
+  },
+  {
+    "content": "检查exchange_config.py待新增模块",
+    "status": "completed",
+    "activeForm": "检查exchange_config.py模块 - 已实现！"
+  },
+  {
+    "content": "检查trading_calendar.py待新增模块",
+    "status": "completed",
+    "activeForm": "检查trading_calendar.py模块 - 已实现！"
+  },
+  {
+    "content": "验证军规M1/M7/M10/M11/M15覆盖",
+    "status": "pending",
+    "activeForm": "验证军规M1/M7/M10/M11/M15覆盖"
+  },
+  {
+    "content": "运行全部门禁检查",
+    "status": "pending",
+    "activeForm": "运行全部门禁检查"
+  },
+  {
+    "content": "给出军规级实施方案",
+    "status": "pending",
+    "activeForm": "给出军规级实施方案"
+  }
+]

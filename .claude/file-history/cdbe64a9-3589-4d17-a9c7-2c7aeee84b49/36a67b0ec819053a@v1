@@ -1,0 +1,26 @@
+@echo off
+echo 正在启动Claude...
+echo.
+
+:: 方法1：直接调用Claude命令行
+"%USERPROFILE%\.trae-cn\extensions\anthropic.claude-code-2.0.61-win32-x64\resources\native-binary\claude.exe" %*
+
+:: 如果上面失败了，显示帮助信息
+if errorlevel 1 (
+    echo.
+    echo ================== Claude使用方法 ==================
+    echo.
+    echo 1. 在VS Code/TREA中使用：
+    echo    - 打开编辑器
+    echo    - 选中代码
+    echo    - 按Ctrl+I
+    echo    - 输入你的问题
+    echo.
+    echo 2. 命令行使用：
+    echo    一键使用Claude.bat "你的问题"
+    echo.
+    echo 3. 示例：
+    echo    一键使用Claude.bat "解释这段代码"
+    echo.
+    pause
+)

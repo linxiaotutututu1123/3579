@@ -1,0 +1,50 @@
+"""
+market_gateway/models.py
+行情数据模型定义。
+
+设计原则：
+- 使用 dataclass 实现，支持 __slots__ 优化内存
+- 所有字段类型明确，支持 mypy --strict
+- 提供校验方法与序列化能力
+- 时间戳统一使用 UTC，精度到微秒
+
+# RISK: 时区处理不当可能导致时间错误
+# 缓解措施: 强制使用 UTC，转换在边界层处理
+
+Author: AI Quant Team
+Version: 1.0.0
+"""
+
+from dataclasses import dataclass, field, asdict
+from datetime import datetime, timezone
+from decimal import Decimal
+from enum import Enum, auto
+from typing import Final, ClassVar
+import hashlib
+
+__all__: list[str] = [
+    "TickData",
+    "DepthData",
+    "BarData",
+    "BarPeriod",
+    "PriceLevel",
+    "DataStatus",
+]
+
+
+class BarPeriod(Enum):
+    """K线周期枚举。"""
+    MINUTE_1 = auto()   # 1分钟
+    MINUTE_5 = auto()   # 5分钟
+    MINUTE_15 = auto()  # 15分钟
+    MINUTE_30 = auto()  # 30分钟
+    HOUR_1 = auto()     # 1小时
+    DAILY = auto()      # 日线
+
+
+class DataStatus(Enum):
+    """数据状态枚举。"""
+    VALID = auto()      # 有效
+    STALE = auto()      # 过期（时间戳超限）
+    INVALID = auto()    # 无效（校验失败）
+    FILTERED = auto()   # 被过滤（如 price<=0）

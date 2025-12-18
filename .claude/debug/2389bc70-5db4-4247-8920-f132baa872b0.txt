@@ -1,0 +1,637 @@
+2025-12-08T20:46:47.743Z [DEBUG] Watching for changes in setting files C:\Users\1\.claude\settings.json, C:\Users\1\.claude\settings.json...
+2025-12-08T20:46:47.760Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2025-12-08T20:46:47.764Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2025-12-08T20:46:47.764Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2025-12-08T20:46:47.764Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2025-12-08T20:46:47.764Z [DEBUG] [LSP SERVER MANAGER] initialize() called
+2025-12-08T20:46:47.764Z [DEBUG] [LSP SERVER MANAGER] Calling getAllLspServers()
+2025-12-08T20:46:47.773Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2025-12-08T20:46:47.775Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.78952.1765226807775
+2025-12-08T20:46:47.775Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:46:47.778Z [DEBUG] Temp file written successfully, size: 2180 bytes
+2025-12-08T20:46:47.778Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:46:47.778Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.78952.1765226807775 to C:\Users\1\.claude.json
+2025-12-08T20:46:47.778Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:46:47.778Z [DEBUG] Total LSP servers loaded: 0
+2025-12-08T20:46:47.778Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2025-12-08T20:46:47.778Z [DEBUG] LSP manager initialized with 0 servers
+2025-12-08T20:46:47.778Z [DEBUG] LSP server manager initialized successfully
+2025-12-08T20:46:47.778Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2025-12-08T20:46:47.782Z [DEBUG] Loading skills from directories: managed=C:\ProgramData\ClaudeCode\.claude\skills, user=C:\Users\1\.claude\skills, project=C:\Users\1\.claude\skills
+2025-12-08T20:46:47.782Z [DEBUG] >>>>> getPluginSkills CALLED <<<<<
+2025-12-08T20:46:48.099Z [DEBUG] installed_plugins.json doesn't exist yet at C:\Users\1\.claude\plugins\installed_plugins.json, returning empty object
+2025-12-08T20:46:48.123Z [DEBUG] Creating shell snapshot for bash (C:\Program Files\Git\bin\bash.exe)
+2025-12-08T20:46:48.124Z [DEBUG] Looking for shell config file: C:\Users\1\.bashrc
+2025-12-08T20:46:48.124Z [DEBUG] Shell config file not found: C:\Users\1\.bashrc, creating snapshot with Claude Code defaults only
+2025-12-08T20:46:48.124Z [DEBUG] Snapshots directory: C:\Users\1\.claude\shell-snapshots
+2025-12-08T20:46:48.131Z [DEBUG] Creating snapshot at: C:\Users\1\.claude\shell-snapshots\snapshot-bash-1765226808124-gtafsz.sh
+2025-12-08T20:46:48.131Z [DEBUG] Shell binary exists: true
+2025-12-08T20:46:48.131Z [DEBUG] Execution timeout: 10000ms
+2025-12-08T20:46:48.134Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765226808134
+2025-12-08T20:46:48.136Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-08T20:46:48.136Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765226808134 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:46:48.136Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:46:48.137Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2025-12-08T20:46:48.137Z [DEBUG] Total plugin skills loaded: 0
+2025-12-08T20:46:48.137Z [DEBUG] Total plugin commands loaded: 0
+2025-12-08T20:46:48.137Z [DEBUG] Registered 0 hooks from 0 plugins
+2025-12-08T20:46:48.138Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, duplicates removed: 0)
+2025-12-08T20:46:48.138Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills
+2025-12-08T20:46:48.138Z [DEBUG] Total plugin agents loaded: 0
+2025-12-08T20:46:48.146Z [DEBUG] Git remote URL: null
+2025-12-08T20:46:48.146Z [DEBUG] No git remote URL found
+2025-12-08T20:46:48.146Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2025-12-08T20:46:48.657Z [DEBUG] Shell snapshot created successfully (338 bytes)
+2025-12-08T20:46:49.406Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.78952.1765226809406
+2025-12-08T20:46:49.406Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:46:49.408Z [DEBUG] Temp file written successfully, size: 2180 bytes
+2025-12-08T20:46:49.408Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:46:49.408Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.78952.1765226809406 to C:\Users\1\.claude.json
+2025-12-08T20:46:49.408Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:46:49.410Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.78952.1765226809410
+2025-12-08T20:46:49.410Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:46:49.412Z [DEBUG] Temp file written successfully, size: 2180 bytes
+2025-12-08T20:46:49.412Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:46:49.412Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.78952.1765226809410 to C:\Users\1\.claude.json
+2025-12-08T20:46:49.412Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:46:49.415Z [DEBUG] Skipping SessionStart:startup hook execution - workspace trust not accepted
+2025-12-08T20:46:49.437Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.78952.1765226809437
+2025-12-08T20:46:49.437Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:46:49.438Z [DEBUG] Temp file written successfully, size: 2072 bytes
+2025-12-08T20:46:49.438Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:46:49.438Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.78952.1765226809437 to C:\Users\1\.claude.json
+2025-12-08T20:46:49.438Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:46:49.441Z [DEBUG] performStartupChecks called
+2025-12-08T20:46:49.441Z [DEBUG] Trust not accepted for current directory - skipping plugin installations
+2025-12-08T20:46:49.448Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.78952.1765226809448
+2025-12-08T20:46:49.448Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:46:49.450Z [DEBUG] Temp file written successfully, size: 2180 bytes
+2025-12-08T20:46:49.450Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:46:49.450Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.78952.1765226809448 to C:\Users\1\.claude.json
+2025-12-08T20:46:49.450Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:46:49.450Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-08T20:46:49.451Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2025-12-08T20:46:49.452Z [DEBUG] Skipping SubagentStart:Explore hook execution - workspace trust not accepted
+2025-12-08T20:46:49.456Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.78952.1765226809456
+2025-12-08T20:46:49.456Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:46:49.457Z [DEBUG] Temp file written successfully, size: 2180 bytes
+2025-12-08T20:46:49.457Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:46:49.457Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.78952.1765226809456 to C:\Users\1\.claude.json
+2025-12-08T20:46:49.457Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:46:49.473Z [DEBUG] Skipping SubagentStart:Plan hook execution - workspace trust not accepted
+2025-12-08T20:46:50.025Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:46:50.188Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:46:50.703Z [DEBUG] Skipping SubagentStop hook execution - workspace trust not accepted
+2025-12-08T20:46:50.956Z [DEBUG] Skipping SubagentStop hook execution - workspace trust not accepted
+2025-12-08T20:46:51.192Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.78952.1765226811192
+2025-12-08T20:46:51.192Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:46:51.194Z [DEBUG] Temp file written successfully, size: 2180 bytes
+2025-12-08T20:46:51.194Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:46:51.194Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.78952.1765226811192 to C:\Users\1\.claude.json
+2025-12-08T20:46:51.194Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:46:53.128Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:46:53.128Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:46:53.128Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:46:53.128Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:46:53.128Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:46:53.128Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:46:53.245Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:46:53.246Z [DEBUG] FileHistory: Added snapshot for f1e9f7ce-b94e-49b2-8399-5740ba92fa05, tracking 0 files
+2025-12-08T20:46:53.262Z [DEBUG] Total plugin output styles loaded: 0
+2025-12-08T20:46:53.275Z [DEBUG] Slash commands included in SlashCommand tool:
+2025-12-08T20:46:53.275Z [DEBUG] Skills and commands included in Skill tool:
+2025-12-08T20:46:54.104Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:46:54.805Z [DEBUG] executePreToolHooks called for tool: Task
+2025-12-08T20:46:54.805Z [DEBUG] Skipping PreToolUse:Task hook execution - workspace trust not accepted
+2025-12-08T20:46:54.832Z [DEBUG] Skipping SubagentStart:general-purpose hook execution - workspace trust not accepted
+2025-12-08T20:46:55.330Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:46:55.547Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-08T20:46:55.548Z [DEBUG] Skipping PreToolUse:Bash hook execution - workspace trust not accepted
+2025-12-08T20:46:55.572Z [DEBUG] tree-sitter: loaded from disk
+2025-12-08T20:46:55.680Z [DEBUG] Session environment not yet supported on Windows
+2025-12-08T20:46:56.226Z [DEBUG] Skipping PostToolUse:Bash hook execution - workspace trust not accepted
+2025-12-08T20:46:56.235Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:46:56.235Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:46:56.986Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:46:56.999Z [DEBUG] executePreToolHooks called for tool: Grep
+2025-12-08T20:46:56.999Z [DEBUG] Skipping PreToolUse:Grep hook execution - workspace trust not accepted
+2025-12-08T20:46:58.089Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=C:\Users\1\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\vendor\ripgrep\x64-win32\rg.exe)
+2025-12-08T20:47:00.062Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:00.090Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:08.094Z [DEBUG] rg error (signal=SIGTERM, code=null, stderr: rg: C:\Users\1\Application Data: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Cookies: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Local Settings: 拒绝访问。 (os error 5)
+rg: C:\Users\1\My Documents: 拒绝访问。 (os error 5)
+rg: C:\Users\1\NetHood: 拒绝访问。 (os error 5)
+rg: C:\Users\1\NTUSER.DAT: 另一个程序正在使用此文件，进程无法访问。 (os error 32)
+rg: C:\Users\1\ntuser.dat.LOG1: 另一个程序正在使用此文件，进程无法访问。 (os error 32)
+rg: C:\Users\1\ntuser.dat.LOG2: 另一个程序正在使用此文件，进程无法访问。 (os error 32)
+rg: C:\Users\1\Documents\My Music: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Documents\My Pictures: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Documents\My Videos: 拒绝访问。 (os error 5)
+rg: C:\Users\1\PrintHood: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Recent: 拒绝访问。 (os error 5)
+rg: C:\Users\1\SendTo: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Templates: 拒绝访问。 (os error 5)
+rg: C:\Users\1\「开始」菜单: 拒绝访问。 (os error 5)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\演示文稿 12月23日18时1分2秒.pptx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\演示文稿 12月23日18时1分26秒.pptx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\演示文稿 12月23日17时53分21秒.pptx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\文档 12月24日10时27分3秒.docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\应用\微信文件\发展对象题库(3).docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\应用\微信文件\发展对象题库(2).docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\应用\微信文件\9d9d74a583d73bb482e30a291299a07f.pptx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\将我的云文档分享给其他人.doc: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\关于PPT色彩，少有人知的5个功能！.pdf: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\使用云文档进行协同办公.doc: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\372381647\WPS云盘\应用\输出为PDF\能源化工报20190116_20190116101426.pdf: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\372381647\WPS云盘\关于汇丰石化集团从事原油期货保税交割业务的说明.doc: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\372381647\WPS云盘\2019放假日历表.xls: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\铁矿一月交易报表.et: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\新建 Microsoft Office Excel 97-2003 工作表.xls: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\支飞龙.xls: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\客户资料.xlsx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\军民融合.docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\关于期货手续费的话术.docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\交易记录表1(1).xlsx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\2018经济工作会议习近平讲话.rtf: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\2018   经济会议.docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\12月交易报表.xlsx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\将我的云文档分享给其他人.doc: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\使用云文档进行协同办公.doc: 云文件提供程序未运行。 (os error 362)
+), 1483 results
+2025-12-08T20:47:08.107Z [DEBUG] Skipping PostToolUse:Grep hook execution - workspace trust not accepted
+2025-12-08T20:47:08.116Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:47:08.116Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:47:09.442Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:09.646Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:47:09.646Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:47:10.812Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:47:10.820Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:47:10.820Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:47:11.598Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:11.823Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:47:11.823Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:47:12.599Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:47:12.606Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:47:12.606Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:47:13.492Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:13.635Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-08T20:47:13.635Z [DEBUG] Skipping PreToolUse:Glob hook execution - workspace trust not accepted
+2025-12-08T20:47:20.069Z [DEBUG] Skipping PostToolUse:Glob hook execution - workspace trust not accepted
+2025-12-08T20:47:20.076Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:47:20.076Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:47:21.118Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:21.326Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-08T20:47:21.326Z [DEBUG] Skipping PreToolUse:Bash hook execution - workspace trust not accepted
+2025-12-08T20:47:21.466Z [DEBUG] Session environment not yet supported on Windows
+2025-12-08T20:47:22.748Z [DEBUG] Skipping PostToolUse:Bash hook execution - workspace trust not accepted
+2025-12-08T20:47:22.756Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:47:22.756Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:47:23.274Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:23.890Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:24.116Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-08T20:47:24.116Z [DEBUG] Skipping PreToolUse:Bash hook execution - workspace trust not accepted
+2025-12-08T20:47:24.544Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:24.724Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:47:24.737Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Bash",
+        "ruleContent": "claude:*"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "localSettings"
+  }
+]
+2025-12-08T20:47:24.747Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2025-12-08T20:47:24.747Z [DEBUG] Skipping PermissionRequest:Bash hook execution - workspace trust not accepted
+2025-12-08T20:47:31.228Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-08T20:47:31.241Z [DEBUG] Skipping PostToolUseFailure:Task hook execution - workspace trust not accepted
+2025-12-08T20:47:53.551Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:47:53.551Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:47:53.551Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:47:53.551Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:47:53.552Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:47:53.552Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:47:53.557Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:47:53.557Z [DEBUG] FileHistory: Making snapshot for message ace70184-b927-4aad-af41-cc46422a1a48
+2025-12-08T20:47:53.558Z [DEBUG] FileHistory: Added snapshot for ace70184-b927-4aad-af41-cc46422a1a48, tracking 0 files
+2025-12-08T20:47:54.132Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:48:25.318Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:48:25.420Z [DEBUG] executePreToolHooks called for tool: Task
+2025-12-08T20:48:25.420Z [DEBUG] Skipping PreToolUse:Task hook execution - workspace trust not accepted
+2025-12-08T20:48:25.442Z [DEBUG] Skipping SubagentStart:general-purpose hook execution - workspace trust not accepted
+2025-12-08T20:48:26.972Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:48:27.343Z [DEBUG] executePreToolHooks called for tool: Grep
+2025-12-08T20:48:27.343Z [DEBUG] Skipping PreToolUse:Grep hook execution - workspace trust not accepted
+2025-12-08T20:48:38.517Z [DEBUG] rg error (signal=SIGTERM, code=null, stderr: rg: C:\Users\1\Application Data: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Cookies: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Local Settings: 拒绝访问。 (os error 5)
+rg: C:\Users\1\My Documents: 拒绝访问。 (os error 5)
+rg: C:\Users\1\NetHood: 拒绝访问。 (os error 5)
+rg: C:\Users\1\NTUSER.DAT: 另一个程序正在使用此文件，进程无法访问。 (os error 32)
+rg: C:\Users\1\ntuser.dat.LOG1: 另一个程序正在使用此文件，进程无法访问。 (os error 32)
+rg: C:\Users\1\ntuser.dat.LOG2: 另一个程序正在使用此文件，进程无法访问。 (os error 32)
+rg: C:\Users\1\PrintHood: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Recent: 拒绝访问。 (os error 5)
+rg: C:\Users\1\SendTo: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Templates: 拒绝访问。 (os error 5)
+rg: C:\Users\1\「开始」菜单: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Documents\My Music: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Documents\My Pictures: 拒绝访问。 (os error 5)
+rg: C:\Users\1\Documents\My Videos: 拒绝访问。 (os error 5)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\演示文稿 12月23日18时1分2秒.pptx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\演示文稿 12月23日18时1分26秒.pptx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\演示文稿 12月23日17时53分21秒.pptx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\文档 12月24日10时27分3秒.docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\应用\微信文件\发展对象题库(3).docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\应用\微信文件\发展对象题库(2).docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\应用\微信文件\9d9d74a583d73bb482e30a291299a07f.pptx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\将我的云文档分享给其他人.doc: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\关于PPT色彩，少有人知的5个功能！.pdf: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\378033108\WPS云盘\使用云文档进行协同办公.doc: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\372381647\WPS云盘\应用\输出为PDF\能源化工报20190116_20190116101426.pdf: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\372381647\WPS云盘\关于汇丰石化集团从事原油期货保税交割业务的说明.doc: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\372381647\WPS云盘\2019放假日历表.xls: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\铁矿一月交易报表.et: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\新建 Microsoft Office Excel 97-2003 工作表.xls: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\支飞龙.xls: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\客户资料.xlsx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\军民融合.docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\关于期货手续费的话术.docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\交易记录表1(1).xlsx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\2018经济工作会议习近平讲话.rtf: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\2018   经济会议.docx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\桌面文档\Administrator桌面文档2018.01.03\12月交易报表.xlsx: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\将我的云文档分享给其他人.doc: 云文件提供程序未运行。 (os error 362)
+rg: C:\Users\1\WPSDrive\265321103\WPS云盘\使用云文档进行协同办公.doc: 云文件提供程序未运行。 (os error 362)
+), 61 results
+2025-12-08T20:48:38.518Z [DEBUG] Skipping PostToolUse:Grep hook execution - workspace trust not accepted
+2025-12-08T20:48:38.526Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:48:38.526Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:48:39.187Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:48:39.362Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:48:39.362Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:48:40.458Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:48:40.466Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:48:40.466Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:48:41.782Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:48:41.859Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:48:41.859Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:48:42.153Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:48:42.161Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:48:42.161Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:48:43.080Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:48:43.427Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:48:43.427Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:48:44.450Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:48:44.458Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:48:44.458Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:48:45.168Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:48:45.482Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:48:45.483Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:48:46.647Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:48:46.656Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:48:46.656Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:48:47.566Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:48:47.784Z [DEBUG] executePreToolHooks called for tool: WebSearch
+2025-12-08T20:48:47.784Z [DEBUG] Skipping PreToolUse:WebSearch hook execution - workspace trust not accepted
+2025-12-08T20:48:47.805Z [DEBUG] executePermissionRequestHooks called for tool: WebSearch
+2025-12-08T20:48:47.805Z [DEBUG] Skipping PermissionRequest:WebSearch hook execution - workspace trust not accepted
+2025-12-08T20:48:53.815Z [DEBUG] Skipping Notification:permission_prompt hook execution - workspace trust not accepted
+2025-12-08T20:49:18.090Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-08T20:49:18.798Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:20.787Z [DEBUG] Skipping PostToolUse:WebSearch hook execution - workspace trust not accepted
+2025-12-08T20:49:20.796Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:49:20.796Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:49:22.540Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:25.110Z [DEBUG] Skipping SubagentStop hook execution - workspace trust not accepted
+2025-12-08T20:49:25.118Z [DEBUG] Skipping PostToolUse:Task hook execution - workspace trust not accepted
+2025-12-08T20:49:25.125Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:49:25.125Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:49:25.125Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:49:25.126Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:49:25.126Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:49:25.126Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:49:25.892Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:27.340Z [DEBUG] Skipping Stop hook execution - workspace trust not accepted
+2025-12-08T20:49:45.860Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:49:45.860Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:49:45.860Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:49:45.860Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:49:45.861Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:49:45.861Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:49:45.862Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:49:45.863Z [DEBUG] FileHistory: Making snapshot for message 6396987e-5661-479b-97a0-1cc61cf2d14c
+2025-12-08T20:49:45.863Z [DEBUG] FileHistory: Added snapshot for 6396987e-5661-479b-97a0-1cc61cf2d14c, tracking 0 files
+2025-12-08T20:49:46.383Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:46.911Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:46.917Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-08T20:49:46.917Z [DEBUG] Skipping PreToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:49:46.923Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765226986923
+2025-12-08T20:49:46.923Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:49:46.926Z [DEBUG] Temp file written successfully, size: 175 bytes
+2025-12-08T20:49:46.926Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:49:46.926Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765226986923 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:49:46.926Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:49:46.929Z [DEBUG] Skipping PostToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:49:46.934Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:49:46.934Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:49:46.934Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:49:46.934Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:49:46.935Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:49:46.935Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:49:49.477Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:49.494Z [DEBUG] executePreToolHooks called for tool: WebSearch
+2025-12-08T20:49:49.494Z [DEBUG] Skipping PreToolUse:WebSearch hook execution - workspace trust not accepted
+2025-12-08T20:49:49.504Z [DEBUG] executePermissionRequestHooks called for tool: WebSearch
+2025-12-08T20:49:49.505Z [DEBUG] Skipping PermissionRequest:WebSearch hook execution - workspace trust not accepted
+2025-12-08T20:49:51.925Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-08T20:49:53.929Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:56.273Z [DEBUG] Skipping PostToolUse:WebSearch hook execution - workspace trust not accepted
+2025-12-08T20:49:56.279Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:49:56.279Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:49:56.279Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:49:56.279Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:49:56.279Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:49:56.279Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:49:57.634Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:57.645Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-08T20:49:57.646Z [DEBUG] Skipping PreToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:49:57.651Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765226997651
+2025-12-08T20:49:57.651Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:49:57.654Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-08T20:49:57.654Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:49:57.654Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765226997651 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:49:57.654Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:49:57.656Z [DEBUG] Skipping PostToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:49:57.660Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:49:57.660Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:49:57.660Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:49:57.660Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:49:57.660Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:49:57.660Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:49:58.296Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:49:59.493Z [DEBUG] Skipping Stop hook execution - workspace trust not accepted
+2025-12-08T20:50:58.368Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:50:58.368Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:50:58.368Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:50:58.368Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:50:58.368Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:50:58.368Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:50:58.370Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:50:58.370Z [DEBUG] FileHistory: Making snapshot for message 1b9a9d58-06c6-48cc-82fa-510403178797
+2025-12-08T20:50:58.370Z [DEBUG] FileHistory: Added snapshot for 1b9a9d58-06c6-48cc-82fa-510403178797, tracking 0 files
+2025-12-08T20:50:58.851Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:50:59.221Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:51:00.433Z [DEBUG] Skipping Stop hook execution - workspace trust not accepted
+2025-12-08T20:51:21.883Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:51:21.883Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:51:21.883Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:51:21.883Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:51:21.883Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:51:21.883Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:51:21.885Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:51:21.886Z [DEBUG] FileHistory: Making snapshot for message 2ff1d11a-829f-45a1-8af8-5ca611eecd44
+2025-12-08T20:51:21.886Z [DEBUG] FileHistory: Added snapshot for 2ff1d11a-829f-45a1-8af8-5ca611eecd44, tracking 0 files
+2025-12-08T20:51:22.403Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:51:22.677Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:51:23.096Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:51:23.096Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:51:23.377Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:51:23.386Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:51:23.386Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:51:23.386Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:51:23.386Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:51:23.386Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:51:23.386Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:51:24.241Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:51:25.624Z [DEBUG] executePreToolHooks called for tool: AskUserQuestion
+2025-12-08T20:51:25.624Z [DEBUG] Skipping PreToolUse:AskUserQuestion hook execution - workspace trust not accepted
+2025-12-08T20:51:25.639Z [DEBUG] executePermissionRequestHooks called for tool: AskUserQuestion
+2025-12-08T20:51:25.639Z [DEBUG] Skipping PermissionRequest:AskUserQuestion hook execution - workspace trust not accepted
+2025-12-08T20:51:47.759Z [DEBUG] Metrics opt-out check failed: No API key available
+2025-12-08T20:51:47.759Z [DEBUG] Metrics check failed, defaulting to disabled
+2025-12-08T20:51:47.759Z [DEBUG] Metrics export disabled by organization setting
+2025-12-08T20:51:49.523Z [DEBUG] Skipping PostToolUse:AskUserQuestion hook execution - workspace trust not accepted
+2025-12-08T20:51:49.523Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-08T20:51:49.534Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:51:49.534Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:51:49.534Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:51:49.534Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:51:49.534Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:51:49.534Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:51:50.627Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:51:50.692Z [DEBUG] executePreToolHooks called for tool: Edit
+2025-12-08T20:51:50.692Z [DEBUG] Skipping PreToolUse:Edit hook execution - workspace trust not accepted
+2025-12-08T20:51:50.879Z [DEBUG] executePermissionRequestHooks called for tool: Edit
+2025-12-08T20:51:50.879Z [DEBUG] Skipping PermissionRequest:Edit hook execution - workspace trust not accepted
+2025-12-08T20:52:00.441Z [DEBUG] Writing to temp file: C:\Users\1\.claude\settings.json.tmp.78952.1765227120441
+2025-12-08T20:52:00.441Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:52:00.443Z [DEBUG] Temp file written successfully, size: 292 bytes
+2025-12-08T20:52:00.444Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:52:00.444Z [DEBUG] Renaming C:\Users\1\.claude\settings.json.tmp.78952.1765227120441 to C:\Users\1\.claude\settings.json
+2025-12-08T20:52:00.444Z [DEBUG] File C:\Users\1\.claude\settings.json written atomically
+2025-12-08T20:52:00.449Z [DEBUG] FileHistory: Tracked file modification for C:\Users\1\.claude\settings.json
+2025-12-08T20:52:00.456Z [DEBUG] Skipping PostToolUse:Edit hook execution - workspace trust not accepted
+2025-12-08T20:52:00.456Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-08T20:52:00.471Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:00.471Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:00.471Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:00.471Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:00.471Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:00.471Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:52:01.545Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-08T20:52:01.547Z [DEBUG] Settings changed from userSettings, updating AppState
+2025-12-08T20:52:02.398Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:03.706Z [DEBUG] Skipping Stop hook execution - workspace trust not accepted
+2025-12-08T20:52:15.102Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:15.102Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:15.102Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:15.102Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:15.102Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:15.102Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:52:15.162Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:52:15.162Z [DEBUG] FileHistory: Making snapshot for message 555f3ef0-98ed-4182-870b-4274aa13efb3
+2025-12-08T20:52:15.163Z [DEBUG] FileHistory: Added snapshot for 555f3ef0-98ed-4182-870b-4274aa13efb3, tracking 1 files
+2025-12-08T20:52:15.726Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:16.654Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:16.663Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-08T20:52:16.663Z [DEBUG] Skipping PreToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:52:16.668Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227136668
+2025-12-08T20:52:16.668Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:52:16.670Z [DEBUG] Temp file written successfully, size: 149 bytes
+2025-12-08T20:52:16.670Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:52:16.670Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227136668 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:52:16.671Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:52:16.675Z [DEBUG] Skipping PostToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:52:16.683Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:16.683Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:16.683Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:16.683Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:16.683Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:16.683Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:52:18.467Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:18.534Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:52:18.534Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:52:18.847Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:52:18.856Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:18.856Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:18.856Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:18.856Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:18.856Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:18.856Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:52:20.158Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:20.167Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-08T20:52:20.167Z [DEBUG] Skipping PreToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:52:20.173Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227140173
+2025-12-08T20:52:20.173Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:52:20.175Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-08T20:52:20.175Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:52:20.175Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227140173 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:52:20.175Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:52:20.180Z [DEBUG] Skipping PostToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:52:20.185Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:20.185Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:20.185Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:20.185Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:20.185Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:20.185Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:52:20.964Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:22.265Z [DEBUG] Skipping Stop hook execution - workspace trust not accepted
+2025-12-08T20:52:45.976Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:45.976Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:45.976Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:45.976Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:45.976Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:45.976Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:52:45.978Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:52:45.979Z [DEBUG] FileHistory: Making snapshot for message f1f2d898-e0a1-4716-a290-71b2339ae179
+2025-12-08T20:52:45.979Z [DEBUG] FileHistory: Added snapshot for f1f2d898-e0a1-4716-a290-71b2339ae179, tracking 1 files
+2025-12-08T20:52:46.544Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:47.145Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:47.154Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-08T20:52:47.155Z [DEBUG] Skipping PreToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:52:47.160Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227167160
+2025-12-08T20:52:47.161Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:52:47.163Z [DEBUG] Temp file written successfully, size: 181 bytes
+2025-12-08T20:52:47.163Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:52:47.163Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227167160 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:52:47.163Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:52:47.168Z [DEBUG] Skipping PostToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:52:47.173Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:47.173Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:47.173Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:47.173Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:47.173Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:47.173Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:52:48.382Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:48.400Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-08T20:52:48.400Z [DEBUG] Skipping PreToolUse:Bash hook execution - workspace trust not accepted
+2025-12-08T20:52:48.524Z [DEBUG] Session environment not yet supported on Windows
+2025-12-08T20:52:49.219Z [DEBUG] Skipping PostToolUse:Bash hook execution - workspace trust not accepted
+2025-12-08T20:52:49.226Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:49.226Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:49.226Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:49.226Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:49.227Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:49.227Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:52:49.634Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:50.383Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:52:50.399Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-08T20:52:50.400Z [DEBUG] Skipping PreToolUse:Glob hook execution - workspace trust not accepted
+2025-12-08T20:52:55.405Z [DEBUG] Skipping PostToolUse:Glob hook execution - workspace trust not accepted
+2025-12-08T20:52:55.415Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:52:55.415Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:52:55.415Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:52:55.415Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:52:55.415Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:52:55.415Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:53:00.354Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:00.423Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-08T20:53:00.424Z [DEBUG] Skipping PreToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:53:01.454Z [DEBUG] Skipping PostToolUse:Read hook execution - workspace trust not accepted
+2025-12-08T20:53:01.461Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:53:01.461Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:53:01.461Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:53:01.461Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:53:01.461Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:53:01.461Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:53:02.771Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:02.778Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-08T20:53:02.778Z [DEBUG] Skipping PreToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:53:02.783Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227182783
+2025-12-08T20:53:02.784Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:53:02.787Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-08T20:53:02.787Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:53:02.787Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227182783 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:53:02.787Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:53:02.792Z [DEBUG] Skipping PostToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:53:02.796Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:53:02.796Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:53:02.796Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:53:02.796Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:53:02.796Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:53:02.796Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:53:03.541Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:05.143Z [DEBUG] Skipping Stop hook execution - workspace trust not accepted
+2025-12-08T20:53:16.942Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:53:16.942Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:53:16.942Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:53:16.942Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:53:16.942Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:53:16.942Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:53:16.944Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:53:16.944Z [DEBUG] FileHistory: Making snapshot for message a43cb8d4-b5a5-4e95-8014-cc8885978ad5
+2025-12-08T20:53:16.945Z [DEBUG] FileHistory: Added snapshot for a43cb8d4-b5a5-4e95-8014-cc8885978ad5, tracking 1 files
+2025-12-08T20:53:17.553Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:23.887Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:25.616Z [DEBUG] Skipping Stop hook execution - workspace trust not accepted
+2025-12-08T20:53:40.266Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:53:40.266Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:53:40.266Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:53:40.266Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:53:40.266Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:53:40.266Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:53:40.268Z [DEBUG] Skipping UserPromptSubmit hook execution - workspace trust not accepted
+2025-12-08T20:53:40.269Z [DEBUG] FileHistory: Making snapshot for message 63391216-1e2e-41c1-ae89-41272b3d4768
+2025-12-08T20:53:40.269Z [DEBUG] FileHistory: Added snapshot for 63391216-1e2e-41c1-ae89-41272b3d4768, tracking 1 files
+2025-12-08T20:53:40.803Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:41.321Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:41.337Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-08T20:53:41.337Z [DEBUG] Skipping PreToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:53:41.342Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227221342
+2025-12-08T20:53:41.342Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:53:41.344Z [DEBUG] Temp file written successfully, size: 152 bytes
+2025-12-08T20:53:41.344Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:53:41.344Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227221342 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:53:41.345Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:53:41.349Z [DEBUG] Skipping PostToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:53:41.356Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:53:41.356Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:53:41.356Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:53:41.356Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:53:41.356Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:53:41.356Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:53:42.787Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:44.039Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-08T20:53:44.039Z [DEBUG] Skipping PreToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:53:44.046Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227224046
+2025-12-08T20:53:44.046Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:53:44.048Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-08T20:53:44.048Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:53:44.048Z [DEBUG] Renaming C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json.tmp.78952.1765227224046 to C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json
+2025-12-08T20:53:44.049Z [DEBUG] File C:\Users\1\.claude\todos\2389bc70-5db4-4247-8920-f132baa872b0-agent-2389bc70-5db4-4247-8920-f132baa872b0.json written atomically
+2025-12-08T20:53:44.054Z [DEBUG] Skipping PostToolUse:TodoWrite hook execution - workspace trust not accepted
+2025-12-08T20:53:44.060Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:53:44.060Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:53:44.060Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:53:44.060Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:53:44.061Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:53:44.061Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:53:44.803Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:53:45.327Z [DEBUG] Skipping Stop hook execution - workspace trust not accepted

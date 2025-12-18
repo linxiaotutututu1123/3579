@@ -1,0 +1,1183 @@
+     1→# =============================================================================
+     2→# V4PRO 必需场景定义 (Military-Grade v4.0)
+     3→# =============================================================================
+     4→# 文档版本: v4.0 军规级别标准
+     5→# 创建日期: 2025-12-17
+     6→# 适用范围: 3579 中国期货量化交易系统
+     7→# 场景总数: 165 个必需场景
+     8→# =============================================================================
+     9→# 军规要求: 所有场景必须通过才能部署到LIVE模式
+    10→# 违规处置: 场景缺失 → Exit 11 (SCENARIO_MISSING)
+    11→# =============================================================================
+    12→
+    13→schema_version: 3
+    14→type: scenario_definition
+    15→total_scenarios: 165
+    16→
+    17→# =============================================================================
+    18→# Phase 0: 基础设施 (Infrastructure) - 25 场景
+    19→# =============================================================================
+    20→phase_0_infrastructure:
+    21→  name: "基础设施"
+    22→  scenario_count: 25
+    23→  scenarios:
+    24→    # CI 门禁场景 (INFRA.CI.*)
+    25→    - id: INFRA.CI.GATE_PASS
+    26→      name: "CI门禁全部通过"
+    27→      description: "所有CI检查步骤必须通过"
+    28→      military_rules: [M1, M2, M3]
+    29→      exit_code_on_fail: 0
+    30→      required: true
+    31→
+    32→    - id: INFRA.CI.LINT_PASS
+    33→      name: "Ruff检查通过"
+    34→      description: "代码格式和风格检查必须通过"
+    35→      military_rules: [M3]
+    36→      exit_code_on_fail: 2
+    37→      required: true
+    38→
+    39→    - id: INFRA.CI.TYPE_PASS
+    40→      name: "Mypy检查通过"
+    41→      description: "类型检查必须通过"
+    42→      military_rules: [M3]
+    43→      exit_code_on_fail: 3
+    44→      required: true
+    45→
+    46→    - id: INFRA.CI.TEST_PASS
+    47→      name: "Pytest通过"
+    48→      description: "所有单元测试必须通过"
+    49→      military_rules: [M3, M7]
+    50→      exit_code_on_fail: 4
+    51→      required: true
+    52→
+    53→    - id: INFRA.CI.COVERAGE_MIN
+    54→      name: "覆盖率门槛"
+    55→      description: "代码覆盖率必须>=85%"
+    56→      military_rules: [M3]
+    57→      exit_code_on_fail: 5
+    58→      threshold: 85
+    59→      required: true
+    60→
+    61→    - id: INFRA.CI.POLICY_VALID
+    62→      name: "策略验证通过"
+    63→      description: "军规策略验证必须通过"
+    64→      military_rules: [M1, M2, M3, M4, M5, M6, M7, M8, M9]
+    65→      exit_code_on_fail: 12
+    66→      required: true
+    67→
+    68→    # CHECK_MODE 场景 (INFRA.CHECK.*)
+    69→    - id: INFRA.CHECK.MODE_ENABLED
+    70→      name: "CHECK_MODE启用"
+    71→      description: "CI/Replay/Sim必须启用CHECK_MODE"
+    72→      military_rules: [M1, M7]
+    73→      required: true
+    74→
+    75→    - id: INFRA.CHECK.BROKER_BLOCKED
+    76→      name: "Broker操作阻塞"
+    77→      description: "CHECK_MODE下broker.place_order必须被阻塞"
+    78→      military_rules: [M1]
+    79→      required: true
+    80→
+    81→    - id: INFRA.CHECK.ASSERT_RAISES
+    82→      name: "断言抛出异常"
+    83→      description: "assert_not_check_mode必须抛出RuntimeError"
+    84→      military_rules: [M1, M9]
+    85→      required: true
+    86→
+    87→    # 退出码场景 (INFRA.EXIT.*)
+    88→    - id: INFRA.EXIT.CODE_0_SUCCESS
+    89→      name: "退出码0成功"
+    90→      description: "全部通过时返回退出码0"
+    91→      military_rules: [M9]
+    92→      required: true
+    93→
+    94→    - id: INFRA.EXIT.CODE_1_GENERAL
+    95→      name: "退出码1一般错误"
+    96→      description: "未预期异常返回退出码1"
+    97→      military_rules: [M9]
+    98→      required: true
+    99→
+   100→    - id: INFRA.EXIT.CODE_2_LINT
+   101→      name: "退出码2格式错误"
+   102→      description: "格式/Lint失败返回退出码2"
+   103→      military_rules: [M9]
+   104→      required: true
+   105→
+   106→    - id: INFRA.EXIT.CODE_3_TYPE
+   107→      name: "退出码3类型错误"
+   108→      description: "类型检查失败返回退出码3"
+   109→      military_rules: [M9]
+   110→      required: true
+   111→
+   112→    - id: INFRA.EXIT.CODE_4_TEST
+   113→      name: "退出码4测试失败"
+   114→      description: "测试失败返回退出码4"
+   115→      military_rules: [M9]
+   116→      required: true
+   117→
+   118→    - id: INFRA.EXIT.CODE_5_COVERAGE
+   119→      name: "退出码5覆盖率不足"
+   120→      description: "覆盖率不足返回退出码5"
+   121→      military_rules: [M9]
+   122→      required: true
+   123→
+   124→    - id: INFRA.EXIT.CODE_6_RISK
+   125→      name: "退出码6风控配置缺失"
+   126→      description: "风控配置缺失返回退出码6"
+   127→      military_rules: [M6, M16]
+   128→      required: true
+   129→
+   130→    - id: INFRA.EXIT.CODE_7_BROKER
+   131→      name: "退出码7凭证无效"
+   132→      description: "Broker凭证无效返回退出码7"
+   133→      military_rules: [M8]
+   134→      required: true
+   135→
+   136→    - id: INFRA.EXIT.CODE_8_REPLAY
+   137→      name: "退出码8回放失败"
+   138→      description: "Replay验证失败返回退出码8"
+   139→      military_rules: [M7]
+   140→      required: true
+   141→
+   142→    - id: INFRA.EXIT.CODE_9_SIM
+   143→      name: "退出码9模拟失败"
+   144→      description: "Sim验证失败返回退出码9"
+   145→      military_rules: [M7]
+   146→      required: true
+   147→
+   148→    - id: INFRA.EXIT.CODE_10_MODEL
+   149→      name: "退出码10模型权重缺失"
+   150→      description: "模型权重缺失返回退出码10"
+   151→      military_rules: [M18]
+   152→      required: true
+   153→
+   154→    - id: INFRA.EXIT.CODE_11_SCENARIO
+   155→      name: "退出码11场景缺失"
+   156→      description: "必需场景缺失返回退出码11"
+   157→      military_rules: [M7]
+   158→      required: true
+   159→
+   160→    - id: INFRA.EXIT.CODE_12_POLICY
+   161→      name: "退出码12军法处置"
+   162→      description: "策略违规返回退出码12"
+   163→      military_rules: [M1, M2, M3, M4, M5, M6, M7, M8, M9]
+   164→      required: true
+   165→
+   166→    - id: INFRA.EXIT.CODE_13_CAPABILITY
+   167→      name: "退出码13能力缺失"
+   168→      description: "平台能力缺失返回退出码13"
+   169→      military_rules: [M4, M5]
+   170→      required: true
+   171→
+   172→    # Schema 场景 (INFRA.SCHEMA.*)
+   173→    - id: INFRA.SCHEMA.VERSION_3
+   174→      name: "Schema版本3"
+   175→      description: "报告Schema版本必须>=3"
+   176→      military_rules: [M3]
+   177→      required: true
+   178→
+   179→    - id: INFRA.SCHEMA.REQUIRED_FIELDS
+   180→      name: "必填字段完整"
+   181→      description: "报告必须包含所有必填字段"
+   182→      military_rules: [M3]
+   183→      required: true
+   184→
+   185→# =============================================================================
+   186→# Phase 1: 行情层 (Market Layer) - 20 场景
+   187→# =============================================================================
+   188→phase_1_market:
+   189→  name: "行情层"
+   190→  scenario_count: 20
+   191→  scenarios:
+   192→    # 订阅场景 (MKT.SUBSCRIBER.*)
+   193→    - id: MKT.SUBSCRIBER.DIFF_UPDATE
+   194→      name: "订阅差分更新"
+   195→      description: "只订阅/取消变化的合约"
+   196→      military_rules: [M3]
+   197→      required: true
+   198→
+   199→    - id: MKT.SUBSCRIBER.ADD_SYMBOLS
+   200→      name: "新增订阅"
+   201→      description: "正确处理新增订阅请求"
+   202→      military_rules: [M3]
+   203→      required: true
+   204→
+   205→    - id: MKT.SUBSCRIBER.REMOVE_SYMBOLS
+   206→      name: "取消订阅"
+   207→      description: "正确处理取消订阅请求"
+   208→      military_rules: [M3]
+   209→      required: true
+   210→
+   211→    - id: MKT.SUBSCRIBER.UNCHANGED_SYMBOLS
+   212→      name: "保持订阅"
+   213→      description: "不变的订阅不重复请求"
+   214→      military_rules: [M3]
+   215→      required: true
+   216→
+   217→    # 行情流场景 (MKT.STREAM.*)
+   218→    - id: MKT.STREAM.TICK_CONVERT
+   219→      name: "Tick转换"
+   220→      description: "正确转换原始Tick数据"
+   221→      military_rules: [M3]
+   222→      required: true
+   223→
+   224→    - id: MKT.STREAM.BAR_CONVERT
+   225→      name: "Bar转换"
+   226→      description: "正确转换K线数据"
+   227→      military_rules: [M3]
+   228→      required: true
+   229→
+   230→    - id: MKT.STREAM.DEPTH_CONVERT
+   231→      name: "深度转换"
+   232→      description: "正确转换盘口深度数据"
+   233→      military_rules: [M3]
+   234→      required: true
+   235→
+   236→    # 价格验证场景 (MKT.PRICE.*)
+   237→    - id: MKT.PRICE.ZERO_REJECT
+   238→      name: "零价格拒绝"
+   239→      description: "拒绝处理零价格数据"
+   240→      military_rules: [M4]
+   241→      required: true
+   242→
+   243→    - id: MKT.PRICE.NEGATIVE_REJECT
+   244→      name: "负价格拒绝"
+   245→      description: "拒绝处理负价格数据"
+   246→      military_rules: [M4]
+   247→      required: true
+   248→
+   249→    - id: MKT.PRICE.LIMIT_UP_DETECT
+   250→      name: "涨停检测"
+   251→      description: "正确检测涨停价格"
+   252→      military_rules: [M4, M5]
+   253→      required: true
+   254→
+   255→    - id: MKT.PRICE.LIMIT_DOWN_DETECT
+   256→      name: "跌停检测"
+   257→      description: "正确检测跌停价格"
+   258→      military_rules: [M4, M5]
+   259→      required: true
+   260→
+   261→    # 市场状态场景 (MKT.STATE.*)
+   262→    - id: MKT.STATE.MARKET_STATE_CREATE
+   263→      name: "MarketState创建"
+   264→      description: "正确创建MarketState对象"
+   265→      military_rules: [M3]
+   266→      required: true
+   267→
+   268→    - id: MKT.STATE.PRICES_DICT
+   269→      name: "价格字典"
+   270→      description: "价格字典结构正确"
+   271→      military_rules: [M3]
+   272→      required: true
+   273→
+   274→    - id: MKT.STATE.EQUITY_TRACK
+   275→      name: "权益追踪"
+   276→      description: "正确追踪账户权益"
+   277→      military_rules: [M3, M6]
+   278→      required: true
+   279→
+   280→    - id: MKT.STATE.BARS_1M_DICT
+   281→      name: "1分钟K线字典"
+   282→      description: "1分钟K线字典结构正确"
+   283→      military_rules: [M3]
+   284→      required: true
+   285→
+   286→    # 连接场景 (MKT.CONN.*)
+   287→    - id: MKT.CONN.RECONNECT
+   288→      name: "断线重连"
+   289→      description: "行情断线后自动重连"
+   290→      military_rules: [M9]
+   291→      required: true
+   292→
+   293→    - id: MKT.CONN.HEARTBEAT
+   294→      name: "心跳检测"
+   295→      description: "定期发送心跳保持连接"
+   296→      military_rules: [M9]
+   297→      required: true
+   298→
+   299→    - id: MKT.CONN.TIMEOUT_HANDLE
+   300→      name: "超时处理"
+   301→      description: "正确处理连接超时"
+   302→      military_rules: [M9]
+   303→      required: true
+   304→
+   305→    - id: MKT.CONN.ERROR_RECOVER
+   306→      name: "错误恢复"
+   307→      description: "连接错误后正确恢复"
+   308→      military_rules: [M9]
+   309→      required: true
+   310→
+   311→    - id: MKT.CONN.MULTI_SOURCE
+   312→      name: "多源支持"
+   313→      description: "支持多个行情源切换"
+   314→      military_rules: [M9]
+   315→      required: true
+   316→
+   317→# =============================================================================
+   318→# Phase 2: 审计层 (Audit Layer) - 25 场景
+   319→# =============================================================================
+   320→phase_2_audit:
+   321→  name: "审计层"
+   322→  scenario_count: 25
+   323→  scenarios:
+   324→    # JSONL写入场景 (AUDIT.WRITE.*)
+   325→    - id: AUDIT.WRITE.JSONL_FORMAT
+   326→      name: "JSONL格式"
+   327→      description: "审计事件以JSONL格式写入"
+   328→      military_rules: [M3]
+   329→      required: true
+   330→
+   331→    - id: AUDIT.WRITE.ATOMIC_APPEND
+   332→      name: "原子追加"
+   333→      description: "使用原子操作追加写入"
+   334→      military_rules: [M3]
+   335→      required: true
+   336→
+   337→    - id: AUDIT.WRITE.FSYNC_GUARANTEE
+   338→      name: "fsync保证"
+   339→      description: "使用fsync确保写入磁盘"
+   340→      military_rules: [M3]
+   341→      required: true
+   342→
+   343→    - id: AUDIT.WRITE.UTF8_ENCODING
+   344→      name: "UTF-8编码"
+   345→      description: "使用UTF-8编码写入"
+   346→      military_rules: [M3]
+   347→      required: true
+   348→
+   349→    # 事件结构场景 (AUDIT.EVENT.*)
+   350→    - id: AUDIT.EVENT.TIMESTAMP_ISO
+   351→      name: "ISO时间戳"
+   352→      description: "时间戳使用ISO8601格式"
+   353→      military_rules: [M3]
+   354→      required: true
+   355→
+   356→    - id: AUDIT.EVENT.RUN_ID_UUID
+   357→      name: "run_id UUID"
+   358→      description: "run_id使用UUID格式"
+   359→      military_rules: [M3]
+   360→      required: true
+   361→
+   362→    - id: AUDIT.EVENT.EXEC_ID_FORMAT
+   363→      name: "exec_id格式"
+   364→      description: "exec_id使用commit_timestamp格式"
+   365→      military_rules: [M3]
+   366→      required: true
+   367→
+   368→    - id: AUDIT.EVENT.EVENT_TYPE_ENUM
+   369→      name: "事件类型枚举"
+   370→      description: "event_type使用预定义枚举"
+   371→      military_rules: [M3]
+   372→      required: true
+   373→
+   374→    # 事件类型场景 (AUDIT.TYPE.*)
+   375→    - id: AUDIT.TYPE.DECISION
+   376→      name: "决策事件"
+   377→      description: "记录策略决策事件"
+   378→      military_rules: [M3, M7]
+   379→      required: true
+   380→
+   381→    - id: AUDIT.TYPE.ORDER
+   382→      name: "订单事件"
+   383→      description: "记录订单提交事件"
+   384→      military_rules: [M3]
+   385→      required: true
+   386→
+   387→    - id: AUDIT.TYPE.FILL
+   388→      name: "成交事件"
+   389→      description: "记录订单成交事件"
+   390→      military_rules: [M3]
+   391→      required: true
+   392→
+   393→    - id: AUDIT.TYPE.RISK
+   394→      name: "风控事件"
+   395→      description: "记录风控触发事件"
+   396→      military_rules: [M3, M6]
+   397→      required: true
+   398→
+   399→    - id: AUDIT.TYPE.ERROR
+   400→      name: "错误事件"
+   401→      description: "记录系统错误事件"
+   402→      military_rules: [M3, M9]
+   403→      required: true
+   404→
+   405→    - id: AUDIT.TYPE.STATE
+   406→      name: "状态事件"
+   407→      description: "记录状态变更事件"
+   408→      military_rules: [M3]
+   409→      required: true
+   410→
+   411→    # 追踪场景 (AUDIT.TRACE.*)
+   412→    - id: AUDIT.TRACE.DECISION_CHAIN
+   413→      name: "决策链追踪"
+   414→      description: "追踪完整决策链"
+   415→      military_rules: [M3, M7]
+   416→      required: true
+   417→
+   418→    - id: AUDIT.TRACE.ORDER_LIFECYCLE
+   419→      name: "订单生命周期"
+   420→      description: "追踪订单完整生命周期"
+   421→      military_rules: [M3]
+   422→      required: true
+   423→
+   424→    - id: AUDIT.TRACE.POSITION_CHANGE
+   425→      name: "持仓变化"
+   426→      description: "追踪持仓变化历史"
+   427→      military_rules: [M3]
+   428→      required: true
+   429→
+   430→    - id: AUDIT.TRACE.PNL_ATTRIBUTION
+   431→      name: "盈亏归因"
+   432→      description: "追踪盈亏归因"
+   433→      military_rules: [M3]
+   434→      required: true
+   435→
+   436→    # 完整性场景 (AUDIT.INTEGRITY.*)
+   437→    - id: AUDIT.INTEGRITY.NO_GAP
+   438→      name: "无断层"
+   439→      description: "审计日志无时间断层"
+   440→      military_rules: [M3]
+   441→      required: true
+   442→
+   443→    - id: AUDIT.INTEGRITY.SEQUENCE
+   444→      name: "序列递增"
+   445→      description: "事件序列号严格递增"
+   446→      military_rules: [M3]
+   447→      required: true
+   448→
+   449→    - id: AUDIT.INTEGRITY.HASH_CHAIN
+   450→      name: "哈希链"
+   451→      description: "事件哈希链完整"
+   452→      military_rules: [M3, M7]
+   453→      required: true
+   454→
+   455→    # 存储场景 (AUDIT.STORAGE.*)
+   456→    - id: AUDIT.STORAGE.PATH_CONVENTION
+   457→      name: "路径约定"
+   458→      description: "遵循D.1固定路径约定"
+   459→      military_rules: [M3]
+   460→      required: true
+   461→
+   462→    - id: AUDIT.STORAGE.ROTATION
+   463→      name: "日志轮转"
+   464→      description: "支持日志文件轮转"
+   465→      military_rules: [M3]
+   466→      required: true
+   467→
+   468→    - id: AUDIT.STORAGE.COMPRESSION
+   469→      name: "压缩存档"
+   470→      description: "支持历史日志压缩"
+   471→      military_rules: [M3]
+   472→      required: true
+   473→
+   474→    - id: AUDIT.STORAGE.RETENTION
+   475→      name: "保留策略"
+   476→      description: "遵循日志保留策略"
+   477→      military_rules: [M3]
+   478→      required: true
+   479→
+   480→# =============================================================================
+   481→# Phase 3: 策略降级 (Strategy Fallback) - 30 场景
+   482→# =============================================================================
+   483→phase_3_fallback:
+   484→  name: "策略降级"
+   485→  scenario_count: 30
+   486→  scenarios:
+   487→    # 降级管理场景 (FALL.MANAGER.*)
+   488→    - id: FALL.MANAGER.INIT
+   489→      name: "FallbackManager初始化"
+   490→      description: "正确初始化降级管理器"
+   491→      military_rules: [M9]
+   492→      required: true
+   493→
+   494→    - id: FALL.MANAGER.REGISTER
+   495→      name: "策略注册"
+   496→      description: "正确注册策略到降级链"
+   497→      military_rules: [M9]
+   498→      required: true
+   499→
+   500→    - id: FALL.MANAGER.EXECUTE
+   501→      name: "执行降级"
+   502→      description: "正确执行策略降级"
+   503→      military_rules: [M9]
+   504→      required: true
+   505→
+   506→    # 降级链场景 (FALL.CHAIN.*)
+   507→    - id: FALL.CHAIN.DEFAULT_CONFIG
+   508→      name: "默认降级链配置"
+   509→      description: "默认降级链配置正确"
+   510→      military_rules: [M9]
+   511→      required: true
+   512→
+   513→    - id: FALL.CHAIN.CUSTOM_CONFIG
+   514→      name: "自定义降级链"
+   515→      description: "支持自定义降级链配置"
+   516→      military_rules: [M9]
+   517→      required: true
+   518→
+   519→    - id: FALL.CHAIN.FLAT_TERMINAL
+   520→      name: "flat终止降级"
+   521→      description: "降级链以flat策略终止"
+   522→      military_rules: [M9]
+   523→      required: true
+   524→
+   525→    # 降级原因场景 (FALL.REASON.*)
+   526→    - id: FALL.REASON.EXCEPTION
+   527→      name: "异常触发降级"
+   528→      description: "策略异常触发降级"
+   529→      military_rules: [M9]
+   530→      required: true
+   531→
+   532→    - id: FALL.REASON.TIMEOUT
+   533→      name: "超时触发降级"
+   534→      description: "策略超时触发降级"
+   535→      military_rules: [M9]
+   536→      required: true
+   537→
+   538→    - id: FALL.REASON.NOT_REGISTERED
+   539→      name: "未注册触发降级"
+   540→      description: "策略未注册触发降级"
+   541→      military_rules: [M9]
+   542→      required: true
+   543→
+   544→    - id: FALL.REASON.MANUAL
+   545→      name: "手动触发降级"
+   546→      description: "支持手动触发降级"
+   547→      military_rules: [M9]
+   548→      required: true
+   549→
+   550→    # CalendarArb腿对场景 (ARB.LEGS.*)
+   551→    - id: ARB.LEGS.FIXED_NEAR_FAR
+   552→      name: "近/远月合约固定"
+   553→      description: "近月和远月合约配对固定"
+   554→      military_rules: [M4]
+   555→      required: true
+   556→
+   557→    - id: ARB.LEGS.PRODUCT_MATCH
+   558→      name: "品种匹配"
+   559→      description: "近远月必须同品种"
+   560→      military_rules: [M4]
+   561→      required: true
+   562→
+   563→    - id: ARB.LEGS.EXPIRY_ORDER
+   564→      name: "到期顺序"
+   565→      description: "近月到期早于远月"
+   566→      military_rules: [M4]
+   567→      required: true
+   568→
+   569→    # CalendarArb信号场景 (ARB.SIGNAL.*)
+   570→    - id: ARB.SIGNAL.HALF_LIFE_GATE
+   571→      name: "半衰期门禁"
+   572→      description: "半衰期超限阻止开仓"
+   573→      military_rules: [M4]
+   574→      required: true
+   575→
+   576→    - id: ARB.SIGNAL.STOP_Z_BREAKER
+   577→      name: "止损触发"
+   578→      description: "Z-score超限触发止损"
+   579→      military_rules: [M4, M6]
+   580→      required: true
+   581→
+   582→    - id: ARB.SIGNAL.EXPIRY_GATE
+   583→      name: "到期门禁"
+   584→      description: "临近到期阻止开仓"
+   585→      military_rules: [M4]
+   586→      required: true
+   587→
+   588→    - id: ARB.SIGNAL.CORRELATION_BREAK
+   589→      name: "相关性崩溃"
+   590→      description: "相关性过低阻止开仓"
+   591→      military_rules: [M4]
+   592→      required: true
+   593→
+   594→    - id: ARB.SIGNAL.LONG_SPREAD
+   595→      name: "多头价差信号"
+   596→      description: "正确生成多头价差信号"
+   597→      military_rules: [M4]
+   598→      required: true
+   599→
+   600→    - id: ARB.SIGNAL.SHORT_SPREAD
+   601→      name: "空头价差信号"
+   602→      description: "正确生成空头价差信号"
+   603→      military_rules: [M4]
+   604→      required: true
+   605→
+   606→    - id: ARB.SIGNAL.FLAT
+   607→      name: "平仓信号"
+   608→      description: "正确生成平仓信号"
+   609→      military_rules: [M4]
+   610→      required: true
+   611→
+   612→    # CalendarArb成本场景 (ARB.COST.*)
+   613→    - id: ARB.COST.ENTRY_GATE
+   614→      name: "成本门禁"
+   615→      description: "边际收益不足阻止开仓"
+   616→      military_rules: [M4]
+   617→      required: true
+   618→
+   619→    - id: ARB.COST.MIN_EDGE_BPS
+   620→      name: "最小边际收益"
+   621→      description: "检查最小边际收益要求"
+   622→      military_rules: [M4]
+   623→      required: true
+   624→
+   625→    # CalendarArb状态场景 (ARB.STATE.*)
+   626→    - id: ARB.STATE.INIT
+   627→      name: "初始状态"
+   628→      description: "策略正确初始化"
+   629→      military_rules: [M9]
+   630→      required: true
+   631→
+   632→    - id: ARB.STATE.ACTIVE
+   633→      name: "激活状态"
+   634→      description: "策略正确激活"
+   635→      military_rules: [M9]
+   636→      required: true
+   637→
+   638→    - id: ARB.STATE.STOPPED
+   639→      name: "停止状态"
+   640→      description: "策略正确停止"
+   641→      military_rules: [M9]
+   642→      required: true
+   643→
+   644→    - id: ARB.STATE.COOLDOWN
+   645→      name: "冷却状态"
+   646→      description: "止损后进入冷却状态"
+   647→      military_rules: [M9]
+   648→      required: true
+   649→
+   650→    # Kalman滤波场景 (ARB.KALMAN.*)
+   651→    - id: ARB.KALMAN.BETA_UPDATE
+   652→      name: "Beta更新"
+   653→      description: "Kalman滤波正确更新Beta"
+   654→      military_rules: [M7]
+   655→      required: true
+   656→
+   657→    - id: ARB.KALMAN.RESIDUAL_COMPUTE
+   658→      name: "残差计算"
+   659→      description: "正确计算残差"
+   660→      military_rules: [M7]
+   661→      required: true
+   662→
+   663→    - id: ARB.KALMAN.ZSCORE_COMPUTE
+   664→      name: "Z-score计算"
+   665→      description: "正确计算Z-score"
+   666→      military_rules: [M7]
+   667→      required: true
+   668→
+   669→    - id: ARB.KALMAN.HALF_LIFE_COMPUTE
+   670→      name: "半衰期计算"
+   671→      description: "正确计算半衰期"
+   672→      military_rules: [M7]
+   673→      required: true
+   674→
+   675→# =============================================================================
+   676→# Phase 4: 回放验证 (Replay Verification) - 25 场景
+   677→# =============================================================================
+   678→phase_4_replay:
+   679→  name: "回放验证"
+   680→  scenario_count: 25
+   681→  scenarios:
+   682→    # 验证器场景 (REPLAY.VERIFIER.*)
+   683→    - id: REPLAY.VERIFIER.INIT
+   684→      name: "验证器初始化"
+   685→      description: "正确初始化回放验证器"
+   686→      military_rules: [M7]
+   687→      required: true
+   688→
+   689→    - id: REPLAY.VERIFIER.DECISION_SEQ
+   690→      name: "决策序列验证"
+   691→      description: "验证决策序列一致性"
+   692→      military_rules: [M7]
+   693→      required: true
+   694→
+   695→    - id: REPLAY.VERIFIER.GUARDIAN_SEQ
+   696→      name: "Guardian序列验证"
+   697→      description: "验证Guardian序列一致性"
+   698→      military_rules: [M7]
+   699→      required: true
+   700→
+   701→    - id: REPLAY.VERIFIER.HASH_MATCH
+   702→      name: "哈希匹配"
+   703→      description: "前后运行哈希必须匹配"
+   704→      military_rules: [M7]
+   705→      required: true
+   706→
+   707→    # 哈希计算场景 (REPLAY.HASH.*)
+   708→    - id: REPLAY.HASH.SHA256
+   709→      name: "SHA256算法"
+   710→      description: "使用SHA256计算哈希"
+   711→      military_rules: [M7]
+   712→      required: true
+   713→
+   714→    - id: REPLAY.HASH.EXCLUDE_FIELDS
+   715→      name: "排除时间戳字段"
+   716→      description: "哈希计算排除时间戳字段"
+   717→      military_rules: [M7]
+   718→      required: true
+   719→
+   720→    - id: REPLAY.HASH.SORT_KEYS
+   721→      name: "键排序"
+   722→      description: "JSON序列化时键排序"
+   723→      military_rules: [M7]
+   724→      required: true
+   725→
+   726→    - id: REPLAY.HASH.DETERMINISTIC
+   727→      name: "确定性哈希"
+   728→      description: "相同输入产生相同哈希"
+   729→      military_rules: [M7]
+   730→      required: true
+   731→
+   732→    # 确定性场景 (REPLAY.DETERMINISTIC.*)
+   733→    - id: REPLAY.DETERMINISTIC.RANDOM_SEED
+   734→      name: "随机数种子"
+   735→      description: "使用固定种子确保可重现"
+   736→      military_rules: [M7]
+   737→      required: true
+   738→
+   739→    - id: REPLAY.DETERMINISTIC.LCG_RANDOM
+   740→      name: "LCG随机数生成器"
+   741→      description: "使用LCG生成确定性随机数"
+   742→      military_rules: [M7]
+   743→      required: true
+   744→
+   745→    - id: REPLAY.DETERMINISTIC.NO_SYSTEM_TIME
+   746→      name: "无系统时间依赖"
+   747→      description: "不依赖系统时间产生随机性"
+   748→      military_rules: [M7]
+   749→      required: true
+   750→
+   751→    - id: REPLAY.DETERMINISTIC.FLOAT_PRECISION
+   752→      name: "浮点精度"
+   753→      description: "浮点计算精度一致"
+   754→      military_rules: [M7]
+   755→      required: true
+   756→
+   757→    # SimGate场景 (REPLAY.SIM.*)
+   758→    - id: REPLAY.SIM.REPORT_SCHEMA
+   759→      name: "报告Schema"
+   760→      description: "Sim报告符合Schema v3"
+   761→      military_rules: [M3, M7]
+   762→      required: true
+   763→
+   764→    - id: REPLAY.SIM.CHECK_MODE_REQUIRED
+   765→      name: "CHECK_MODE必需"
+   766→      description: "Sim必须启用CHECK_MODE"
+   767→      military_rules: [M1, M7]
+   768→      required: true
+   769→
+   770→    - id: REPLAY.SIM.SCENARIOS_COUNT
+   771→      name: "场景计数"
+   772→      description: "正确统计场景通过/失败数"
+   773→      military_rules: [M7]
+   774→      required: true
+   775→
+   776→    - id: REPLAY.SIM.FAILURE_STRUCTURE
+   777→      name: "失败结构"
+   778→      description: "失败包含rule_id/component/evidence"
+   779→      military_rules: [M3, M7]
+   780→      required: true
+   781→
+   782→    # 回放事件场景 (REPLAY.EVENT.*)
+   783→    - id: REPLAY.EVENT.JSONL_FORMAT
+   784→      name: "JSONL格式"
+   785→      description: "回放事件使用JSONL格式"
+   786→      military_rules: [M3]
+   787→      required: true
+   788→
+   789→    - id: REPLAY.EVENT.FIXED_PATH
+   790→      name: "固定路径"
+   791→      description: "事件文件使用固定路径"
+   792→      military_rules: [M3]
+   793→      required: true
+   794→
+   795→    - id: REPLAY.EVENT.TICK_SEQUENCE
+   796→      name: "Tick序列"
+   797→      description: "Tick序列严格有序"
+   798→      military_rules: [M7]
+   799→      required: true
+   800→
+   801→    - id: REPLAY.EVENT.NO_FUTURE_LEAK
+   802→      name: "无未来数据泄露"
+   803→      description: "不使用未来数据"
+   804→      military_rules: [M7]
+   805→      required: true
+   806→
+   807→    # VaR验证场景 (REPLAY.VAR.*)
+   808→    - id: REPLAY.VAR.HISTORICAL
+   809→      name: "历史VaR"
+   810→      description: "历史VaR计算可重现"
+   811→      military_rules: [M7]
+   812→      required: true
+   813→
+   814→    - id: REPLAY.VAR.PARAMETRIC
+   815→      name: "参数VaR"
+   816→      description: "参数VaR计算可重现"
+   817→      military_rules: [M7]
+   818→      required: true
+   819→
+   820→    - id: REPLAY.VAR.MONTE_CARLO
+   821→      name: "蒙特卡洛VaR"
+   822→      description: "蒙特卡洛VaR计算可重现"
+   823→      military_rules: [M7]
+   824→      required: true
+   825→
+   826→    - id: REPLAY.VAR.EXPECTED_SHORTFALL
+   827→      name: "预期短缺"
+   828→      description: "ES计算可重现"
+   829→      military_rules: [M7]
+   830→      required: true
+   831→
+   832→    - id: REPLAY.VAR.CONFIDENCE_LEVELS
+   833→      name: "置信度级别"
+   834→      description: "支持多置信度级别"
+   835→      military_rules: [M7]
+   836→      required: true
+   837→
+   838→# =============================================================================
+   839→# Phase 5: 成本层 (Cost Layer) - 40 场景
+   840→# =============================================================================
+   841→phase_5_cost:
+   842→  name: "成本层"
+   843→  scenario_count: 40
+   844→  scenarios:
+   845→    # 交易所场景 (COST.EXCHANGE.*)
+   846→    - id: COST.EXCHANGE.SHFE
+   847→      name: "上期所费率"
+   848→      description: "上海期货交易所费率正确"
+   849→      military_rules: [M4]
+   850→      required: true
+   851→
+   852→    - id: COST.EXCHANGE.DCE
+   853→      name: "大商所费率"
+   854→      description: "大连商品交易所费率正确"
+   855→      military_rules: [M4]
+   856→      required: true
+   857→
+   858→    - id: COST.EXCHANGE.CZCE
+   859→      name: "郑商所费率"
+   860→      description: "郑州商品交易所费率正确"
+   861→      military_rules: [M4]
+   862→      required: true
+   863→
+   864→    - id: COST.EXCHANGE.CFFEX
+   865→      name: "中金所费率"
+   866→      description: "中国金融期货交易所费率正确"
+   867→      military_rules: [M4]
+   868→      required: true
+   869→
+   870→    - id: COST.EXCHANGE.GFEX
+   871→      name: "广期所费率"
+   872→      description: "广州期货交易所费率正确"
+   873→      military_rules: [M4]
+   874→      required: true
+   875→
+   876→    - id: COST.EXCHANGE.INE
+   877→      name: "能源中心费率"
+   878→      description: "上海国际能源交易中心费率正确"
+   879→      military_rules: [M4]
+   880→      required: true
+   881→
+   882→    # 费率类型场景 (COST.FEE_TYPE.*)
+   883→    - id: COST.FEE_TYPE.FIXED
+   884→      name: "固定费率"
+   885→      description: "正确计算固定费率"
+   886→      military_rules: [M4]
+   887→      required: true
+   888→
+   889→    - id: COST.FEE_TYPE.RATIO
+   890→      name: "比例费率"
+   891→      description: "正确计算比例费率"
+   892→      military_rules: [M4]
+   893→      required: true
+   894→
+   895→    - id: COST.FEE_TYPE.MIXED
+   896→      name: "混合费率"
+   897→      description: "正确计算混合费率"
+   898→      military_rules: [M4]
+   899→      required: true
+   900→
+   901→    # 交易方向场景 (COST.DIRECTION.*)
+   902→    - id: COST.DIRECTION.OPEN
+   903→      name: "开仓费率"
+   904→      description: "正确计算开仓费率"
+   905→      military_rules: [M4]
+   906→      required: true
+   907→
+   908→    - id: COST.DIRECTION.CLOSE
+   909→      name: "平昨费率"
+   910→      description: "正确计算平昨费率"
+   911→      military_rules: [M4]
+   912→      required: true
+   913→
+   914→    - id: COST.DIRECTION.CLOSE_TODAY
+   915→      name: "平今费率"
+   916→      description: "正确计算平今费率"
+   917→      military_rules: [M4]
+   918→      required: true
+   919→
+   920→    - id: COST.DIRECTION.CLOSE_TODAY_FREE
+   921→      name: "平今免费"
+   922→      description: "支持平今免费品种"
+   923→      military_rules: [M4]
+   924→      required: true
+   925→
+   926→    # 成本分解场景 (COST.BREAKDOWN.*)
+   927→    - id: COST.BREAKDOWN.FEE
+   928→      name: "手续费分解"
+   929→      description: "正确分解手续费"
+   930→      military_rules: [M4]
+   931→      required: true
+   932→
+   933→    - id: COST.BREAKDOWN.SLIPPAGE
+   934→      name: "滑点分解"
+   935→      description: "正确分解滑点成本"
+   936→      military_rules: [M4]
+   937→      required: true
+   938→
+   939→    - id: COST.BREAKDOWN.IMPACT
+   940→      name: "冲击分解"
+   941→      description: "正确分解市场冲击"
+   942→      military_rules: [M4]
+   943→      required: true
+   944→
+   945→    - id: COST.BREAKDOWN.TOTAL
+   946→      name: "总成本"
+   947→      description: "正确计算总成本"
+   948→      military_rules: [M4]
+   949→      required: true
+   950→
+   951→    - id: COST.BREAKDOWN.TOTAL_BPS
+   952→      name: "总成本基点"
+   953→      description: "正确计算总成本基点"
+   954→      military_rules: [M4]
+   955→      required: true
+   956→
+   957→    # 估算器场景 (COST.ESTIMATOR.*)
+   958→    - id: COST.ESTIMATOR.INIT
+   959→      name: "估算器初始化"
+   960→      description: "正确初始化成本估算器"
+   961→      military_rules: [M4]
+   962→      required: true
+   963→
+   964→    - id: COST.ESTIMATOR.ESTIMATE
+   965→      name: "成本估算"
+   966→      description: "正确估算交易成本"
+   967→      military_rules: [M4]
+   968→      required: true
+   969→
+   970→    - id: COST.ESTIMATOR.EDGE_GATE
+   971→      name: "边际门禁"
+   972→      description: "正确执行边际门禁检查"
+   973→      military_rules: [M4]
+   974→      required: true
+   975→
+   976→    # 品种费率场景 (COST.PRODUCT.*)
+   977→    - id: COST.PRODUCT.CU
+   978→      name: "铜费率"
+   979→      description: "沪铜费率配置正确"
+   980→      military_rules: [M4]
+   981→      required: true
+   982→
+   983→    - id: COST.PRODUCT.AL
+   984→      name: "铝费率"
+   985→      description: "沪铝费率配置正确"
+   986→      military_rules: [M4]
+   987→      required: true
+   988→
+   989→    - id: COST.PRODUCT.RB
+   990→      name: "螺纹钢费率"
+   991→      description: "螺纹钢费率配置正确"
+   992→      military_rules: [M4]
+   993→      required: true
+   994→
+   995→    - id: COST.PRODUCT.HC
+   996→      name: "热卷费率"
+   997→      description: "热卷费率配置正确"
+   998→      military_rules: [M4]
+   999→      required: true
+  1000→
+  1001→    - id: COST.PRODUCT.M
+  1002→      name: "豆粕费率"
+  1003→      description: "豆粕费率配置正确"
+  1004→      military_rules: [M4]
+  1005→      required: true
+  1006→
+  1007→    - id: COST.PRODUCT.Y
+  1008→      name: "豆油费率"
+  1009→      description: "豆油费率配置正确"
+  1010→      military_rules: [M4]
+  1011→      required: true
+  1012→
+  1013→    - id: COST.PRODUCT.P
+  1014→      name: "棕榈油费率"
+  1015→      description: "棕榈油费率配置正确"
+  1016→      military_rules: [M4]
+  1017→      required: true
+  1018→
+  1019→    - id: COST.PRODUCT.CF
+  1020→      name: "棉花费率"
+  1021→      description: "棉花费率配置正确"
+  1022→      military_rules: [M4]
+  1023→      required: true
+  1024→
+  1025→    - id: COST.PRODUCT.SR
+  1026→      name: "白糖费率"
+  1027→      description: "白糖费率配置正确"
+  1028→      military_rules: [M4]
+  1029→      required: true
+  1030→
+  1031→    - id: COST.PRODUCT.TA
+  1032→      name: "PTA费率"
+  1033→      description: "PTA费率配置正确"
+  1034→      military_rules: [M4]
+  1035→      required: true
+  1036→
+  1037→    - id: COST.PRODUCT.IF
+  1038→      name: "沪深300费率"
+  1039→      description: "沪深300期货费率配置正确"
+  1040→      military_rules: [M4]
+  1041→      required: true
+  1042→
+  1043→    - id: COST.PRODUCT.IC
+  1044→      name: "中证500费率"
+  1045→      description: "中证500期货费率配置正确"
+  1046→      military_rules: [M4]
+  1047→      required: true
+  1048→
+  1049→    - id: COST.PRODUCT.IH
+  1050→      name: "上证50费率"
+  1051→      description: "上证50期货费率配置正确"
+  1052→      military_rules: [M4]
+  1053→      required: true
+  1054→
+  1055→    - id: COST.PRODUCT.SC
+  1056→      name: "原油费率"
+  1057→      description: "原油期货费率配置正确"
+  1058→      military_rules: [M4]
+  1059→      required: true
+  1060→
+  1061→    - id: COST.PRODUCT.AO
+  1062→      name: "氧化铝费率"
+  1063→      description: "氧化铝期货费率配置正确"
+  1064→      military_rules: [M4]
+  1065→      required: true
+  1066→
+  1067→    - id: COST.PRODUCT.SI
+  1068→      name: "工业硅费率"
+  1069→      description: "工业硅期货费率配置正确"
+  1070→      military_rules: [M4]
+  1071→      required: true
+  1072→
+  1073→    - id: COST.PRODUCT.LC
+  1074→      name: "碳酸锂费率"
+  1075→      description: "碳酸锂期货费率配置正确"
+  1076→      military_rules: [M4]
+  1077→      required: true
+  1078→
+  1079→    # 滑点模型场景 (COST.SLIPPAGE.*)
+  1080→    - id: COST.SLIPPAGE.FIXED_TICK
+  1081→      name: "固定滑点"
+  1082→      description: "支持固定tick滑点模型"
+  1083→      military_rules: [M4]
+  1084→      required: true
+  1085→
+  1086→    - id: COST.SLIPPAGE.VOLUME_BASED
+  1087→      name: "成交量滑点"
+  1088→      description: "支持成交量相关滑点模型"
+  1089→      military_rules: [M4]
+  1090→      required: true
+  1091→
+  1092→# =============================================================================
+  1093→# 军规映射表 (Military Rule Mapping)
+  1094→# =============================================================================
+  1095→military_rules:
+  1096→  M1:
+  1097→    name: "防止未授权交易"
+  1098→    description: "CHECK_MODE必须阻止所有broker操作"
+  1099→    scenarios: [INFRA.CHECK.MODE_ENABLED, INFRA.CHECK.BROKER_BLOCKED, REPLAY.SIM.CHECK_MODE_REQUIRED]
+  1100→
+  1101→  M2:
+  1102→    name: "强制双人审批"
+  1103→    description: "关键操作需要双人审批"
+  1104→    scenarios: [INFRA.CI.GATE_PASS, INFRA.CI.POLICY_VALID]
+  1105→
+  1106→  M3:
+  1107→    name: "完整审计追踪"
+  1108→    description: "所有操作必须有完整审计记录"
+  1109→    scenarios: [AUDIT.WRITE.JSONL_FORMAT, AUDIT.WRITE.ATOMIC_APPEND, AUDIT.TRACE.DECISION_CHAIN]
+  1110→
+  1111→  M4:
+  1112→    name: "下单前风控检查"
+  1113→    description: "所有下单必须经过风控检查"
+  1114→    scenarios: [ARB.COST.ENTRY_GATE, COST.ESTIMATOR.EDGE_GATE]
+  1115→
+  1116→  M5:
+  1117→    name: "市价单禁止"
+  1118→    description: "禁止使用市价单"
+  1119→    scenarios: [MKT.PRICE.LIMIT_UP_DETECT, MKT.PRICE.LIMIT_DOWN_DETECT]
+  1120→
+  1121→  M6:
+  1122→    name: "熔断保护"
+  1123→    description: "必须配置熔断保护机制"
+  1124→    scenarios: [INFRA.EXIT.CODE_6_RISK, ARB.SIGNAL.STOP_Z_BREAKER]
+  1125→
+  1126→  M7:
+  1127→    name: "回放一致性"
+  1128→    description: "回放结果必须与实盘一致"
+  1129→    scenarios: [REPLAY.VERIFIER.DECISION_SEQ, REPLAY.HASH.DETERMINISTIC, REPLAY.DETERMINISTIC.LCG_RANDOM]
+  1130→
+  1131→  M8:
+  1132→    name: "凭证验证"
+  1133→    description: "Broker凭证必须验证"
+  1134→    scenarios: [INFRA.EXIT.CODE_7_BROKER]
+  1135→
+  1136→  M9:
+  1137→    name: "异常处理"
+  1138→    description: "所有异常必须正确处理"
+  1139→    scenarios: [FALL.REASON.EXCEPTION, FALL.REASON.TIMEOUT, INFRA.EXIT.CODE_1_GENERAL]
+  1140→
+  1141→  M16:
+  1142→    name: "风控配置"
+  1143→    description: "风控配置必须完整"
+  1144→    scenarios: [INFRA.EXIT.CODE_6_RISK]
+  1145→
+  1146→  M18:
+  1147→    name: "实验性门禁"
+  1148→    description: "实验性功能必须有门禁"
+  1149→    scenarios: [INFRA.EXIT.CODE_10_MODEL, ARB.SIGNAL.HALF_LIFE_GATE]
+  1150→
+  1151→# =============================================================================
+  1152→# 验证配置
+  1153→# =============================================================================
+  1154→validation:
+  1155→  # 必须通过的场景比例
+  1156→  pass_threshold: 1.0  # 100% - 军规级要求全部通过
+  1157→
+  1158→  # 允许跳过的场景（仅用于开发环境）
+  1159→  skip_allowed_in_dev: false
+  1160→
+  1161→  # 场景超时（秒）
+  1162→  scenario_timeout: 30
+  1163→
+  1164→  # 失败时退出码
+  1165→  exit_code_on_fail: 11  # SCENARIO_MISSING
+  1166→
+  1167→  # 报告输出路径
+  1168→  report_path: "artifacts/scenarios/validation_report.json"
+  1169→
+  1170→# =============================================================================
+  1171→# 元数据
+  1172→# =============================================================================
+  1173→metadata:
+  1174→  created_by: "Claude Code V4PRO总工程师"
+  1175→  created_at: "2025-12-17T12:45:00Z"
+  1176→  version: "4.0.0"
+  1177→  description: "军规级必需场景定义文件"
+  1178→  copyright: "3579 中国期货量化交易系统"
+  1179→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

@@ -1,0 +1,319 @@
+"""异常类单元测试"""
+
+import pytest
+
+from src.market_gateway.exceptions import (
+    GatewayError,
+    ConnectionError,
+    ConnectionTimeoutError,
+    ConnectionRefusedError,
+    AuthenticationError,
+    InvalidCredentialsError,
+    SessionExpiredError,
+    SubscriptionError,
+    SubscriptionLimitError,
+    InvalidSymbolError,
+    ConfigError,
+    MissingConfigError,
+    InvalidConfigValueError,
+    DataValidationError,
+    InvalidPriceError,
+    InvalidVolumeError,
+    DataProcessingError,
+    StorageError,
+    RedisStorageError,
+    ClickHouseStorageError,
+    RateLimitError,
+    GatewayNotConnectedError,
+    get_error_message,
+    ERROR_CODE_MESSAGES
+)
+
+
+class TestGatewayError:
+    """GatewayError基类测试"""
+
+    def test_create_with_defaults(self):
+        """测试使用默认值创建"""
+        error = GatewayError()
+
+        assert error.message == "Gateway error occurred"
+        assert error.error_code == 1000
+        assert error.details == {}
+
+    def test_create_with_custom_values(self):
+        """测试使用自定义值创建"""
+        error = GatewayError(
+            message="Custom error",
+            error_code=9999,
+            details={"key": "value"}
+        )
+
+        assert error.message == "Custom error"
+        assert error.error_code == 9999
+        assert error.details["key"] == "value"
+
+    def test_str_representation(self):
+        """测试字符串表示"""
+        error = GatewayError(message="Test error", error_code=1000)
+
+        assert "[1000] Test error" in str(error)
+
+    def test_str_with_details(self):
+        """测试带详情的字符串表示"""
+        error = GatewayError(
+            message="Test error",
+            error_code=1000,
+            details={"info": "extra"}
+        )
+
+        error_str = str(error)
+        assert "[1000]" in error_str
+        assert "Test error" in error_str
+
+    def test_to_dict(self):
+        """测试转换为字典"""
+        error = GatewayError(
+            message="Test",
+            error_code=1000,
+            details={"key": "value"}
+        )
+
+        data = error.to_dict()
+
+        assert data["error_type"] == "GatewayError"
+        assert data["error_code"] == 1000
+        assert data["message"] == "Test"
+        assert data["details"]["key"] == "value"
+
+
+class TestConnectionErrors:
+    """连接异常测试"""
+
+    def test_connection_error(self):
+        """测试ConnectionError"""
+        error = ConnectionError("Network error")
+
+        assert error.error_code == 1100
+        assert "Network error" in error.message
+
+    def test_connection_timeout_error(self):
+        """测试ConnectionTimeoutError"""
+        error = ConnectionTimeoutError(timeout_seconds=30)
+
+        assert error.error_code == 1101
+        assert error.details["timeout_seconds"] == 30
+
+    def test_connection_refused_error(self):
+        """测试ConnectionRefusedError"""
+        error = ConnectionRefusedError(host="127.0.0.1", port=10131)
+
+        assert error.error_code == 1102
+        assert error.details["host"] == "127.0.0.1"
+        assert error.details["port"] == 10131
+
+
+class TestAuthenticationErrors:
+    """认证异常测试"""
+
+    def test_authentication_error(self):
+        """测试AuthenticationError"""
+        error = AuthenticationError()
+
+        assert error.error_code == 1200
+
+    def test_invalid_credentials_error(self):
+        """测试InvalidCredentialsError"""
+        error = InvalidCredentialsError()
+
+        assert error.error_code == 1201
+
+    def test_session_expired_error(self):
+        """测试SessionExpiredError"""
+        error = SessionExpiredError()
+
+        assert error.error_code == 1202
+
+
+class TestSubscriptionErrors:
+    """订阅异常测试"""
+
+    def test_subscription_error(self):
+        """测试SubscriptionError"""
+        error = SubscriptionError(symbols=["rb2401", "cu2401"])
+
+        assert error.error_code == 1300
+        assert error.details["symbols"] == ["rb2401", "cu2401"]
+
+    def test_subscription_limit_error(self):
+        """测试SubscriptionLimitError"""
+        error = SubscriptionLimitError(current_count=1000, max_limit=500)
+
+        assert error.error_code == 1301
+        assert error.details["current_count"] == 1000
+        assert error.details["max_limit"] == 500
+
+    def test_invalid_symbol_error(self):
+        """测试InvalidSymbolError"""
+        error = InvalidSymbolError(symbol="invalid")
+
+        assert error.error_code == 1302
+        assert error.details["symbol"] == "invalid"
+
+
+class TestConfigErrors:
+    """配置异常测试"""
+
+    def test_config_error(self):
+        """测试ConfigError"""
+        error = ConfigError(config_key="front_addr")
+
+        assert error.error_code == 1400
+        assert error.details["config_key"] == "front_addr"
+
+    def test_missing_config_error(self):
+        """测试MissingConfigError"""
+        error = MissingConfigError(config_key="password")
+
+        assert error.error_code == 1401
+
+    def test_invalid_config_value_error(self):
+        """测试InvalidConfigValueError"""
+        error = InvalidConfigValueError(
+            config_key="port",
+            expected="1-65535",
+            actual=70000
+        )
+
+        assert error.error_code == 1402
+        assert error.details["expected"] == "1-65535"
+        assert error.details["actual"] == "70000"
+
+
+class TestDataValidationErrors:
+    """数据验证异常测试"""
+
+    def test_data_validation_error(self):
+        """测试DataValidationError"""
+        error = DataValidationError(field_name="price")
+
+        assert error.error_code == 1500
+        assert error.details["field_name"] == "price"
+
+    def test_invalid_price_error(self):
+        """测试InvalidPriceError"""
+        error = InvalidPriceError(price=-100.0)
+
+        assert error.error_code == 1501
+        assert error.details["price"] == -100.0
+
+    def test_invalid_volume_error(self):
+        """测试InvalidVolumeError"""
+        error = InvalidVolumeError(volume=-50)
+
+        assert error.error_code == 1502
+        assert error.details["volume"] == -50
+
+
+class TestStorageErrors:
+    """存储异常测试"""
+
+    def test_storage_error(self):
+        """测试StorageError"""
+        error = StorageError(storage_type="redis")
+
+        assert error.error_code == 1700
+        assert error.details["storage_type"] == "redis"
+
+    def test_redis_storage_error(self):
+        """测试RedisStorageError"""
+        error = RedisStorageError()
+
+        assert error.error_code == 1701
+        assert error.details["storage_type"] == "redis"
+
+    def test_clickhouse_storage_error(self):
+        """测试ClickHouseStorageError"""
+        error = ClickHouseStorageError()
+
+        assert error.error_code == 1702
+        assert error.details["storage_type"] == "clickhouse"
+
+
+class TestOtherErrors:
+    """其他异常测试"""
+
+    def test_data_processing_error(self):
+        """测试DataProcessingError"""
+        error = DataProcessingError()
+
+        assert error.error_code == 1600
+
+    def test_rate_limit_error(self):
+        """测试RateLimitError"""
+        error = RateLimitError(retry_after=60.0)
+
+        assert error.error_code == 1800
+        assert error.details["retry_after_seconds"] == 60.0
+
+    def test_gateway_not_connected_error(self):
+        """测试GatewayNotConnectedError"""
+        error = GatewayNotConnectedError()
+
+        assert error.error_code == 1900
+
+
+class TestErrorCodeMessages:
+    """错误代码消息测试"""
+
+    def test_get_error_message_known(self):
+        """测试获取已知错误代码消息"""
+        message = get_error_message(1100)
+
+        assert message == "连接失败"
+
+    def test_get_error_message_unknown(self):
+        """测试获取未知错误代码消息"""
+        message = get_error_message(9999)
+
+        assert "未知错误" in message
+        assert "9999" in message
+
+    def test_error_code_messages_coverage(self):
+        """测试错误代码消息覆盖率"""
+        expected_codes = [
+            1000, 1100, 1101, 1102,
+            1200, 1201, 1202,
+            1300, 1301, 1302,
+            1400, 1401, 1402,
+            1500, 1501, 1502,
+            1600, 1700, 1701, 1702,
+            1800, 1900
+        ]
+
+        for code in expected_codes:
+            assert code in ERROR_CODE_MESSAGES
+
+
+class TestExceptionInheritance:
+    """异常继承关系测试"""
+
+    def test_connection_error_is_gateway_error(self):
+        """测试ConnectionError继承自GatewayError"""
+        error = ConnectionError()
+        assert isinstance(error, GatewayError)
+
+    def test_authentication_error_is_gateway_error(self):
+        """测试AuthenticationError继承自GatewayError"""
+        error = AuthenticationError()
+        assert isinstance(error, GatewayError)
+
+    def test_connection_timeout_is_connection_error(self):
+        """测试ConnectionTimeoutError继承自ConnectionError"""
+        error = ConnectionTimeoutError()
+        assert isinstance(error, ConnectionError)
+        assert isinstance(error, GatewayError)
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

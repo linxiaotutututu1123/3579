@@ -1,0 +1,46 @@
+C:\Users\1\2468\3579\src\config.py:10:    secret: str | None
+C:\Users\1\2468\3579\src\config.py:24:    secret = getenv("DINGTALK_SECRET", "").strip() or None
+C:\Users\1\2468\3579\src\config.py:35:        dingtalk = DingTalkSettings(webhook_url=webhook, secret=secret)
+C:\Users\1\2468\3579\src\execution\ctp_broker.py:45:    password: str
+C:\Users\1\2468\3579\src\execution\ctp_broker.py:55:    "CTP_PASSWORD",
+C:\Users\1\2468\3579\src\execution\ctp_broker.py:94:        password=os.environ["CTP_PASSWORD"],
+C:\Users\1\2468\3579\src\app\live_entry.py:33:    "CTP_PASSWORD",
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:79:        password: 密码
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:89:    password: str = ""
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:114:        if not self.password:
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:115:            errors.append("password不能为空")
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:123:    def to_dict(self, mask_password: bool = True) -> dict[str, Any]:
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:127:            mask_password: 是否掩码密码
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:136:            "password": "***" if mask_password and self.password else self.password,
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:138:            "auth_code": "***" if mask_password and self.auth_code else self.auth_code,
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:228:    "CTP_PASSWORD",
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:278:            password="mock_password",
+C:\Users\1\2468\3579\src\brokers\ctp\config.py:298:        password=os.environ.get("CTP_PASSWORD", ""),
+C:\Users\1\2468\3579\src\app\config.py:85:        password: 密码
+C:\Users\1\2468\3579\src\app\config.py:93:    password: str = ""
+C:\Users\1\2468\3579\src\app\config.py:111:    def to_dict(self, mask_password: bool = True) -> dict[str, Any]:
+C:\Users\1\2468\3579\src\app\config.py:115:            mask_password: 是否掩码密码
+C:\Users\1\2468\3579\src\app\config.py:125:            "password": "***" if mask_password and self.password else self.password,
+C:\Users\1\2468\3579\src\app\config.py:138:        password: 密码
+C:\Users\1\2468\3579\src\app\config.py:144:    password: str = ""
+C:\Users\1\2468\3579\src\app\config.py:146:    def to_dict(self, mask_password: bool = True) -> dict[str, Any]:
+C:\Users\1\2468\3579\src\app\config.py:152:            "password": "***" if mask_password and self.password else self.password,
+C:\Users\1\2468\3579\src\app\config.py:261:    def to_dict(self, mask_secrets: bool = True) -> dict[str, Any]:
+C:\Users\1\2468\3579\src\app\config.py:265:            mask_secrets: 是否掩码敏感信息
+C:\Users\1\2468\3579\src\app\config.py:275:            "database": self.database.to_dict(mask_secrets),
+C:\Users\1\2468\3579\src\app\config.py:276:            "redis": self.redis.to_dict(mask_secrets),
+C:\Users\1\2468\3579\src\app\config.py:289:    "DB_PASSWORD",
+C:\Users\1\2468\3579\src\app\config.py:350:        password=os.environ.get("DB_PASSWORD", ""),
+C:\Users\1\2468\3579\src\app\config.py:359:        password=os.environ.get("REDIS_PASSWORD", ""),
+C:\Users\1\2468\3579\src\app\config.py:439:        password=db_data.get("password", ""),
+C:\Users\1\2468\3579\src\app\config.py:449:        password=redis_data.get("password", ""),
+C:\Users\1\2468\3579\src\brokers\ctp\api.py:627:    password: str | None = None,
+C:\Users\1\2468\3579\src\brokers\ctp\api.py:636:        password: 密码，为None则从环境变量读取
+C:\Users\1\2468\3579\src\brokers\ctp\api.py:642:    if all(v is not None for v in [front_addr, broker_id, user_id, password]):
+C:\Users\1\2468\3579\src\brokers\ctp\api.py:647:            password=password,  # type: ignore[arg-type]
+C:\Users\1\2468\3579\src\alerts\dingtalk.py:15:    secret: str | None = None
+C:\Users\1\2468\3579\src\alerts\dingtalk.py:19:def _sign(secret: str, timestamp_ms: int) -> str:
+C:\Users\1\2468\3579\src\alerts\dingtalk.py:20:    string_to_sign = f"{timestamp_ms}\n{secret}"
+C:\Users\1\2468\3579\src\alerts\dingtalk.py:22:        secret.encode("utf-8"),
+C:\Users\1\2468\3579\src\alerts\dingtalk.py:31:    if cfg.secret:
+C:\Users\1\2468\3579\src\alerts\dingtalk.py:33:        sign = _sign(cfg.secret, ts)

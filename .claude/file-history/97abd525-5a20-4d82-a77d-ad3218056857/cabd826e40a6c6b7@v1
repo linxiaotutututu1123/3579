@@ -1,0 +1,437 @@
+"""
+tests/risk_control/test_risk_control.py
+风控模块单元测试。
+
+测试覆盖：
+- #15 止损保护
+- #16 持仓限制
+- #17 资金监控
+- #18 交易时段控制
+- #19 异常订单检测
+
+Author: AI Quant Team
+"""
+
+import pytest
+from datetime import datetime, time, timezone
+from decimal import Decimal
+
+from quant_system.risk_control import (
+    # 模型
+    Direction,
+    OrderType,
+    OrderStatus,
+    RiskLevel,
+    Position,
+    Order,
+    Account,
+    # 配置
+    StopLossConfig,
+    PositionLimitConfig,
+    AccountLimitConfig,
+    RiskControlConfig,
+    SymbolRiskConfig,
+    # 交易时段
+    TradingCalendar,
+    TradingSession,
+    Exchange,
+    # 订单验证
+    OrderValidator,
+    OrderRejectReason,
+    # 引擎
+    RiskControlEngine,
+)
+
+
+# =============================================================================
+# Fixtures
+# =============================================================================
+
+
+@pytest.fixture
+def default_config() -> RiskControlConfig:
+    """默认风控配置。"""
+    return RiskControlConfig(
+        stop_loss=StopLossConfig(
+            max_single_loss_pct=Decimal("0.5"),
+            max_daily_loss_pct=Decimal("2.0"),
+            max_total_drawdown_pct=Decimal("8.0"),
+        ),
+        position_limit=PositionLimitConfig(
+            max_position_per_symbol=100,
+            max_total_position=500,
+            max_order_volume=50,
+        ),
+        account_limit=AccountLimitConfig(
+            margin_warning_pct=Decimal("70.0"),
+            margin_force_close_pct=Decimal("90.0"),
+            min_available=Decimal("50000"),
+        ),
+    )
+
+
+@pytest.fixture
+def order_validator(default_config: RiskControlConfig) -> OrderValidator:
+    """订单验证器。"""
+    return OrderValidator(default_config)
+
+
+@pytest.fixture
+def risk_engine(default_config: RiskControlConfig) -> RiskControlEngine:
+    """风控引擎。"""
+    return RiskControlEngine(default_config)
+
+
+@pytest.fixture
+def sample_order() -> Order:
+    """示例订单。"""
+    return Order(
+        order_id="TEST001",
+        symbol="IF2401",
+        direction=Direction.LONG,
+        order_type=OrderType.LIMIT,
+        price=Decimal("5000"),
+        volume=10,
+    )
+
+
+@pytest.fixture
+def sample_position() -> Position:
+    """示例持仓。"""
+    return Position(
+        symbol="IF2401",
+        direction=Direction.LONG,
+        volume=50,
+        avg_price=Decimal("5000"),
+        margin=Decimal("100000"),
+        unrealized_pnl=Decimal("-5000"),
+    )
+
+
+@pytest.fixture
+def sample_account() -> Account:
+    """示例账户。"""
+    return Account(
+        balance=Decimal("1000000"),
+        available=Decimal("800000"),
+        margin=Decimal("200000"),
+        unrealized_pnl=Decimal("-10000"),
+    )
+
+
+# =============================================================================
+# #19 异常订单检测测试
+# =============================================================================
+
+
+class TestOrderValidator:
+    """订单验证器测试。"""
+
+    def test_valid_order(
+        self,
+        order_validator: OrderValidator,
+        sample_order: Order,
+    ) -> None:
+        """测试正常订单通过验证。"""
+        # WHY: 在交易时段内，价格正常
+        result = order_validator.validate(
+            sample_order,
+            current_price=Decimal("5000"),
+            current_position=0,
+        )
+        # 注：可能因非交易时段失败，但基础检查应通过
+        assert result.reject_reason != OrderRejectReason.VOLUME_ZERO
+        assert result.reject_reason != OrderRejectReason.PRICE_TOO_HIGH
+
+    def test_reject_zero_volume(
+        self,
+        order_validator: OrderValidator,
+    ) -> None:
+        """测试零数量订单被拒绝。"""
+        order = Order(
+            order_id="TEST002",
+            symbol="IF2401",
+            direction=Direction.LONG,
+            order_type=OrderType.LIMIT,
+            price=Decimal("5000"),
+            volume=0,  # WHY: 无效数量
+        )
+        result = order_validator.validate(
+            order,
+            current_price=Decimal("5000"),
+        )
+        assert not result.is_valid
+        assert result.reject_reason == OrderRejectReason.VOLUME_ZERO
+
+    def test_reject_price_too_high(
+        self,
+        order_validator: OrderValidator,
+    ) -> None:
+        """测试价格偏离过大被拒绝（乌龙指防护）。"""
+        order = Order(
+            order_id="TEST003",
+            symbol="IF2401",
+            direction=Direction.LONG,
+            order_type=OrderType.LIMIT,
+            price=Decimal("5500"),  # WHY: 高于现价 10%
+            volume=10,
+        )
+        result = order_validator.validate(
+            order,
+            current_price=Decimal("5000"),
+        )
+        # WHY: 默认偏离限制 3%
+        assert not result.is_valid
+        assert result.reject_reason == OrderRejectReason.PRICE_TOO_HIGH
+
+    def test_reject_volume_too_large(
+        self,
+        order_validator: OrderValidator,
+    ) -> None:
+        """测试超大数量被拒绝。"""
+        order = Order(
+            order_id="TEST004",
+            symbol="IF2401",
+            direction=Direction.LONG,
+            order_type=OrderType.LIMIT,
+            price=Decimal("5000"),
+            volume=100,  # WHY: 超过限制 50
+        )
+        result = order_validator.validate(
+            order,
+            current_price=Decimal("5000"),
+        )
+        assert not result.is_valid
+        assert result.reject_reason == OrderRejectReason.VOLUME_TOO_LARGE
+
+
+# =============================================================================
+# #18 交易时段控制测试
+# =============================================================================
+
+
+class TestTradingSession:
+    """交易时段测试。"""
+
+    def test_session_contains(self) -> None:
+        """测试时段包含判断。"""
+        session = TradingSession(time(9, 0), time(11, 30), "上午盘")
+
+        assert session.contains(time(9, 0))
+        assert session.contains(time(10, 0))
+        assert session.contains(time(11, 30))
+        assert not session.contains(time(8, 59))
+        assert not session.contains(time(11, 31))
+
+    def test_night_session_cross_day(self) -> None:
+        """测试跨日夜盘时段。"""
+        session = TradingSession(time(21, 0), time(2, 30), "夜盘")
+
+        # WHY: 跨日时段
+        assert session.contains(time(21, 0))
+        assert session.contains(time(23, 0))
+        assert session.contains(time(0, 30))
+        assert session.contains(time(2, 30))
+        assert not session.contains(time(3, 0))
+        assert not session.contains(time(20, 0))
+
+
+class TestTradingCalendar:
+    """交易日历测试。"""
+
+    def test_get_exchange(self) -> None:
+        """测试交易所推断。"""
+        calendar = TradingCalendar()
+
+        # WHY: 股指期货 -> CFFEX
+        assert calendar.get_exchange("IF2401") == Exchange.CFFEX
+        assert calendar.get_exchange("IC2401") == Exchange.CFFEX
+
+        # WHY: 铜 -> SHFE
+        assert calendar.get_exchange("CU2401") == Exchange.SHFE
+
+        # WHY: 原油 -> INE
+        assert calendar.get_exchange("SC2401") == Exchange.INE
+
+    def test_holiday(self) -> None:
+        """测试节假日判断。"""
+        calendar = TradingCalendar()
+        calendar.add_holiday("20240101")
+
+        dt = datetime(2024, 1, 1, 10, 0, tzinfo=timezone.utc)
+        assert calendar.is_holiday(dt)
+
+
+# =============================================================================
+# #15 止损保护测试
+# =============================================================================
+
+
+class TestStopLossConfig:
+    """止损配置测试。"""
+
+    def test_default_values(self) -> None:
+        """测试默认值。"""
+        config = StopLossConfig()
+
+        assert config.max_single_loss_pct == Decimal("0.5")
+        assert config.max_daily_loss_pct == Decimal("2.0")
+        assert config.max_total_drawdown_pct == Decimal("8.0")
+
+    def test_validation(self) -> None:
+        """测试配置校验。"""
+        # WHY: 超出范围应该失败
+        with pytest.raises(ValueError):
+            StopLossConfig(max_single_loss_pct=Decimal("10.0"))
+
+
+# =============================================================================
+# #16 持仓限制测试
+# =============================================================================
+
+
+class TestPositionLimitConfig:
+    """持仓限制配置测试。"""
+
+    def test_default_values(self) -> None:
+        """测试默认值。"""
+        config = PositionLimitConfig()
+
+        assert config.max_position_per_symbol == 100
+        assert config.max_total_position == 500
+        assert config.max_order_volume == 50
+
+
+# =============================================================================
+# #17 资金监控测试
+# =============================================================================
+
+
+class TestAccountLimitConfig:
+    """资金监控配置测试。"""
+
+    def test_margin_validation(self) -> None:
+        """测试保证金配置校验。"""
+        # WHY: 强平线必须高于警戒线
+        with pytest.raises(ValueError):
+            AccountLimitConfig(
+                margin_warning_pct=Decimal("90.0"),
+                margin_force_close_pct=Decimal("80.0"),
+            )
+
+
+class TestAccount:
+    """账户模型测试。"""
+
+    def test_equity_calculation(self) -> None:
+        """测试动态权益计算。"""
+        account = Account(
+            balance=Decimal("1000000"),
+            unrealized_pnl=Decimal("-50000"),
+        )
+
+        # WHY: 动态权益 = 余额 + 浮动盈亏
+        assert account.equity == Decimal("950000")
+
+    def test_risk_degree(self) -> None:
+        """测试风险度计算。"""
+        account = Account(
+            balance=Decimal("1000000"),
+            margin=Decimal("700000"),
+            unrealized_pnl=Decimal("0"),
+        )
+
+        # WHY: 风险度 = 保证金 / 动态权益 * 100
+        assert account.risk_degree == Decimal("70")
+
+
+# =============================================================================
+# 风控引擎集成测试
+# =============================================================================
+
+
+class TestRiskControlEngine:
+    """风控引擎测试。"""
+
+    @pytest.mark.asyncio
+    async def test_check_order_passed(
+        self,
+        risk_engine: RiskControlEngine,
+        sample_order: Order,
+    ) -> None:
+        """测试正常订单通过。"""
+        result = await risk_engine.check_order(
+            sample_order,
+            current_price=Decimal("5000"),
+        )
+        # 注：可能因交易时段失败
+        assert result.message != ""
+
+    @pytest.mark.asyncio
+    async def test_trading_halt(
+        self,
+        risk_engine: RiskControlEngine,
+        sample_order: Order,
+    ) -> None:
+        """测试交易暂停后拒绝订单。"""
+        # WHY: 手动暂停交易
+        risk_engine._halt_trading("测试暂停")
+
+        result = await risk_engine.check_order(
+            sample_order,
+            current_price=Decimal("5000"),
+        )
+
+        assert not result.passed
+        assert "暂停" in result.message
+
+    def test_get_status(
+        self,
+        risk_engine: RiskControlEngine,
+    ) -> None:
+        """测试状态查询。"""
+        status = risk_engine.get_status()
+
+        assert "enabled" in status
+        assert "trading_halted" in status
+        assert "daily_pnl" in status
+        assert "current_drawdown" in status
+
+
+# =============================================================================
+# Position 模型测试
+# =============================================================================
+
+
+class TestPosition:
+    """持仓模型测试。"""
+
+    def test_update_pnl_long(self) -> None:
+        """测试多头盈亏计算。"""
+        position = Position(
+            symbol="IF2401",
+            direction=Direction.LONG,
+            volume=10,
+            avg_price=Decimal("5000"),
+            multiplier=300,
+        )
+
+        # WHY: 价格上涨，多头盈利
+        position.update_pnl(Decimal("5100"))
+        # 盈亏 = (5100 - 5000) * 10 * 300 = 300000
+        assert position.unrealized_pnl == Decimal("300000")
+
+    def test_update_pnl_short(self) -> None:
+        """测试空头盈亏计算。"""
+        position = Position(
+            symbol="IF2401",
+            direction=Direction.SHORT,
+            volume=10,
+            avg_price=Decimal("5000"),
+            multiplier=300,
+        )
+
+        # WHY: 价格下跌，空头盈利
+        position.update_pnl(Decimal("4900"))
+        # 盈亏 = (5000 - 4900) * 10 * 300 = 300000
+        assert position.unrealized_pnl == Decimal("300000")

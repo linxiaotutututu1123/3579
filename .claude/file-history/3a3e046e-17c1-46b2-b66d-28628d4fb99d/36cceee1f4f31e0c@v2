@@ -1,0 +1,136 @@
+"""
+配置模型
+"""
+
+from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import List, Dict, Optional, Any
+
+class CtpConfig(BaseModel):
+    """CTP连接配置模型"""
+    
+    # 连接信息
+    front_addr: str = Field(..., description="CTP前置服务器地址")
+    broker_id: str = Field(..., description="期货公司ID")
+    user_id: str = Field(..., description="用户ID")
+    password: str = Field(..., description="密码")
+    app_id: Optional[str] = Field(None, description="应用ID")
+    auth_code: Optional[str] = Field(None, description="认证码")
+    
+    # 连接参数
+    connect_timeout: int = Field(default=10, description="连接超时时间（秒）")
+    heartbeat_interval: int = Field(default=30, description="心跳间隔（秒）")
+    
+    @field_validator('front_addr', mode='before')
+    @classmethod
+    def validate_front_addr(cls, v):
+        """验证前置地址格式"""
+        if not v or ':' not in v:
+            raise ValueError("前置地址格式无效，应为'host:port'")
+        return v
+
+class GatewayConfig(BaseModel):
+    """网关配置模型"""
+    
+    # 基本配置
+    name: str = Field(default="CtpMarketGateway", description="网关名称")
+    enabled: bool = Field(default=True, description="是否启用")
+    
+    # CTP配置
+    ctp: CtpConfig = Field(..., description="CTP连接配置")
+    
+    # 重连配置
+    max_reconnect_attempts: int = Field(default=0, description="最大重连次数，0表示无限次")
+    max_backoff_seconds: int = Field(default=60, description="最大退避时间（秒）")
+    initial_backoff_seconds: int = Field(default=1, description="初始退避时间（秒）")
+    
+    # 订阅配置
+    max_subscriptions: int = Field(default=1000, description="最大订阅合约数量")
+    subscription_timeout: int = Field(default=5, description="订阅超时时间（秒）")
+    
+    # 数据缓存配置
+    cache_duration_seconds: int = Field(default=30, description="数据缓存时间（秒）")
+    max_cache_size: int = Field(default=10000, description="最大缓存条目数")
+    
+    # 数据清洗配置
+    price_deviation_threshold: float = Field(default=0.1, description="价格偏差阈值（比例）")
+    timestamp_tolerance_hours: int = Field(default=1, description="时间戳容错（小时）")
+    
+    # 性能配置
+    max_ticks_per_second: int = Field(default=5000, description="每秒最大处理Tick数")
+    batch_size: int = Field(default=100, description="批处理大小")
+    
+    # 告警配置
+    dingtalk_webhook: Optional[str] = Field(None, description="钉钉告警Webhook URL")
+    alert_cooldown_seconds: int = Field(default=300, description="告警冷却时间（秒）")
+    
+    # Redis配置
+    redis_host: str = Field(default="localhost", description="Redis主机")
+    redis_port: int = Field(default=6379, description="Redis端口")
+    redis_db: int = Field(default=0, description="Redis数据库")
+    redis_password: Optional[str] = Field(None, description="Redis密码")
+    
+    # ClickHouse配置
+    clickhouse_host: str = Field(default="localhost", description="ClickHouse主机")
+    clickhouse_port: int = Field(default=9000, description="ClickHouse端口")
+    clickhouse_database: str = Field(default="market_data", description="ClickHouse数据库名")
+    clickhouse_table: str = Field(default="tick_data", description="ClickHouse表名")
+    clickhouse_user: Optional[str] = Field(None, description="ClickHouse用户名")
+    clickhouse_password: Optional[str] = Field(None, description="ClickHouse密码")
+    
+    @field_validator('max_reconnect_attempts', mode='before')
+    @classmethod
+    def validate_max_reconnect_attempts(cls, v):
+        """验证最大重连次数"""
+        if v >= 0:
+            return v
+        raise ValueError("最大重连次数必须为非负数")
+    
+    @field_validator('max_backoff_seconds', 'initial_backoff_seconds', mode='before')
+    @classmethod
+    def validate_backoff_seconds(cls, v):
+        """验证退避时间"""
+        if v <= 0:
+            raise ValueError("退避时间必须为正数")
+        return v
+    
+    @field_validator('max_subscriptions', mode='before')
+    @classmethod
+    def validate_max_subscriptions(cls, v):
+        """验证最大订阅数"""
+        if v <= 0:
+            raise ValueError("最大订阅数必须为正数")
+        return v
+    
+    @field_validator('cache_duration_seconds', mode='before')
+    @classmethod
+    def validate_cache_duration_seconds(cls, v):
+        """验证缓存时间"""
+        if v < 0:
+            raise ValueError("缓存时间不能为负数")
+        return v
+
+class KLineConfig(BaseModel):
+    """K线生成配置"""
+    
+    # K线周期
+    periods: List[int] = Field(default=[1, 5], description="K线周期（分钟）")
+    
+    # 生成策略
+    generate_on_tick: bool = Field(default=True, description="是否在每个Tick时更新K线")
+    generate_on_close: bool = Field(default=True, description="是否在K线收盘时生成")
+    
+    # 数据保存
+    save_to_clickhouse: bool = Field(default=True, description="是否保存到ClickHouse")
+    publish_to_redis: bool = Field(default=True, description="是否发布到Redis")
+    
+    @field_validator('periods', mode='before')
+    @classmethod
+    def validate_periods(cls, v):
+        """验证K线周期"""
+        if not v:
+            raise ValueError("K线周期不能为空")
+        if any(p <= 0 for p in v):
+            raise ValueError("K线周期必须为正数")
+        return sorted(v)
+
+__all__ = ['CtpConfig', 'GatewayConfig', 'KLineConfig']
