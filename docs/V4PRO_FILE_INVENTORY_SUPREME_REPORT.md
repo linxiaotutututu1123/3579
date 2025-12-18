@@ -145,22 +145,17 @@
 
 **RL模块小计: 4 文件, ~750 行 ✅**
 
-#### 2.3.6 B类模型 - 交叉验证子模块 (src/strategy/cv/) - Phase 6 待新增
+#### 2.3.6 B类模型 - 交叉验证子模块 (src/strategy/cv/) - ✅ 已完成
 
 | 文件 | 功能描述 | 军规覆盖 | 状态 |
 |------|----------|----------|------|
-| `__init__.py` | 模块导出 | - | ⏸ 待新增 |
-| `cv_config.py` | 交叉验证配置 | M8 | ⏸ 待新增 |
-| `cv_splitter.py` | 时序交叉验证划分器 | M7 | ⏸ 待新增 |
-| `cv_runner.py` | 交叉验证运行器 | M7,M18 | ⏸ 待新增 |
-| `cv_evaluator.py` | 交叉验证评估器 | M18,M19 | ⏸ 待新增 |
-| `cv_reporter.py` | 交叉验证报告生成器 | M3 | ⏸ 待新增 |
-| `cv_plotter.py` | 交叉验证结果可视化 | - | ⏸ 待新增 |
-| `cv_logger.py` | 交叉验证日志记录 | M3 | ⏸ 待新增 |
-| `cv_data_handler.py` | 交叉验证数据处理 | M7 | ⏸ 待新增 |
-| `cv_utils.py` | 交叉验证工具函数 | - | ⏸ 待新增 |
+| `__init__.py` | 模块导出 | - | ✅ |
+| `base.py` | CV基类(CVConfig/CVSplit/CrossValidator) | M3,M7 | ✅ |
+| `walk_forward.py` | Walk-Forward CV(Expanding/Rolling/Anchored) | M7 | ✅ |
+| `purged_kfold.py` | 净化K折(Purge Gap/Embargo) | M7 | ✅ |
+| `metrics.py` | CV指标(Sharpe/Drawdown/VaR/CVaR/稳定性) | M19 | ✅ |
 
-**CV模块小计: 10 文件, ~1740 行**
+**CV模块小计: 5 文件, ~700 行 ✅**
 
 #### 2.3.7 B类模型 - 工具模块 (src/strategy/utils/, common/) - Phase 6 待新增
 
