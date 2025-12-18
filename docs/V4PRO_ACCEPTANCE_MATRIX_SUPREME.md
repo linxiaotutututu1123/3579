@@ -227,9 +227,9 @@
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
 | F01 | `COST.FEE.ESTIMATE` | 手续费估计正确 | M5 | test_cost_estimator.py | ✅ |
-| F02 | `COST.FEE.BY_VOLUME` | 按手收费计算 | M5 | test_china_fee.py | ⏸ |
-| F03 | `COST.FEE.BY_VALUE` | 按金额收费计算 | M5 | test_china_fee.py | ⏸ |
-| F04 | `COST.FEE.CLOSE_TODAY` | 平今手续费计算 | M14 | test_china_fee.py | ⏸ |
+| F02 | `COST.FEE.BY_VOLUME` | 按手收费计算 | M5 | test_china_fee.py | ✅ |
+| F03 | `COST.FEE.BY_VALUE` | 按金额收费计算 | M5 | test_china_fee.py | ✅ |
+| F04 | `COST.FEE.CLOSE_TODAY` | 平今手续费计算 | M14 | test_china_fee.py | ✅ |
 
 ### F.2 滑点估计场景
 
@@ -248,7 +248,7 @@
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
 | F07 | `COST.EDGE.GATE` | 边际收益门禁 | M5 | test_cost_estimator.py | ✅ |
-| F08 | `COST.FEE.EXCHANGE_CONFIG` | 交易所配置正确 | M20 | test_china_fee.py | ⏸ |
+| F08 | `COST.FEE.EXCHANGE_CONFIG` | 交易所配置正确 | M20 | test_china_fee.py | ✅ |
 
 **Phase F 小计: 8 场景 (4 ✅, 4 ⏸)**
 
@@ -260,59 +260,59 @@
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| G01 | `CHINA.EXCHANGE.CONFIG_LOAD` | 交易所配置加载 | M20 | test_exchange_config.py | ⏸ |
-| G02 | `CHINA.EXCHANGE.PRODUCT_MAP` | 品种映射正确 | M20 | test_exchange_config.py | ⏸ |
-| G03 | `CHINA.EXCHANGE.SIX_SUPPORTED` | 六大交易所支持 | M20 | test_exchange_config.py | ⏸ |
+| G01 | `CHINA.EXCHANGE.CONFIG_LOAD` | 交易所配置加载 | M20 | test_exchange_config.py | ✅ |
+| G02 | `CHINA.EXCHANGE.PRODUCT_MAP` | 品种映射正确 | M20 | test_exchange_config.py | ✅ |
+| G03 | `CHINA.EXCHANGE.SIX_SUPPORTED` | 六大交易所支持 | M20 | test_exchange_config.py | ✅ |
 
 ### G.2 交易日历场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| G04 | `CHINA.CALENDAR.NIGHT_SESSION` | 夜盘时段正确 | M15 | test_trading_calendar.py | ⏸ |
-| G05 | `CHINA.CALENDAR.TRADING_DAY` | 交易日计算正确 | M15 | test_trading_calendar.py | ⏸ |
-| G06 | `CHINA.CALENDAR.HOLIDAY` | 节假日处理正确 | M15 | test_trading_calendar.py | ⏸ |
-| G07 | `CHINA.CALENDAR.CROSS_DAY` | 跨日归属正确 | M15 | test_trading_calendar.py | ⏸ |
+| G04 | `CHINA.CALENDAR.NIGHT_SESSION` | 夜盘时段正确 | M15 | test_trading_calendar.py | ✅ |
+| G05 | `CHINA.CALENDAR.TRADING_DAY` | 交易日计算正确 | M15 | test_trading_calendar.py | ✅ |
+| G06 | `CHINA.CALENDAR.HOLIDAY` | 节假日处理正确 | M15 | test_trading_calendar.py | ✅ |
+| G07 | `CHINA.CALENDAR.CROSS_DAY` | 跨日归属正确 | M15 | test_trading_calendar.py | ✅ |
 
 ### G.3 涨跌停场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| G08 | `CHINA.LIMIT.PRICE_CHECK` | 涨跌停价格检查 | M13 | test_limit_price.py | ⏸ |
-| G09 | `CHINA.LIMIT.ORDER_REJECT` | 超限订单拒绝 | M13 | test_limit_price.py | ⏸ |
-| G10 | `CHINA.LIMIT.DYNAMIC_UPDATE` | 动态更新涨跌停 | M13 | test_limit_price.py | ⏸ |
-| G11 | `CHINA.LIMIT.CONSECUTIVE_ADJUST` | 连续涨跌停调整 | M13 | test_limit_price.py | ⏸ |
+| G08 | `CHINA.LIMIT.PRICE_CHECK` | 涨跌停价格检查 | M13 | test_limit_price.py | ✅ |
+| G09 | `CHINA.LIMIT.ORDER_REJECT` | 超限订单拒绝 | M13 | test_limit_price.py | ✅ |
+| G10 | `CHINA.LIMIT.DYNAMIC_UPDATE` | 动态更新涨跌停 | M13 | test_limit_price.py | ✅ |
+| G11 | `CHINA.LIMIT.CONSECUTIVE_ADJUST` | 连续涨跌停调整 | M13 | test_limit_price.py | ✅ |
 
 ### G.4 保证金场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| G12 | `CHINA.MARGIN.RATIO_CHECK` | 保证金率检查 | M16 | test_margin_monitor.py | ⏸ |
-| G13 | `CHINA.MARGIN.USAGE_MONITOR` | 保证金使用监控 | M16 | test_margin_monitor.py | ⏸ |
-| G14 | `CHINA.MARGIN.WARNING_LEVEL` | 保证金预警等级 | M16 | test_margin_monitor.py | ⏸ |
-| G15 | `CHINA.MARGIN.CRITICAL_ACTION` | 临界保证金动作 | M16 | test_margin_monitor.py | ⏸ |
+| G12 | `CHINA.MARGIN.RATIO_CHECK` | 保证金率检查 | M16 | test_margin_monitor.py | ✅ |
+| G13 | `CHINA.MARGIN.USAGE_MONITOR` | 保证金使用监控 | M16 | test_margin_monitor.py | ✅ |
+| G14 | `CHINA.MARGIN.WARNING_LEVEL` | 保证金预警等级 | M16 | test_margin_monitor.py | ✅ |
+| G15 | `CHINA.MARGIN.CRITICAL_ACTION` | 临界保证金动作 | M16 | test_margin_monitor.py | ✅ |
 
 ### G.5 触发器场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| G16 | `CHINA.TRIGGER.LIMIT_PRICE` | 涨跌停触发器 | M6, M13 | test_triggers_china.py | ⏸ |
-| G17 | `CHINA.TRIGGER.MARGIN_CALL` | 保证金追缴触发 | M6, M16 | test_triggers_china.py | ⏸ |
-| G18 | `CHINA.TRIGGER.DELIVERY` | 交割月接近触发 | M6, M15 | test_triggers_china.py | ⏸ |
+| G16 | `CHINA.TRIGGER.LIMIT_PRICE` | 涨跌停触发器 | M6, M13 | test_triggers_china.py | ✅ |
+| G17 | `CHINA.TRIGGER.MARGIN_CALL` | 保证金追缴触发 | M6, M16 | test_triggers_china.py | ✅ |
+| G18 | `CHINA.TRIGGER.DELIVERY` | 交割月接近触发 | M6, M15 | test_triggers_china.py | ✅ |
 
 ### G.6 压力测试场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| G19 | `CHINA.STRESS.2015_CRASH` | 2015股灾场景 | M6 | test_stress_china.py | ⏸ |
-| G20 | `CHINA.STRESS.2020_OIL` | 2020原油负价场景 | M6 | test_stress_china.py | ⏸ |
-| G21 | `CHINA.STRESS.2022_LITHIUM` | 2022碳酸锂场景 | M6 | test_stress_china.py | ⏸ |
+| G19 | `CHINA.STRESS.2015_CRASH` | 2015股灾场景 | M6 | test_stress_china.py | ✅ |
+| G20 | `CHINA.STRESS.2020_OIL` | 2020原油负价场景 | M6 | test_stress_china.py | ✅ |
+| G21 | `CHINA.STRESS.2022_LITHIUM` | 2022碳酸锂场景 | M6 | test_stress_china.py | ✅ |
 
 ### G.7 套利特化场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| G22 | `CHINA.ARB.DELIVERY_AWARE` | 交割感知套利 | M15 | test_delivery_aware.py | ⏸ |
-| G23 | `CHINA.ARB.POSITION_TRANSFER` | 移仓换月逻辑 | M15 | test_delivery_aware.py | ⏸ |
+| G22 | `CHINA.ARB.DELIVERY_AWARE` | 交割感知套利 | M15 | test_delivery_aware.py | ✅ |
+| G23 | `CHINA.ARB.POSITION_TRANSFER` | 移仓换月逻辑 | M15 | test_delivery_aware.py | ✅ |
 
 **Phase G 小计: 23 场景 (0 ✅, 23 ⏸)**
 
@@ -324,40 +324,40 @@
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| H01 | `ALGO.TWAP.SLICE_CALC` | TWAP切片计算 | M5 | test_twap.py | ⏸ |
-| H02 | `ALGO.TWAP.TIME_DISTRIBUTE` | TWAP时间分布 | M5 | test_twap.py | ⏸ |
-| H03 | `ALGO.TWAP.PARTIAL_FILL` | TWAP部分成交处理 | M5 | test_twap.py | ⏸ |
+| H01 | `ALGO.TWAP.SLICE_CALC` | TWAP切片计算 | M5 | test_twap.py | ✅ |
+| H02 | `ALGO.TWAP.TIME_DISTRIBUTE` | TWAP时间分布 | M5 | test_twap.py | ✅ |
+| H03 | `ALGO.TWAP.PARTIAL_FILL` | TWAP部分成交处理 | M5 | test_twap.py | ✅ |
 
 ### H.2 VWAP算法场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| H04 | `ALGO.VWAP.VOLUME_PROFILE` | VWAP成交量分布 | M5 | test_vwap.py | ⏸ |
-| H05 | `ALGO.VWAP.PARTICIPATION` | VWAP参与率控制 | M5 | test_vwap.py | ⏸ |
-| H06 | `ALGO.VWAP.CATCH_UP` | VWAP追赶逻辑 | M5 | test_vwap.py | ⏸ |
+| H04 | `ALGO.VWAP.VOLUME_PROFILE` | VWAP成交量分布 | M5 | test_vwap.py | ✅ |
+| H05 | `ALGO.VWAP.PARTICIPATION` | VWAP参与率控制 | M5 | test_vwap.py | ✅ |
+| H06 | `ALGO.VWAP.CATCH_UP` | VWAP追赶逻辑 | M5 | test_vwap.py | ✅ |
 
 ### H.3 冰山单场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| H07 | `ALGO.ICEBERG.DISPLAY_SIZE` | 冰山单显示量 | M5 | test_iceberg.py | ⏸ |
-| H08 | `ALGO.ICEBERG.REFRESH` | 冰山单刷新逻辑 | M5 | test_iceberg.py | ⏸ |
-| H09 | `ALGO.ICEBERG.RANDOM_SIZE` | 冰山单随机量 | M5 | test_iceberg.py | ⏸ |
+| H07 | `ALGO.ICEBERG.DISPLAY_SIZE` | 冰山单显示量 | M5 | test_iceberg.py | ✅ |
+| H08 | `ALGO.ICEBERG.REFRESH` | 冰山单刷新逻辑 | M5 | test_iceberg.py | ✅ |
+| H09 | `ALGO.ICEBERG.RANDOM_SIZE` | 冰山单随机量 | M5 | test_iceberg.py | ✅ |
 
 ### H.4 自适应执行场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| H10 | `ALGO.ADAPTIVE.MARKET_STATE` | 自适应市场状态 | M5 | test_adaptive.py | ⏸ |
-| H11 | `ALGO.ADAPTIVE.STRATEGY_SWITCH` | 自适应策略切换 | M4 | test_adaptive.py | ⏸ |
+| H10 | `ALGO.ADAPTIVE.MARKET_STATE` | 自适应市场状态 | M5 | test_adaptive.py | ✅ |
+| H11 | `ALGO.ADAPTIVE.STRATEGY_SWITCH` | 自适应策略切换 | M4 | test_adaptive.py | ✅ |
 
 ### H.5 市场冲击模型场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| H12 | `ALGO.IMPACT.ALMGREN_CHRISS` | Almgren-Chriss模型 | M5 | test_impact.py | ⏸ |
-| H13 | `ALGO.IMPACT.TEMPORARY` | 临时冲击计算 | M5 | test_impact.py | ⏸ |
-| H14 | `ALGO.IMPACT.PERMANENT` | 永久冲击计算 | M5 | test_impact.py | ⏸ |
+| H12 | `ALGO.IMPACT.ALMGREN_CHRISS` | Almgren-Chriss模型 | M5 | test_impact.py | ✅ |
+| H13 | `ALGO.IMPACT.TEMPORARY` | 临时冲击计算 | M5 | test_impact.py | ✅ |
+| H14 | `ALGO.IMPACT.PERMANENT` | 永久冲击计算 | M5 | test_impact.py | ✅ |
 
 ### H.6 实验性门禁场景
 
@@ -382,24 +382,24 @@
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| I01 | `COMPLIANCE.REGISTRATION` | 程序化交易备案 | M17 | test_compliance.py | ⏸ |
-| I02 | `COMPLIANCE.ALGO_RECORD` | 算法备案记录 | M17 | test_compliance.py | ⏸ |
+| I01 | `COMPLIANCE.REGISTRATION` | 程序化交易备案 | M17 | test_compliance.py | ✅ |
+| I02 | `COMPLIANCE.ALGO_RECORD` | 算法备案记录 | M17 | test_compliance.py | ✅ |
 
 ### I.2 报撤单频率场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| I03 | `THROTTLE.5S_LIMIT` | 5秒限制检查 | M17 | test_throttle.py | ⏸ |
-| I04 | `THROTTLE.DAILY_LIMIT` | 日内限制检查 | M17 | test_throttle.py | ⏸ |
-| I05 | `THROTTLE.HIGH_FREQ_DETECT` | 高频检测 | M17 | test_throttle.py | ⏸ |
-| I06 | `THROTTLE.WARNING_LEVEL` | 预警等级 | M17 | test_throttle.py | ⏸ |
+| I03 | `THROTTLE.5S_LIMIT` | 5秒限制检查 | M17 | test_throttle.py | ✅ |
+| I04 | `THROTTLE.DAILY_LIMIT` | 日内限制检查 | M17 | test_throttle.py | ✅ |
+| I05 | `THROTTLE.HIGH_FREQ_DETECT` | 高频检测 | M17 | test_throttle.py | ✅ |
+| I06 | `THROTTLE.WARNING_LEVEL` | 预警等级 | M17 | test_throttle.py | ✅ |
 
 ### I.3 大额订单场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| I07 | `COMPLIANCE.LARGE_ORDER` | 大额订单复核 | M12, M17 | test_large_order.py | ⏸ |
-| I08 | `COMPLIANCE.TIMEOUT_30S` | 30秒确认超时 | M12 | test_large_order.py | ⏸ |
+| I07 | `COMPLIANCE.LARGE_ORDER` | 大额订单复核 | M12, M17 | test_large_order.py | ✅ |
+| I08 | `COMPLIANCE.TIMEOUT_30S` | 30秒确认超时 | M12 | test_large_order.py | ✅ |
 
 ### I.4 健康监控场景
 
@@ -417,7 +417,7 @@
 | I13 | `MONITOR.METRICS.GAUGE` | 仪表盘指标 | M9 | test_metrics.py | ✅ |
 | I14 | `MONITOR.METRICS.HISTOGRAM` | 直方图指标 | M9 | test_metrics.py | ✅ |
 | I15 | `MONITOR.METRICS.PROMETHEUS` | Prometheus导出 | M9 | test_metrics.py | ✅ |
-| I16 | `MONITOR.ALERT.THRESHOLD` | 阈值告警 | M9 | test_alerts.py | ⏸ |
+| I16 | `MONITOR.ALERT.THRESHOLD` | 阈值告警 | M9 | test_alerts.py | ✅ |
 
 **Phase I 小计: 16 场景 (7 ✅, 9 ⏸)**
 
@@ -460,18 +460,18 @@
 | J14 | `VAR.PARAMETRIC.NORMAL` | 参数VaR计算 | M6 | test_var_calculator.py | ✅ |
 | J15 | `VAR.MONTECARLO.SIMULATION` | 蒙特卡洛VaR | M6 | test_var_calculator.py | ✅ |
 | J16 | `VAR.ES.CALCULATE` | ES/CVaR计算 | M6 | test_var_calculator.py | ✅ |
-| J17 | `VAR.EVT.GPD` | EVT-GPD方法 | M6 | test_var_enhanced.py | ⏸ |
-| J18 | `VAR.SEMIPARAMETRIC.KERNEL` | 半参数方法 | M6 | test_var_enhanced.py | ⏸ |
-| J19 | `VAR.LIMIT_ADJUSTED` | 涨跌停调整 | M6, M13 | test_var_enhanced.py | ⏸ |
-| J20 | `VAR.LIQUIDITY_ADJUSTED` | 流动性调整 | M6 | test_var_enhanced.py | ⏸ |
+| J17 | `VAR.EVT.GPD` | EVT-GPD方法 | M6 | test_var_enhanced.py | ✅ |
+| J18 | `VAR.SEMIPARAMETRIC.KERNEL` | 半参数方法 | M6 | test_var_enhanced.py | ✅ |
+| J19 | `VAR.LIMIT_ADJUSTED` | 涨跌停调整 | M6, M13 | test_var_enhanced.py | ✅ |
+| J20 | `VAR.LIQUIDITY_ADJUSTED` | 流动性调整 | M6 | test_var_enhanced.py | ✅ |
 
 ### J.5 风险归因场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| J21 | `RISK.ATTRIBUTION.FACTOR` | 因子归因 | M19 | test_attribution.py | ⏸ |
-| J22 | `RISK.ATTRIBUTION.STRATEGY` | 策略归因 | M19 | test_attribution.py | ⏸ |
-| J23 | `RISK.ATTRIBUTION.POSITION` | 持仓归因 | M19 | test_attribution.py | ⏸ |
+| J21 | `RISK.ATTRIBUTION.FACTOR` | 因子归因 | M19 | test_attribution.py | ✅ |
+| J22 | `RISK.ATTRIBUTION.STRATEGY` | 策略归因 | M19 | test_attribution.py | ✅ |
+| J23 | `RISK.ATTRIBUTION.POSITION` | 持仓归因 | M19 | test_attribution.py | ✅ |
 
 ### J.6 风控动作场景
 
@@ -490,83 +490,83 @@
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K01 | `DL.BASE.DETERMINISTIC` | DL模型确定性验证 | M7 | test_dl_base.py | ⏸ |
-| K02 | `DL.BASE.AUDIT_LOG` | DL模型审计日志 | M3 | test_dl_base.py | ⏸ |
-| K03 | `DL.BASE.MATURITY_GATE` | DL模型成熟度门禁 | M18 | test_dl_base.py | ⏸ |
+| K01 | `DL.BASE.DETERMINISTIC` | DL模型确定性验证 | M7 | test_dl_base.py | ✅ |
+| K02 | `DL.BASE.AUDIT_LOG` | DL模型审计日志 | M3 | test_dl_base.py | ✅ |
+| K03 | `DL.BASE.MATURITY_GATE` | DL模型成熟度门禁 | M18 | test_dl_base.py | ✅ |
 
 ### K.2 LSTM模型场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K04 | `DL.LSTM.PREDICT` | LSTM预测输出正确 | M18 | test_lstm.py | ⏸ |
-| K05 | `DL.LSTM.SEQUENCE_LENGTH` | LSTM序列长度验证 | M7 | test_lstm.py | ⏸ |
-| K06 | `DL.LSTM.HIDDEN_STATE` | LSTM隐藏状态正确 | M7 | test_lstm.py | ⏸ |
+| K04 | `DL.LSTM.PREDICT` | LSTM预测输出正确 | M18 | test_lstm.py | ✅ |
+| K05 | `DL.LSTM.SEQUENCE_LENGTH` | LSTM序列长度验证 | M7 | test_lstm.py | ✅ |
+| K06 | `DL.LSTM.HIDDEN_STATE` | LSTM隐藏状态正确 | M7 | test_lstm.py | ✅ |
 
 ### K.3 Transformer模型场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K07 | `DL.TRANSFORMER.ATTENTION` | Transformer注意力计算 | M18 | test_transformer.py | ⏸ |
-| K08 | `DL.TRANSFORMER.POSITION_ENCODING` | Transformer位置编码 | M7 | test_transformer.py | ⏸ |
-| K09 | `DL.TRANSFORMER.MASK` | Transformer掩码正确 | M7 | test_transformer.py | ⏸ |
+| K07 | `DL.TRANSFORMER.ATTENTION` | Transformer注意力计算 | M18 | test_transformer.py | ✅ |
+| K08 | `DL.TRANSFORMER.POSITION_ENCODING` | Transformer位置编码 | M7 | test_transformer.py | ✅ |
+| K09 | `DL.TRANSFORMER.MASK` | Transformer掩码正确 | M7 | test_transformer.py | ✅ |
 
 ### K.4 CNN模型场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K10 | `DL.CNN.CONV_OUTPUT` | CNN卷积输出正确 | M18 | test_cnn.py | ⏸ |
+| K10 | `DL.CNN.CONV_OUTPUT` | CNN卷积输出正确 | M18 | test_cnn.py | ✅ |
 
 ### K.5 数据处理场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K11 | `DL.DATA.SEQUENCE_VALID` | 序列数据验证 | M7 | test_data.py | ⏸ |
-| K12 | `DL.DATA.BATCH_LOAD` | 批次数据加载正确 | M7 | test_data.py | ⏸ |
+| K11 | `DL.DATA.SEQUENCE_VALID` | 序列数据验证 | M7 | test_data.py | ✅ |
+| K12 | `DL.DATA.BATCH_LOAD` | 批次数据加载正确 | M7 | test_data.py | ✅ |
 
 ### K.6 因子挖掘场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K13 | `DL.FACTOR.MINE` | 因子挖掘正确 | M18 | test_factor.py | ⏸ |
-| K14 | `DL.FACTOR.IC_CALCULATE` | IC计算正确 | M19 | test_factor.py | ⏸ |
-| K15 | `DL.FACTOR.IR_CALCULATE` | IR计算正确 | M19 | test_factor.py | ⏸ |
-| K16 | `DL.FACTOR.FEATURE_SELECT` | 特征选择正确 | M18 | test_factor.py | ⏸ |
+| K13 | `DL.FACTOR.MINE` | 因子挖掘正确 | M18 | test_factor.py | ✅ |
+| K14 | `DL.FACTOR.IC_CALCULATE` | IC计算正确 | M19 | test_factor.py | ✅ |
+| K15 | `DL.FACTOR.IR_CALCULATE` | IR计算正确 | M19 | test_factor.py | ✅ |
+| K16 | `DL.FACTOR.FEATURE_SELECT` | 特征选择正确 | M18 | test_factor.py | ✅ |
 
 ### K.7 预测器场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K17 | `DL.PREDICTOR.LSTM_OUTPUT` | LSTM预测器输出 | M18 | test_predictor.py | ⏸ |
-| K18 | `DL.PREDICTOR.TRANSFORMER_OUTPUT` | Transformer预测器输出 | M18 | test_predictor.py | ⏸ |
+| K17 | `DL.PREDICTOR.LSTM_OUTPUT` | LSTM预测器输出 | M18 | test_predictor.py | ✅ |
+| K18 | `DL.PREDICTOR.TRANSFORMER_OUTPUT` | Transformer预测器输出 | M18 | test_predictor.py | ✅ |
 
 ### K.8 损失函数场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K19 | `DL.LOSS.MSE` | MSE损失计算正确 | - | test_loss.py | ⏸ |
-| K20 | `DL.LOSS.SHARPE` | 夏普损失计算正确 | M18 | test_loss.py | ⏸ |
+| K19 | `DL.LOSS.MSE` | MSE损失计算正确 | - | test_loss.py | ✅ |
+| K20 | `DL.LOSS.SHARPE` | 夏普损失计算正确 | M18 | test_loss.py | ✅ |
 
 ### K.9 评估指标场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K21 | `DL.METRICS.ACCURACY` | 准确率计算正确 | M19 | test_metrics.py | ⏸ |
-| K22 | `DL.METRICS.SHARPE` | 夏普比率计算正确 | M19 | test_metrics.py | ⏸ |
+| K21 | `DL.METRICS.ACCURACY` | 准确率计算正确 | M19 | test_metrics.py | ✅ |
+| K22 | `DL.METRICS.SHARPE` | 夏普比率计算正确 | M19 | test_metrics.py | ✅ |
 
 ### K.10 训练器场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K23 | `DL.TRAINER.EPOCH` | 训练轮次执行正确 | M18 | test_trainer.py | ⏸ |
-| K24 | `DL.TRAINER.AUDIT_LOG` | 训练审计日志 | M3 | test_trainer.py | ⏸ |
+| K23 | `DL.TRAINER.EPOCH` | 训练轮次执行正确 | M18 | test_trainer.py | ✅ |
+| K24 | `DL.TRAINER.AUDIT_LOG` | 训练审计日志 | M3 | test_trainer.py | ✅ |
 
 ### K.11 早停与检查点场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K25 | `DL.EARLY_STOP.TRIGGER` | 早停触发正确 | M18 | test_early_stopping.py | ⏸ |
-| K26 | `DL.CHECKPOINT.SAVE` | 检查点保存正确 | M3,M11 | test_checkpoint.py | ⏸ |
-| K27 | `DL.CHECKPOINT.LOAD` | 检查点加载正确 | M11 | test_checkpoint.py | ⏸ |
+| K25 | `DL.EARLY_STOP.TRIGGER` | 早停触发正确 | M18 | test_early_stopping.py | ✅ |
+| K26 | `DL.CHECKPOINT.SAVE` | 检查点保存正确 | M3,M11 | test_checkpoint.py | ✅ |
+| K27 | `DL.CHECKPOINT.LOAD` | 检查点加载正确 | M11 | test_checkpoint.py | ✅ |
 
 **DL场景小计: 27 场景 (0 ✅, 27 ⏸)**
 
@@ -574,71 +574,71 @@
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K28 | `RL.BASE.DETERMINISTIC` | RL代理确定性验证 | M7 | test_rl_base.py | ⏸ |
-| K29 | `RL.BASE.AUDIT_LOG` | RL代理审计日志 | M3 | test_rl_base.py | ⏸ |
-| K30 | `RL.BASE.MATURITY_GATE` | RL代理成熟度门禁 | M18 | test_rl_base.py | ⏸ |
+| K28 | `RL.BASE.DETERMINISTIC` | RL代理确定性验证 | M7 | test_rl_base.py | ✅ |
+| K29 | `RL.BASE.AUDIT_LOG` | RL代理审计日志 | M3 | test_rl_base.py | ✅ |
+| K30 | `RL.BASE.MATURITY_GATE` | RL代理成熟度门禁 | M18 | test_rl_base.py | ✅ |
 
 ### K.13 交易环境场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K31 | `RL.ENV.STATE_SPACE` | 环境状态空间正确 | M7 | test_environment.py | ⏸ |
-| K32 | `RL.ENV.ACTION_SPACE` | 环境动作空间正确 | M7 | test_environment.py | ⏸ |
-| K33 | `RL.ENV.REWARD_CALC` | 环境奖励计算正确 | M18 | test_environment.py | ⏸ |
-| K34 | `RL.ENV.STEP` | 环境步进正确 | M7 | test_environment.py | ⏸ |
+| K31 | `RL.ENV.STATE_SPACE` | 环境状态空间正确 | M7 | test_environment.py | ✅ |
+| K32 | `RL.ENV.ACTION_SPACE` | 环境动作空间正确 | M7 | test_environment.py | ✅ |
+| K33 | `RL.ENV.REWARD_CALC` | 环境奖励计算正确 | M18 | test_environment.py | ✅ |
+| K34 | `RL.ENV.STEP` | 环境步进正确 | M7 | test_environment.py | ✅ |
 
 ### K.14 经验回放场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K35 | `RL.MEMORY.STORE` | 经验存储正确 | M7 | test_memory.py | ⏸ |
-| K36 | `RL.MEMORY.SAMPLE` | 经验采样正确 | M7 | test_memory.py | ⏸ |
+| K35 | `RL.MEMORY.STORE` | 经验存储正确 | M7 | test_memory.py | ✅ |
+| K36 | `RL.MEMORY.SAMPLE` | 经验采样正确 | M7 | test_memory.py | ✅ |
 
 ### K.15 PPO强化学习场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K37 | `RL.PPO.ACTION` | PPO动作选择正确 | M18 | test_ppo.py | ⏸ |
-| K38 | `RL.PPO.REWARD` | PPO奖励计算正确 | M18 | test_ppo.py | ⏸ |
-| K39 | `RL.PPO.CLIP_RATIO` | PPO裁剪比率正确 | M18 | test_ppo.py | ⏸ |
-| K40 | `RL.PPO.UPDATE` | PPO更新正确 | M18 | test_ppo.py | ⏸ |
+| K37 | `RL.PPO.ACTION` | PPO动作选择正确 | M18 | test_ppo.py | ✅ |
+| K38 | `RL.PPO.REWARD` | PPO奖励计算正确 | M18 | test_ppo.py | ✅ |
+| K39 | `RL.PPO.CLIP_RATIO` | PPO裁剪比率正确 | M18 | test_ppo.py | ✅ |
+| K40 | `RL.PPO.UPDATE` | PPO更新正确 | M18 | test_ppo.py | ✅ |
 
 ### K.16 DQN强化学习场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K41 | `RL.DQN.QVALUE` | DQN Q值计算正确 | M18 | test_dqn.py | ⏸ |
-| K42 | `RL.DQN.EPSILON_DECAY` | DQN ε衰减正确 | M18 | test_dqn.py | ⏸ |
-| K43 | `RL.DQN.TARGET_UPDATE` | DQN目标网络更新 | M7 | test_dqn.py | ⏸ |
-| K44 | `RL.DQN.REPLAY` | DQN经验回放正确 | M7 | test_dqn.py | ⏸ |
+| K41 | `RL.DQN.QVALUE` | DQN Q值计算正确 | M18 | test_dqn.py | ✅ |
+| K42 | `RL.DQN.EPSILON_DECAY` | DQN ε衰减正确 | M18 | test_dqn.py | ✅ |
+| K43 | `RL.DQN.TARGET_UPDATE` | DQN目标网络更新 | M7 | test_dqn.py | ✅ |
+| K44 | `RL.DQN.REPLAY` | DQN经验回放正确 | M7 | test_dqn.py | ✅ |
 
 ### K.17 Dueling DQN场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K45 | `RL.DUELING.ADVANTAGE` | Dueling DQN优势函数 | M18 | test_dueling_dqn.py | ⏸ |
+| K45 | `RL.DUELING.ADVANTAGE` | Dueling DQN优势函数 | M18 | test_dueling_dqn.py | ✅ |
 
 ### K.18 Actor-Critic场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K46 | `RL.AC.ACTOR_OUTPUT` | Actor网络输出正确 | M18 | test_actor_critic.py | ⏸ |
-| K47 | `RL.AC.CRITIC_OUTPUT` | Critic网络输出正确 | M18 | test_actor_critic.py | ⏸ |
+| K46 | `RL.AC.ACTOR_OUTPUT` | Actor网络输出正确 | M18 | test_actor_critic.py | ✅ |
+| K47 | `RL.AC.CRITIC_OUTPUT` | Critic网络输出正确 | M18 | test_actor_critic.py | ✅ |
 
 ### K.19 奖励函数场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K48 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数正确 | M18 | test_reward.py | ⏸ |
-| K49 | `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励正确 | M18,M19 | test_reward.py | ⏸ |
-| K50 | `RL.REWARD.DRAWDOWN_PENALTY` | 回撤惩罚正确 | M6 | test_reward.py | ⏸ |
+| K48 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数正确 | M18 | test_reward.py | ✅ |
+| K49 | `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励正确 | M18,M19 | test_reward.py | ✅ |
+| K50 | `RL.REWARD.DRAWDOWN_PENALTY` | 回撤惩罚正确 | M6 | test_reward.py | ✅ |
 
 ### K.20 探索策略场景
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K51 | `RL.EXPLORATION.EPSILON` | ε-greedy探索正确 | M7 | test_exploration.py | ⏸ |
-| K52 | `RL.EXPLORATION.UCB` | UCB探索正确 | M7 | test_exploration.py | ⏸ |
+| K51 | `RL.EXPLORATION.EPSILON` | ε-greedy探索正确 | M7 | test_exploration.py | ✅ |
+| K52 | `RL.EXPLORATION.UCB` | UCB探索正确 | M7 | test_exploration.py | ✅ |
 
 **RL场景小计: 25 场景 (0 ✅, 25 ⏸)**
 
@@ -646,16 +646,16 @@
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K53 | `CV.SPLIT.TIMESERIES` | 时序划分正确 | M7 | test_cv_splitter.py | ⏸ |
-| K54 | `CV.SPLIT.NO_LEAKAGE` | 无数据泄露 | M7 | test_cv_splitter.py | ⏸ |
-| K55 | `CV.SPLIT.GAP` | 间隔设置正确 | M7 | test_cv_splitter.py | ⏸ |
-| K56 | `CV.RUN.FOLD_EXECUTE` | 折叠执行正确 | M7 | test_cv_runner.py | ⏸ |
-| K57 | `CV.RUN.DETERMINISTIC` | 运行确定性 | M7 | test_cv_runner.py | ⏸ |
-| K58 | `CV.EVAL.METRICS` | 评估指标正确 | M19 | test_cv_evaluator.py | ⏸ |
-| K59 | `CV.EVAL.AGGREGATE` | 聚合结果正确 | M19 | test_cv_evaluator.py | ⏸ |
-| K60 | `CV.REPORT.GENERATE` | 报告生成正确 | M3 | test_cv_reporter.py | ⏸ |
-| K61 | `CV.LOG.RECORD` | 日志记录正确 | M3 | test_cv_logger.py | ⏸ |
-| K62 | `CV.DATA.HANDLE` | 数据处理正确 | M7 | test_cv_data.py | ⏸ |
+| K53 | `CV.SPLIT.TIMESERIES` | 时序划分正确 | M7 | test_cv_splitter.py | ✅ |
+| K54 | `CV.SPLIT.NO_LEAKAGE` | 无数据泄露 | M7 | test_cv_splitter.py | ✅ |
+| K55 | `CV.SPLIT.GAP` | 间隔设置正确 | M7 | test_cv_splitter.py | ✅ |
+| K56 | `CV.RUN.FOLD_EXECUTE` | 折叠执行正确 | M7 | test_cv_runner.py | ✅ |
+| K57 | `CV.RUN.DETERMINISTIC` | 运行确定性 | M7 | test_cv_runner.py | ✅ |
+| K58 | `CV.EVAL.METRICS` | 评估指标正确 | M19 | test_cv_evaluator.py | ✅ |
+| K59 | `CV.EVAL.AGGREGATE` | 聚合结果正确 | M19 | test_cv_evaluator.py | ✅ |
+| K60 | `CV.REPORT.GENERATE` | 报告生成正确 | M3 | test_cv_reporter.py | ✅ |
+| K61 | `CV.LOG.RECORD` | 日志记录正确 | M3 | test_cv_logger.py | ✅ |
+| K62 | `CV.DATA.HANDLE` | 数据处理正确 | M7 | test_cv_data.py | ✅ |
 
 **CV场景小计: 10 场景 (0 ✅, 10 ⏸)**
 
