@@ -31,7 +31,9 @@
       "Bash(done)",
       "Bash(xargs:*)",
       "SlashCommand(/sc:help)",
-      "SlashCommand(/sc:design:*)"
+      "SlashCommand(/sc:design:*)",
+      "Bash(superclaude:*)",
+      "Bash(superclaude version:*)"
     ]
   }
 }
