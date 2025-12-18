@@ -303,9 +303,9 @@
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| G19 | `CHINA.STRESS.2015_CRASH` | 2015股灾场景 | M6 | test_stress_china.py | ✅ |
-| G20 | `CHINA.STRESS.2020_OIL` | 2020原油负价场景 | M6 | test_stress_china.py | ✅ |
-| G21 | `CHINA.STRESS.2022_LITHIUM` | 2022碳酸锂场景 | M6 | test_stress_china.py | ✅ |
+| G19 | `CHINA.STRESS.2015_CRASH` | 2015股灾场景 | M6 | test_stress_test_china.py | ✅ |
+| G20 | `CHINA.STRESS.2020_OIL` | 2020原油负价场景 | M6 | test_stress_test_china.py | ✅ |
+| G21 | `CHINA.STRESS.2022_LITHIUM` | 2022碳酸锂场景 | M6 | test_stress_test_china.py | ✅ |
 
 ### G.7 套利特化场景
 
@@ -314,7 +314,7 @@
 | G22 | `CHINA.ARB.DELIVERY_AWARE` | 交割感知套利 | M15 | test_delivery_aware.py | ✅ |
 | G23 | `CHINA.ARB.POSITION_TRANSFER` | 移仓换月逻辑 | M15 | test_delivery_aware.py | ✅ |
 
-**Phase G 小计: 23 场景 (0 ✅, 23 ⏸)**
+**Phase G 小计: 23 场景 (23 ✅)**
 
 ---
 
