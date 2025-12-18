@@ -604,8 +604,9 @@ class TestCVIntegration:
 
         splits = list(cv.split(100))
 
-        # 验证所有分割
+        # 验证所有分割无重叠
         for split in splits:
-            log = cv.get_split_log()
-            entry = [e for e in log if e["fold_idx"] == split.fold_idx][0]
-            assert entry["no_leakage"] is True
+            train_set = set(split.train_indices.tolist())
+            test_set = set(split.test_indices.tolist())
+            # 验证训练集和测试集无重叠
+            assert len(train_set & test_set) == 0
