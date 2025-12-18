@@ -585,28 +585,36 @@ class TestRLEnvRewardShape:
 
     def test_risk_penalty(self) -> None:
         """测试风险惩罚."""
+        # 测试风险惩罚存在且随仓位增加
         config = TradingEnvConfig(
             reward_scale=1.0,
-            risk_penalty_factor=1.0,
+            risk_penalty_factor=10.0,  # 高惩罚系数
             cost_penalty_factor=0.0,
             commission_rate=0.0,
             slippage_ticks=0,
             max_position=10,
         )
-        bars = _generate_bars(200)
+        # 使用平稳价格避免PnL干扰
+        bars = _generate_bars(200, trend=0.0)
 
         env = TradingEnv(config, bars)
         env.reset()
 
-        # 建立大仓位
-        for _ in range(10):
+        # 小仓位
+        env.step(TradingAction.BUY)
+        _, reward_small, _, _ = env.step(TradingAction.HOLD)
+
+        # 重置并建立大仓位
+        env.reset()
+        for _ in range(9):  # 9手
             env.step(TradingAction.BUY)
+        _, reward_large, _, _ = env.step(TradingAction.HOLD)
 
-        # 持有时应有风险惩罚
-        _, reward, _, _ = env.step(TradingAction.HOLD)
-
-        # 满仓时风险惩罚最大
-        assert reward < 0 or abs(reward) < 0.01  # 惩罚或接近0
+        # 大仓位的风险惩罚应更大(奖励更低)
+        # 因为risk_penalty = (position/max_position)^2 * factor
+        # 小仓位: (1/10)^2 * 10 = 0.1
+        # 大仓位: (9/10)^2 * 10 = 8.1
+        assert reward_large < reward_small
 
     def test_cost_penalty(self) -> None:
         """测试成本惩罚 (M5)."""
