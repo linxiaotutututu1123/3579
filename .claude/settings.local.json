@@ -29,7 +29,8 @@
       "Bash(C:/Users/1/2468/3579/.venv/Scripts/python.exe scripts/validate_scenarios.py:*)",
       "Bash(git add:*)",
       "Bash(done)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "SlashCommand(/sc:help)"
     ]
   }
 }
