@@ -279,10 +279,7 @@ def load_ctp_config(
         )
 
     # SIM/LIVE模式：从环境变量加载
-    missing_vars = []
-    for var in REQUIRED_CTP_ENV_VARS:
-        if not os.environ.get(var):
-            missing_vars.append(var)
+    missing_vars = [var for var in REQUIRED_CTP_ENV_VARS if not os.environ.get(var)]
 
     if missing_vars and (environment == TradeEnvironment.LIVE or require_complete):
         raise CtpConfigMissingError(

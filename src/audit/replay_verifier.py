@@ -134,11 +134,11 @@ class ReplayVerifier:
         output_hash_match = original_output_hash == replay_output_hash
 
         # 找出不匹配的事件
-        mismatches: list[int] = []
         min_len = min(len(original_outputs), len(replay_outputs))
-        for i in range(min_len):
-            if not self._events_match(original_outputs[i], replay_outputs[i]):
-                mismatches.append(i)
+        mismatches: list[int] = [
+            i for i in range(min_len)
+            if not self._events_match(original_outputs[i], replay_outputs[i])
+        ]
 
         # 长度不同也记录
         if len(original_outputs) != len(replay_outputs):

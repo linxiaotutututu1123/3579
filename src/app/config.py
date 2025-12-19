@@ -330,10 +330,7 @@ def load_app_config(
 
     # PROD模式下检查必需变量
     if environment == Environment.PROD or require_complete:
-        missing_vars = []
-        for var in REQUIRED_PROD_ENV_VARS:
-            if not os.environ.get(var):
-                missing_vars.append(var)
+        missing_vars = [var for var in REQUIRED_PROD_ENV_VARS if not os.environ.get(var)]
 
         if missing_vars:
             raise ConfigMissingError(
