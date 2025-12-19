@@ -18,16 +18,23 @@ from src.trading.controls import TradeMode
 
 
 @pytest.fixture(autouse=True)
-def ensure_no_ctp_sdk() -> None:
+def ensure_no_ctp_sdk(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure CTP SDK is not available for these tests.
 
-    This fixture removes any 'ctp' module from sys.modules before each test
-    to ensure test isolation. This is necessary because other test modules
-    may add mock ctp modules that persist across tests in the same process.
+    This fixture patches _lazy_import_ctp to return None, ensuring the CTP SDK
+    appears unavailable. This is necessary because other test modules may add
+    mock ctp modules to sys.modules that persist across tests in the same process.
     """
     # Remove 'ctp' from sys.modules if present
     if "ctp" in sys.modules:
         del sys.modules["ctp"]
+
+    # Patch the lazy import function to always return None
+    # This ensures CtpBroker sees SDK as unavailable regardless of sys.modules state
+    monkeypatch.setattr(
+        "src.execution.ctp_broker._lazy_import_ctp",
+        lambda: None,
+    )
 
 
 def _make_config() -> CtpConfig:
