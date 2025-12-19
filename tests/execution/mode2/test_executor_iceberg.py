@@ -13,8 +13,6 @@ from __future__ import annotations
 
 import time
 
-import pytest
-
 from src.execution.mode2.executor_base import (
     ExecutorActionType,
     ExecutorStatus,

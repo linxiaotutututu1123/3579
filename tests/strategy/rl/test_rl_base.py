@@ -22,7 +22,6 @@ import math
 from typing import Any
 
 import numpy as np
-import pytest
 import torch
 from numpy.typing import NDArray
 
@@ -35,8 +34,8 @@ from src.strategy.rl.base import (
 )
 from src.strategy.rl.buffer import (
     BufferConfig,
-    PriorityConfig,
     PrioritizedReplayBuffer,
+    PriorityConfig,
     ReplayBuffer,
     RolloutBuffer,
     RolloutConfig,
@@ -45,7 +44,6 @@ from src.strategy.rl.env import (
     TradingAction,
     TradingEnv,
     TradingEnvConfig,
-    TradingState,
 )
 from src.strategy.types import Bar1m
 

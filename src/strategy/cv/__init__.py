@@ -16,25 +16,26 @@ V4 SPEC: §26 时间序列交叉验证
 """
 
 from src.strategy.cv.base import (
+    CrossValidator,
     CVConfig,
     CVResult,
     CVSplit,
-    CrossValidator,
 )
-from src.strategy.cv.walk_forward import (
-    WalkForwardConfig,
-    WalkForwardCV,
+from src.strategy.cv.metrics import (
+    CVMetrics,
+    compute_cv_metrics,
+    compute_max_drawdown,
+    compute_sharpe_ratio,
 )
 from src.strategy.cv.purged_kfold import (
     PurgedKFoldConfig,
     PurgedKFoldCV,
 )
-from src.strategy.cv.metrics import (
-    CVMetrics,
-    compute_cv_metrics,
-    compute_sharpe_ratio,
-    compute_max_drawdown,
+from src.strategy.cv.walk_forward import (
+    WalkForwardConfig,
+    WalkForwardCV,
 )
+
 
 __all__ = [
     # 基础类

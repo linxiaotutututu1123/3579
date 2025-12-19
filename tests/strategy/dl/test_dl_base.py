@@ -15,7 +15,6 @@ import hashlib
 import math
 
 import numpy as np
-import pytest
 import torch
 
 from src.strategy.dl.features import build_features, get_feature_dim
