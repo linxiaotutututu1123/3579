@@ -33,7 +33,8 @@
       "SlashCommand(/sc:help)",
       "SlashCommand(/sc:design:*)",
       "Bash(superclaude:*)",
-      "Bash(superclaude version:*)"
+      "Bash(superclaude version:*)",
+      "Skill(sc:help)"
     ]
   }
 }
