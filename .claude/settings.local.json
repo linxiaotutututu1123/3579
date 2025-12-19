@@ -36,7 +36,8 @@
       "Bash(superclaude version:*)",
       "Skill(sc:help)",
       "Skill(sc:analyze)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Skill(sc:improve)"
     ]
   }
 }
