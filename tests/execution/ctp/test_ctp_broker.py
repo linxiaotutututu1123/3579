@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sys
+
 import pytest
 
 from src.execution.ctp_broker import (
@@ -13,6 +15,19 @@ from src.execution.ctp_broker import (
 )
 from src.execution.order_types import Offset, OrderIntent, Side
 from src.trading.controls import TradeMode
+
+
+@pytest.fixture(autouse=True)
+def ensure_no_ctp_sdk() -> None:
+    """Ensure CTP SDK is not available for these tests.
+
+    This fixture removes any 'ctp' module from sys.modules before each test
+    to ensure test isolation. This is necessary because other test modules
+    may add mock ctp modules that persist across tests in the same process.
+    """
+    # Remove 'ctp' from sys.modules if present
+    if "ctp" in sys.modules:
+        del sys.modules["ctp"]
 
 
 def _make_config() -> CtpConfig:
