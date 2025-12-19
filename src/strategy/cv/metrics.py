@@ -175,7 +175,7 @@ def compute_calmar_ratio(
     n_periods = len(returns)
     annual_return = (1 + total_return) ** (annualization_factor / n_periods) - 1
 
-    return annual_return / max_dd
+    return float(annual_return / max_dd)
 
 
 def compute_var(
