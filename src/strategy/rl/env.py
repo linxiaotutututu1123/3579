@@ -402,7 +402,8 @@ class TradingEnv:
         # 拼接特征
         features = np.concatenate([returns, volumes, ranges])
 
-        return features.astype(np.float32)
+        result: NDArray[np.float32] = features.astype(np.float32)
+        return result
 
     def _log_trade(self, trade_info: dict[str, Any]) -> None:
         """记录交易 (M3 审计).
