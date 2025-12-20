@@ -223,6 +223,8 @@ module = [
     "pathlib",
     "pickletools",
     "pkg_resources.extern.packaging.version",
+    "pydantic",
+    "pydantic.json",
 
 # =============================================================================
 # Pytest 配置
