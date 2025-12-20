@@ -284,6 +284,7 @@ omit = [
 # - src/execution/**
 # - src/risk/**
 # - src/market/**
+#
 # 不允许排除非核心模块！测试必须补齐
 
 [tool.coverage.report]
