@@ -256,7 +256,7 @@ class TestIcebergRefresh:
         plan_id = executor.make_plan(intent)
 
         # 执行三轮补单
-        for i in range(3):
+        for _ in range(3):
             action = executor.next_action(plan_id, time.time())
             assert action is not None
             assert action.action_type == ExecutorActionType.PLACE_ORDER
