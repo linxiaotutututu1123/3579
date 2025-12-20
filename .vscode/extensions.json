@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "ms-vscode.cmake-tools",
-        "coenraads.bracket-pair-colorizer-2"
+        "coenraads.bracket-pair-colorizer-2",
+        "anthropic.claude-code"
     ]
 }
