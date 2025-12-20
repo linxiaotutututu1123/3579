@@ -145,9 +145,31 @@ module = [
     "src.execution.*",
     "src.risk.*",
     "src.market.*",
+    "src.app.*",
+    "src.utils.*",
+    "src.config.*",
+    "src.cli.*",
+    "src.data.*",
+    "src.strategy.*",
+    "src.backtesting.*",
+    "src.common.*",
+    "src.broker.*",
+    "src.gateway.*",
+    "src.simulation.*",
+    "src.ai.*",
+    "src.analytics.*",
+    "src.visualization.*",
+    "src.ml.*",
+    "src.optimization.*",
+    "src.portfolio.*",
+    "src.performance.*",
 ]
 strict = true
 disallow_any_unimported = true
+disallow_any_expr = true
+disallow_any_decorated = true
+disallow_any_explicit = true
+disallow_subclassing_any = true
 
 # 测试模块最严格模式
 [[tool.mypy.overrides]]
@@ -155,6 +177,8 @@ module = "tests.*"
 disallow_untyped_decorators = false
 warn_unreachable = false
 ignore_errors = true
+strict = true
+disallow_any_unimported = true
 
 # 外部依赖类型桩（CTP SDK 和可选AI依赖）
 [[tool.mypy.overrides]]
