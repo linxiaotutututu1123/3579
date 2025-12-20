@@ -250,6 +250,20 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "replay: marks tests as replay/sim tests",
+    "live: marks tests as live trading tests",
+    "paper: marks tests as paper trading tests",
+    "unit: marks tests as unit tests",
+    "performance: marks tests as performance tests",
+    "backtest: marks tests as backtest tests",
+    "simulation: marks tests as simulation tests",
+    "strategy: marks tests as strategy tests",
+    "ai: marks tests as AI related test cases",
+    "ml: marks tests as ML related test cases",
+    "optimization: marks tests as optimization related test cases",
+    "portfolio: marks tests as portfolio management related test cases",
+    "visualization: marks tests as visualization related test cases",
+    "analytics: marks tests as analytics related test cases",
+
 ]
 
 # =============================================================================
