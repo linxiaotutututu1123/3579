@@ -53,7 +53,7 @@ jobs:
           try { tree /F > artifacts\context\tree.txt } catch {}
           try { git rev-parse HEAD > artifacts\context\git_commit.txt } catch {}
           try { git status --porcelain=v1 > artifacts\context\git_status.txt } catch {}
-          .\.venv\Scripts\python.exe scripts\export_context.py --out artifacts\context\context.md
+          try { .\.venv\Scripts\python.exe scripts\export_context.py --out artifacts\context\context.md } catch { Write-Host "Export context failed: $_" }
 
       - name: Upload context artifact
         uses: actions/upload-artifact@v4
