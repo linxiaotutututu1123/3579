@@ -170,6 +170,8 @@ disallow_any_expr = true
 disallow_any_decorated = true
 disallow_any_explicit = true
 disallow_subclassing_any = true
+disallow_untyped_decorators = true
+warn_unreachable = true
 
 # 测试模块最严格模式
 [[tool.mypy.overrides]]
@@ -179,6 +181,8 @@ warn_unreachable = false
 ignore_errors = true
 strict = true
 disallow_any_unimported = true
+disallow_any_expr = true
+disallow_any_decorated = true
 
 # 外部依赖类型桩（CTP SDK 和可选AI依赖）
 [[tool.mypy.overrides]]
@@ -189,8 +193,36 @@ module = [
     "thosttraderapi.*",
     "shap",
     "shap.*",
+    "xgboost",
+    "xgboost.*",
+    "sklearn",
+    "sklearn.*",
+    "pandas_ta",
+    "pandas_ta.*",
 ]
 ignore_missing_imports = true
+
+# 忽略的第三方库
+[[tool.mypy.overrides]]
+module = [
+    "asyncio",
+    "aiohttp",
+    "aiosqlite",
+    "click",
+    "colorama",
+    "ctypes",
+    "dataclasses_json",
+    "enum",
+    "fastapi",
+    "jsonschema",
+    "logging",
+    "multiprocessing.pool._threads_queues",
+    "numpy.typing._array_like",
+    "numpy.typing._dtype_like",
+    "numpy.typing._nested_sequence",
+    "pathlib",
+    "pickletools",
+    "pkg_resources.extern.packaging.version",
 
 # =============================================================================
 # Pytest 配置
