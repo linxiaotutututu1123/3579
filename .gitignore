@@ -16,3 +16,14 @@ Thumbs.db
 
 # Artifacts
 artifacts/
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log

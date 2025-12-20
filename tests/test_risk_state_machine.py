@@ -63,7 +63,8 @@ def test_second_breach_locks_for_day() -> None:
     rm.on_day_start_0900(AccountSnapshot(equity=1_000_000.0, margin_used=0.0))
 
     rm.update(AccountSnapshot(equity=969_000.0, margin_used=0.0))
-    assert rm.state.mode == RiskMode.COOLDOWN
+    mode: RiskMode = rm.state.mode
+    assert mode == RiskMode.COOLDOWN
     assert calls["cancel"] == 1
 
     now["t"] = 2
