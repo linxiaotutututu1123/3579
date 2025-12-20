@@ -244,9 +244,8 @@ class AppConfig:
             errors.append("version不能为空")
 
         # PROD环境特殊验证
-        if self.environment == Environment.PROD:
-            if self.debug:
-                errors.append("PROD环境不允许开启debug模式")
+        if self.environment == Environment.PROD and self.debug:
+            errors.append("PROD环境不允许开启debug模式")
 
         # 验证子配置
         errors.extend(self.database.validate())

@@ -143,9 +143,7 @@ class CostEstimator:
 
         # 滑点 = 基准 ticks * (1 + qty/depth) * tick_size * multiplier * qty
         slippage_ticks = self.SLIPPAGE_BASE_TICKS * (1.0 + qty / depth)
-        slippage = slippage_ticks * tick_size * multiplier * qty
-
-        return slippage
+        return slippage_ticks * tick_size * multiplier * qty
 
     def impact_estimate(
         self,

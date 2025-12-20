@@ -68,7 +68,6 @@ ignore = [
     "DTZ001",   # 测试允许无时区的datetime（中国期货市场使用本地时间）
     "DTZ005",   # 测试允许datetime.now()不带tz参数
     "DTZ011",   # 测试允许date.today()（中国期货市场使用本地日期）
-    "PT011",    # 测试允许宽泛的pytest.raises（简化测试代码）
     "PT018",    # 测试允许复合断言（提高测试可读性）
 ]
 "scripts/*" = [

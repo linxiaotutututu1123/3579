@@ -48,7 +48,7 @@ def main() -> None:
         ) from e
 
     if not callable(run_f21):
-        raise RuntimeError("Implement src.runner.run_f21() first.")
+        raise TypeError("Implement src.runner.run_f21() first.")
 
     # broker_factory (from F20) returns NoopBroker for PAPER mode
     run_f21(
