@@ -111,6 +111,7 @@ strict_equality = true
 warn_no_return = true
 warn_unused_ignores = true
 warn_unused_configs = true
+warn_unused_variables = true
 
 # 军规级增强配置
 warn_redundant_casts = true
@@ -122,6 +123,15 @@ disallow_incomplete_defs = true
 check_untyped_defs = true
 no_implicit_reexport = true
 strict_concatenate = true
+strict_param_forwarding = true
+strict_boolean_expr = true
+strict_equality = true
+warn_final = true
+warn_overlapping_literals = true
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_unused_configs = true
+warn_unused_variables = true
 
 # 排除目录
 exclude = [
