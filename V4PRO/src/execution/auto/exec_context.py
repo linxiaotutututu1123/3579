@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
@@ -267,7 +268,7 @@ class ExecContextManager:
             max_history: 最大历史记录数
         """
         self._contexts: dict[str, ExecContext] = {}
-        self._history: list[ExecContext] = []
+        self._history: deque[ExecContext] = deque(maxlen=max_history)
         self._max_history = max_history
 
     def create(
