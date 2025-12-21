@@ -37,7 +37,7 @@ from dataclasses import dataclass
 from typing import Any
 
 
-@dataclass
+@dataclass(slots=True)
 class KalmanConfig:
     """Configuration for Kalman beta estimator.
 
@@ -62,7 +62,7 @@ class KalmanConfig:
     min_samples: int = 20
 
 
-@dataclass
+@dataclass(slots=True)
 class KalmanResult:
     """Result of Kalman filter update.
 
