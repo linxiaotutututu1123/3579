@@ -1790,6 +1790,18 @@ DEPENDENT_TASKS = [
   ☒ D7-P1: Implement intelligent order splitter - src/execution/order_splitter.py
   ☒ D8: Implement adaptive VaR frequency optimization - src/risk/adaptive_var.py
   ☒ Implement compliance throttling mechanism (M17) - src/compliance/compliance_throttling.py
+
+    Todos
+  ☒ 第一波: P0-arbiter.py 信号仲裁器
+  ☒ 第一波: P0-allocator.py 资源分配器
+  ☐ 第一波: P1B-detector.py HFT检测器
+  ☐ 第一波: P1B-tracker.py 频率追踪器
+  ☐ 第一波: P1B-analyzer.py 模式分析器
+  ☐ 第一波: P1B-throttle.py 限速控制器
+  ☐ 第二波: P2 night_session 基础模块
+  ☐ 第二波: P2 夜盘策略实现
+  ☐ 集成验证与测试
+
  
 **文档结束**
 
