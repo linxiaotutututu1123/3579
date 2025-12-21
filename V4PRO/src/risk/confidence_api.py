@@ -464,12 +464,12 @@ class ConfidenceAPI:
         trend = self._assessor.get_trend_analysis()
         return TrendResponse(
             trend=trend["trend"],
-            direction=trend["direction"],
-            recent_avg=trend["recent_avg"],
-            overall_avg=trend["overall_avg"],
-            alert=trend["alert"],
+            direction=trend.get("direction", "NEUTRAL"),
+            recent_avg=trend.get("recent_avg", 0.0),
+            overall_avg=trend.get("overall_avg", 0.0),
+            alert=trend.get("alert", False),
             alert_message=trend.get("alert_message", ""),
-            history_count=trend["history_count"],
+            history_count=trend.get("history_count", 0),
         )
 
     def reset(self) -> None:
