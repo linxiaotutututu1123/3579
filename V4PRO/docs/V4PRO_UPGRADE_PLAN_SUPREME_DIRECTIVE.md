@@ -232,7 +232,7 @@ Update documentation if needed
 Share learnings in KNOWLEDGE.md
 📊 Quality Metrics
 Code Quality
-Test coverage: Aim for >80%
+Test coverage: Aim for ≥95%
 Linting: Zero ruff errors
 Type checking: Use type hints, minimal mypy errors
 Documentation: All public APIs documented
@@ -614,7 +614,7 @@ CTP接口 ◀── 订单执行 ◀── 订单验证 ◀── 涨跌停检�
 | `INFRA.CI.LINT_PASS` | Ruff检查通过 | test_ci_gate.py |
 | `INFRA.CI.TYPE_PASS` | Mypy检查通过 | test_ci_gate.py |
 | `INFRA.CI.TEST_PASS` | Pytest通过 | test_ci_gate.py |
-| `INFRA.CI.COVERAGE_MIN` | 覆盖率≥80% | test_ci_gate.py |
+| `INFRA.CI.COVERAGE_MIN` | 覆盖率≥95% | test_ci_gate.py |
 | `INFRA.SIM.GATE_PASS` | 仿真门禁通过 | test_sim_gate.py |
 | `INFRA.SIM.SCENARIO_ALL` | 所有场景覆盖 | test_sim_gate.py |
 | `INFRA.CTP.CONNECT` | CTP连接成功 | test_ctp_api.py |
