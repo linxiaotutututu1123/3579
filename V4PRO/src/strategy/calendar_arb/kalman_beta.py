@@ -239,14 +239,18 @@ class KalmanBetaEstimator:
 
     def _update_rolling_stats(self, residual: float) -> None:
         """Update rolling statistics for z-score calculation."""
+        # Track old value before append (deque auto-evicts when full)
+        old: float | None = None
+        if len(self._residuals) == self._config.z_score_window:
+            old = self._residuals[0]
+
         self._residuals.append(residual)
         self._residual_sum += residual
         self._residual_sq_sum += residual * residual
         self._sample_count += 1
 
-        # Trim to window size
-        if len(self._residuals) > self._config.z_score_window:
-            old = self._residuals.pop(0)
+        # Adjust sums for evicted element (deque handles removal automatically)
+        if old is not None:
             self._residual_sum -= old
             self._residual_sq_sum -= old * old
 
