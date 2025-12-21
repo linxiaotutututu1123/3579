@@ -35,6 +35,7 @@ from src.knowledge.pattern_store import MarketRegime, Pattern, PatternStore
 from src.knowledge.reflexion import (
     Experience,
     ExperienceCategory,
+    ExperienceContext,
     ExperienceType,
     ReflexionStore,
 )
