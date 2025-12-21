@@ -59,7 +59,7 @@ class SignalStrength(Enum):
     WEAK = "WEAK"  # 弱信号 (<0.4)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class StrategySignal:
     """策略信号 (不可变).
 
