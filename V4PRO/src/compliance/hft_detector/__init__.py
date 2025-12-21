@@ -125,4 +125,16 @@ __all__ = [
     "create_hft_detector",
     "get_default_hft_config",
     "get_hft_thresholds",
+    # Analyzer module
+    # Enums
+    "TradingPattern",
+    "RiskLevel",
+    # Data Classes
+    "PatternIndicator",
+    "BehaviorProfile",
+    "AnalyzerConfig",
+    # Main Class
+    "HFTPatternAnalyzer",
+    # Factory Functions
+    "create_analyzer",
 ]
