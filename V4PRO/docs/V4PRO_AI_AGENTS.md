@@ -41,6 +41,7 @@
     相关文档链接:
   [text](confirmation_enhancement_design_report.md)
   C:\Users\1\2468\3579\V4PRO\docs\CIRCUIT_BREAKER_STATE_MACHINE_REPORT.md
+  C:\Users\1\2468\3579\V4PRO\docs\templates\compliance_report_template.md
 
 ## 目录
 
