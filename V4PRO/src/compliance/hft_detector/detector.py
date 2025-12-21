@@ -1069,6 +1069,7 @@ class HFTDetector:
         delay_map = {
             ThrottleLevel.NONE: 0,
             ThrottleLevel.WARNING: 50,      # 50ms
+            ThrottleLevel.SLOW: 100,        # 100ms (与现有 throttle 模块一致)
             ThrottleLevel.CRITICAL: 200,    # 200ms
             ThrottleLevel.BLOCK: 5000,      # 5000ms (实际应阻断)
         }
