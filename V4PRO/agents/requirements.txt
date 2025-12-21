@@ -1,0 +1,5 @@
+# Minimal deps for agents demo
+# Keep empty to use only Python stdlib; add libs as needed
+# numpy
+# pandas
+# requests
