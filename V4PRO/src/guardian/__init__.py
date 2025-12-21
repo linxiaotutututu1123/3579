@@ -115,6 +115,27 @@ __all__ = [
     "RecoveryProgress",
     "TriggerCheckResult",
     "TriggerThresholds",
+    # Circuit Breaker Controller (熔断恢复闭环控制器) - V4 SPEC D2
+    "CircuitBreakerController",
+    "ControllerStatus",
+    "create_default_controller",
+    # Circuit Breaker Triggers (熔断触发器) - V4 SPEC D2
+    "CircuitBreakerRiskTrigger",
+    "ConsecutiveLossTrigger",
+    "DailyLossTrigger",
+    "MarginUsageTrigger",
+    "PositionLossTrigger",
+    "RiskMetricsCollector",
+    "create_circuit_breaker_triggers",
+    "register_circuit_breaker_triggers",
+    # Gradual Recovery (渐进式恢复) - V4 SPEC D2
+    "DefaultAlertSender",
+    "DefaultPositionScaler",
+    "GradualRecoveryExecutor",
+    "GradualRecoveryStatus",
+    "RecoveryCoordinator",
+    "RecoveryEvent",
+    "RecoveryStage",
     # Guardian FSM (原状态机)
     "VALID_TRANSITIONS",
     "ActionResult",
