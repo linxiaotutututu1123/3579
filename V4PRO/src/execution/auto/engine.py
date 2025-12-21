@@ -497,4 +497,4 @@ class AutoOrderEngine:
 
     def __len__(self) -> int:
         """返回活动订单数量."""
-        return len(self.get_active_orders())
+        return len(self._active_orders)
