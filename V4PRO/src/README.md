@@ -107,6 +107,7 @@ writer.write_decision(decision_event)
 | M13 | `execution/protection/limit_price.py` | 涨跌停感知 |
 | M15 | `market/trading_calendar.py` | 夜盘日历 |
 | M17 | `compliance/programmatic_trading.py` | 报撤单合规 |
+| M31 | `risk/confidence.py` | 置信度检查 (v4.3) |
 
 ---
 
