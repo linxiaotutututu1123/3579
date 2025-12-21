@@ -702,3 +702,275 @@ class FusionEngine:
             "active_recommendations": len(self._active_recommendations),
             "registered_rules": len(self._fusion_rules),
         }
+
+    def _rule_market_regime_adaptation(
+        self,
+        context: FusionContext,
+    ) -> list[Recommendation]:
+        """市场状态适应规则.
+
+        根据市场状态变化提供策略调整建议。
+
+        Args:
+            context: 融合上下文
+
+        Returns:
+            适应性建议列表
+        """
+        recommendations: list[Recommendation] = []
+
+        # 获取当前市场状态下的历史决策表现
+        if context.strategy_id:
+            decisions = self.decisions.search(
+                strategy_id=context.strategy_id,
+                limit=100,
+            )
+
+            # 分析在不同市场状态下的表现
+            regime_performance: dict[str, dict[str, float]] = {}
+            for decision in decisions:
+                regime = decision.context.market_regime
+                if regime not in regime_performance:
+                    regime_performance[regime] = {"wins": 0, "losses": 0, "total_pnl": 0}
+
+                if decision.result.outcome == DecisionOutcome.PROFITABLE:
+                    regime_performance[regime]["wins"] += 1
+                elif decision.result.outcome == DecisionOutcome.LOSS:
+                    regime_performance[regime]["losses"] += 1
+                regime_performance[regime]["total_pnl"] += decision.result.pnl
+
+            # 检查当前市场状态下的历史表现
+            current_regime = context.market_regime.value
+            if current_regime in regime_performance:
+                perf = regime_performance[current_regime]
+                total = perf["wins"] + perf["losses"]
+                if total > 0:
+                    win_rate = perf["wins"] / total
+                    if win_rate < 0.4:
+                        rec = Recommendation.create(
+                            rec_type=RecommendationType.STRATEGY_OPTIMIZE,
+                            priority=RecommendationPriority.HIGH,
+                            title=f"当前市场状态 {current_regime} 历史表现不佳",
+                            description=f"在 {current_regime} 状态下胜率仅 {win_rate:.1%}，建议调整策略参数或减少交易频率",
+                            action="reduce_trading_frequency",
+                            confidence=0.85,
+                            evidence=[
+                                f"历史数据: {total} 笔交易",
+                                f"胜率: {win_rate:.1%}",
+                                f"总盈亏: {perf['total_pnl']:.2f}",
+                            ],
+                            impact=0.4,
+                        )
+                        recommendations.append(rec)
+
+        # 极端市场状态警告
+        if context.market_regime == MarketRegime.EXTREME:
+            rec = Recommendation.create(
+                rec_type=RecommendationType.RISK_ENHANCE,
+                priority=RecommendationPriority.CRITICAL,
+                title="极端市场状态警告",
+                description="当前市场处于极端状态，建议暂停新开仓并收紧止损",
+                action="pause_new_entries_and_tighten_stops",
+                confidence=0.95,
+                evidence=["Market regime: EXTREME"],
+                impact=0.8,
+                ttl_seconds=1800,  # 30分钟有效
+            )
+            recommendations.append(rec)
+
+        return recommendations
+
+    def _rule_position_sizing(
+        self,
+        context: FusionContext,
+    ) -> list[Recommendation]:
+        """仓位管理规则.
+
+        基于风险和收益提供仓位调整建议。
+
+        Args:
+            context: 融合上下文
+
+        Returns:
+            仓位建议列表
+        """
+        recommendations: list[Recommendation] = []
+
+        # 检查组合价值和波动率
+        if context.portfolio_value > 0 and context.volatility > 0:
+            # 计算风险调整后的建议仓位
+            # 简单的波动率调整公式
+            volatility_multiplier = 1 / (1 + context.volatility * 10)
+
+            if volatility_multiplier < 0.5:
+                rec = Recommendation.create(
+                    rec_type=RecommendationType.POSITION_ADJUST,
+                    priority=RecommendationPriority.HIGH,
+                    title="高波动率下仓位调整建议",
+                    description=f"当前波动率 {context.volatility:.2%}，建议将仓位降至 {volatility_multiplier:.0%}",
+                    action=f"reduce_position_to_{volatility_multiplier:.0%}",
+                    confidence=0.8,
+                    evidence=[
+                        f"当前波动率: {context.volatility:.2%}",
+                        f"建议仓位系数: {volatility_multiplier:.2f}",
+                    ],
+                    impact=0.5,
+                )
+                recommendations.append(rec)
+
+        # 检查失败经验中的仓位教训
+        position_lessons = self.reflexion.search(
+            category=ExperienceCategory.RISK,
+            failure_only=True,
+            limit=5,
+        )
+
+        for exp in position_lessons:
+            if "仓位" in exp.description or "position" in exp.description.lower():
+                if exp.confidence >= 0.7:
+                    rec = Recommendation.create(
+                        rec_type=RecommendationType.POSITION_ADJUST,
+                        priority=RecommendationPriority.MEDIUM,
+                        title=f"历史仓位教训: {exp.title}",
+                        description=exp.description,
+                        action=exp.action_recommended or "review_position_size",
+                        confidence=exp.confidence,
+                        evidence=[f"Experience: {exp.id}"],
+                    )
+                    recommendations.append(rec)
+                    break  # 只取最相关的一条
+
+        return recommendations
+
+    def _rule_correlation_warning(
+        self,
+        context: FusionContext,
+    ) -> list[Recommendation]:
+        """相关性警告规则.
+
+        检测持仓间的高相关性风险。
+
+        Args:
+            context: 融合上下文
+
+        Returns:
+            相关性警告列表
+        """
+        recommendations: list[Recommendation] = []
+
+        # 检查持仓多样性
+        if context.position:
+            position_count = len(context.position)
+            if position_count > 3:
+                # 获取与持仓相关的历史模式
+                warning_patterns = self.patterns.search(
+                    min_success_rate=0.6,
+                    limit=10,
+                )
+
+                # 检查是否有相关性警告模式
+                for pattern in warning_patterns:
+                    if "相关" in pattern.name or "关联" in pattern.name:
+                        rec = Recommendation.create(
+                            rec_type=RecommendationType.RISK_ENHANCE,
+                            priority=RecommendationPriority.MEDIUM,
+                            title=f"持仓相关性提醒",
+                            description=f"当前持有 {position_count} 个标的，请注意检查相关性风险",
+                            action="check_correlation_risk",
+                            confidence=0.7,
+                            evidence=[f"Pattern: {pattern.name}"],
+                        )
+                        recommendations.append(rec)
+                        break
+
+        return recommendations
+
+    def generate_comprehensive_suggestion(
+        self,
+        context: FusionContext,
+    ) -> dict[str, Any]:
+        """生成综合交易建议.
+
+        融合所有知识源生成完整的交易建议报告。
+
+        Args:
+            context: 融合上下文
+
+        Returns:
+            综合建议报告
+        """
+        # 执行融合获取所有建议
+        all_recommendations = self.fuse(context)
+
+        # 按类型分类
+        strategy_recs = [r for r in all_recommendations if r.rec_type == RecommendationType.STRATEGY_OPTIMIZE]
+        risk_recs = [r for r in all_recommendations if r.rec_type == RecommendationType.RISK_ENHANCE]
+        fault_recs = [r for r in all_recommendations if r.rec_type == RecommendationType.FAULT_PREVENT]
+        signal_recs = [r for r in all_recommendations if r.rec_type in [
+            RecommendationType.ENTRY_SIGNAL,
+            RecommendationType.EXIT_SIGNAL,
+            RecommendationType.POSITION_ADJUST,
+        ]]
+
+        # 计算综合置信度
+        if all_recommendations:
+            avg_confidence = sum(r.confidence for r in all_recommendations) / len(all_recommendations)
+        else:
+            avg_confidence = 0.5
+
+        # 获取关键教训
+        key_lessons = self.reflexion.get_lessons(limit=5)
+
+        # 获取相似经验
+        similar_experiences: list[dict[str, Any]] = []
+        if context.strategy_id:
+            exp_context = ExperienceContext(
+                strategy_id=context.strategy_id,
+                market_state=context.market_regime.value,
+                symbol=context.symbol,
+            )
+            similar = self.reflexion.find_similar(exp_context, limit=3)
+            similar_experiences = [
+                {
+                    "id": exp.id,
+                    "title": exp.title,
+                    "outcome": "成功" if exp.exp_type == ExperienceType.SUCCESS else "失败",
+                    "confidence": exp.confidence,
+                }
+                for exp in similar
+            ]
+
+        return {
+            "context_summary": {
+                "symbol": context.symbol,
+                "strategy": context.strategy_id,
+                "market_regime": context.market_regime.value,
+                "volatility": context.volatility,
+                "position_count": len(context.position),
+            },
+            "overall_confidence": avg_confidence,
+            "recommendation_counts": {
+                "strategy_optimization": len(strategy_recs),
+                "risk_enhancement": len(risk_recs),
+                "fault_prevention": len(fault_recs),
+                "trading_signals": len(signal_recs),
+            },
+            "top_recommendations": [
+                {
+                    "type": r.rec_type.name,
+                    "priority": r.priority.name,
+                    "title": r.title,
+                    "action": r.action,
+                    "confidence": r.confidence,
+                }
+                for r in all_recommendations[:5]
+            ],
+            "critical_alerts": [
+                r.to_dict()
+                for r in all_recommendations
+                if r.priority == RecommendationPriority.CRITICAL
+            ],
+            "key_lessons": key_lessons,
+            "similar_experiences": similar_experiences,
+            "fusion_timestamp": time.time(),
+        }
