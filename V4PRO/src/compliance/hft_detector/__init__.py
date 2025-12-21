@@ -60,6 +60,7 @@ from src.compliance.hft_detector.detector import (
     HFT_THRESHOLDS,
     DEFAULT_WINDOW_SECONDS,
     MAX_RECORDS,
+    THROTTLE_LEVEL_PRIORITY,
     # Enums
     HFTIndicatorType,
     AuditEventType,
@@ -89,6 +90,7 @@ __all__ = [
     "HFT_THRESHOLDS",
     "DEFAULT_WINDOW_SECONDS",
     "MAX_RECORDS",
+    "THROTTLE_LEVEL_PRIORITY",
     # Enums
     "HFTIndicatorType",
     "AuditEventType",
