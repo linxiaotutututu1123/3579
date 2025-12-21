@@ -74,6 +74,21 @@ from src.guardian.triggers_china import (
 
 
 __all__ = [
+    # Circuit Breaker (熔断-恢复状态机) - V4 SPEC D2
+    "VALID_CIRCUIT_BREAKER_TRANSITIONS",
+    "AuditRecord",
+    "CircuitBreaker",
+    "CircuitBreakerEvent",
+    "CircuitBreakerManager",
+    "CircuitBreakerMetrics",
+    "CircuitBreakerState",
+    "CircuitBreakerTransitionError",
+    "DefaultAuditLogger",
+    "RecoveryConfig",
+    "RecoveryProgress",
+    "TriggerCheckResult",
+    "TriggerThresholds",
+    # Guardian FSM (原状态机)
     "VALID_TRANSITIONS",
     "ActionResult",
     "ActionStatus",
