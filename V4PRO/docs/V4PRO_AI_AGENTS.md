@@ -1351,12 +1351,7 @@ NIGHT_SESSION_RULES = {
   ☒ D7-P1: Implement intelligent order splitter - src/execution/order_splitter.py
   ☒ D8: Implement adaptive VaR frequency optimization - src/risk/adaptive_var.py
   ☒ Implement compliance throttling mechanism (M17) - src/compliance/compliance_throttling.py
-  ☐ D7-P1: Implement compliance registration module
-  ☐ D6: Phase 6 DL model development
-  ☐ D1: Update test coverage to 95% unified standard
-  ☐ D9/D10: Document structure and terminology unification
-  ☐ P0: Implement Strategy Federation Hub
-
+ 
 **文档结束**
 
 ```
