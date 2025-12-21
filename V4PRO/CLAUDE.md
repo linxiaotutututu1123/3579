@@ -169,7 +169,7 @@ NPM 包版本：配置在 package.json（需与 VERSION 文件版本一致）
 🔄 开发工作流
 新功能开发流程
 调研阶段
-阅读 PLANNING.md、TASK.md、KNOWLEDGE.md,V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文档
+阅读 PLANNING.md、TASK.md、KNOWLEDGE.md,V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md,行为准则.md 文档
 通过 Glob/Grep 检索现有代码，检查功能重复
 查阅官方文档（Context7 MCP）和开源实现方案（WebSearch）
 执行置信度检查（目标置信度 100%）
@@ -191,7 +191,7 @@ NPM 包版本：配置在 package.json（需与 VERSION 文件版本一致）
 为新增代码编写文档字符串
 更新 CHANGELOG.md 变更日志
 更新 TASK.md（标记任务完成状态）
-更新 CLAUDE.md（必要）
+更新 KNOWLEDGE.md（必要）
 更新 README.md（必要）
 更新 PLANNING.md（必要）
 更新 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md（必须）
