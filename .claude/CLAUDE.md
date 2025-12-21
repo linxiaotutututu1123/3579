@@ -1,8 +1,10 @@
-V4PRO 框架的架构、设计原则与绝对规则
+# V4PRO 框架的架构、设计原则与绝对规则
 
 本文件会在会话启动时由 Claude Code 读取，以确保开发工作始终符合项目标准，产出一致且高质量的成果。
 
 🎯 项目目标
+
+看 行为准则.md 文件。
 详细看 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文件。
 
 💡 核心使命 (详细看 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文件)
@@ -25,6 +27,7 @@ V4PRO 框架的架构、设计原则与绝对规则
 3. 不允许删除已有的功能或模块，除非有明确的理由和替代方案。
 4. 不允许更改框架的核心算法和逻辑，除非有充分的理由和证明。
 5. 不允许在框架中引入不安全的代码或操作，如访问敏感数据等。
+6. 遵守 行为准则.md 文件。
 
 📐 设计原则 (详细看 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文件)
 1. 遵循 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 中定义的行为规范和指令集。任何违反这些规定的代码或行为都将被拒绝。
@@ -244,13 +247,13 @@ Bug 修复流程
 
 
 核心要点：
-严格遵守本文件和 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文件中的绝对规则
+严格遵守本文件和 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文件和 行为准则.md 文件中的绝对规则
 所有新增代码必须配套测试用例
 集成项目管理智能体模式
 同步更新相关文档
-提交合并请求前必须发起代码评审、
+提交合并请求前必须发起代码评审
 
-⚠ 最终一切以 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文件为准。
+⚠ 最终一切以 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文件和 行为准则.md 文件为准。
 
 📚 参考资源
 TASK.md：当前任务与优先级列表
