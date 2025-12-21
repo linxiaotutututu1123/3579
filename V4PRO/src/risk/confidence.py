@@ -229,19 +229,24 @@ class ConfidenceAssessor:
         self,
         high_threshold: float = 0.90,
         medium_threshold: float = 0.70,
+        adaptive_mode: bool = False,
     ) -> None:
         """初始化置信度评估器.
 
         参数:
             high_threshold: 高置信度阈值
             medium_threshold: 中等置信度阈值
+            adaptive_mode: 是否启用自适应阈值模式
         """
         self._high_threshold = high_threshold
         self._medium_threshold = medium_threshold
+        self._adaptive_mode = adaptive_mode
         self._assessment_count = 0
         self._high_count = 0
         self._medium_count = 0
         self._low_count = 0
+        self._score_history: list[float] = []  # 置信度历史记录
+        self._max_history = 100  # 最大历史记录数
 
     def assess(self, context: ConfidenceContext) -> ConfidenceResult:
         """评估置信度.
