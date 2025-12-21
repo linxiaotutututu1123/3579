@@ -1,6 +1,7 @@
 """夜盘交易策略模块 (军规级 v4.0).
 
 本模块提供夜盘交易策略的实现，包括：
+- 夜盘基础设施: 配置类、时段管理器
 - 夜盘跳空闪电战策略
 - 夜盘策略基类
 
@@ -16,6 +17,13 @@
 
 from __future__ import annotations
 
+from src.strategy.night_session.base import (
+    InternationalMarket,
+    NightSessionConfig,
+    NightSessionManager,
+    SessionType,
+    TimeRange,
+)
 from src.strategy.night_session.gap_flash import (
     GapDirection,
     GapInfo,
@@ -26,6 +34,13 @@ from src.strategy.night_session.gap_flash import (
 )
 
 __all__ = [
+    # base.py
+    "InternationalMarket",
+    "NightSessionConfig",
+    "NightSessionManager",
+    "SessionType",
+    "TimeRange",
+    # gap_flash.py
     "GapDirection",
     "GapInfo",
     "MarketContext",
