@@ -119,13 +119,25 @@ __all__ = [
     # 自适应VaR调度器 (D8设计)
     "AdaptiveVaRConfig",
     "AdaptiveVaRScheduler",
+    # 告警记录 (v4.4)
+    "AlertRecord",
     "AttributionMethod",
     "AttributionResult",
+    # 置信度API (v4.4)
+    "ConfidenceAPI",
+    "ConfidenceAPIRequest",
+    "ConfidenceAPIResponse",
     # 置信度评估 (v4.3)
     "ConfidenceAssessor",
     "ConfidenceCheck",
     "ConfidenceContext",
     "ConfidenceLevel",
+    # 置信度ML (v4.4)
+    "ConfidenceMLP",
+    "ConfidenceMLPredictor",
+    # 置信度监控 (v4.4)
+    "ConfidenceMonitor",
+    "ConfidenceMonitorConfig",
     "ConfidenceResult",
     "Decision",
     # 动态VaR引擎 (v4.2)
@@ -135,11 +147,15 @@ __all__ = [
     "EventType",
     "FactorContribution",
     "FactorType",
+    # 特征配置 (v4.4)
+    "FeatureConfig",
     "GPDParameters",
     "ImpactLevel",
     "LiquidityMetrics",
     # 市场状态枚举 (D8)
     "MarketRegime",
+    # ML增强评估器 (v4.4)
+    "MLEnhancedAssessor",
     # 性能指标 (D8)
     "PerformanceMetrics",
     "PositionExposure",
@@ -153,31 +169,56 @@ __all__ = [
     "RiskMode",
     "RiskState",
     "ScenarioType",
+    # 统计响应 (v4.4)
+    "StatisticsResponse",
     "StressScenario",
     "StressTestResult",
     "StressTestSummary",
     "StressTester",
     "TaskType",
+    # 训练配置 (v4.4)
+    "TrainingConfig",
+    "TrainingResult",
+    # 趋势响应 (v4.4)
+    "TrendResponse",
     "VaRMethod",
     # VaR调度状态 (D8)
     "VaRScheduleState",
+    "assess_from_json",
     "assess_pre_execution",
     "assess_signal",
     "attribute_trade_loss",
     "create_attribution_engine",
     # 自适应VaR工厂函数 (D8)
     "create_adaptive_var_scheduler",
+    # 置信度API工厂 (v4.4)
+    "create_api",
+    # 置信度监控工厂 (v4.4)
+    "create_confidence_monitor",
     "create_dynamic_var_engine",
+    # ML工厂函数 (v4.4)
+    "create_ml_enhanced_assessor",
+    "create_ml_predictor",
+    # 特征提取 (v4.4)
+    "extract_features",
     "format_confidence_report",
     "get_all_scenarios",
     "get_default_tester",
     "get_factor_summary",
+    # 特征维度 (v4.4)
+    "get_feature_dim",
     # 市场状态辅助函数 (D8)
     "get_regime_from_volatility",
     "get_scenario_by_name",
     # 快速VaR计算函数
     "quick_adaptive_var",
+    # 快速API评估 (v4.4)
+    "quick_assess",
     "quick_evt_var",
     "quick_limit_var",
+    # 快速ML预测 (v4.4)
+    "quick_ml_predict",
+    # 快速监控检查 (v4.4)
+    "quick_monitor_check",
     "run_stress_test",
 ]
