@@ -5,7 +5,7 @@
 - INFRA.CI.LINT_PASS: Ruff检查通过
 - INFRA.CI.TYPE_PASS: Mypy检查通过
 - INFRA.CI.TEST_PASS: Pytest通过
-- INFRA.CI.COVERAGE_MIN: 覆盖率≥80%
+- INFRA.CI.COVERAGE_MIN: 覆盖率≥95%
 """
 
 from __future__ import annotations
