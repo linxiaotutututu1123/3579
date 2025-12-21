@@ -6,6 +6,7 @@ V4 SPEC: D7-P1 程序化交易备案
 V4 Scenarios:
 - CHINA.COMPLIANCE.HFT_DETECTION: 高频交易检测
 - CHINA.COMPLIANCE.THROTTLE: 限速控制
+- CHINA.COMPLIANCE.HFT_ANALYSIS: 高频交易模式分析
 - CHINA.COMPLIANCE.AUDIT_LOG: 审计日志记录
 
 军规覆盖:
@@ -15,8 +16,10 @@ V4 Scenarios:
 
 功能模块:
 - HFTDetector: 高频交易检测器 (主类)
+- HFTPatternAnalyzer: HFT模式分析器
 - OrderFlow: 订单流数据结构
 - HFTDetectionResult: 检测结果
+- BehaviorProfile: 账户行为画像
 - ThrottleLevel: 限速级别枚举
 - ThrottleController: 限速控制器
 - ThrottleStatus: 限速状态
@@ -30,6 +33,7 @@ V4 Scenarios:
 示例:
     >>> from src.compliance.hft_detector import (
     ...     HFTDetector,
+    ...     HFTPatternAnalyzer,
     ...     OrderFlow,
     ...     ThrottleLevel,
     ...     HFTDetectionResult,
