@@ -86,6 +86,28 @@ DEFAULT_WINDOW_SECONDS = 1
 # 最大记录数
 MAX_RECORDS = 100000
 
+# 限速级别优先级映射 (用于级别比较)
+# 值越大表示限制越严格
+THROTTLE_LEVEL_PRIORITY = {
+    "NONE": 0,
+    "WARNING": 1,
+    "SLOW": 2,
+    "CRITICAL": 3,
+    "BLOCK": 4,
+}
+
+
+def _get_level_priority(level: ThrottleLevel) -> int:
+    """获取限速级别的优先级.
+
+    参数:
+        level: 限速级别
+
+    返回:
+        优先级数值 (越大表示越严格)
+    """
+    return THROTTLE_LEVEL_PRIORITY.get(level.value, 0)
+
 
 # ============================================================
 # 枚举定义
