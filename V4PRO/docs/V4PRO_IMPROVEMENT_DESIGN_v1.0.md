@@ -413,13 +413,19 @@ V4PRO知识库架构:
    - 策略模式
    - 故障模式
    - 市场模式
+   - 行为模式
+   
    
 
 3. **决策支持 (Decision Support)**
    - 历史决策回溯
    - 决策置信度评估
-   - 建议生成
+   - 决策建议生成
    - 决策优化
+   - 决策风险提示
+   - 决策效果评估
+   - 决策改进建议
+   - 决策模式挖掘
 ```
 
 ### 5.4 Phase 9 扩展: 知识库应用
@@ -436,6 +442,9 @@ V4PRO知识库架构:
 | `src/knowledge/fault_preventer.py` | ~250 | 故障预防器 | ⏸ 待新增 |
 | `src/knowledge/optimization.py` | ~300 | 参数优化器 | ⏸ 待新增 |
 | `src/knowledge/report_generator.py` | ~200 | 报告生成器 | ⏸ 待新增 |
+| `src/knowledge/integration.py` | ~150 | 系统集成 | ⏸ 待新增 |
+| `src/knowledge/api.py` | ~100 | 知识库API | ⏸ 待新增 |
+| `src/knowledge/ui.py` | ~200 | 知识库UI | ⏸ 待新增 |
 
 ### 9.B 应用场景
 
