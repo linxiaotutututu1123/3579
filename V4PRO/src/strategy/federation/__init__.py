@@ -15,11 +15,22 @@ V4 SPEC: §28 策略联邦, §29 信号融合, §30 风险对冲
 - central_coordinator: 联邦中枢协调器
 - registry: 策略注册与生命周期管理
 - allocator: 资源分配器
+- arbiter: 信号仲裁器 (冲突检测与解决)
 - models: 数据模型定义
 """
 
 from __future__ import annotations
 
+from src.strategy.federation.arbiter import (
+    ArbiterConfig,
+    ArbiterDecision,
+    ArbiterStatus,
+    ArbitrationResult,
+    SignalArbiter,
+    SignalKey,
+    create_arbiter,
+    create_config,
+)
 from src.strategy.federation.allocator import (
     ResourceAllocator,
     ResourcePool,
