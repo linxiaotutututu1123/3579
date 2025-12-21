@@ -61,7 +61,6 @@ from src.compliance.hft_detector.detector import (
     DEFAULT_WINDOW_SECONDS,
     MAX_RECORDS,
     # Enums
-    ThrottleLevel as DetectorThrottleLevel,
     HFTIndicatorType,
     AuditEventType,
     # Data Classes
