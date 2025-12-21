@@ -588,7 +588,7 @@ class HFTDetector:
         # 确定最高限速级别
         max_level = ThrottleLevel.NONE
         for indicator in indicators:
-            if indicator.level.value > max_level.value:
+            if _get_level_priority(indicator.level) > _get_level_priority(max_level):
                 max_level = indicator.level
 
         # 判定是否为HFT
