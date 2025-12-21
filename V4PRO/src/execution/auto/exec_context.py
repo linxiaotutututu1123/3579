@@ -330,9 +330,8 @@ class ExecContextManager:
         if ctx is None:
             return False
 
+        # deque with maxlen auto-evicts oldest when full
         self._history.append(ctx)
-        if len(self._history) > self._max_history:
-            self._history.pop(0)
 
         return True
 
