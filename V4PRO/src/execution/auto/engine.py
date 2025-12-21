@@ -333,9 +333,8 @@ class AutoOrderEngine:
         Returns:
             活动订单 ID 列表
         """
-        return [
-            local_id for local_id, fsm in self._fsm_map.items() if not fsm.is_terminal()
-        ]
+        # O(n) 复制 vs O(n) 遍历+过滤，但 set 更简洁
+        return list(self._active_orders)
 
     def _on_timeout(self, local_id: str, timeout_type: TimeoutType) -> None:
         """超时回调.
