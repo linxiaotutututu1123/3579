@@ -136,6 +136,14 @@ from src.knowledge.storage import (
     TieredStorageConfig,
     WarmStorage,
 )
+from src.knowledge.precipitator import (
+    KnowledgePrecipitator,
+    KnowledgeVersion,
+    MaintenanceAction,
+    PrecipitationLevel,
+    PrecipitationRecord,
+    PrecipitationRule,
+)
 
 
 __all__ = [
