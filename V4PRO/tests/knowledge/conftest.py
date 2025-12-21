@@ -53,6 +53,12 @@ from src.knowledge.storage import (
     TieredStorageConfig,
     WarmStorage,
 )
+from src.knowledge.precipitator import (
+    KnowledgePrecipitator,
+    PrecipitationLevel,
+    PrecipitationRule,
+    MaintenanceAction,
+)
 
 
 @pytest.fixture
