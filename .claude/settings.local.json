@@ -37,7 +37,8 @@
       "Skill(sc:help)",
       "Skill(sc:analyze)",
       "Bash(wc:*)",
-      "Skill(sc:improve)"
+      "Skill(sc:improve)",
+      "Bash(PYTHONIOENCODING=utf-8 C:/Users/1/2468/3579/.venv/Scripts/python.exe:*)"
     ]
   }
 }
