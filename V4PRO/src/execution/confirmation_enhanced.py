@@ -726,7 +726,7 @@ class ConfirmationManagerEnhanced:
         if self._circuit_breaker is None:
             return None
         try:
-            return self._circuit_breaker.current_state.value
+            return self._circuit_breaker.state.name
         except Exception:
             return None
 
