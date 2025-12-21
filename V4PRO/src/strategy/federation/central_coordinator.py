@@ -397,8 +397,11 @@ class StrategyFederation:
         if SignalDirection.LONG in directions and SignalDirection.SHORT in directions:
             self._conflict_count += 1
 
-        # 更新相关性矩阵
-        self._update_correlation_matrix()
+        # 更新相关性矩阵 (节流: 避免每次信号都重算)
+        now = time.time()
+        if now - self._last_correlation_update >= self._correlation_update_interval:
+            self._update_correlation_matrix()
+            self._last_correlation_update = now
 
         # 计算融合信号
         fused_signal = self._fuse_signals(symbol, valid_signals, timestamp)
