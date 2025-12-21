@@ -45,7 +45,8 @@
       "Skill(sc:save)",
       "Skill(sc:design)",
       "Bash(PYTHONPATH=.. C:/Users/1/2468/3579/.venv/Scripts/python.exe:*)",
-      "Skill(sc:site-packages:superclaude:agents:refactoring-expert)"
+      "Skill(sc:site-packages:superclaude:agents:refactoring-expert)",
+      "Bash(find:*)"
     ]
   }
 }
