@@ -608,6 +608,113 @@ class ConfidenceAssessor:
         self._high_count = 0
         self._medium_count = 0
         self._low_count = 0
+        self._score_history.clear()
+
+    def get_adaptive_thresholds(
+        self, context: ConfidenceContext
+    ) -> tuple[float, float]:
+        """获取自适应阈值 (v4.3增强).
+
+        根据市场状态动态调整置信度阈值:
+        - 高波动市场: 提高阈值要求
+        - 低流动性市场: 提高阈值要求
+        - 正常市场: 使用默认阈值
+
+        参数:
+            context: 评估上下文
+
+        返回:
+            (高阈值, 中阈值) 元组
+        """
+        high_thresh = self._high_threshold
+        medium_thresh = self._medium_threshold
+
+        # 波动率调整 (高波动 +5%)
+        if context.volatility > 0.3:
+            adjustment = min(0.05, (context.volatility - 0.3) * 0.2)
+            high_thresh = min(0.99, high_thresh + adjustment)
+            medium_thresh = min(0.89, medium_thresh + adjustment)
+
+        # 流动性调整 (低流动性 +3%)
+        if context.liquidity_score < 0.6:
+            adjustment = min(0.03, (0.6 - context.liquidity_score) * 0.1)
+            high_thresh = min(0.99, high_thresh + adjustment)
+            medium_thresh = min(0.89, medium_thresh + adjustment)
+
+        # 异常市场状态调整 (+5%)
+        if context.market_condition in {"VOLATILE", "CRISIS", "LIMIT_UP", "LIMIT_DOWN"}:
+            high_thresh = min(0.99, high_thresh + 0.05)
+            medium_thresh = min(0.89, medium_thresh + 0.05)
+
+        return (high_thresh, medium_thresh)
+
+    def get_trend_analysis(self) -> dict[str, Any]:
+        """获取置信度趋势分析 (v4.3增强).
+
+        分析历史置信度变化趋势，提供预警信息。
+
+        返回:
+            趋势分析结果字典
+        """
+        if len(self._score_history) < 3:
+            return {
+                "trend": "INSUFFICIENT_DATA",
+                "message": "历史数据不足，无法分析趋势",
+                "recent_avg": 0.0,
+                "overall_avg": 0.0,
+                "direction": "NEUTRAL",
+                "alert": False,
+            }
+
+        overall_avg = sum(self._score_history) / len(self._score_history)
+
+        # 近期平均 (最近5次)
+        recent = self._score_history[-5:]
+        recent_avg = sum(recent) / len(recent)
+
+        # 趋势方向
+        if recent_avg >= overall_avg + 0.05:
+            direction = "UP"
+            trend = "IMPROVING"
+        elif recent_avg <= overall_avg - 0.05:
+            direction = "DOWN"
+            trend = "DECLINING"
+        else:
+            direction = "NEUTRAL"
+            trend = "STABLE"
+
+        # 预警检测
+        alert = False
+        alert_message = ""
+
+        # 连续下降预警
+        if len(self._score_history) >= 3:
+            last_3 = self._score_history[-3:]
+            if all(last_3[i] > last_3[i + 1] for i in range(len(last_3) - 1)):
+                alert = True
+                alert_message = "⚠️ 置信度连续下降"
+
+        # 低置信度预警
+        if recent_avg < 0.70:
+            alert = True
+            alert_message = "❌ 近期置信度持续偏低"
+
+        return {
+            "trend": trend,
+            "message": f"趋势: {trend} | 方向: {direction}",
+            "recent_avg": round(recent_avg, 4),
+            "overall_avg": round(overall_avg, 4),
+            "direction": direction,
+            "alert": alert,
+            "alert_message": alert_message,
+            "history_count": len(self._score_history),
+        }
+
+    def _record_score(self, score: float) -> None:
+        """记录置信度分数到历史."""
+        self._score_history.append(score)
+        if len(self._score_history) > self._max_history:
+            self._score_history.pop(0)
 
 
 # ============================================================
