@@ -1,8 +1,8 @@
 """
 守护模块 (军规级 v4.0).
 
-V4PRO Platform Component - Phase 1 + Phase 7 中国期货特化
-V4 SPEC: §6 Guardian, §12 Phase 7
+V4PRO Platform Component - Phase 1 + Phase 7 中国期货特化 + Phase 10 熔断增强
+V4 SPEC: §6 Guardian, §12 Phase 7, D2 熔断-恢复闭环
 
 功能特性:
 - 守护主循环 (GuardianMonitor)
@@ -11,9 +11,11 @@ V4 SPEC: §6 Guardian, §12 Phase 7
 - 冷启动恢复 (ColdStartRecovery)
 - 触发器管理器 (TriggerManager)
 - 中国期货触发器 (LimitPrice/Margin/Delivery)
+- 熔断-恢复状态机 (CircuitBreaker) - V4 SPEC D2
 
 军规覆盖:
-- M6: 熔断保护
+- M3: 审计日志完整，状态转换全记录
+- M6: 熔断保护机制完整，状态机设计完善
 - M13: 涨跌停感知
 - M15: 夜盘跨日处理
 - M16: 保证金实时监控
