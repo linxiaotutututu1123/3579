@@ -348,16 +348,15 @@ class StrategyFederation:
         member.signal_count += 1
         member.last_signal = signal
 
-        # 记录信号历史 (用于相关性计算)
+        # 记录信号历史 (用于相关性计算) - deque 自动处理 maxlen
         direction_value = (
             1.0
             if signal.direction == SignalDirection.LONG
             else (-1.0 if signal.direction == SignalDirection.SHORT else 0.0)
         )
-        history = self._signal_history[signal.strategy_id]
-        history.append(direction_value * signal.strength)
-        if len(history) > self._history_window:
-            history.pop(0)
+        self._signal_history[signal.strategy_id].append(
+            direction_value * signal.strength
+        )
 
     def generate_signal(
         self,
