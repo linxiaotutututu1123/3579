@@ -122,7 +122,7 @@ class KalmanBetaEstimator:
         self._variance = self._config.initial_variance
 
         # Rolling statistics for z-score
-        self._residuals: list[float] = []
+        self._residuals: deque[float] = deque(maxlen=self._config.z_score_window)
         self._residual_sum: float = 0.0
         self._residual_sq_sum: float = 0.0
         self._sample_count: int = 0
