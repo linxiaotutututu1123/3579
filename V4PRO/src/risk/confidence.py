@@ -126,6 +126,16 @@ class ConfidenceContext:
     historical_win_rate: float = 0.5  # 策略历史胜率
     position_concentration: float = 0.0  # 持仓集中度 (0=分散, 1=集中)
 
+    # 高级检查项 (v4.4增强)
+    backtest_sample_size: int = 0  # 回测样本数量
+    backtest_sharpe: float = 0.0  # 回测夏普比率
+    external_signal_valid: bool = False  # 外部信号有效性
+    external_signal_correlation: float = 0.0  # 外部信号相关性 (0.0-1.0)
+    regime_alignment: bool = False  # 市场体制对齐
+    current_regime: str = "UNKNOWN"  # 当前市场体制 (TRENDING/RANGE/VOLATILE/UNKNOWN)
+    strategy_regime: str = "UNKNOWN"  # 策略适用体制
+    cross_asset_correlation: float = 0.0  # 跨资产相关性风险 (0=低相关, 1=高相关)
+
     # 元数据
     metadata: dict[str, Any] = field(default_factory=dict)
 
