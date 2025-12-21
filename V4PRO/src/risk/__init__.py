@@ -40,6 +40,7 @@ from src.risk.confidence import (
     format_confidence_report,
 )
 from src.risk.dynamic_var import (
+    # 动态VaR引擎核心
     DynamicVaREngine,
     DynamicVaRResult,
     GPDParameters,
@@ -49,6 +50,16 @@ from src.risk.dynamic_var import (
     create_dynamic_var_engine,
     quick_evt_var,
     quick_limit_var,
+    # 自适应VaR调度器 (D8设计)
+    AdaptiveVaRConfig,
+    AdaptiveVaRScheduler,
+    EventType,
+    MarketRegime,
+    PerformanceMetrics,
+    VaRScheduleState,
+    create_adaptive_var_scheduler,
+    get_regime_from_volatility,
+    quick_adaptive_var,
 )
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.manager import Decision, RiskManager
@@ -75,6 +86,9 @@ __all__ = [
     "HYPOTHETICAL_SCENARIOS",
     "STRESS_SCENARIOS",
     "AccountSnapshot",
+    # 自适应VaR调度器 (D8设计)
+    "AdaptiveVaRConfig",
+    "AdaptiveVaRScheduler",
     "AttributionMethod",
     "AttributionResult",
     # 置信度评估 (v4.3)
@@ -87,11 +101,17 @@ __all__ = [
     # 动态VaR引擎 (v4.2)
     "DynamicVaREngine",
     "DynamicVaRResult",
+    # 事件触发器类型 (D8)
+    "EventType",
     "FactorContribution",
     "FactorType",
     "GPDParameters",
     "ImpactLevel",
     "LiquidityMetrics",
+    # 市场状态枚举 (D8)
+    "MarketRegime",
+    # 性能指标 (D8)
+    "PerformanceMetrics",
     "PositionExposure",
     "RiskAction",
     "RiskAttributionEngine",
@@ -109,16 +129,24 @@ __all__ = [
     "StressTester",
     "TaskType",
     "VaRMethod",
+    # VaR调度状态 (D8)
+    "VaRScheduleState",
     "assess_pre_execution",
     "assess_signal",
     "attribute_trade_loss",
     "create_attribution_engine",
+    # 自适应VaR工厂函数 (D8)
+    "create_adaptive_var_scheduler",
     "create_dynamic_var_engine",
     "format_confidence_report",
     "get_all_scenarios",
     "get_default_tester",
     "get_factor_summary",
+    # 市场状态辅助函数 (D8)
+    "get_regime_from_volatility",
     "get_scenario_by_name",
+    # 快速VaR计算函数
+    "quick_adaptive_var",
     "quick_evt_var",
     "quick_limit_var",
     "run_stress_test",
