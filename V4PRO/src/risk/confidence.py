@@ -252,6 +252,7 @@ class ConfidenceAssessor:
         """评估置信度.
 
         根据任务类型选择适当的评估策略。
+        支持自适应阈值模式 (v4.3增强)。
 
         参数:
             context: 评估上下文
@@ -273,12 +274,22 @@ class ConfidenceAssessor:
         # 计算总分
         score = sum(c.weight for c in checks if c.passed)
 
+        # 记录分数历史
+        self._record_score(score)
+
+        # 获取阈值 (支持自适应模式)
+        if self._adaptive_mode:
+            high_thresh, medium_thresh = self.get_adaptive_thresholds(context)
+        else:
+            high_thresh = self._high_threshold
+            medium_thresh = self._medium_threshold
+
         # 确定等级
-        if score >= self._high_threshold:
+        if score >= high_thresh:
             level = ConfidenceLevel.HIGH
             can_proceed = True
             self._high_count += 1
-        elif score >= self._medium_threshold:
+        elif score >= medium_thresh:
             level = ConfidenceLevel.MEDIUM
             can_proceed = False  # 需要确认
             self._medium_count += 1
@@ -294,6 +305,8 @@ class ConfidenceAssessor:
             "task_name": context.task_name,
             "symbol": context.symbol,
             "strategy_id": context.strategy_id,
+            "adaptive_mode": self._adaptive_mode,
+            "thresholds": {"high": high_thresh, "medium": medium_thresh},
         }
 
         return ConfidenceResult(
