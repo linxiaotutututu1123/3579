@@ -990,20 +990,22 @@ logging:
   output: "logs/agents/"
 ```
 ---
-  Todos
+  Todos (2025-12-22 更新)
   ☒ Analyze codebase gaps against D7 42-module list
   ☒ Create implementation priority matrix for Phase 6-10 modules
-  ☐ D2: Implement layered confirmation mechanism (M12 compliance)
-  ☒ D2: Verify CircuitBreaker 5-state machine compliance
-  ☐ D4: Create knowledge base module infrastructure (Phase 8)
-  ☐ D7-P0: Implement Regime market state engine
-  ☐ D7-P0: Implement single signal source module (M1)
-  ☐ D7-P1: Implement intelligent order splitter
+  ☒ D2: Implement layered confirmation mechanism (M12 compliance) - src/execution/confirmation.py
+  ☒ D2: Verify CircuitBreaker 5-state machine compliance - src/guardian/circuit_breaker_controller.py
+  ☒ D4: Create knowledge base module infrastructure (Phase 8) - src/knowledge/precipitator.py
+  ☒ D7-P0: Implement Regime market state engine - src/strategy/regime/
+  ☒ D7-P0: Implement single signal source module (M1) - src/strategy/single_signal_source.py
+  ☒ D7-P1: Implement intelligent order splitter - src/execution/order_splitter.py
+  ☒ D8: Implement adaptive VaR frequency optimization - src/risk/adaptive_var.py
+  ☒ Implement compliance throttling mechanism (M17) - src/compliance/compliance_throttling.py
   ☐ D7-P1: Implement compliance registration module
-  ☐ D8: Implement adaptive VaR frequency optimization
   ☐ D6: Phase 6 DL model development
   ☐ D1: Update test coverage to 95% unified standard
   ☐ D9/D10: Document structure and terminology unification
+  ☐ P0: Implement Strategy Federation Hub
 
 **文档结束**
 
