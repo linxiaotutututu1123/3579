@@ -298,8 +298,8 @@ class StrategyFederation:
             dynamic_weight=weight,
         )
 
-        # 初始化信号历史
-        self._signal_history[strategy_id] = []
+        # 初始化信号历史 - 使用 deque
+        self._signal_history[strategy_id] = deque(maxlen=self._history_window)
 
     def unregister_strategy(self, strategy_id: str) -> None:
         """注销策略.
