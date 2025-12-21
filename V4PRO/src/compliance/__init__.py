@@ -12,6 +12,9 @@ V4 SPEC: §12 Phase 7, §21 程序化交易合规, D7-P1 程序化交易备案
 - 程序化交易备案登记 (RegistrationRegistry) [Phase 9]
 - 合规阈值验证 (ComplianceValidator) [Phase 9]
 - 监管报送接口 (RegulatoryReporter) [Phase 9]
+- 合规节流管理器 (ComplianceThrottleManager) [D7-P1]
+- 高频交易检测器 (HFTDetector) [D7-P1]
+- 审计日志记录器 (AuditLogger) [M3]
 
 军规覆盖:
 - M3: 审计日志完整 - 所有操作必须记录审计日志
@@ -32,6 +35,11 @@ V4 SPEC: §12 Phase 7, §21 程序化交易合规, D7-P1 程序化交易备案
 - 订单间隔: >=100ms
 - 审计延迟: <=1s
 
+审计日志规范 (M3):
+- 必记字段: timestamp, event_type, operator, target, action, result, context
+- 保留期限: 交易日志5年, 系统日志3年, 审计日志10年
+- 存储要求: 加密, 不可篡改, 异地备份
+
 示例:
     >>> from src.compliance import (
     ...     ChinaFuturesComplianceChecker,
@@ -41,6 +49,9 @@ V4 SPEC: §12 Phase 7, §21 程序化交易合规, D7-P1 程序化交易备案
     ...     RegistrationRegistry,
     ...     ComplianceValidator,
     ...     RegulatoryReporter,
+    ...     ComplianceThrottleManager,
+    ...     HFTDetector,
+    ...     AuditLogger,
     ... )
     >>> compliance = ProgrammaticTradingCompliance()
     >>> can, msg = compliance.can_submit("rb2501")
@@ -49,6 +60,9 @@ V4 SPEC: §12 Phase 7, §21 程序化交易合规, D7-P1 程序化交易备案
     >>> registry = RegistrationRegistry()
     >>> validator = ComplianceValidator()
     >>> reporter = RegulatoryReporter(registry, validator)
+    >>> throttle_manager = ComplianceThrottleManager()
+    >>> hft_detector = HFTDetector()
+    >>> audit_logger = AuditLogger()
 """
 
 from __future__ import annotations
@@ -97,6 +111,38 @@ from src.compliance.registration import (
     create_compliance_validator,
     create_registration_registry,
     create_regulatory_reporter,
+)
+from src.compliance.compliance_throttling import (
+    # Config
+    ThrottleConfig as ThrottleConfigD7,
+    AuditLogConfig,
+    # Enums
+    ThrottleAction,
+    AuditEventType,
+    LogCategory,
+    # Data Classes
+    ThrottleResult,
+    AuditLogEntry,
+    HFTDetectionResult,
+    # Main Classes
+    ComplianceThrottleManager,
+    HFTDetector,
+    AuditLogger,
+    # Factory Functions
+    create_throttle_manager,
+    create_hft_detector,
+    create_audit_logger,
+    get_default_throttle_config as get_default_throttle_config_d7,
+    get_default_audit_config,
+    # Constants
+    MAX_CANCEL_RATIO,
+    MAX_CANCEL_FREQ_PER_SEC,
+    MIN_ORDER_INTERVAL_MS,
+    MAX_AUDIT_DELAY_SEC,
+    HFT_THRESHOLD_PER_SEC,
+    TRADING_LOG_RETENTION_YEARS,
+    SYSTEM_LOG_RETENTION_YEARS,
+    AUDIT_LOG_RETENTION_YEARS,
 )
 
 
