@@ -83,6 +83,20 @@ from src.compliance.hft_detector.detector import (
     get_hft_thresholds,
 )
 
+from src.compliance.hft_detector.analyzer import (
+    # Enums
+    TradingPattern,
+    RiskLevel,
+    # Data Classes
+    PatternIndicator,
+    BehaviorProfile,
+    AnalyzerConfig,
+    # Main Class
+    HFTPatternAnalyzer,
+    # Factory Functions
+    create_analyzer,
+)
+
 __all__ = [
     # Throttle module (existing)
     "ThrottleConfig",
