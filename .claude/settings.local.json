@@ -43,7 +43,8 @@
       "Skill(sc:implement)",
       "Bash(PYTHONPATH=. C:/Users/1/2468/3579/.venv/Scripts/python.exe:*)",
       "Skill(sc:save)",
-      "Skill(sc:design)"
+      "Skill(sc:design)",
+      "Bash(PYTHONPATH=.. C:/Users/1/2468/3579/.venv/Scripts/python.exe:*)"
     ]
   }
 }
