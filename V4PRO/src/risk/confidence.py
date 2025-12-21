@@ -219,6 +219,12 @@ class ConfidenceAssessor:
     WEIGHT_MARKET_CONDITION: ClassVar[float] = 0.25
     WEIGHT_RISK_LIMITS: ClassVar[float] = 0.20
 
+    # 扩展检查项权重 (v4.3增强)
+    WEIGHT_VOLATILITY: ClassVar[float] = 0.15
+    WEIGHT_LIQUIDITY: ClassVar[float] = 0.15
+    WEIGHT_WIN_RATE: ClassVar[float] = 0.10
+    WEIGHT_CONCENTRATION: ClassVar[float] = 0.10
+
     def __init__(
         self,
         high_threshold: float = 0.90,
