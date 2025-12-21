@@ -396,6 +396,8 @@ V4PRO知识库架构:
 | `src/knowledge/fusion_engine.py` | ~400 | 知识融合 | ⏸ 待新增 |
 | `src/knowledge/query.py` | ~200 | 知识查询 | ⏸ 待新增 |
 | `src/knowledge/export.py` | ~150 | 知识导出 | ⏸ 待新增 |
+| `src/knowledge/import.py` | ~100 | 知识导入 | ⏸ 待新增 |
+| `src/knowledge/utils.py` | ~100 | 工具函数 | ⏸ 待新增 |
 
 ### 8.B 核心功能
 
@@ -403,16 +405,21 @@ V4PRO知识库架构:
    - 错误模式记录
    - 成功模式记录
    - 跨会话学习
+   - 异常模式标记
+   - 异常模式预警
 
 2. **模式识别 (Pattern Recognition)**
    - 代码模式
    - 策略模式
    - 故障模式
+   - 市场模式
+   
 
 3. **决策支持 (Decision Support)**
    - 历史决策回溯
    - 决策置信度评估
    - 建议生成
+   - 决策优化
 ```
 
 ### 5.4 Phase 9 扩展: 知识库应用
