@@ -1,0 +1,185 @@
+"""
+Tick数据模型
+"""
+
+from pydantic import BaseModel, Field, field_validator, ConfigDict
+from datetime import datetime as dt
+from decimal import Decimal
+from typing import Optional, Dict, Any, List
+from enum import Enum
+
+class TickDataQuality(Enum):
+    """数据质量等级"""
+    EXCELLENT = "excellent"  # 优质数据
+    GOOD = "good"            # 良好数据
+    FAIR = "fair"            # 一般数据
+    POOR = "poor"            # 劣质数据
+
+class TickData(BaseModel):
+    """Tick行情数据模型
+    
+    包含标准化的行情数据字段，支持数据验证和转换
+    """
+    # 合约基本信息
+    symbol: str = Field(..., description="合约代码，如'rb2401'")
+    exchange: str = Field(..., description="交易所代码，如'SHFE'")
+    
+    # 时间戳信息
+    datetime: dt = Field(..., description="行情时间戳（交易所时间）")
+    local_datetime: dt = Field(..., description="本地接收时间戳")
+    
+    # 最新价信息
+    last_price: Decimal = Field(..., description="最新价")
+    volume: int = Field(..., description="成交量（累计）")
+    turnover: Decimal = Field(..., description="成交额（累计）")
+    open_interest: int = Field(..., description="持仓量")
+    
+    # Level1 数据 - 买卖盘
+    bid_price_1: Decimal = Field(..., description="买一价")
+    bid_volume_1: int = Field(..., description="买一量")
+    ask_price_1: Decimal = Field(..., description="卖一价")
+    ask_volume_1: int = Field(..., description="卖一量")
+    
+    # 数据质量信息
+    source: str = Field(default="unknown", description="数据来源")
+    quality: TickDataQuality = Field(default=TickDataQuality.GOOD, description="数据质量等级")
+    is_valid: bool = Field(default=True, description="数据是否有效")
+    validation_errors: Optional[List[str]] = Field(None, description="验证错误信息")
+    
+    model_config = ConfigDict(
+        # Pydantic V2不再使用json_encoders，而是使用model_serializer
+    )
+    
+    def model_dump_json(self, **kwargs) -> str:
+        """序列化为JSON字符串，自定义datetime和Decimal的格式
+        
+        Returns:
+            str: JSON字符串
+        """
+        def custom_serializer(obj):
+            if isinstance(obj, dt):
+                return obj.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            elif isinstance(obj, Decimal):
+                return float(obj)
+            return str(obj)
+        
+        import json
+        return json.dumps(self.model_dump(), default=custom_serializer, **kwargs)
+    
+    @field_validator('last_price', mode='before')
+    @classmethod
+    def validate_last_price(cls, v):
+        """验证最新价有效性"""
+        if v is None:
+            return v
+        # 最新价必须为正数
+        if isinstance(v, (int, float, Decimal)) and v <= 0:
+            raise ValueError("最新价必须为正数")
+        return Decimal(str(v))
+
+    @field_validator('bid_price_1', 'ask_price_1', mode='before')
+    @classmethod
+    def validate_quote_price(cls, v):
+        """验证买卖盘价格有效性"""
+        if v is None:
+            return v
+        # 买卖盘价格可以为0（无报价时）
+        if isinstance(v, (int, float, Decimal)) and v < 0:
+            raise ValueError("价格不能为负数")
+        return Decimal(str(v))
+    
+    @field_validator('volume', 'bid_volume_1', 'ask_volume_1', 'open_interest', mode='before')
+    @classmethod
+    def validate_volume(cls, v):
+        """验证成交量有效性"""
+        if v is None:
+            return v
+        # 成交量不能为负数
+        if isinstance(v, int) and v < 0:
+            raise ValueError("成交量不能为负数")
+        return v
+    
+    @field_validator('datetime', 'local_datetime', mode='before')
+    @classmethod
+    def validate_datetime(cls, v):
+        """验证时间戳有效性"""
+        if isinstance(v, str):
+            try:
+                return dt.fromisoformat(v)
+            except ValueError:
+                raise ValueError("时间戳格式无效")
+        return v
+    
+    def __repr__(self) -> str:
+        """返回TickData对象的字符串表示，便于调试
+        
+        Returns:
+            str: TickData的字符串表示
+        """
+        return (f"TickData(symbol='{self.symbol}', exchange='{self.exchange}', "
+                f"last_price={self.last_price}, volume={self.volume}, "
+                f"datetime='{self.datetime.strftime('%Y-%m-%d %H:%M:%S')}')")
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典格式，便于序列化
+        
+        Returns:
+            Dict[str, Any]: 字典格式的Tick数据
+        """
+        return self.model_dump()
+    
+    @classmethod
+    def from_raw_data(cls, raw_data: Dict[str, Any], source: str = "unknown") -> 'TickData':
+        """从原始数据创建TickData对象
+        
+        Args:
+            raw_data: 原始行情数据字典，应包含必要字段
+            source: 数据来源标识
+            
+        Returns:
+            TickData: 标准化的TickData对象
+            
+        Raises:
+            ValueError: 当原始数据缺少必要字段时
+        """
+        # 检查必要字段是否存在
+        required_fields = ['symbol', 'exchange', 'datetime', 'last_price']
+        for field in required_fields:
+            if field not in raw_data:
+                raise ValueError(f"缺少必要字段: {field}")
+        
+        # 构建TickData对象
+        tick_data = {
+            "symbol": raw_data["symbol"],
+            "exchange": raw_data["exchange"],
+            "datetime": raw_data["datetime"],
+            "local_datetime": raw_data.get("local_datetime", dt.now()),
+            "last_price": raw_data["last_price"],
+            "volume": raw_data.get("volume", 0),
+            "turnover": raw_data.get("turnover", Decimal("0")),
+            "open_interest": raw_data.get("open_interest", 0),
+            "bid_price_1": raw_data.get("bid_price_1", Decimal("0")),
+            "ask_price_1": raw_data.get("ask_price_1", Decimal("0")),
+            "bid_volume_1": raw_data.get("bid_volume_1", 0),
+            "ask_volume_1": raw_data.get("ask_volume_1", 0),
+            "source": source,
+            "quality": raw_data.get("quality", TickDataQuality.GOOD),
+            "is_valid": raw_data.get("is_valid", True),
+            "validation_errors": raw_data.get("validation_errors", None)
+        }
+        
+        return cls(**tick_data)
+    
+    def is_stale(self, tolerance_seconds: int = 30) -> bool:
+        """检查数据是否过期
+        
+        Args:
+            tolerance_seconds: 容忍的时间差（秒）
+            
+        Returns:
+            bool: 是否过期
+        """
+        now = dt.now()
+        return (now - self.datetime).total_seconds() > tolerance_seconds
+
+__all__ = ['TickData', 'TickDataQuality']

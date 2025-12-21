@@ -1,0 +1,492 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+TREA 自动化脚本集合
+用于提升开发效率的自动化工具
+"""
+
+import os
+import sys
+import subprocess
+import json
+import time
+import shutil
+from datetime import datetime
+from pathlib import Path
+
+class TREA_Automation:
+    """TREA 自动化工具类"""
+
+    def __init__(self):
+        self.workspace_root = Path.cwd()
+        self.trea_path = Path.home() / '.trae-cn'
+        self.vscode_path = self.workspace_root / '.vscode'
+        self.log_file = self.workspace_root / 'automation.log'
+
+    def log(self, message):
+        """记录日志"""
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_entry = f"[{timestamp}] {message}\n"
+        print(log_entry.strip())
+        with open(self.log_file, 'a', encoding='utf-8') as f:
+            f.write(log_entry)
+
+    def setup_project(self, project_name, project_type='python'):
+        """快速创建项目模板"""
+        project_path = self.workspace_root / project_name
+        self.log(f"创建项目: {project_name} (类型: {project_type})")
+
+        # 创建目录结构
+        dirs = {
+            'python': ['src', 'tests', 'docs', 'config', 'scripts', 'data'],
+            'javascript': ['src', 'dist', 'tests', 'docs', 'config', 'public'],
+            'web': ['src', 'public', 'tests', 'docs', 'config', 'assets'],
+            'data-science': ['src', 'data', 'notebooks', 'tests', 'docs', 'models']
+        }
+
+        if project_type not in dirs:
+            project_type = 'python'
+
+        # 创建主目录
+        project_path.mkdir(exist_ok=True)
+
+        # 创建子目录
+        for dir_name in dirs[project_type]:
+            (project_path / dir_name).mkdir(exist_ok=True)
+
+        # 创建基础文件
+        self._create_project_files(project_path, project_type)
+
+        # 初始化Git
+        self._init_git(project_path)
+
+        # 打开项目
+        self._open_in_trea(project_path)
+
+        self.log(f"项目 {project_name} 创建完成！")
+        return project_path
+
+    def _create_project_files(self, project_path, project_type):
+        """创建项目基础文件"""
+        # README.md
+        readme_content = f"""# {project_path.name}
+
+## 项目描述
+这是一个使用TREA创建的{project_type}项目。
+
+## 快速开始
+1. 安装依赖
+2. 运行项目
+3. 开始开发
+
+## 功能特性
+- 功能1
+- 功能2
+- 功能3
+
+## 作者
+创建日期: {datetime.now().strftime('%Y-%m-%d')}
+"""
+        (project_path / 'README.md').write_text(readme_content, encoding='utf-8')
+
+        # .gitignore
+        gitignore_content = """# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Project specific
+"""
+        (project_path / '.gitignore').write_text(gitignore_content, encoding='utf-8')
+
+        # 项目特定文件
+        if project_type == 'python':
+            # requirements.txt
+            requirements = """# 基础依赖
+requests>=2.26.0
+numpy>=1.21.0
+pandas>=1.3.0
+matplotlib>=3.4.0
+
+# 开发依赖
+pytest>=6.2.0
+black>=21.6.0
+flake8>=3.9.0
+mypy>=0.910
+"""
+            (project_path / 'requirements.txt').write_text(requirements)
+
+            # main.py
+            main_py = """#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+\"\"\"
+主程序入口
+\"\"\"
+
+def main():
+    print(f\"Hello from {__file__}!\")
+
+if __name__ == \"__main__\":
+    main()
+"""
+            (project_path / 'src' / 'main.py').write_text(main_py, encoding='utf-8')
+
+        elif project_type == 'javascript':
+            # package.json
+            package_json = {
+                "name": project_path.name,
+                "version": "1.0.0",
+                "description": "",
+                "main": "src/index.js",
+                "scripts": {
+                    "start": "node src/index.js",
+                    "dev": "nodemon src/index.js",
+                    "test": "jest"
+                },
+                "dependencies": {},
+                "devDependencies": {
+                    "nodemon": "^2.0.12",
+                    "jest": "^27.0.6"
+                }
+            }
+            (project_path / 'package.json').write_text(
+                json.dumps(package_json, indent=2),
+                encoding='utf-8'
+            )
+
+            # index.js
+            index_js = """/**
+ * 主程序入口
+ */
+console.log('Hello from TREA!');
+"""
+            (project_path / 'src' / 'index.js').write_text(index_js, encoding='utf-8')
+
+    def _init_git(self, project_path):
+        """初始化Git仓库"""
+        subprocess.run(['git', 'init'], cwd=project_path, capture_output=True)
+        subprocess.run(['git', 'add', '.'], cwd=project_path, capture_output=True)
+        subprocess.run(['git', 'commit', '-m', 'Initial commit'], cwd=project_path, capture_output=True)
+        self.log("Git仓库初始化完成")
+
+    def _open_in_trea(self, project_path):
+        """在TREA中打开项目"""
+        # 尝试多种方式打开VS Code
+        commands = [
+            ['code', str(project_path)],
+            [str(self.trea_path / 'extensions' / 'ms-python.python' / 'bin' / 'code'), str(project_path)]
+        ]
+
+        for cmd in commands:
+            try:
+                subprocess.run(cmd, capture_output=True, check=True)
+                self.log(f"已在TREA中打开项目: {project_path}")
+                break
+            except:
+                continue
+
+    def analyze_code_with_ai(self, file_path, ai_assistant='claude'):
+        """使用AI助手分析代码"""
+        self.log(f"使用 {ai_assistant} 分析代码: {file_path}")
+
+        file_path = Path(file_path)
+        if not file_path.exists():
+            self.log(f"文件不存在: {file_path}")
+            return None
+
+        # 准备分析提示
+        prompt = f"""
+请分析以下Python文件，重点关注：
+1. 代码结构和组织
+2. 潜在的性能问题
+3. 安全性考虑
+4. 改进建议
+
+文件路径: {file_path}
+文件内容:
+"""
+
+        # 读取文件内容
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        prompt += content
+
+        # 调用AI助手
+        if ai_assistant.lower() == 'claude':
+            claude_path = self.trea_path / 'extensions/anthropic.claude-code-2.0.61-win32-x64/resources/native-binary/claude.exe'
+            try:
+                result = subprocess.run(
+                    [str(claude_path), '-p', prompt],
+                    capture_output=True,
+                    text=True,
+                    timeout=60
+                )
+                analysis = result.stdout
+                self.log("Claude分析完成")
+                return analysis
+            except Exception as e:
+                self.log(f"Claude分析失败: {e}")
+                return None
+
+    def batch_process_files(self, directory, operation, pattern='*.py'):
+        """批量处理文件"""
+        directory = Path(directory)
+        self.log(f"批量处理目录: {directory}, 操作: {operation}, 模式: {pattern}")
+
+        processed_files = []
+
+        for file_path in directory.glob(pattern):
+            if file_path.is_file():
+                try:
+                    if operation == 'format':
+                        self._format_file(file_path)
+                    elif operation == 'lint':
+                        self._lint_file(file_path)
+                    elif operation == 'analyze':
+                        result = self.analyze_code_with_ai(file_path)
+                        if result:
+                            # 保存分析结果
+                            result_file = file_path.with_suffix('.ai_analysis.txt')
+                            result_file.write_text(result, encoding='utf-8')
+
+                    processed_files.append(file_path)
+                    self.log(f"处理完成: {file_path}")
+
+                except Exception as e:
+                    self.log(f"处理失败 {file_path}: {e}")
+
+        self.log(f"批量处理完成，共处理 {len(processed_files)} 个文件")
+        return processed_files
+
+    def _format_file(self, file_path):
+        """格式化文件"""
+        if file_path.suffix == '.py':
+            subprocess.run(['python', '-m', 'black', str(file_path)], capture_output=True)
+            subprocess.run(['python', '-m', 'isort', str(file_path)], capture_output=True)
+
+    def _lint_file(self, file_path):
+        """检查文件"""
+        if file_path.suffix == '.py':
+            result = subprocess.run(['python', '-m', 'pylint', str(file_path)], capture_output=True, text=True)
+            if result.stdout:
+                # 保存检查结果
+                lint_file = file_path.with_suffix('.pylint.txt')
+                lint_file.write_text(result.stdout, encoding='utf-8')
+
+    def create_backup(self, source, backup_name=None):
+        """创建项目备份"""
+        source = Path(source)
+        if not source.exists():
+            self.log(f"源路径不存在: {source}")
+            return None
+
+        if not backup_name:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            backup_name = f"{source.name}_backup_{timestamp}"
+
+        backup_path = source.parent / backup_name
+
+        try:
+            if source.is_file():
+                shutil.copy2(source, backup_path)
+            else:
+                shutil.copytree(source, backup_path, ignore=shutil.ignore_patterns(
+                    '__pycache__', '*.pyc', '.git', 'node_modules', '.vscode'
+                ))
+
+            self.log(f"备份创建成功: {backup_path}")
+            return backup_path
+
+        except Exception as e:
+            self.log(f"备份创建失败: {e}")
+            return None
+
+    def install_dependencies(self, requirements_file='requirements.txt'):
+        """安装项目依赖"""
+        requirements_file = Path(requirements_file)
+        if not requirements_file.exists():
+            self.log(f"依赖文件不存在: {requirements_file}")
+            return False
+
+        self.log("开始安装依赖...")
+
+        try:
+            subprocess.run(['pip', 'install', '-r', str(requirements_file)], check=True)
+            self.log("依赖安装完成")
+            return True
+
+        except Exception as e:
+            self.log(f"依赖安装失败: {e}")
+            return False
+
+    def run_tests(self, test_dir='tests'):
+        """运行测试"""
+        test_dir = Path(test_dir)
+        if not test_dir.exists():
+            self.log(f"测试目录不存在: {test_dir}")
+            return False
+
+        self.log("开始运行测试...")
+
+        try:
+            # 尝试使用pytest
+            result = subprocess.run(
+                ['python', '-m', 'pytest', str(test_dir), '-v'],
+                capture_output=True,
+                text=True
+            )
+            self.log("测试运行完成")
+            print(result.stdout)
+
+            # 保存测试报告
+            report_file = self.workspace_root / 'test_report.txt'
+            report_file.write_text(result.stdout, encoding='utf-8')
+
+            return result.returncode == 0
+
+        except Exception as e:
+            self.log(f"测试运行失败: {e}")
+            return False
+
+    def generate_documentation(self, source_dir='src', output_dir='docs'):
+        """生成文档"""
+        source_dir = Path(source_dir)
+        output_dir = Path(output_dir)
+        output_dir.mkdir(exist_ok=True)
+
+        self.log("开始生成文档...")
+
+        # 简单的文档生成
+        doc_content = f"""
+# 项目文档
+
+生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+## 源代码结构
+
+"""
+
+        for py_file in source_dir.rglob('*.py'):
+            rel_path = py_file.relative_to(source_dir)
+            doc_content += f"### {rel_path}\n\n"
+
+            # 读取文件并提取文档字符串
+            try:
+                with open(py_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    # 简单提取文档字符串
+                    import re
+                    docstrings = re.findall(r'"""([^"]+)"""', content)
+                    if docstrings:
+                        for doc in docstrings[:3]:  # 只取前3个
+                            doc_content += f"{doc}\n\n"
+            except:
+                pass
+
+        # 保存文档
+        doc_file = output_dir / 'documentation.md'
+        doc_file.write_text(doc_content, encoding='utf-8')
+
+        self.log(f"文档生成完成: {doc_file}")
+        return doc_file
+
+def main():
+    """主函数 - 命令行接口"""
+    import argparse
+
+    parser = argparse.ArgumentParser(description='TREA自动化工具')
+    parser.add_argument('command', choices=[
+        'setup', 'analyze', 'batch', 'backup', 'install', 'test', 'docs'
+    ], help='要执行的命令')
+    parser.add_argument('--path', help='文件或目录路径')
+    parser.add_argument('--name', help='项目名称')
+    parser.add_argument('--type', choices=['python', 'javascript', 'web', 'data-science'],
+                       default='python', help='项目类型')
+    parser.add_argument('--ai', choices=['claude', 'chatgpt'], default='claude',
+                       help='AI助手选择')
+    parser.add_argument('--operation', choices=['format', 'lint', 'analyze'],
+                       default='analyze', help='批量操作类型')
+
+    args = parser.parse_args()
+
+    automation = TREA_Automation()
+
+    if args.command == 'setup':
+        if not args.name:
+            print("错误: 创建项目需要提供 --name 参数")
+            return
+        automation.setup_project(args.name, args.type)
+
+    elif args.command == 'analyze':
+        if not args.path:
+            print("错误: 分析代码需要提供 --path 参数")
+            return
+        result = automation.analyze_code_with_ai(args.path, args.ai)
+        if result:
+            print("\n分析结果:")
+            print(result)
+
+    elif args.command == 'batch':
+        if not args.path:
+            print("错误: 批量处理需要提供 --path 参数")
+            return
+        automation.batch_process_files(args.path, args.operation)
+
+    elif args.command == 'backup':
+        if not args.path:
+            print("错误: 备份需要提供 --path 参数")
+            return
+        automation.create_backup(args.path)
+
+    elif args.command == 'install':
+        automation.install_dependencies()
+
+    elif args.command == 'test':
+        automation.run_tests()
+
+    elif args.command == 'docs':
+        automation.generate_documentation(args.path or 'src', 'docs')
+
+if __name__ == '__main__':
+    main()

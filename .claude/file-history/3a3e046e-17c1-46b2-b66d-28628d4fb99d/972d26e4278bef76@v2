@@ -1,0 +1,288 @@
+# -*- coding: utf-8 -*-
+"""Strategy Module
+
+Provides trading strategy functionality including:
+- Strategy base class
+- Signal generation interface
+- Strategy state management
+"""
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from decimal import Decimal
+from typing import Dict, List, Optional, Any, Callable
+from enum import Enum
+from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class SignalType(Enum):
+    """Signal type enumeration"""
+    BUY = "buy"
+    SELL = "sell"
+    HOLD = "hold"
+    CLOSE_LONG = "close_long"
+    CLOSE_SHORT = "close_short"
+
+
+class StrategyStatus(Enum):
+    """Strategy status enumeration"""
+    STOPPED = "stopped"
+    RUNNING = "running"
+    PAUSED = "paused"
+    ERROR = "error"
+
+
+@dataclass
+class Signal:
+    """Trading signal data class"""
+    signal_type: SignalType
+    symbol: str
+    price: Decimal
+    volume: int = 1
+    confidence: Decimal = Decimal("0.5")
+    strategy_name: str = ""
+    reason: str = ""
+    timestamp: datetime = field(default_factory=datetime.now)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        return {
+            "signal_type": self.signal_type.value,
+            "symbol": self.symbol,
+            "price": float(self.price),
+            "volume": self.volume,
+            "confidence": float(self.confidence),
+            "strategy_name": self.strategy_name,
+            "reason": self.reason,
+            "timestamp": self.timestamp.isoformat(),
+            "metadata": self.metadata
+        }
+
+    def __repr__(self) -> str:
+        return (f"Signal({self.signal_type.value}, {self.symbol}, "
+                f"price={self.price}, vol={self.volume}, "
+                f"conf={self.confidence:.2f})")
+
+
+@dataclass
+class StrategyParams:
+    """Strategy parameters"""
+    name: str = "BaseStrategy"
+    symbols: List[str] = field(default_factory=list)
+    capital: Decimal = Decimal("100000")
+    max_position: int = 10
+    enable_long: bool = True
+    enable_short: bool = True
+    custom_params: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        return {
+            "name": self.name,
+            "symbols": self.symbols,
+            "capital": float(self.capital),
+            "max_position": self.max_position,
+            "enable_long": self.enable_long,
+            "enable_short": self.enable_short,
+            "custom_params": self.custom_params
+        }
+
+
+class BaseStrategy(ABC):
+    """Base strategy class"""
+
+    def __init__(self, params: Optional[StrategyParams] = None):
+        self.params = params or StrategyParams()
+        self.status = StrategyStatus.STOPPED
+        self._signals: List[Signal] = []
+        self._positions: Dict[str, int] = {}
+        self._signal_handlers: List[Callable[[Signal], None]] = []
+        logger.info(f"Strategy {self.params.name} initialized")
+
+    @property
+    def name(self) -> str:
+        return self.params.name
+
+    @property
+    def is_running(self) -> bool:
+        return self.status == StrategyStatus.RUNNING
+
+    @abstractmethod
+    def on_tick(self, tick_data: Dict[str, Any]) -> Optional[Signal]:
+        pass
+
+    @abstractmethod
+    def on_bar(self, bar_data: Dict[str, Any]) -> Optional[Signal]:
+        pass
+
+    def on_trade(self, trade_data: Dict[str, Any]) -> None:
+        symbol = trade_data.get("symbol", "")
+        volume = trade_data.get("volume", 0)
+        direction = trade_data.get("direction", "")
+        if direction == "buy":
+            self._positions[symbol] = self._positions.get(symbol, 0) + volume
+        elif direction == "sell":
+            self._positions[symbol] = self._positions.get(symbol, 0) - volume
+        logger.info(f"Trade processed: {symbol} {direction} {volume}")
+
+    def start(self) -> bool:
+        if self.status == StrategyStatus.RUNNING:
+            logger.warning(f"Strategy {self.name} is already running")
+            return False
+        self.status = StrategyStatus.RUNNING
+        self.on_start()
+        logger.info(f"Strategy {self.name} started")
+        return True
+
+    def stop(self) -> bool:
+        if self.status == StrategyStatus.STOPPED:
+            logger.warning(f"Strategy {self.name} is already stopped")
+            return False
+        self.status = StrategyStatus.STOPPED
+        self.on_stop()
+        logger.info(f"Strategy {self.name} stopped")
+        return True
+
+    def pause(self) -> bool:
+        if self.status != StrategyStatus.RUNNING:
+            return False
+        self.status = StrategyStatus.PAUSED
+        logger.info(f"Strategy {self.name} paused")
+        return True
+
+    def resume(self) -> bool:
+        if self.status != StrategyStatus.PAUSED:
+            return False
+        self.status = StrategyStatus.RUNNING
+        logger.info(f"Strategy {self.name} resumed")
+        return True
+
+    def on_start(self) -> None:
+        pass
+
+    def on_stop(self) -> None:
+        pass
+
+    def emit_signal(self, signal: Signal) -> None:
+        signal.strategy_name = self.name
+        self._signals.append(signal)
+        for handler in self._signal_handlers:
+            try:
+                handler(signal)
+            except Exception as e:
+                logger.error(f"Signal handler error: {e}")
+        logger.info(f"Signal emitted: {signal}")
+
+    def add_signal_handler(self, handler: Callable[[Signal], None]) -> None:
+        if handler not in self._signal_handlers:
+            self._signal_handlers.append(handler)
+
+    def remove_signal_handler(self, handler: Callable[[Signal], None]) -> bool:
+        if handler in self._signal_handlers:
+            self._signal_handlers.remove(handler)
+            return True
+        return False
+
+    def get_position(self, symbol: str) -> int:
+        return self._positions.get(symbol, 0)
+
+    def get_all_positions(self) -> Dict[str, int]:
+        return self._positions.copy()
+
+    def get_signals(self, limit: int = 100) -> List[Signal]:
+        return self._signals[-limit:]
+
+    def clear_signals(self) -> None:
+        self._signals.clear()
+
+    def get_status(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "status": self.status.value,
+            "positions": self._positions.copy(),
+            "signal_count": len(self._signals),
+            "params": self.params.to_dict()
+        }
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(name={self.name}, status={self.status.value})"
+
+
+class SimpleMovingAverageStrategy(BaseStrategy):
+    """Simple Moving Average Strategy"""
+
+    def __init__(
+        self,
+        params: Optional[StrategyParams] = None,
+        fast_period: int = 5,
+        slow_period: int = 20
+    ):
+        super().__init__(params)
+        self.fast_period = fast_period
+        self.slow_period = slow_period
+        self._price_history: Dict[str, List[Decimal]] = {}
+
+    def on_tick(self, tick_data: Dict[str, Any]) -> Optional[Signal]:
+        return None
+
+    def on_bar(self, bar_data: Dict[str, Any]) -> Optional[Signal]:
+        symbol = bar_data.get("symbol", "")
+        close_price = Decimal(str(bar_data.get("close", 0)))
+
+        if symbol not in self._price_history:
+            self._price_history[symbol] = []
+        self._price_history[symbol].append(close_price)
+
+        max_len = self.slow_period + 10
+        if len(self._price_history[symbol]) > max_len:
+            self._price_history[symbol] = self._price_history[symbol][-max_len:]
+
+        prices = self._price_history[symbol]
+
+        if len(prices) < self.slow_period:
+            return None
+
+        fast_ma = sum(prices[-self.fast_period:]) / self.fast_period
+        slow_ma = sum(prices[-self.slow_period:]) / self.slow_period
+
+        if len(prices) < self.slow_period + 1:
+            return None
+
+        prev_fast_ma = sum(prices[-self.fast_period-1:-1]) / self.fast_period
+        prev_slow_ma = sum(prices[-self.slow_period-1:-1]) / self.slow_period
+
+        if prev_fast_ma <= prev_slow_ma and fast_ma > slow_ma:
+            return Signal(
+                signal_type=SignalType.BUY,
+                symbol=symbol,
+                price=close_price,
+                volume=1,
+                confidence=Decimal("0.7"),
+                reason=f"Golden cross: MA{self.fast_period} crosses above MA{self.slow_period}"
+            )
+
+        if prev_fast_ma >= prev_slow_ma and fast_ma < slow_ma:
+            return Signal(
+                signal_type=SignalType.SELL,
+                symbol=symbol,
+                price=close_price,
+                volume=1,
+                confidence=Decimal("0.7"),
+                reason=f"Death cross: MA{self.fast_period} crosses below MA{self.slow_period}"
+            )
+
+        return None
+
+
+__all__ = [
+    'SignalType',
+    'StrategyStatus',
+    'Signal',
+    'StrategyParams',
+    'BaseStrategy',
+    'SimpleMovingAverageStrategy'
+]

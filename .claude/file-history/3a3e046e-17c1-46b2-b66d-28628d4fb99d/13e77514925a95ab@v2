@@ -1,0 +1,310 @@
+"""风险管理模块测试"""
+
+import pytest
+from decimal import Decimal
+
+from src.risk import (
+    RiskLevel,
+    RiskType,
+    RiskMetrics,
+    RiskAlert,
+    RiskManager
+)
+
+
+class TestRiskLevel:
+    """RiskLevel枚举测试"""
+
+    def test_risk_level_values(self):
+        """测试风险等级值"""
+        assert RiskLevel.LOW.value == "low"
+        assert RiskLevel.MEDIUM.value == "medium"
+        assert RiskLevel.HIGH.value == "high"
+        assert RiskLevel.CRITICAL.value == "critical"
+
+
+class TestRiskType:
+    """RiskType枚举测试"""
+
+    def test_risk_type_values(self):
+        """测试风险类型值"""
+        assert RiskType.POSITION.value == "position"
+        assert RiskType.DRAWDOWN.value == "drawdown"
+        assert RiskType.CONCENTRATION.value == "concentration"
+        assert RiskType.VOLATILITY.value == "volatility"
+        assert RiskType.LIQUIDITY.value == "liquidity"
+
+
+class TestRiskMetrics:
+    """RiskMetrics测试"""
+
+    def test_create_default_metrics(self):
+        """测试创建默认指标"""
+        metrics = RiskMetrics()
+
+        assert metrics.max_drawdown == Decimal("0")
+        assert metrics.current_drawdown == Decimal("0")
+        assert metrics.daily_pnl == Decimal("0")
+        assert metrics.risk_level == RiskLevel.LOW
+
+    def test_create_custom_metrics(self):
+        """测试创建自定义指标"""
+        metrics = RiskMetrics(
+            max_drawdown=Decimal("0.05"),
+            current_drawdown=Decimal("0.03"),
+            daily_pnl=Decimal("-5000"),
+            position_value=Decimal("100000"),
+            margin_ratio=Decimal("0.2"),
+            risk_level=RiskLevel.MEDIUM
+        )
+
+        assert metrics.max_drawdown == Decimal("0.05")
+        assert metrics.risk_level == RiskLevel.MEDIUM
+
+    def test_to_dict(self):
+        """测试转换为字典"""
+        metrics = RiskMetrics(
+            max_drawdown=Decimal("0.05"),
+            risk_level=RiskLevel.HIGH
+        )
+
+        data = metrics.to_dict()
+
+        assert isinstance(data, dict)
+        assert data["max_drawdown"] == 0.05
+        assert data["risk_level"] == "high"
+        assert "timestamp" in data
+
+
+class TestRiskAlert:
+    """RiskAlert测试"""
+
+    def test_create_alert(self):
+        """测试创建告警"""
+        alert = RiskAlert(
+            alert_id="abc123",
+            risk_type=RiskType.DRAWDOWN,
+            level=RiskLevel.HIGH,
+            message="回撤超过阈值"
+        )
+
+        assert alert.alert_id == "abc123"
+        assert alert.risk_type == RiskType.DRAWDOWN
+        assert alert.level == RiskLevel.HIGH
+        assert alert.acknowledged is False
+
+    def test_alert_with_symbol(self):
+        """测试带合约的告警"""
+        alert = RiskAlert(
+            alert_id="xyz789",
+            risk_type=RiskType.POSITION,
+            level=RiskLevel.HIGH,
+            message="Position too large",
+            symbol="rb2401",
+            threshold=Decimal("100000"),
+            current_value=Decimal("120000")
+        )
+
+        assert alert.symbol == "rb2401"
+        assert alert.threshold == Decimal("100000")
+
+    def test_to_dict(self):
+        """测试转换为字典"""
+        alert = RiskAlert(
+            alert_id="test",
+            risk_type=RiskType.DRAWDOWN,
+            level=RiskLevel.CRITICAL,
+            message="Test alert"
+        )
+
+        data = alert.to_dict()
+
+        assert data["alert_id"] == "test"
+        assert data["risk_type"] == "drawdown"
+        assert data["level"] == "critical"
+
+
+class TestRiskManager:
+    """RiskManager测试"""
+
+    @pytest.fixture
+    def risk_manager(self):
+        """创建风险管理器fixture"""
+        return RiskManager(
+            max_position_value=Decimal("500000"),
+            max_drawdown_pct=Decimal("0.1"),
+            max_daily_loss=Decimal("30000"),
+            max_single_loss=Decimal("10000")
+        )
+
+    def test_init(self, risk_manager):
+        """测试初始化"""
+        assert risk_manager.max_position_value == Decimal("500000")
+        assert risk_manager.max_drawdown_pct == Decimal("0.1")
+        assert risk_manager.is_trading_allowed() is True
+
+    def test_check_order_risk_allowed(self, risk_manager):
+        """测试订单风险检查-允许"""
+        allowed, reason = risk_manager.check_order_risk(
+            symbol="rb2401",
+            direction="buy",
+            price=Decimal("3500"),
+            volume=10
+        )
+
+        assert allowed is True
+        assert reason is None
+
+    def test_check_order_risk_position_limit(self, risk_manager):
+        """测试订单风险检查-超过持仓限额"""
+        # 先更新持仓到接近限额
+        risk_manager.update_metrics(
+            position_value=Decimal("480000"),
+            daily_pnl=Decimal("0"),
+            equity=Decimal("500000"),
+            peak_equity=Decimal("500000")
+        )
+
+        allowed, reason = risk_manager.check_order_risk(
+            symbol="rb2401",
+            direction="buy",
+            price=Decimal("5000"),
+            volume=100  # 大额订单
+        )
+
+        assert allowed is False
+        assert "limit" in reason
+
+    def test_update_metrics_low_risk(self, risk_manager):
+        """测试更新指标-低风险"""
+        metrics = risk_manager.update_metrics(
+            position_value=Decimal("100000"),
+            daily_pnl=Decimal("5000"),
+            equity=Decimal("520000"),
+            peak_equity=Decimal("520000")
+        )
+
+        assert metrics.risk_level == RiskLevel.LOW
+        assert risk_manager.is_trading_allowed() is True
+
+    def test_update_metrics_high_drawdown(self, risk_manager):
+        """测试更新指标-高回撤"""
+        metrics = risk_manager.update_metrics(
+            position_value=Decimal("100000"),
+            daily_pnl=Decimal("-20000"),
+            equity=Decimal("400000"),
+            peak_equity=Decimal("500000")  # 20%回撤
+        )
+
+        assert metrics.current_drawdown == Decimal("0.2")
+        assert metrics.risk_level == RiskLevel.CRITICAL
+        assert risk_manager.is_trading_allowed() is False
+
+    def test_update_metrics_daily_loss_limit(self, risk_manager):
+        """测试更新指标-日亏损限制"""
+        metrics = risk_manager.update_metrics(
+            position_value=Decimal("100000"),
+            daily_pnl=Decimal("-35000"),  # 超过30000限制
+            equity=Decimal("465000"),
+            peak_equity=Decimal("500000")
+        )
+
+        assert risk_manager.is_trading_allowed() is False
+
+    def test_get_alerts(self, risk_manager):
+        """测试获取告警"""
+        # 触发告警
+        risk_manager.update_metrics(
+            position_value=Decimal("100000"),
+            daily_pnl=Decimal("-35000"),
+            equity=Decimal("465000"),
+            peak_equity=Decimal("500000")
+        )
+
+        alerts = risk_manager.get_alerts()
+        assert len(alerts) > 0
+
+        unack_alerts = risk_manager.get_alerts(unacknowledged_only=True)
+        assert len(unack_alerts) == len(alerts)
+
+    def test_acknowledge_alert(self, risk_manager):
+        """测试确认告警"""
+        # 触发告警
+        risk_manager.update_metrics(
+            position_value=Decimal("100000"),
+            daily_pnl=Decimal("-35000"),
+            equity=Decimal("465000"),
+            peak_equity=Decimal("500000")
+        )
+
+        alerts = risk_manager.get_alerts()
+        if alerts:
+            alert_id = alerts[0].alert_id
+            result = risk_manager.acknowledge_alert(alert_id)
+            assert result is True
+
+            unack_alerts = risk_manager.get_alerts(unacknowledged_only=True)
+            assert len(unack_alerts) < len(alerts)
+
+    def test_acknowledge_nonexistent_alert(self, risk_manager):
+        """测试确认不存在的告警"""
+        result = risk_manager.acknowledge_alert("nonexistent")
+        assert result is False
+
+    def test_reset_daily(self, risk_manager):
+        """测试重置日度指标"""
+        # 先触发日亏损限制
+        risk_manager.update_metrics(
+            position_value=Decimal("100000"),
+            daily_pnl=Decimal("-35000"),
+            equity=Decimal("465000"),
+            peak_equity=Decimal("500000")
+        )
+        assert risk_manager.is_trading_allowed() is False
+
+        # 重置
+        risk_manager.reset_daily()
+
+        assert risk_manager.is_trading_allowed() is True
+        assert risk_manager.get_metrics().daily_pnl == Decimal("0")
+
+    def test_resume_trading(self, risk_manager):
+        """测试恢复交易"""
+        # 先禁止交易
+        risk_manager.update_metrics(
+            position_value=Decimal("100000"),
+            daily_pnl=Decimal("-35000"),
+            equity=Decimal("465000"),
+            peak_equity=Decimal("500000")
+        )
+
+        assert risk_manager.is_trading_allowed() is False
+
+        # 恢复交易
+        risk_manager.resume_trading()
+
+        assert risk_manager.is_trading_allowed() is True
+
+    def test_trading_blocked_check_order(self, risk_manager):
+        """测试交易被禁止时检查订单"""
+        # 禁止交易
+        risk_manager.update_metrics(
+            position_value=Decimal("100000"),
+            daily_pnl=Decimal("-35000"),
+            equity=Decimal("465000"),
+            peak_equity=Decimal("500000")
+        )
+
+        allowed, reason = risk_manager.check_order_risk(
+            symbol="rb2401",
+            direction="buy",
+            price=Decimal("3500"),
+            volume=1
+        )
+
+        assert allowed is False
+        assert "suspended" in reason
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

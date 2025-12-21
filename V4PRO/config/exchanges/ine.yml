@@ -1,0 +1,61 @@
+# 上海国际能源交易中心 (INE) 配置
+# 军规级 v4.1 - 配置文件结构化
+
+exchange:
+  code: "INE"
+  name: "上海国际能源交易中心"
+  name_en: "Shanghai International Energy Exchange"
+  timezone: "Asia/Shanghai"
+
+# 交易时段
+trading_sessions:
+  day:
+    - start: "09:00"
+      end: "10:15"
+    - start: "10:30"
+      end: "11:30"
+    - start: "13:30"
+      end: "15:00"
+  night:
+    - start: "21:00"
+      end: "02:30"  # 次日
+
+# 夜盘收盘时间
+night_session_end:
+  "02:30":
+    - sc    # 原油
+    - bc    # 国际铜
+    - lu    # 低硫燃料油
+    - nr    # 20号胶
+    - ec    # 集运指数
+
+# 品种列表
+products:
+  energy:
+    - symbol: sc
+      name: "原油"
+      multiplier: 1000
+      tick_size: 0.1
+      margin_ratio: 0.10
+    - symbol: lu
+      name: "低硫燃料油"
+      multiplier: 10
+      tick_size: 1
+      margin_ratio: 0.10
+    - symbol: ec
+      name: "集运指数"
+      multiplier: 50
+      tick_size: 0.1
+      margin_ratio: 0.12
+  metals:
+    - symbol: bc
+      name: "国际铜"
+      multiplier: 5
+      tick_size: 10
+      margin_ratio: 0.08
+  rubber:
+    - symbol: nr
+      name: "20号胶"
+      multiplier: 10
+      tick_size: 5
+      margin_ratio: 0.10

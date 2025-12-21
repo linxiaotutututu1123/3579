@@ -1,0 +1,20 @@
+Exit code 1
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\1\2468\3579
+configfile: pyproject.toml
+plugins: cov-7.0.0
+collected 1 item
+
+tests\strategy\test_strategy_lifecycle.py F                              [100%]
+
+================================== FAILURES ===================================
+___________ TestStateTransition.test_suspension_on_severe_drawdown ____________
+tests\strategy\test_strategy_lifecycle.py:296: in test_suspension_on_severe_drawdown
+    assert state.stage == LifecycleStage.SUSPENDED
+E   AssertionError: assert <LifecycleStage.PRODUCTION: '������'> == <LifecycleStage.SUSPENDED: '��ͣ��'>
+E    +  where <LifecycleStage.PRODUCTION: '������'> = StrategyState(strategy_id='ppo_v1', strategy_name='PPO����', strategy_type='rl', stage=<LifecycleStage.PRODUCTION: '������'...unt=0, registered_at=datetime.datetime(2025, 12, 18, 10, 15, 1, 370076), last_stage_change=None, notes=[], metadata={}).stage
+E    +  and   <LifecycleStage.SUSPENDED: '��ͣ��'> = LifecycleStage.SUSPENDED
+=========================== short test summary info ===========================
+FAILED tests/strategy/test_strategy_lifecycle.py::TestStateTransition::test_suspension_on_severe_drawdown
+============================== 1 failed in 0.12s ==============================

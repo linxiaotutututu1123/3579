@@ -1,0 +1,682 @@
+     1→"""
+     2→涨跌停保护模块 - LimitPriceGuard (军规级 v4.0).
+     3→
+     4→V4PRO Platform Component - Phase 7 中国期货市场特化
+     5→V4 SPEC: §18 涨跌停板规则
+     6→V4 Scenarios: CHINA.LIMIT.PRICE_CHECK, CHINA.LIMIT.ORDER_REJECT
+     7→
+     8→军规 M13: 涨跌停感知 - 订单价格必须检查涨跌停板
+     9→
+    10→功能特性:
+    11→- 根据昨结算价和涨跌停幅度计算涨跌停价格
+    12→- 检查订单价格是否在涨跌停范围内
+    13→- 支持不同品种的涨跌停幅度配置
+    14→- 提供涨跌停价格查询功能
+    15→- 检测当前价格是否处于涨跌停状态
+    16→
+    17→涨跌停幅度参考 (2025年):
+    18→- 股指期货 (IF/IH/IC/IM): ±10%
+    19→- 国债期货 (T/TF/TS): ±2%
+    20→- 商品期货: 3%-8% (各品种不同)
+    21→- 贵金属 (au/ag): 6%-8%
+    22→- 有色金属: 4%-7%
+    23→- 黑色系: 4%-8%
+    24→- 农产品: 4%-5%
+    25→- 化工品: 4%-6%
+    26→
+    27→示例:
+    28→    >>> guard = LimitPriceGuard()
+    29→    >>> result = guard.check_order_price(
+    30→    ...     order_price=4500.0,
+    31→    ...     last_settle=4200.0,
+    32→    ...     limit_pct=0.05,  # 5%涨跌停
+    33→    ...     symbol="rb2501",
+    34→    ... )
+    35→    >>> if result.passed:
+    36→    ...     print("订单价格在涨跌停范围内")
+    37→"""
+    38→
+    39→from __future__ import annotations
+    40→
+    41→from dataclasses import dataclass
+    42→from enum import Enum
+    43→from typing import Any
+    44→
+    45→
+    46→class LimitPriceCheckResult(Enum):
+    47→    """涨跌停检查结果枚举."""
+    48→
+    49→    PASS = "PASS"  # 通过检查
+    50→    ABOVE_LIMIT_UP = "ABOVE_LIMIT_UP"  # 超过涨停价
+    51→    BELOW_LIMIT_DOWN = "BELOW_LIMIT_DOWN"  # 低于跌停价
+    52→    INVALID_PRICE = "INVALID_PRICE"  # 无效价格
+    53→    INVALID_SETTLE = "INVALID_SETTLE"  # 无效结算价
+    54→    AT_LIMIT_UP = "AT_LIMIT_UP"  # 处于涨停价
+    55→    AT_LIMIT_DOWN = "AT_LIMIT_DOWN"  # 处于跌停价
+    56→
+    57→
+    58→class LimitStatus(Enum):
+    59→    """涨跌停状态枚举."""
+    60→
+    61→    NORMAL = "NORMAL"  # 正常交易
+    62→    AT_LIMIT_UP = "AT_LIMIT_UP"  # 涨停
+    63→    AT_LIMIT_DOWN = "AT_LIMIT_DOWN"  # 跌停
+    64→    NEAR_LIMIT_UP = "NEAR_LIMIT_UP"  # 接近涨停 (<1%距离)
+    65→    NEAR_LIMIT_DOWN = "NEAR_LIMIT_DOWN"  # 接近跌停 (<1%距离)
+    66→
+    67→
+    68→@dataclass(frozen=True)
+    69→class LimitPriceConfig:
+    70→    """涨跌停配置.
+    71→
+    72→    属性:
+    73→        default_limit_pct: 默认涨跌停幅度 (如 0.05 表示 5%)
+    74→        near_limit_threshold: 接近涨跌停的阈值 (如 0.01 表示 1%)
+    75→        allow_limit_price_order: 是否允许以涨跌停价下单
+    76→        tick_size: 最小变动价位 (用于价格修正)
+    77→    """
+    78→
+    79→    default_limit_pct: float = 0.05
+    80→    near_limit_threshold: float = 0.01
+    81→    allow_limit_price_order: bool = True
+    82→    tick_size: float = 1.0
+    83→
+    84→
+    85→# 中国期货市场各品种涨跌停幅度配置
+    86→# 来源: 各交易所规则 (2025年)
+    87→PRODUCT_LIMIT_PCT: dict[str, float] = {
+    88→    # 股指期货 (CFFEX) - ±10%
+    89→    "if": 0.10,
+    90→    "ih": 0.10,
+    91→    "ic": 0.10,
+    92→    "im": 0.10,
+    93→    # 国债期货 (CFFEX) - ±2%
+    94→    "t": 0.02,
+    95→    "tf": 0.02,
+    96→    "ts": 0.02,
+    97→    # 贵金属 (SHFE) - 6%
+    98→    "au": 0.06,
+    99→    "ag": 0.06,
+   100→    # 有色金属 (SHFE) - 5%
+   101→    "cu": 0.05,
+   102→    "al": 0.05,
+   103→    "zn": 0.05,
+   104→    "pb": 0.05,
+   105→    "ni": 0.05,
+   106→    "sn": 0.05,
+   107→    "ao": 0.05,  # 氧化铝
+   108→    # 黑色系 (SHFE/DCE) - 4%
+   109→    "rb": 0.04,
+   110→    "hc": 0.04,
+   111→    "ss": 0.04,  # 不锈钢
+   112→    "i": 0.04,  # 铁矿石
+   113→    "j": 0.04,  # 焦炭
+   114→    "jm": 0.04,  # 焦煤
+   115→    # 能源化工 (SHFE/DCE/CZCE/INE) - 5%
+   116→    "bu": 0.05,
+   117→    "ru": 0.05,
+   118→    "sp": 0.05,
+   119→    "nr": 0.05,
+   120→    "sc": 0.05,  # 原油
+   121→    "lu": 0.05,  # 低硫燃料油
+   122→    "fu": 0.05,  # 燃料油
+   123→    "l": 0.05,  # 塑料
+   124→    "v": 0.05,  # PVC
+   125→    "pp": 0.05,
+   126→    "eg": 0.05,  # 乙二醇
+   127→    "eb": 0.05,  # 苯乙烯
+   128→    "pg": 0.05,  # LPG
+   129→    "ma": 0.05,  # 甲醇 (郑商所大写)
+   130→    "ta": 0.05,  # PTA
+   131→    "sa": 0.05,  # 纯碱
+   132→    "ur": 0.05,  # 尿素
+   133→    "pf": 0.05,  # 涤纶短纤
+   134→    # 农产品 (DCE/CZCE) - 4%
+   135→    "c": 0.04,  # 玉米
+   136→    "cs": 0.04,  # 淀粉
+   137→    "a": 0.04,  # 豆一
+   138→    "b": 0.04,  # 豆二
+   139→    "m": 0.04,  # 豆粕
+   140→    "y": 0.04,  # 豆油
+   141→    "p": 0.04,  # 棕榈油
+   142→    "jd": 0.04,  # 鸡蛋
+   143→    "lh": 0.04,  # 生猪
+   144→    "rr": 0.04,  # 粳米
+   145→    "wh": 0.04,  # 强麦
+   146→    "ri": 0.04,  # 早稻
+   147→    "pm": 0.04,  # 普麦
+   148→    "cf": 0.04,  # 棉花
+   149→    "sr": 0.04,  # 白糖
+   150→    "oi": 0.04,  # 菜油
+   151→    "rm": 0.04,  # 菜粕
+   152→    "rs": 0.04,  # 菜籽
+   153→    "ap": 0.04,  # 苹果
+   154→    "cj": 0.04,  # 红枣
+   155→    "pk": 0.04,  # 花生
+   156→    # 新能源 (GFEX) - 5%
+   157→    "lc": 0.05,  # 碳酸锂
+   158→    "si": 0.05,  # 工业硅
+   159→}
+   160→
+   161→
+   162→@dataclass
+   163→class LimitPrices:
+   164→    """涨跌停价格.
+   165→
+   166→    属性:
+   167→        limit_up: 涨停价
+   168→        limit_down: 跌停价
+   169→        last_settle: 昨结算价
+   170→        limit_pct: 涨跌停幅度
+   171→        tick_size: 最小变动价位
+   172→    """
+   173→
+   174→    limit_up: float
+   175→    limit_down: float
+   176→    last_settle: float
+   177→    limit_pct: float
+   178→    tick_size: float = 1.0
+   179→
+   180→    def to_dict(self) -> dict[str, Any]:
+   181→        """转换为字典."""
+   182→        return {
+   183→            "limit_up": self.limit_up,
+   184→            "limit_down": self.limit_down,
+   185→            "last_settle": self.last_settle,
+   186→            "limit_pct": self.limit_pct,
+   187→            "tick_size": self.tick_size,
+   188→        }
+   189→
+   190→
+   191→@dataclass
+   192→class LimitPriceCheckOutput:
+   193→    """涨跌停检查输出.
+   194→
+   195→    属性:
+   196→        result: 检查结果枚举
+   197→        symbol: 合约代码
+   198→        order_price: 订单价格
+   199→        limit_up: 涨停价
+   200→        limit_down: 跌停价
+   201→        last_settle: 昨结算价
+   202→        limit_pct: 涨跌停幅度
+   203→        message: 详细信息
+   204→    """
+   205→
+   206→    result: LimitPriceCheckResult
+   207→    symbol: str = ""
+   208→    order_price: float = 0.0
+   209→    limit_up: float = 0.0
+   210→    limit_down: float = 0.0
+   211→    last_settle: float = 0.0
+   212→    limit_pct: float = 0.0
+   213→    message: str = ""
+   214→
+   215→    @property
+   216→    def passed(self) -> bool:
+   217→        """是否通过检查."""
+   218→        return self.result == LimitPriceCheckResult.PASS
+   219→
+   220→    def to_dict(self) -> dict[str, Any]:
+   221→        """转换为字典."""
+   222→        return {
+   223→            "result": self.result.value,
+   224→            "symbol": self.symbol,
+   225→            "order_price": self.order_price,
+   226→            "limit_up": self.limit_up,
+   227→            "limit_down": self.limit_down,
+   228→            "last_settle": self.last_settle,
+   229→            "limit_pct": self.limit_pct,
+   230→            "message": self.message,
+   231→            "passed": self.passed,
+   232→        }
+   233→
+   234→
+   235→class LimitPriceGuard:
+   236→    """涨跌停保护门控 (军规级 v4.0).
+   237→
+   238→    军规 M13: 涨跌停感知 - 订单价格必须检查涨跌停板
+   239→
+   240→    V4 Scenarios:
+   241→    - CHINA.LIMIT.PRICE_CHECK: 涨跌停价格检查
+   242→    - CHINA.LIMIT.ORDER_REJECT: 超限订单拒绝
+   243→
+   244→    功能:
+   245→    - 根据昨结算价计算涨跌停价格
+   246→    - 检查订单价格是否在涨跌停范围内
+   247→    - 检测当前价格的涨跌停状态
+   248→    - 支持自定义品种涨跌停幅度
+   249→
+   250→    示例:
+   251→        >>> guard = LimitPriceGuard()
+   252→        >>> result = guard.check_order_price(
+   253→        ...     order_price=4500.0,
+   254→        ...     last_settle=4200.0,
+   255→        ...     limit_pct=0.05,
+   256→        ...     symbol="rb2501",
+   257→        ... )
+   258→    """
+   259→
+   260→    def __init__(
+   261→        self,
+   262→        config: LimitPriceConfig | None = None,
+   263→        product_limits: dict[str, float] | None = None,
+   264→    ) -> None:
+   265→        """初始化涨跌停保护门控.
+   266→
+   267→        参数:
+   268→            config: 涨跌停配置
+   269→            product_limits: 品种涨跌停幅度覆盖配置
+   270→        """
+   271→        self._config = config or LimitPriceConfig()
+   272→        self._product_limits = product_limits or PRODUCT_LIMIT_PCT.copy()
+   273→        self._check_count = 0
+   274→        self._reject_count = 0
+   275→        self._limit_hit_count = 0
+   276→
+   277→    @property
+   278→    def config(self) -> LimitPriceConfig:
+   279→        """配置."""
+   280→        return self._config
+   281→
+   282→    @property
+   283→    def check_count(self) -> int:
+   284→        """检查次数."""
+   285→        return self._check_count
+   286→
+   287→    @property
+   288→    def reject_count(self) -> int:
+   289→        """拒绝次数 (超出涨跌停范围)."""
+   290→        return self._reject_count
+   291→
+   292→    @property
+   293→    def limit_hit_count(self) -> int:
+   294→        """涨跌停触发次数."""
+   295→        return self._limit_hit_count
+   296→
+   297→    def get_limit_pct(self, symbol: str) -> float:
+   298→        """获取品种的涨跌停幅度.
+   299→
+   300→        参数:
+   301→            symbol: 合约代码 (如 "rb2501")
+   302→
+   303→        返回:
+   304→            涨跌停幅度 (如 0.05 表示 5%)
+   305→        """
+   306→        product = self._extract_product(symbol)
+   307→        return self._product_limits.get(product, self._config.default_limit_pct)
+   308→
+   309→    def get_limit_prices(
+   310→        self,
+   311→        last_settle: float,
+   312→        limit_pct: float | None = None,
+   313→        symbol: str = "",
+   314→        tick_size: float | None = None,
+   315→    ) -> LimitPrices:
+   316→        """计算涨跌停价格.
+   317→
+   318→        参数:
+   319→            last_settle: 昨结算价
+   320→            limit_pct: 涨跌停幅度 (None则根据品种查找)
+   321→            symbol: 合约代码 (用于查找品种涨跌停幅度)
+   322→            tick_size: 最小变动价位 (用于价格修正)
+   323→
+   324→        返回:
+   325→            涨跌停价格对象
+   326→        """
+   327→        # 确定涨跌停幅度
+   328→        if limit_pct is None:
+   329→            limit_pct = self.get_limit_pct(symbol) if symbol else self._config.default_limit_pct
+   330→
+   331→        # 确定tick_size
+   332→        actual_tick_size = tick_size if tick_size is not None else self._config.tick_size
+   333→
+   334→        # 计算原始涨跌停价格
+   335→        raw_limit_up = last_settle * (1 + limit_pct)
+   336→        raw_limit_down = last_settle * (1 - limit_pct)
+   337→
+   338→        # 按tick_size修正 (涨停向下取整，跌停向上取整)
+   339→        if actual_tick_size > 0:
+   340→            limit_up = self._round_down(raw_limit_up, actual_tick_size)
+   341→            limit_down = self._round_up(raw_limit_down, actual_tick_size)
+   342→        else:
+   343→            limit_up = raw_limit_up
+   344→            limit_down = raw_limit_down
+   345→
+   346→        return LimitPrices(
+   347→            limit_up=limit_up,
+   348→            limit_down=limit_down,
+   349→            last_settle=last_settle,
+   350→            limit_pct=limit_pct,
+   351→            tick_size=actual_tick_size,
+   352→        )
+   353→
+   354→    def check_order_price(
+   355→        self,
+   356→        order_price: float,
+   357→        last_settle: float,
+   358→        limit_pct: float | None = None,
+   359→        symbol: str = "",
+   360→        tick_size: float | None = None,
+   361→    ) -> LimitPriceCheckOutput:
+   362→        """检查订单价格是否在涨跌停范围内.
+   363→
+   364→        军规 M13: 涨跌停感知 - 订单价格必须检查涨跌停板
+   365→        V4 Scenario: CHINA.LIMIT.PRICE_CHECK
+   366→
+   367→        参数:
+   368→            order_price: 订单价格
+   369→            last_settle: 昨结算价
+   370→            limit_pct: 涨跌停幅度 (None则根据品种查找)
+   371→            symbol: 合约代码
+   372→            tick_size: 最小变动价位
+   373→
+   374→        返回:
+   375→            检查输出
+   376→        """
+   377→        self._check_count += 1
+   378→
+   379→        # 验证订单价格
+   380→        if order_price <= 0:
+   381→            self._reject_count += 1
+   382→            return LimitPriceCheckOutput(
+   383→                result=LimitPriceCheckResult.INVALID_PRICE,
+   384→                symbol=symbol,
+   385→                order_price=order_price,
+   386→                message=f"无效订单价格: {order_price}",
+   387→            )
+   388→
+   389→        # 验证昨结算价
+   390→        if last_settle <= 0:
+   391→            self._reject_count += 1
+   392→            return LimitPriceCheckOutput(
+   393→                result=LimitPriceCheckResult.INVALID_SETTLE,
+   394→                symbol=symbol,
+   395→                order_price=order_price,
+   396→                last_settle=last_settle,
+   397→                message=f"无效昨结算价: {last_settle}",
+   398→            )
+   399→
+   400→        # 获取涨跌停价格
+   401→        limits = self.get_limit_prices(last_settle, limit_pct, symbol, tick_size)
+   402→
+   403→        # 检查是否超过涨停价
+   404→        # V4 Scenario: CHINA.LIMIT.ORDER_REJECT
+   405→        if order_price > limits.limit_up:
+   406→            self._reject_count += 1
+   407→            return LimitPriceCheckOutput(
+   408→                result=LimitPriceCheckResult.ABOVE_LIMIT_UP,
+   409→                symbol=symbol,
+   410→                order_price=order_price,
+   411→                limit_up=limits.limit_up,
+   412→                limit_down=limits.limit_down,
+   413→                last_settle=last_settle,
+   414→                limit_pct=limits.limit_pct,
+   415→                message=f"订单价格 {order_price} 超过涨停价 {limits.limit_up}",
+   416→            )
+   417→
+   418→        # 检查是否低于跌停价
+   419→        # V4 Scenario: CHINA.LIMIT.ORDER_REJECT
+   420→        if order_price < limits.limit_down:
+   421→            self._reject_count += 1
+   422→            return LimitPriceCheckOutput(
+   423→                result=LimitPriceCheckResult.BELOW_LIMIT_DOWN,
+   424→                symbol=symbol,
+   425→                order_price=order_price,
+   426→                limit_up=limits.limit_up,
+   427→                limit_down=limits.limit_down,
+   428→                last_settle=last_settle,
+   429→                limit_pct=limits.limit_pct,
+   430→                message=f"订单价格 {order_price} 低于跌停价 {limits.limit_down}",
+   431→            )
+   432→
+   433→        # 检查是否刚好等于涨停价
+   434→        if abs(order_price - limits.limit_up) < 0.0001:
+   435→            self._limit_hit_count += 1
+   436→            if not self._config.allow_limit_price_order:
+   437→                self._reject_count += 1
+   438→                return LimitPriceCheckOutput(
+   439→                    result=LimitPriceCheckResult.AT_LIMIT_UP,
+   440→                    symbol=symbol,
+   441→                    order_price=order_price,
+   442→                    limit_up=limits.limit_up,
+   443→                    limit_down=limits.limit_down,
+   444→                    last_settle=last_settle,
+   445→                    limit_pct=limits.limit_pct,
+   446→                    message=f"订单价格 {order_price} 等于涨停价, 不允许涨停价下单",
+   447→                )
+   448→
+   449→        # 检查是否刚好等于跌停价
+   450→        if abs(order_price - limits.limit_down) < 0.0001:
+   451→            self._limit_hit_count += 1
+   452→            if not self._config.allow_limit_price_order:
+   453→                self._reject_count += 1
+   454→                return LimitPriceCheckOutput(
+   455→                    result=LimitPriceCheckResult.AT_LIMIT_DOWN,
+   456→                    symbol=symbol,
+   457→                    order_price=order_price,
+   458→                    limit_up=limits.limit_up,
+   459→                    limit_down=limits.limit_down,
+   460→                    last_settle=last_settle,
+   461→                    limit_pct=limits.limit_pct,
+   462→                    message=f"订单价格 {order_price} 等于跌停价, 不允许跌停价下单",
+   463→                )
+   464→
+   465→        # 通过检查
+   466→        return LimitPriceCheckOutput(
+   467→            result=LimitPriceCheckResult.PASS,
+   468→            symbol=symbol,
+   469→            order_price=order_price,
+   470→            limit_up=limits.limit_up,
+   471→            limit_down=limits.limit_down,
+   472→            last_settle=last_settle,
+   473→            limit_pct=limits.limit_pct,
+   474→            message="涨跌停检查通过",
+   475→        )
+   476→
+   477→    def get_limit_status(
+   478→        self,
+   479→        current_price: float,
+   480→        last_settle: float,
+   481→        limit_pct: float | None = None,
+   482→        symbol: str = "",
+   483→        tick_size: float | None = None,
+   484→    ) -> LimitStatus:
+   485→        """获取当前价格的涨跌停状态.
+   486→
+   487→        参数:
+   488→            current_price: 当前价格
+   489→            last_settle: 昨结算价
+   490→            limit_pct: 涨跌停幅度
+   491→            symbol: 合约代码
+   492→            tick_size: 最小变动价位
+   493→
+   494→        返回:
+   495→            涨跌停状态枚举
+   496→        """
+   497→        if current_price <= 0 or last_settle <= 0:
+   498→            return LimitStatus.NORMAL
+   499→
+   500→        limits = self.get_limit_prices(last_settle, limit_pct, symbol, tick_size)
+   501→
+   502→        # 涨停
+   503→        if abs(current_price - limits.limit_up) < 0.0001:
+   504→            return LimitStatus.AT_LIMIT_UP
+   505→
+   506→        # 跌停
+   507→        if abs(current_price - limits.limit_down) < 0.0001:
+   508→            return LimitStatus.AT_LIMIT_DOWN
+   509→
+   510→        # 接近涨停 (距离涨停价 < threshold)
+   511→        distance_to_up = (limits.limit_up - current_price) / last_settle
+   512→        if 0 < distance_to_up < self._config.near_limit_threshold:
+   513→            return LimitStatus.NEAR_LIMIT_UP
+   514→
+   515→        # 接近跌停 (距离跌停价 < threshold)
+   516→        distance_to_down = (current_price - limits.limit_down) / last_settle
+   517→        if 0 < distance_to_down < self._config.near_limit_threshold:
+   518→            return LimitStatus.NEAR_LIMIT_DOWN
+   519→
+   520→        return LimitStatus.NORMAL
+   521→
+   522→    def is_at_limit(
+   523→        self,
+   524→        current_price: float,
+   525→        last_settle: float,
+   526→        limit_pct: float | None = None,
+   527→        symbol: str = "",
+   528→    ) -> bool:
+   529→        """检查当前价格是否处于涨跌停.
+   530→
+   531→        参数:
+   532→            current_price: 当前价格
+   533→            last_settle: 昨结算价
+   534→            limit_pct: 涨跌停幅度
+   535→            symbol: 合约代码
+   536→
+   537→        返回:
+   538→            是否处于涨跌停状态
+   539→        """
+   540→        status = self.get_limit_status(current_price, last_settle, limit_pct, symbol)
+   541→        return status in (LimitStatus.AT_LIMIT_UP, LimitStatus.AT_LIMIT_DOWN)
+   542→
+   543→    def get_stats(self) -> dict[str, Any]:
+   544→        """获取统计信息.
+   545→
+   546→        返回:
+   547→            统计字典
+   548→        """
+   549→        return {
+   550→            "check_count": self._check_count,
+   551→            "reject_count": self._reject_count,
+   552→            "limit_hit_count": self._limit_hit_count,
+   553→            "pass_rate": (
+   554→                (self._check_count - self._reject_count) / self._check_count
+   555→                if self._check_count > 0
+   556→                else 0.0
+   557→            ),
+   558→        }
+   559→
+   560→    def reset_stats(self) -> None:
+   561→        """重置统计信息."""
+   562→        self._check_count = 0
+   563→        self._reject_count = 0
+   564→        self._limit_hit_count = 0
+   565→
+   566→    def _extract_product(self, symbol: str) -> str:
+   567→        """从合约代码提取品种代码.
+   568→
+   569→        参数:
+   570→            symbol: 合约代码 (如 "rb2501", "IF2501")
+   571→
+   572→        返回:
+   573→            品种代码 (如 "rb", "if")
+   574→        """
+   575→        if not symbol:
+   576→            return ""
+   577→
+   578→        # 提取字母部分 (品种代码)
+   579→        product = ""
+   580→        for char in symbol:
+   581→            if char.isalpha():
+   582→                product += char
+   583→            elif char.isdigit() and product:
+   584→                break
+   585→
+   586→        return product.lower()
+   587→
+   588→    def _round_down(self, price: float, tick_size: float) -> float:
+   589→        """向下取整到tick_size.
+   590→
+   591→        参数:
+   592→            price: 原始价格
+   593→            tick_size: 最小变动价位
+   594→
+   595→        返回:
+   596→            修正后的价格
+   597→        """
+   598→        if tick_size <= 0:
+   599→            return price
+   600→        return int(price / tick_size) * tick_size
+   601→
+   602→    def _round_up(self, price: float, tick_size: float) -> float:
+   603→        """向上取整到tick_size.
+   604→
+   605→        参数:
+   606→            price: 原始价格
+   607→            tick_size: 最小变动价位
+   608→
+   609→        返回:
+   610→            修正后的价格
+   611→        """
+   612→        if tick_size <= 0:
+   613→            return price
+   614→        import math
+   615→
+   616→        return math.ceil(price / tick_size) * tick_size
+   617→
+   618→
+   619→# 便捷函数
+   620→
+   621→_default_guard: LimitPriceGuard | None = None
+   622→
+   623→
+   624→def get_default_guard() -> LimitPriceGuard:
+   625→    """获取默认涨跌停保护门控 (单例).
+   626→
+   627→    返回:
+   628→        默认的LimitPriceGuard实例
+   629→    """
+   630→    global _default_guard
+   631→    if _default_guard is None:
+   632→        _default_guard = LimitPriceGuard()
+   633→    return _default_guard
+   634→
+   635→
+   636→def check_limit_price(
+   637→    order_price: float,
+   638→    last_settle: float,
+   639→    limit_pct: float | None = None,
+   640→    symbol: str = "",
+   641→) -> tuple[bool, str]:
+   642→    """检查订单价格是否在涨跌停范围内 (便捷函数).
+   643→
+   644→    军规 M13: 涨跌停感知
+   645→
+   646→    参数:
+   647→        order_price: 订单价格
+   648→        last_settle: 昨结算价
+   649→        limit_pct: 涨跌停幅度 (None则使用品种默认值)
+   650→        symbol: 合约代码
+   651→
+   652→    返回:
+   653→        (是否通过, 消息)
+   654→    """
+   655→    guard = get_default_guard()
+   656→    result = guard.check_order_price(order_price, last_settle, limit_pct, symbol)
+   657→    return result.passed, result.message
+   658→
+   659→
+   660→def get_limit_prices(
+   661→    last_settle: float,
+   662→    limit_pct: float | None = None,
+   663→    symbol: str = "",
+   664→) -> tuple[float, float]:
+   665→    """获取涨跌停价格 (便捷函数).
+   666→
+   667→    参数:
+   668→        last_settle: 昨结算价
+   669→        limit_pct: 涨跌停幅度 (None则使用品种默认值)
+   670→        symbol: 合约代码
+   671→
+   672→    返回:
+   673→        (涨停价, 跌停价)
+   674→    """
+   675→    guard = get_default_guard()
+   676→    limits = guard.get_limit_prices(last_settle, limit_pct, symbol)
+   677→    return limits.limit_up, limits.limit_down
+   678→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

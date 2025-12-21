@@ -1,0 +1,229 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+多AI助手协作工作流系统
+结合 Claude 和 ChatGPT 完成复杂任务
+"""
+
+import subprocess
+import json
+import time
+from typing import Dict, List, Optional
+from dataclasses import dataclass
+
+@dataclass
+class AIResponse:
+    """AI响应数据结构"""
+    ai_name: str
+    task: str
+    response: str
+    confidence: float
+    execution_time: float
+
+class MultiAIWorkflow:
+    """多AI协作工作流管理器"""
+
+    def __init__(self):
+        self.claude_path = ".trae-cn/extensions/anthropic.claude-code-2.0.61-win32-x64/resources/native-binary/claude.exe"
+        self.chatgpt_path = ".trae-cn/extensions/openai.chatgpt-0.4.49-universal/bin/windows-x86_64/codex.exe"
+        self.results = []
+
+    def ask_claude(self, prompt: str, print_mode: bool = True) -> AIResponse:
+        """向Claude提问"""
+        cmd = [self.claude_path]
+        if print_mode:
+            cmd.extend(["-p", prompt])
+
+        start_time = time.time()
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=60
+            )
+            response = result.stdout
+            confidence = self._analyze_confidence(response)
+        except Exception as e:
+            response = f"Claude执行错误: {str(e)}"
+            confidence = 0.0
+
+        execution_time = time.time() - start_time
+
+        return AIResponse(
+            ai_name="Claude",
+            task=prompt,
+            response=response,
+            confidence=confidence,
+            execution_time=execution_time
+        )
+
+    def ask_chatgpt(self, prompt: str) -> AIResponse:
+        """向ChatGPT提问"""
+        cmd = [self.chatgpt_path, prompt]
+
+        start_time = time.time()
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=60
+            )
+            response = result.stdout
+            confidence = self._analyze_confidence(response)
+        except Exception as e:
+            response = f"ChatGPT执行错误: {str(e)}"
+            confidence = 0.0
+
+        execution_time = time.time() - start_time
+
+        return AIResponse(
+            ai_name="ChatGPT",
+            task=prompt,
+            response=response,
+            confidence=confidence,
+            execution_time=execution_time
+        )
+
+    def parallel_analysis(self, task: str) -> List[AIResponse]:
+        """并行分析任务"""
+        print(f"\n开始多AI协作分析任务: {task}")
+        print("=" * 60)
+
+        # Claude 分析
+        claude_prompt = f"""
+作为专业代码分析师，请分析以下任务：
+{task}
+
+请提供：
+1. 技术实现方案
+2. 潜在问题和风险
+3. 最佳实践建议
+4. 代码示例（如适用）
+"""
+
+        print("\nClaude 正在分析...")
+        claude_response = self.ask_claude(claude_prompt)
+
+        # ChatGPT 分析
+        chatgpt_prompt = f"""
+作为资深开发者，请评估以下任务：
+{task}
+
+请提供：
+1. 不同的实现思路
+2. 优化建议
+3. 测试策略
+4. 维护性考虑
+"""
+
+        print("\nChatGPT 正在分析...")
+        chatgpt_response = self.ask_chatgpt(chatgpt_prompt)
+
+        return [claude_response, chatgpt_response]
+
+    def synthesize_results(self, responses: List[AIResponse]) -> Dict:
+        """综合多个AI的结果"""
+        print("\n综合分析结果...")
+        print("-" * 60)
+
+        synthesis = {
+            "task": responses[0].task,
+            "ai_opinions": {},
+            "common_points": [],
+            "conflicts": [],
+            "recommendations": [],
+            "final_decision": ""
+        }
+
+        # 收集各AI意见
+        for resp in responses:
+            synthesis["ai_opinions"][resp.ai_name] = {
+                "response": resp.response,
+                "confidence": resp.confidence,
+                "execution_time": resp.execution_time
+            }
+            print(f"\n{resp.ai_name} 响应时间: {resp.execution_time:.2f}秒")
+            print(f"置信度: {resp.confidence:.2f}")
+            print(f"响应内容摘要: {resp.response[:200]}...")
+
+        # 使用Claude进行综合分析
+        synthesis_prompt = f"""
+请综合以下两个AI的响应，提供最终建议：
+
+Claude的响应：
+{responses[0].response}
+
+ChatGPT的响应：
+{responses[1].response}
+
+请分析：
+1. 共同观点
+2. 不同意见
+3. 综合建议
+4. 最终实施方案
+"""
+
+        print("\nClaude 正在进行综合分析...")
+        final_analysis = self.ask_claude(synthesis_prompt)
+        synthesis["final_decision"] = final_analysis.response
+
+        return synthesis
+
+    def _analyze_confidence(self, response: str) -> float:
+        """分析响应的置信度"""
+        # 简单的置信度评估逻辑
+        if len(response) < 50:
+            return 0.3
+        elif "错误" in response or "error" in response.lower():
+            return 0.2
+        elif len(response) > 500:
+            return 0.9
+        else:
+            return 0.7
+
+    def save_results(self, results: Dict, filename: str = "ai_analysis_results.json"):
+        """保存分析结果"""
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+        print(f"\n结果已保存到: {filename}")
+
+def main():
+    """主函数演示"""
+    workflow = MultiAIWorkflow()
+
+    # 示例任务：分析钻石评估系统的改进方案
+    task = """
+分析钻石光学评估系统（QL钻石光学能量化系统）的改进方案：
+
+当前系统特点：
+1. 使用200位量子级精度计算
+2. GUI界面基于tkinter
+3. 支持多线程计算
+4. 有完整的错误处理
+
+需要改进的方面：
+1. 性能优化
+2. 用户体验提升
+3. 功能扩展
+4. 代码质量提升
+"""
+
+    # 执行多AI协作分析
+    responses = workflow.parallel_analysis(task)
+
+    # 综合结果
+    synthesis = workflow.synthesize_results(responses)
+
+    # 显示最终决策
+    print("\n" + "=" * 60)
+    print("最终综合建议：")
+    print("=" * 60)
+    print(synthesis["final_decision"])
+
+    # 保存结果
+    workflow.save_results(synthesis)
+
+if __name__ == "__main__":
+    main()

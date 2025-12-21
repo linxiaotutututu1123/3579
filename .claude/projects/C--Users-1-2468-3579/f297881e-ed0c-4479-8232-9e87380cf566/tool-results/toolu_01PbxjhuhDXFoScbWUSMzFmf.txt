@@ -1,0 +1,671 @@
+     1→"""中国期货夜盘交易日历模块 (军规级 v4.0).
+     2→
+     3→本模块提供中国期货市场的交易日历功能，包括：
+     4→- 夜盘交易日归属判断
+     5→- 交易时间判断
+     6→- 节假日处理
+     7→- 下一交易日计算
+     8→
+     9→军规覆盖:
+    10→- M15: 夜盘跨日处理 - 夜盘交易日归属必须正确
+    11→
+    12→场景覆盖:
+    13→- CHINA.CALENDAR.NIGHT_SESSION: 夜盘时段正确
+    14→- CHINA.CALENDAR.TRADING_DAY: 交易日计算正确
+    15→- CHINA.CALENDAR.HOLIDAY: 节假日处理正确
+    16→
+    17→夜盘交易日归属规则:
+    18→- 周一夜盘 21:00 → 周二 02:30 归属于周二交易日
+    19→- 周五没有夜盘
+    20→- 节假日前一天没有夜盘
+    21→- 节假日后第一天从日盘开始
+    22→
+    23→示例:
+    24→    >>> from src.market.trading_calendar import ChinaTradingCalendar
+    25→    >>> calendar = ChinaTradingCalendar()
+    26→    >>> # 周一晚上21:30属于周二交易日
+    27→    >>> trading_day = calendar.get_trading_day("2025-12-15 21:30:00")
+    28→    >>> print(trading_day)
+    29→    2025-12-16
+    30→"""
+    31→
+    32→from __future__ import annotations
+    33→
+    34→from dataclasses import dataclass, field
+    35→from datetime import date, datetime, time, timedelta
+    36→from enum import Enum
+    37→from typing import ClassVar
+    38→
+    39→from src.market.exchange_config import (
+    40→    Exchange,
+    41→    NightSessionEnd,
+    42→    get_exchange_for_product,
+    43→    get_night_session_end_for_product,
+    44→)
+    45→
+    46→
+    47→class TradingPeriod(Enum):
+    48→    """交易时段枚举.
+    49→
+    50→    属性:
+    51→        PRE_MARKET: 盘前（09:00之前）
+    52→        MORNING_1: 早盘第一节（09:00-10:15）
+    53→        MORNING_BREAK: 早盘休息（10:15-10:30）
+    54→        MORNING_2: 早盘第二节（10:30-11:30）
+    55→        LUNCH_BREAK: 午休（11:30-13:30）
+    56→        AFTERNOON: 午盘（13:30-15:00）
+    57→        AFTER_MARKET: 盘后（15:00-21:00）
+    58→        NIGHT: 夜盘（21:00-次日02:30）
+    59→        CLOSED: 休市
+    60→    """
+    61→
+    62→    PRE_MARKET = "盘前"
+    63→    MORNING_1 = "早盘第一节"
+    64→    MORNING_BREAK = "早盘休息"
+    65→    MORNING_2 = "早盘第二节"
+    66→    LUNCH_BREAK = "午休"
+    67→    AFTERNOON = "午盘"
+    68→    AFTER_MARKET = "盘后"
+    69→    NIGHT = "夜盘"
+    70→    CLOSED = "休市"
+    71→
+    72→
+    73→@dataclass
+    74→class TradingDayInfo:
+    75→    """交易日信息.
+    76→
+    77→    属性:
+    78→        trading_day: 交易日日期
+    79→        is_trading_day: 是否为交易日
+    80→        has_night_session: 是否有夜盘
+    81→        period: 当前交易时段
+    82→        reason: 非交易日原因（如节假日名称）
+    83→    """
+    84→
+    85→    trading_day: date
+    86→    is_trading_day: bool = True
+    87→    has_night_session: bool = True
+    88→    period: TradingPeriod = TradingPeriod.CLOSED
+    89→    reason: str = ""
+    90→
+    91→
+    92→# ============================================================================
+    93→# 2025年中国期货市场节假日（示例数据，实际使用时需要更新）
+    94→# ============================================================================
+    95→HOLIDAYS_2025: dict[date, str] = {
+    96→    # 元旦
+    97→    date(2025, 1, 1): "元旦",
+    98→    # 春节（1月28日-2月4日）
+    99→    date(2025, 1, 28): "春节",
+   100→    date(2025, 1, 29): "春节",
+   101→    date(2025, 1, 30): "春节",
+   102→    date(2025, 1, 31): "春节",
+   103→    date(2025, 2, 1): "春节",
+   104→    date(2025, 2, 2): "春节",
+   105→    date(2025, 2, 3): "春节",
+   106→    date(2025, 2, 4): "春节",
+   107→    # 清明节（4月4日-4月6日）
+   108→    date(2025, 4, 4): "清明节",
+   109→    date(2025, 4, 5): "清明节",
+   110→    date(2025, 4, 6): "清明节",
+   111→    # 劳动节（5月1日-5月5日）
+   112→    date(2025, 5, 1): "劳动节",
+   113→    date(2025, 5, 2): "劳动节",
+   114→    date(2025, 5, 3): "劳动节",
+   115→    date(2025, 5, 4): "劳动节",
+   116→    date(2025, 5, 5): "劳动节",
+   117→    # 端午节（5月31日-6月2日）
+   118→    date(2025, 5, 31): "端午节",
+   119→    date(2025, 6, 1): "端午节",
+   120→    date(2025, 6, 2): "端午节",
+   121→    # 中秋节（10月6日）
+   122→    date(2025, 10, 6): "中秋节",
+   123→    # 国庆节（10月1日-10月8日）
+   124→    date(2025, 10, 1): "国庆节",
+   125→    date(2025, 10, 2): "国庆节",
+   126→    date(2025, 10, 3): "国庆节",
+   127→    date(2025, 10, 4): "国庆节",
+   128→    date(2025, 10, 5): "国庆节",
+   129→    date(2025, 10, 7): "国庆节",
+   130→    date(2025, 10, 8): "国庆节",
+   131→}
+   132→
+   133→# 2025年调休工作日（周末上班）
+   134→WORKDAYS_2025: set[date] = {
+   135→    date(2025, 1, 26),  # 春节调休
+   136→    date(2025, 2, 8),  # 春节调休
+   137→    date(2025, 4, 27),  # 劳动节调休
+   138→    date(2025, 9, 28),  # 国庆节调休
+   139→    date(2025, 10, 11),  # 国庆节调休
+   140→}
+   141→
+   142→
+   143→@dataclass
+   144→class ChinaTradingCalendar:
+   145→    """中国期货市场交易日历.
+   146→
+   147→    提供交易日计算、夜盘归属判断等功能。
+   148→
+   149→    属性:
+   150→        holidays: 节假日字典（日期->节假日名称）
+   151→        workdays: 调休工作日集合
+   152→        _cache: 交易日缓存
+   153→
+   154→    示例:
+   155→        >>> calendar = ChinaTradingCalendar()
+   156→        >>> # 判断是否为交易日
+   157→        >>> calendar.is_trading_day(date(2025, 12, 16))
+   158→        True
+   159→        >>> # 获取交易日
+   160→        >>> calendar.get_trading_day("2025-12-15 21:30:00")
+   161→        date(2025, 12, 16)
+   162→    """
+   163→
+   164→    holidays: dict[date, str] = field(default_factory=lambda: HOLIDAYS_2025.copy())
+   165→    workdays: set[date] = field(default_factory=lambda: WORKDAYS_2025.copy())
+   166→    _cache: dict[date, TradingDayInfo] = field(default_factory=dict)
+   167→
+   168→    # 交易时段时间点
+   169→    NIGHT_SESSION_START: ClassVar[time] = time(21, 0)
+   170→    NIGHT_SESSION_END_23: ClassVar[time] = time(23, 0)
+   171→    NIGHT_SESSION_END_01: ClassVar[time] = time(1, 0)
+   172→    NIGHT_SESSION_END_02: ClassVar[time] = time(2, 30)
+   173→    DAY_SESSION_START: ClassVar[time] = time(9, 0)
+   174→    MORNING_BREAK_START: ClassVar[time] = time(10, 15)
+   175→    MORNING_BREAK_END: ClassVar[time] = time(10, 30)
+   176→    LUNCH_START: ClassVar[time] = time(11, 30)
+   177→    LUNCH_END: ClassVar[time] = time(13, 30)
+   178→    DAY_SESSION_END: ClassVar[time] = time(15, 0)
+   179→
+   180→    def is_holiday(self, d: date) -> bool:
+   181→        """判断是否为节假日.
+   182→
+   183→        参数:
+   184→            d: 日期
+   185→
+   186→        返回:
+   187→            是否为节假日
+   188→        """
+   189→        return d in self.holidays
+   190→
+   191→    def get_holiday_name(self, d: date) -> str | None:
+   192→        """获取节假日名称.
+   193→
+   194→        参数:
+   195→            d: 日期
+   196→
+   197→        返回:
+   198→            节假日名称，非节假日返回None
+   199→        """
+   200→        return self.holidays.get(d)
+   201→
+   202→    def is_weekend(self, d: date) -> bool:
+   203→        """判断是否为周末.
+   204→
+   205→        参数:
+   206→            d: 日期
+   207→
+   208→        返回:
+   209→            是否为周末（周六或周日）
+   210→        """
+   211→        return d.weekday() >= 5
+   212→
+   213→    def is_workday_override(self, d: date) -> bool:
+   214→        """判断是否为调休工作日.
+   215→
+   216→        参数:
+   217→            d: 日期
+   218→
+   219→        返回:
+   220→            是否为调休工作日
+   221→        """
+   222→        return d in self.workdays
+   223→
+   224→    def is_trading_day(self, d: date) -> bool:
+   225→        """判断是否为交易日.
+   226→
+   227→        参数:
+   228→            d: 日期
+   229→
+   230→        返回:
+   231→            是否为交易日
+   232→
+   233→        规则:
+   234→        1. 节假日不是交易日
+   235→        2. 周末不是交易日（除非是调休工作日）
+   236→        3. 调休工作日是交易日
+   237→        """
+   238→        # 节假日不是交易日
+   239→        if self.is_holiday(d):
+   240→            return False
+   241→
+   242→        # 调休工作日是交易日
+   243→        if self.is_workday_override(d):
+   244→            return True
+   245→
+   246→        # 周末不是交易日
+   247→        return not self.is_weekend(d)
+   248→
+   249→    def has_night_session_on_day(self, d: date) -> bool:
+   250→        """判断某日是否有夜盘.
+   251→
+   252→        参数:
+   253→            d: 日期
+   254→
+   255→        返回:
+   256→            该日是否有夜盘
+   257→
+   258→        规则:
+   259→        1. 非交易日没有夜盘
+   260→        2. 周五没有夜盘
+   261→        3. 节假日前一天没有夜盘
+   262→        4. 当天是节假日没有夜盘
+   263→        """
+   264→        # 非交易日没有夜盘
+   265→        if not self.is_trading_day(d):
+   266→            return False
+   267→
+   268→        # 周五没有夜盘
+   269→        if d.weekday() == 4:  # Friday
+   270→            return False
+   271→
+   272→        # 检查下一个自然日是否为交易日
+   273→        next_day = d + timedelta(days=1)
+   274→
+   275→        # 如果下一天是节假日或周末（非调休工作日），则没有夜盘
+   276→        if self.is_holiday(next_day):
+   277→            return False
+   278→
+   279→        # 周六周日（非调休）前一天没有夜盘
+   280→        return not (self.is_weekend(next_day) and not self.is_workday_override(next_day))
+   281→
+   282→    def get_trading_day(
+   283→        self,
+   284→        dt: datetime | str,
+   285→        product: str | None = None,
+   286→    ) -> date:
+   287→        """根据时间戳获取所属交易日.
+   288→
+   289→        参数:
+   290→            dt: 时间戳（datetime对象或ISO格式字符串）
+   291→            product: 品种代码（可选，用于判断夜盘结束时间）
+   292→
+   293→        返回:
+   294→            所属交易日
+   295→
+   296→        规则:
+   297→        - 夜盘21:00-次日02:30属于下一交易日
+   298→        - 日盘09:00-15:00属于当日
+   299→        - 其他时间属于当日（如果当日是交易日）
+   300→        """
+   301→        if isinstance(dt, str):
+   302→            dt = datetime.fromisoformat(dt)
+   303→
+   304→        current_date = dt.date()
+   305→        current_time = dt.time()
+   306→
+   307→        # 判断是否在夜盘时段
+   308→        if self._is_in_night_session(current_time, product):
+   309→            # 夜盘时段：21:00-23:59属于下一交易日
+   310→            if current_time >= self.NIGHT_SESSION_START:
+   311→                return self._get_next_trading_day(current_date)
+   312→            # 夜盘时段：00:00-02:30属于当日（夜盘延续）
+   313→            return current_date
+   314→
+   315→        # 日盘时段：属于当日
+   316→        return current_date
+   317→
+   318→    def _is_in_night_session(
+   319→        self,
+   320→        t: time,
+   321→        product: str | None = None,
+   322→    ) -> bool:
+   323→        """判断时间是否在夜盘时段.
+   324→
+   325→        参数:
+   326→            t: 时间
+   327→            product: 品种代码
+   328→
+   329→        返回:
+   330→            是否在夜盘时段
+   331→        """
+   332→        # 获取夜盘结束时间
+   333→        if product:
+   334→            night_end = get_night_session_end_for_product(product)
+   335→        else:
+   336→            night_end = NightSessionEnd.T_02_30  # 默认最晚结束时间
+   337→
+   338→        # 无夜盘品种
+   339→        if night_end == NightSessionEnd.NONE:
+   340→            return False
+   341→
+   342→        # 21:00-23:59
+   343→        if t >= self.NIGHT_SESSION_START:
+   344→            return True
+   345→
+   346→        # 00:00-夜盘结束时间
+   347→        if night_end == NightSessionEnd.T_23_00:
+   348→            return False  # 23:00结束，00:00后不算夜盘
+   349→        if night_end == NightSessionEnd.T_01_00:
+   350→            return t < self.NIGHT_SESSION_END_01
+   351→        # T_02_30
+   352→        return t < self.NIGHT_SESSION_END_02
+   353→
+   354→    def _get_next_trading_day(self, d: date) -> date:
+   355→        """获取下一个交易日.
+   356→
+   357→        参数:
+   358→            d: 当前日期
+   359→
+   360→        返回:
+   361→            下一个交易日
+   362→        """
+   363→        next_day = d + timedelta(days=1)
+   364→        while not self.is_trading_day(next_day):
+   365→            next_day += timedelta(days=1)
+   366→            # 防止无限循环（最多查找30天）
+   367→            if (next_day - d).days > 30:
+   368→                # 理论上不会发生，但作为保护
+   369→                return next_day
+   370→        return next_day
+   371→
+   372→    def get_next_trading_day(self, d: date) -> date:
+   373→        """获取下一个交易日（公开方法）.
+   374→
+   375→        参数:
+   376→            d: 当前日期
+   377→
+   378→        返回:
+   379→            下一个交易日
+   380→        """
+   381→        return self._get_next_trading_day(d)
+   382→
+   383→    def get_previous_trading_day(self, d: date) -> date:
+   384→        """获取上一个交易日.
+   385→
+   386→        参数:
+   387→            d: 当前日期
+   388→
+   389→        返回:
+   390→            上一个交易日
+   391→        """
+   392→        prev_day = d - timedelta(days=1)
+   393→        while not self.is_trading_day(prev_day):
+   394→            prev_day -= timedelta(days=1)
+   395→            # 防止无限循环
+   396→            if (d - prev_day).days > 30:
+   397→                return prev_day
+   398→        return prev_day
+   399→
+   400→    def is_trading_time(
+   401→        self,
+   402→        dt: datetime | str,
+   403→        product: str | None = None,
+   404→        exchange: Exchange | None = None,
+   405→    ) -> bool:
+   406→        """判断是否为交易时间.
+   407→
+   408→        参数:
+   409→            dt: 时间戳
+   410→            product: 品种代码
+   411→            exchange: 交易所
+   412→
+   413→        返回:
+   414→            是否为交易时间
+   415→        """
+   416→        if isinstance(dt, str):
+   417→            dt = datetime.fromisoformat(dt)
+   418→
+   419→        current_date = dt.date()
+   420→        current_time = dt.time()
+   421→
+   422→        # 确定交易所
+   423→        if exchange is None and product:
+   424→            exchange = get_exchange_for_product(product)
+   425→
+   426→        # 判断夜盘
+   427→        if self._is_in_night_session(current_time, product):
+   428→            # 夜盘时段需要检查前一日是否有夜盘
+   429→            if current_time >= self.NIGHT_SESSION_START:
+   430→                return self.has_night_session_on_day(current_date)
+   431→            # 凌晨时段需要检查前一日是否有夜盘
+   432→            prev_day = current_date - timedelta(days=1)
+   433→            return self.has_night_session_on_day(prev_day)
+   434→
+   435→        # 日盘时段
+   436→        if not self.is_trading_day(current_date):
+   437→            return False
+   438→
+   439→        # 检查是否在日盘时段内
+   440→        return self._is_in_day_session(current_time, exchange)
+   441→
+   442→    def _is_in_day_session(
+   443→        self,
+   444→        t: time,
+   445→        exchange: Exchange | None = None,
+   446→    ) -> bool:
+   447→        """判断时间是否在日盘时段.
+   448→
+   449→        参数:
+   450→            t: 时间
+   451→            exchange: 交易所
+   452→
+   453→        返回:
+   454→            是否在日盘时段
+   455→        """
+   456→        # CFFEX股指期货特殊时段
+   457→        if exchange == Exchange.CFFEX:
+   458→            # 09:30-11:30, 13:00-15:00
+   459→            if time(9, 30) <= t < time(11, 30):
+   460→                return True
+   461→            return time(13, 0) <= t < time(15, 0)
+   462→
+   463→        # 标准日盘时段
+   464→        # 09:00-10:15
+   465→        if self.DAY_SESSION_START <= t < self.MORNING_BREAK_START:
+   466→            return True
+   467→        # 10:30-11:30
+   468→        if self.MORNING_BREAK_END <= t < self.LUNCH_START:
+   469→            return True
+   470→        # 13:30-15:00
+   471→        return self.LUNCH_END <= t < self.DAY_SESSION_END
+   472→
+   473→    def get_trading_period(
+   474→        self,
+   475→        dt: datetime | str,
+   476→        product: str | None = None,
+   477→    ) -> TradingPeriod:
+   478→        """获取当前交易时段.
+   479→
+   480→        参数:
+   481→            dt: 时间戳
+   482→            product: 品种代码
+   483→
+   484→        返回:
+   485→            当前交易时段
+   486→        """
+   487→        if isinstance(dt, str):
+   488→            dt = datetime.fromisoformat(dt)
+   489→
+   490→        current_date = dt.date()
+   491→        current_time = dt.time()
+   492→
+   493→        # 判断是否为交易日
+   494→        if not self.is_trading_day(current_date):
+   495→            # 检查是否在夜盘延续时段（凌晨）
+   496→            if current_time < time(3, 0):
+   497→                prev_day = current_date - timedelta(days=1)
+   498→                if self.has_night_session_on_day(prev_day):
+   499→                    if self._is_in_night_session(current_time, product):
+   500→                        return TradingPeriod.NIGHT
+   501→            return TradingPeriod.CLOSED
+   502→
+   503→        # 夜盘时段
+   504→        if current_time >= self.NIGHT_SESSION_START:
+   505→            if self.has_night_session_on_day(current_date):
+   506→                return TradingPeriod.NIGHT
+   507→            return TradingPeriod.AFTER_MARKET
+   508→
+   509→        # 凌晨夜盘延续
+   510→        if current_time < time(3, 0):
+   511→            prev_day = current_date - timedelta(days=1)
+   512→            if self.has_night_session_on_day(prev_day):
+   513→                if self._is_in_night_session(current_time, product):
+   514→                    return TradingPeriod.NIGHT
+   515→
+   516→        # 盘前
+   517→        if current_time < self.DAY_SESSION_START:
+   518→            return TradingPeriod.PRE_MARKET
+   519→
+   520→        # 早盘第一节
+   521→        if current_time < self.MORNING_BREAK_START:
+   522→            return TradingPeriod.MORNING_1
+   523→
+   524→        # 早盘休息
+   525→        if current_time < self.MORNING_BREAK_END:
+   526→            return TradingPeriod.MORNING_BREAK
+   527→
+   528→        # 早盘第二节
+   529→        if current_time < self.LUNCH_START:
+   530→            return TradingPeriod.MORNING_2
+   531→
+   532→        # 午休
+   533→        if current_time < self.LUNCH_END:
+   534→            return TradingPeriod.LUNCH_BREAK
+   535→
+   536→        # 午盘
+   537→        if current_time < self.DAY_SESSION_END:
+   538→            return TradingPeriod.AFTERNOON
+   539→
+   540→        # 盘后
+   541→        return TradingPeriod.AFTER_MARKET
+   542→
+   543→    def get_trading_days_between(
+   544→        self,
+   545→        start: date,
+   546→        end: date,
+   547→    ) -> list[date]:
+   548→        """获取两个日期之间的所有交易日.
+   549→
+   550→        参数:
+   551→            start: 开始日期（包含）
+   552→            end: 结束日期（包含）
+   553→
+   554→        返回:
+   555→            交易日列表
+   556→        """
+   557→        trading_days = []
+   558→        current = start
+   559→        while current <= end:
+   560→            if self.is_trading_day(current):
+   561→                trading_days.append(current)
+   562→            current += timedelta(days=1)
+   563→        return trading_days
+   564→
+   565→    def count_trading_days(
+   566→        self,
+   567→        start: date,
+   568→        end: date,
+   569→    ) -> int:
+   570→        """计算两个日期之间的交易日数量.
+   571→
+   572→        参数:
+   573→            start: 开始日期（包含）
+   574→            end: 结束日期（包含）
+   575→
+   576→        返回:
+   577→            交易日数量
+   578→        """
+   579→        return len(self.get_trading_days_between(start, end))
+   580→
+   581→    def add_trading_days(
+   582→        self,
+   583→        d: date,
+   584→        n: int,
+   585→    ) -> date:
+   586→        """在日期上增加n个交易日.
+   587→
+   588→        参数:
+   589→            d: 起始日期
+   590→            n: 交易日数量（正数向后，负数向前）
+   591→
+   592→        返回:
+   593→            目标日期
+   594→        """
+   595→        if n == 0:
+   596→            return d
+   597→
+   598→        step = 1 if n > 0 else -1
+   599→        remaining = abs(n)
+   600→        current = d
+   601→
+   602→        while remaining > 0:
+   603→            current += timedelta(days=step)
+   604→            if self.is_trading_day(current):
+   605→                remaining -= 1
+   606→
+   607→        return current
+   608→
+   609→
+   610→# ============================================================================
+   611→# 便捷函数
+   612→# ============================================================================
+   613→_default_calendar: ChinaTradingCalendar | None = None
+   614→
+   615→
+   616→def get_default_calendar() -> ChinaTradingCalendar:
+   617→    """获取默认交易日历实例.
+   618→
+   619→    返回:
+   620→        默认交易日历实例
+   621→    """
+   622→    global _default_calendar
+   623→    if _default_calendar is None:
+   624→        _default_calendar = ChinaTradingCalendar()
+   625→    return _default_calendar
+   626→
+   627→
+   628→def get_trading_day(dt: datetime | str, product: str | None = None) -> date:
+   629→    """获取时间戳所属交易日.
+   630→
+   631→    参数:
+   632→        dt: 时间戳
+   633→        product: 品种代码
+   634→
+   635→    返回:
+   636→        所属交易日
+   637→    """
+   638→    return get_default_calendar().get_trading_day(dt, product)
+   639→
+   640→
+   641→def is_trading_day(d: date) -> bool:
+   642→    """判断是否为交易日.
+   643→
+   644→    参数:
+   645→        d: 日期
+   646→
+   647→    返回:
+   648→        是否为交易日
+   649→    """
+   650→    return get_default_calendar().is_trading_day(d)
+   651→
+   652→
+   653→def is_trading_time(
+   654→    dt: datetime | str,
+   655→    product: str | None = None,
+   656→) -> bool:
+   657→    """判断是否为交易时间.
+   658→
+   659→    参数:
+   660→        dt: 时间戳
+   661→        product: 品种代码
+   662→
+   663→    返回:
+   664→        是否为交易时间
+   665→    """
+   666→    return get_default_calendar().is_trading_time(dt, product)
+   667→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

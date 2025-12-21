@@ -1,0 +1,12 @@
+C:\Users\1\2468\3579\src\trading\controls.py
+C:\Users\1\2468\3579\src\trading\events.py
+C:\Users\1\2468\3579\src\trading\__init__.py
+C:\Users\1\2468\3579\src\trading\serial_exec.py
+C:\Users\1\2468\3579\src\trading\utils.py
+C:\Users\1\2468\3579\src\trading\live_guard.py
+C:\Users\1\2468\3579\src\trading\orchestrator.py
+C:\Users\1\2468\3579\src\trading\reconcile.py
+C:\Users\1\2468\3579\src\trading\sim.py
+C:\Users\1\2468\3579\src\trading\sim_gate.py
+C:\Users\1\2468\3579\src\trading\replay.py
+C:\Users\1\2468\3579\src\trading\ci_gate.py

@@ -1,0 +1,8 @@
+services:
+  3579:
+    image: 3579
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000

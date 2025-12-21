@@ -1,0 +1,1820 @@
+     1→# V3PRO+ 中国期货市场军规级全面改进报告
+     2→
+     3→> **版本**: v1.0
+     4→> **日期**: 2025-12-16
+     5→> **作者**: CLAUDE上校（军规级别国家伟大工程的总工程师）
+     6→> **文档类型**: 最高指示文件全面审查报告
+     7→> **审查范围**: V3PRO_UPGRADE_PLAN_Version2.md 全部28章节（2748行）
+     8→
+     9→---
+    10→
+    11→## 执行摘要
+    12→
+    13→本报告是对 V3PRO_UPGRADE_PLAN_Version2.md 最高指示文件的**军规级别全面审查**，基于中国期货市场的实际特点，逐章逐节提出改进建议。
+    14→
+    15→### 审查统计
+    16→
+    17→| 项目 | 数量 |
+    18→|------|------|
+    19→| 审查章节 | 28 章 |
+    20→| 文件总行数 | 2,748 行 |
+    21→| 发现改进项 | 87 项 |
+    22→| P0 紧急改进 | 12 项 |
+    23→| P1 重要改进 | 28 项 |
+    24→| P2 建议改进 | 47 项 |
+    25→| 新增 Scenarios | 34 条 |
+    26→
+    27→### 中国期货市场关键特点
+    28→
+    29→基于网络搜索获取的最新信息（2024-2025年）：
+    30→
+    31→| 特点 | 说明 | 对系统的影响 |
+    32→|------|------|-------------|
+    33→| **六大交易所** | SHFE/DCE/CZCE/CFFEX/GFEX/INE | 需支持多交易所差异化 |
+    34→| **涨跌停板制度** | 3%-15% 不等，节前调高 | 需涨跌停板风控逻辑 |
+    35→| **夜盘交易** | 21:00-次日02:30 | 需跨日交易支持 |
+    36→| **T+0 制度** | 当日可平仓 | 需平今/平昨区分 |
+    37→| **保证金动态调整** | 节前/交割月提高 | 需保证金监控模块 |
+    38→| **程序化交易新规** | 2025年10月实施 | 需合规性检查模块 |
+    39→| **报撤单频率限制** | 5秒50笔预警 | 需节流控制增强 |
+    40→
+    41→---
+    42→
+    43→## 第一部分：军规与门禁改进（第1章）
+    44→
+    45→### 1.1 军规改进建议
+    46→
+    47→#### P0-001: 新增军规 M12-M16（中国期货市场特化）
+    48→
+    49→**现状**: 现有军规 M1-M11 覆盖通用规则，缺少中国期货市场特有要求。
+    50→
+    51→**改进**: 新增以下军规：
+    52→
+    53→| 编号 | 原则 | 说明 | 违反后果 |
+    54→|------|------|------|----------|
+    55→| M12 | **涨跌停感知** | 订单价格必须检查涨跌停板 | 订单拒绝 |
+    56→| M13 | **平今平昨分离** | 平仓时必须区分平今/平昨 | 手续费错误 |
+    57→| M14 | **夜盘跨日处理** | 夜盘交易日归属必须正确 | 结算错误 |
+    58→| M15 | **保证金实时监控** | 保证金使用率必须实时计算 | 强平风险 |
+    59→| M16 | **程序化合规** | 报撤单频率必须在监管阈值内 | 账户限制 |
+    60→
+    61→**代码示例**:
+    62→
+    63→```python
+    64→# src/compliance/china_futures_rules.py
+    65→"""中国期货市场合规检查模块."""
+    66→
+    67→from dataclasses import dataclass
+    68→from enum import Enum
+    69→
+    70→
+    71→class ComplianceRule(Enum):
+    72→    """合规规则枚举."""
+    73→
+    74→    M12_LIMIT_PRICE_CHECK = "M12"      # 涨跌停价格检查
+    75→    M13_CLOSE_TODAY_SEPARATE = "M13"   # 平今平昨分离
+    76→    M14_NIGHT_SESSION_DATE = "M14"     # 夜盘日期归属
+    77→    M15_MARGIN_REALTIME = "M15"        # 保证金实时监控
+    78→    M16_ORDER_FREQUENCY = "M16"        # 报撤单频率限制
+    79→
+    80→
+    81→@dataclass(frozen=True)
+    82→class ComplianceCheckResult:
+    83→    """合规检查结果."""
+    84→
+    85→    rule: ComplianceRule
+    86→    passed: bool
+    87→    message: str
+    88→    details: dict
+    89→
+    90→
+    91→class ChinaFuturesComplianceChecker:
+    92→    """中国期货市场合规检查器.
+    93→
+    94→    功能:
+    95→        - M12: 涨跌停价格检查
+    96→        - M13: 平今/平昨检查
+    97→        - M14: 夜盘日期归属检查
+    98→        - M15: 保证金实时计算
+    99→        - M16: 报撤单频率检查
+   100→    """
+   101→
+   102→    # 报撤单频率阈值（5秒内）
+   103→    ORDER_FREQUENCY_THRESHOLD = 50
+   104→    ORDER_FREQUENCY_WINDOW_S = 5.0
+   105→
+   106→    def __init__(self) -> None:
+   107→        """初始化合规检查器."""
+   108→        self._order_timestamps: list[float] = []
+   109→
+   110→    def check_limit_price(
+   111→        self,
+   112→        price: float,
+   113→        upper_limit: float,
+   114→        lower_limit: float
+   115→    ) -> ComplianceCheckResult:
+   116→        """M12: 检查价格是否在涨跌停板范围内.
+   117→
+   118→        参数:
+   119→            price: 委托价格
+   120→            upper_limit: 涨停价
+   121→            lower_limit: 跌停价
+   122→
+   123→        返回:
+   124→            合规检查结果
+   125→        """
+   126→        if lower_limit <= price <= upper_limit:
+   127→            return ComplianceCheckResult(
+   128→                rule=ComplianceRule.M12_LIMIT_PRICE_CHECK,
+   129→                passed=True,
+   130→                message="价格在涨跌停范围内",
+   131→                details={"price": price, "upper": upper_limit, "lower": lower_limit}
+   132→            )
+   133→        return ComplianceCheckResult(
+   134→            rule=ComplianceRule.M12_LIMIT_PRICE_CHECK,
+   135→            passed=False,
+   136→            message=f"价格 {price} 超出涨跌停范围 [{lower_limit}, {upper_limit}]",
+   137→            details={"price": price, "upper": upper_limit, "lower": lower_limit}
+   138→        )
+   139→
+   140→    def check_order_frequency(self, current_ts: float) -> ComplianceCheckResult:
+   141→        """M16: 检查报撤单频率是否超过监管阈值.
+   142→
+   143→        参数:
+   144→            current_ts: 当前时间戳
+   145→
+   146→        返回:
+   147→            合规检查结果
+   148→        """
+   149→        # 清理过期时间戳
+   150→        cutoff = current_ts - self.ORDER_FREQUENCY_WINDOW_S
+   151→        self._order_timestamps = [
+   152→            ts for ts in self._order_timestamps if ts > cutoff
+   153→        ]
+   154→
+   155→        # 添加当前时间戳
+   156→        self._order_timestamps.append(current_ts)
+   157→
+   158→        count = len(self._order_timestamps)
+   159→        if count <= self.ORDER_FREQUENCY_THRESHOLD:
+   160→            return ComplianceCheckResult(
+   161→                rule=ComplianceRule.M16_ORDER_FREQUENCY,
+   162→                passed=True,
+   163→                message=f"报撤单频率正常: {count}/{self.ORDER_FREQUENCY_THRESHOLD}",
+   164→                details={"count": count, "threshold": self.ORDER_FREQUENCY_THRESHOLD}
+   165→            )
+   166→        return ComplianceCheckResult(
+   167→            rule=ComplianceRule.M16_ORDER_FREQUENCY,
+   168→            passed=False,
+   169→            message=f"报撤单频率超限: {count}/{self.ORDER_FREQUENCY_THRESHOLD}",
+   170→            details={"count": count, "threshold": self.ORDER_FREQUENCY_THRESHOLD}
+   171→        )
+   172→```
+   173→
+   174→### 1.2 门禁改进建议
+   175→
+   176→#### P0-002: 新增中国期货市场合规门禁
+   177→
+   178→**改进**: 在门禁定义中新增合规检查：
+   179→
+   180→| 序号 | 命令 | 说明 | 失败退出码 |
+   181→|------|------|------|-----------|
+   182→| 8 | `python scripts/compliance_gate.py --china-futures` | 中国期货合规门禁 | 13 |
+   183→| 9 | `python scripts/margin_check.py --realtime` | 保证金检查门禁 | 15 |
+   184→
+   185→#### P0-003: 退出码扩展
+   186→
+   187→| 退出码 | 含义 | 动作 |
+   188→|--------|------|------|
+   189→| 13 | 合规检查失败 | 修复合规问题 |
+   190→| 15 | 保证金不足 | 减仓或追加保证金 |
+   191→| 16 | 涨跌停触发 | 等待或调整策略 |
+   192→
+   193→---
+   194→
+   195→## 第二部分：行情层改进（第5章 Phase 0）
+   196→
+   197→### 2.1 InstrumentCache 扩展
+   198→
+   199→#### P0-004: 新增中国期货市场特有字段
+   200→
+   201→**现状**: `InstrumentInfo` 缺少涨跌停板、保证金率、交易时段等关键字段。
+   202→
+   203→**改进**: 扩展 `InstrumentInfo` 数据结构：
+   204→
+   205→```python
+   206→@dataclass(frozen=True)
+   207→class InstrumentInfo:
+   208→    """合约信息（中国期货市场增强版）.
+   209→
+   210→    属性:
+   211→        symbol: 合约代码（如 AO2501）
+   212→        product: 品种代码（如 AO）
+   213→        exchange: 交易所（SHFE/CZCE/DCE/CFFEX/GFEX/INE）
+   214→        expire_date: 到期日（YYYYMMDD）
+   215→        tick_size: 最小变动价位
+   216→        multiplier: 合约乘数
+   217→        max_order_volume: 单笔最大手数
+   218→        position_limit: 持仓限额
+   219→
+   220→        # ===== 中国期货市场特有字段（新增） =====
+   221→        upper_limit_pct: 涨停板幅度（如0.10=10%）
+   222→        lower_limit_pct: 跌停板幅度
+   223→        settlement_price: 昨结算价（用于计算涨跌停价）
+   224→        upper_limit_price: 涨停价（计算值）
+   225→        lower_limit_price: 跌停价（计算值）
+   226→        margin_rate_long: 多头保证金率
+   227→        margin_rate_short: 空头保证金率
+   228→        spec_margin_rate: 投机保证金率（可能高于套保）
+   229→        trading_sessions: 交易时段列表
+   230→        has_night_session: 是否有夜盘
+   231→        night_session_end: 夜盘结束时间
+   232→        fee_type: 手续费类型（按手/按金额）
+   233→        fee_rate: 手续费率
+   234→        fee_per_lot: 每手手续费（按手收费时）
+   235→        close_today_fee_multiplier: 平今手续费倍数
+   236→        product_class: 品种分类（农产品/金属/能源/金融）
+   237→        is_main_contract: 是否主力合约
+   238→        delivery_month: 交割月
+   239→        days_to_delivery: 距交割日天数
+   240→    """
+   241→
+   242→    # 基础字段
+   243→    symbol: str
+   244→    product: str
+   245→    exchange: str
+   246→    expire_date: str
+   247→    tick_size: float
+   248→    multiplier: int
+   249→    max_order_volume: int
+   250→    position_limit: int
+   251→
+   252→    # 涨跌停板字段
+   253→    upper_limit_pct: float = 0.10        # 默认10%
+   254→    lower_limit_pct: float = 0.10
+   255→    settlement_price: float = 0.0
+   256→    upper_limit_price: float = 0.0
+   257→    lower_limit_price: float = 0.0
+   258→
+   259→    # 保证金字段
+   260→    margin_rate_long: float = 0.10       # 默认10%
+   261→    margin_rate_short: float = 0.10
+   262→    spec_margin_rate: float = 0.12       # 投机保证金通常更高
+   263→
+   264→    # 交易时段字段
+   265→    trading_sessions: tuple[tuple[str, str], ...] = (
+   266→        ("09:00", "10:15"),
+   267→        ("10:30", "11:30"),
+   268→        ("13:30", "15:00"),
+   269→    )
+   270→    has_night_session: bool = False
+   271→    night_session_end: str = ""          # 如 "23:00", "01:00", "02:30"
+   272→
+   273→    # 手续费字段
+   274→    fee_type: str = "rate"               # "rate" 或 "per_lot"
+   275→    fee_rate: float = 0.0001             # 按金额收费时的费率
+   276→    fee_per_lot: float = 0.0             # 按手收费时的每手费用
+   277→    close_today_fee_multiplier: float = 1.0  # 平今手续费倍数
+   278→
+   279→    # 分类字段
+   280→    product_class: str = "OTHER"         # AGRICULTURE/METAL/ENERGY/FINANCIAL/OTHER
+   281→    is_main_contract: bool = False
+   282→    delivery_month: str = ""
+   283→    days_to_delivery: int = 999
+   284→
+   285→    def compute_limit_prices(self, settlement: float) -> tuple[float, float]:
+   286→        """计算涨跌停价.
+   287→
+   288→        参数:
+   289→            settlement: 昨结算价
+   290→
+   291→        返回:
+   292→            (涨停价, 跌停价)
+   293→        """
+   294→        upper = round(settlement * (1 + self.upper_limit_pct) / self.tick_size) * self.tick_size
+   295→        lower = round(settlement * (1 - self.lower_limit_pct) / self.tick_size) * self.tick_size
+   296→        return (upper, max(lower, self.tick_size))
+   297→```
+   298→
+   299→### 2.2 交易所差异化配置
+   300→
+   301→#### P1-001: 六大交易所配置表
+   302→
+   303→```python
+   304→# src/market/exchange_config.py
+   305→"""中国期货交易所配置模块."""
+   306→
+   307→from dataclasses import dataclass
+   308→from enum import Enum
+   309→
+   310→
+   311→class Exchange(Enum):
+   312→    """中国期货交易所枚举."""
+   313→
+   314→    SHFE = "SHFE"    # 上海期货交易所
+   315→    DCE = "DCE"      # 大连商品交易所
+   316→    CZCE = "CZCE"    # 郑州商品交易所
+   317→    CFFEX = "CFFEX"  # 中国金融期货交易所
+   318→    GFEX = "GFEX"    # 广州期货交易所
+   319→    INE = "INE"      # 上海国际能源交易中心
+   320→
+   321→
+   322→@dataclass(frozen=True)
+   323→class ExchangeConfig:
+   324→    """交易所配置."""
+   325→
+   326→    exchange: Exchange
+   327→    code_case: str                       # 合约代码大小写（upper/lower）
+   328→    default_limit_pct: float             # 默认涨跌停幅度
+   329→    default_margin_rate: float           # 默认保证金率
+   330→    night_session_available: bool        # 是否有夜盘
+   331→    order_ref_format: str                # 订单引用格式
+   332→
+   333→
+   334→# 交易所配置表（2025年最新）
+   335→EXCHANGE_CONFIGS: dict[Exchange, ExchangeConfig] = {
+   336→    Exchange.SHFE: ExchangeConfig(
+   337→        exchange=Exchange.SHFE,
+   338→        code_case="lower",               # 如：cu2501
+   339→        default_limit_pct=0.06,          # 6%
+   340→        default_margin_rate=0.08,
+   341→        night_session_available=True,
+   342→        order_ref_format="SHFE_{symbol}_{seq}",
+   343→    ),
+   344→    Exchange.DCE: ExchangeConfig(
+   345→        exchange=Exchange.DCE,
+   346→        code_case="lower",               # 如：c2501
+   347→        default_limit_pct=0.05,          # 5%
+   348→        default_margin_rate=0.08,
+   349→        night_session_available=True,
+   350→        order_ref_format="DCE_{symbol}_{seq}",
+   351→    ),
+   352→    Exchange.CZCE: ExchangeConfig(
+   353→        exchange=Exchange.CZCE,
+   354→        code_case="upper",               # 如：CF501（注意年份只有1位）
+   355→        default_limit_pct=0.05,          # 5%
+   356→        default_margin_rate=0.07,
+   357→        night_session_available=True,
+   358→        order_ref_format="CZCE_{symbol}_{seq}",
+   359→    ),
+   360→    Exchange.CFFEX: ExchangeConfig(
+   361→        exchange=Exchange.CFFEX,
+   362→        code_case="upper",               # 如：IF2501
+   363→        default_limit_pct=0.10,          # 10%
+   364→        default_margin_rate=0.12,
+   365→        night_session_available=False,   # 无夜盘
+   366→        order_ref_format="CFFEX_{symbol}_{seq}",
+   367→    ),
+   368→    Exchange.GFEX: ExchangeConfig(
+   369→        exchange=Exchange.GFEX,
+   370→        code_case="lower",               # 如：lc2501
+   371→        default_limit_pct=0.08,          # 8%
+   372→        default_margin_rate=0.12,
+   373→        night_session_available=False,   # 碳酸锂无夜盘
+   374→        order_ref_format="GFEX_{symbol}_{seq}",
+   375→    ),
+   376→    Exchange.INE: ExchangeConfig(
+   377→        exchange=Exchange.INE,
+   378→        code_case="lower",               # 如：sc2501
+   379→        default_limit_pct=0.08,          # 8%
+   380→        default_margin_rate=0.10,
+   381→        night_session_available=True,    # 原油有夜盘
+   382→        order_ref_format="INE_{symbol}_{seq}",
+   383→    ),
+   384→}
+   385→```
+   386→
+   387→### 2.3 夜盘交易时段支持
+   388→
+   389→#### P0-005: 夜盘交易日归属逻辑
+   390→
+   391→```python
+   392→# src/market/trading_calendar.py
+   393→"""中国期货交易日历模块."""
+   394→
+   395→from datetime import date, datetime, time, timedelta
+   396→from enum import Enum
+   397→
+   398→
+   399→class TradingSession(Enum):
+   400→    """交易时段枚举."""
+   401→
+   402→    PRE_MARKET = "pre_market"       # 集合竞价
+   403→    MORNING_1 = "morning_1"         # 09:00-10:15
+   404→    MORNING_2 = "morning_2"         # 10:30-11:30
+   405→    AFTERNOON = "afternoon"         # 13:30-15:00
+   406→    NIGHT = "night"                 # 夜盘
+   407→    CLOSED = "closed"               # 休市
+   408→
+   409→
+   410→# 夜盘结束时间配置（按品种分类）
+   411→NIGHT_SESSION_END_TIMES: dict[str, time] = {
+   412→    # 23:00 结束
+   413→    "cu": time(23, 0),   # 铜
+   414→    "al": time(23, 0),   # 铝
+   415→    "zn": time(23, 0),   # 锌
+   416→    "pb": time(23, 0),   # 铅
+   417→    "ni": time(23, 0),   # 镍
+   418→    "sn": time(23, 0),   # 锡
+   419→
+   420→    # 01:00 结束
+   421→    "au": time(1, 0),    # 黄金
+   422→    "ag": time(1, 0),    # 白银
+   423→
+   424→    # 02:30 结束
+   425→    "sc": time(2, 30),   # 原油
+   426→
+   427→    # 23:30 结束
+   428→    "rb": time(23, 30),  # 螺纹钢
+   429→    "hc": time(23, 30),  # 热轧卷板
+   430→
+   431→    # ... 其他品种
+   432→}
+   433→
+   434→
+   435→class ChinaTradingCalendar:
+   436→    """中国期货交易日历.
+   437→
+   438→    功能:
+   439→        - 判断交易日
+   440→        - 判断当前交易时段
+   441→        - 夜盘交易日归属
+   442→        - 节假日处理
+   443→    """
+   444→
+   445→    def get_trading_date(self, dt: datetime, product: str) -> date:
+   446→        """获取给定时间的交易日归属.
+   447→
+   448→        夜盘规则：21:00之后的交易归属于下一个交易日
+   449→
+   450→        参数:
+   451→            dt: 日期时间
+   452→            product: 品种代码
+   453→
+   454→        返回:
+   455→            交易日
+   456→        """
+   457→        current_date = dt.date()
+   458→        current_time = dt.time()
+   459→
+   460→        # 21:00 之后视为下一交易日的夜盘
+   461→        if current_time >= time(21, 0):
+   462→            # 获取下一个交易日（跳过周末和节假日）
+   463→            return self._next_trading_day(current_date)
+   464→
+   465→        # 00:00-02:30 之间的交易仍属于昨日夜盘的交易日
+   466→        night_end = NIGHT_SESSION_END_TIMES.get(product, time(23, 0))
+   467→        if current_time < night_end:
+   468→            return current_date  # 已经是正确的交易日
+   469→
+   470→        return current_date
+   471→
+   472→    def _next_trading_day(self, current: date) -> date:
+   473→        """获取下一个交易日.
+   474→
+   475→        参数:
+   476→            current: 当前日期
+   477→
+   478→        返回:
+   479→            下一个交易日
+   480→        """
+   481→        next_day = current + timedelta(days=1)
+   482→
+   483→        # 跳过周末
+   484→        while next_day.weekday() >= 5:
+   485→            next_day += timedelta(days=1)
+   486→
+   487→        # TODO: 检查节假日列表
+   488→
+   489→        return next_day
+   490→
+   491→    def get_current_session(self, dt: datetime, product: str) -> TradingSession:
+   492→        """获取当前交易时段.
+   493→
+   494→        参数:
+   495→            dt: 日期时间
+   496→            product: 品种代码
+   497→
+   498→        返回:
+   499→            交易时段
+   500→        """
+   501→        t = dt.time()
+   502→
+   503→        # 集合竞价
+   504→        if time(8, 55) <= t < time(9, 0):
+   505→            return TradingSession.PRE_MARKET
+   506→
+   507→        # 早盘第一节
+   508→        if time(9, 0) <= t < time(10, 15):
+   509→            return TradingSession.MORNING_1
+   510→
+   511→        # 早盘第二节
+   512→        if time(10, 30) <= t < time(11, 30):
+   513→            return TradingSession.MORNING_2
+   514→
+   515→        # 下午盘
+   516→        if time(13, 30) <= t < time(15, 0):
+   517→            return TradingSession.AFTERNOON
+   518→
+   519→        # 夜盘
+   520→        night_end = NIGHT_SESSION_END_TIMES.get(product, time(23, 0))
+   521→        if t >= time(21, 0) or t < night_end:
+   522→            return TradingSession.NIGHT
+   523→
+   524→        return TradingSession.CLOSED
+   525→```
+   526→
+   527→### 2.4 新增 Required Scenarios
+   528→
+   529→| rule_id | component | 描述 |
+   530→|---------|-----------|------|
+   531→| `MKT.INST.LIMIT_PRICE` | market.instrument_cache | 涨跌停价正确计算 |
+   532→| `MKT.INST.MARGIN_RATE` | market.instrument_cache | 保证金率正确获取 |
+   533→| `MKT.INST.NIGHT_SESSION` | market.instrument_cache | 夜盘时段正确识别 |
+   534→| `MKT.CALENDAR.TRADING_DATE` | market.trading_calendar | 交易日归属正确 |
+   535→| `MKT.EXCHANGE.DIFF_CONFIG` | market.exchange_config | 交易所差异化配置 |
+   536→
+   537→---
+   538→
+   539→## 第三部分：成本模型改进（第6章 Phase 1）
+   540→
+   541→### 3.1 中国期货手续费特化
+   542→
+   543→#### P0-006: 按手/按金额混合收费
+   544→
+   545→**现状**: 当前 `CostEstimator` 仅支持按金额收费，不支持按手收费。
+   546→
+   547→**改进**:
+   548→
+   549→```python
+   550→# src/cost/china_fee_calculator.py
+   551→"""中国期货手续费计算模块."""
+   552→
+   553→from dataclasses import dataclass
+   554→from enum import Enum
+   555→
+   556→
+   557→class FeeType(Enum):
+   558→    """手续费类型."""
+   559→
+   560→    RATE = "rate"           # 按金额（万分之X）
+   561→    PER_LOT = "per_lot"     # 按手（每手X元）
+   562→
+   563→
+   564→@dataclass(frozen=True)
+   565→class FeeConfig:
+   566→    """手续费配置."""
+   567→
+   568→    fee_type: FeeType
+   569→    open_fee: float          # 开仓费（费率或每手费用）
+   570→    close_fee: float         # 平仓费
+   571→    close_today_fee: float   # 平今费
+   572→
+   573→
+   574→# 2025年主流品种手续费配置（示例）
+   575→FEE_CONFIGS: dict[str, FeeConfig] = {
+   576→    # 按手收费品种
+   577→    "c": FeeConfig(FeeType.PER_LOT, 1.2, 1.2, 1.2),       # 玉米
+   578→    "cs": FeeConfig(FeeType.PER_LOT, 1.5, 1.5, 1.5),      # 淀粉
+   579→    "jd": FeeConfig(FeeType.PER_LOT, 1.5, 1.5, 1.5),      # 鸡蛋
+   580→    "lh": FeeConfig(FeeType.PER_LOT, 2.0, 2.0, 2.0),      # 生猪
+   581→
+   582→    # 按金额收费品种
+   583→    "cu": FeeConfig(FeeType.RATE, 0.00005, 0.00005, 0.00005),  # 铜
+   584→    "au": FeeConfig(FeeType.RATE, 0.00002, 0.00002, 0.00002),  # 黄金
+   585→    "ag": FeeConfig(FeeType.RATE, 0.00005, 0.00005, 0.00005),  # 白银
+   586→    "rb": FeeConfig(FeeType.RATE, 0.0001, 0.0001, 0.0001),     # 螺纹钢
+   587→
+   588→    # 平今减免/加收品种
+   589→    "IF": FeeConfig(FeeType.RATE, 0.000023, 0.000023, 0.000345),  # 股指（平今15倍）
+   590→    "IC": FeeConfig(FeeType.RATE, 0.000023, 0.000023, 0.000345),
+   591→    "IH": FeeConfig(FeeType.RATE, 0.000023, 0.000023, 0.000345),
+   592→    "IM": FeeConfig(FeeType.RATE, 0.000023, 0.000023, 0.000345),
+   593→}
+   594→
+   595→
+   596→class ChinaFeeCalculator:
+   597→    """中国期货手续费计算器.
+   598→
+   599→    功能:
+   600→        - 支持按手/按金额两种收费模式
+   601→        - 支持平今手续费差异化
+   602→        - 支持交易所手续费 + 期货公司加收
+   603→    """
+   604→
+   605→    # 期货公司加收比例（默认）
+   606→    BROKER_SURCHARGE_RATE = 0.0  # 可配置
+   607→
+   608→    def calculate_fee(
+   609→        self,
+   610→        product: str,
+   611→        price: float,
+   612→        volume: int,
+   613→        multiplier: int,
+   614→        is_open: bool,
+   615→        is_close_today: bool = False,
+   616→    ) -> float:
+   617→        """计算手续费.
+   618→
+   619→        参数:
+   620→            product: 品种代码
+   621→            price: 成交价格
+   622→            volume: 成交手数
+   623→            multiplier: 合约乘数
+   624→            is_open: 是否开仓
+   625→            is_close_today: 是否平今
+   626→
+   627→        返回:
+   628→            手续费金额
+   629→        """
+   630→        config = FEE_CONFIGS.get(product)
+   631→        if config is None:
+   632→            # 使用默认配置
+   633→            config = FeeConfig(FeeType.RATE, 0.0001, 0.0001, 0.0001)
+   634→
+   635→        # 选择费率
+   636→        if is_open:
+   637→            fee_value = config.open_fee
+   638→        elif is_close_today:
+   639→            fee_value = config.close_today_fee
+   640→        else:
+   641→            fee_value = config.close_fee
+   642→
+   643→        # 计算手续费
+   644→        if config.fee_type == FeeType.RATE:
+   645→            # 按金额：成交金额 × 费率
+   646→            notional = price * volume * multiplier
+   647→            exchange_fee = notional * fee_value
+   648→        else:
+   649→            # 按手：手数 × 每手费用
+   650→            exchange_fee = volume * fee_value
+   651→
+   652→        # 加上期货公司加收
+   653→        broker_fee = exchange_fee * self.BROKER_SURCHARGE_RATE
+   654→
+   655→        return exchange_fee + broker_fee
+   656→```
+   657→
+   658→### 3.2 新增 Required Scenarios
+   659→
+   660→| rule_id | component | 描述 |
+   661→|---------|-----------|------|
+   662→| `COST.FEE.PER_LOT` | cost.china_fee | 按手收费正确计算 |
+   663→| `COST.FEE.RATE_BASED` | cost.china_fee | 按金额收费正确计算 |
+   664→| `COST.FEE.CLOSE_TODAY` | cost.china_fee | 平今手续费正确计算 |
+   665→| `COST.FEE.EXCHANGE_DIFF` | cost.china_fee | 交易所差异化费率 |
+   666→
+   667→---
+   668→
+   669→## 第四部分：保护层改进（第7章 Phase 2）
+   670→
+   671→### 4.1 涨跌停保护
+   672→
+   673→#### P0-007: 涨跌停价格检查
+   674→
+   675→```python
+   676→# src/execution/protection/limit_price.py
+   677→"""涨跌停保护模块."""
+   678→
+   679→from dataclasses import dataclass
+   680→from enum import Enum
+   681→
+   682→
+   683→class LimitPriceAction(Enum):
+   684→    """涨跌停触发动作."""
+   685→
+   686→    REJECT = "reject"               # 直接拒绝
+   687→    ADJUST_TO_LIMIT = "adjust"      # 调整到涨跌停价
+   688→    WARN_AND_PASS = "warn"          # 警告但放行
+   689→
+   690→
+   691→@dataclass(frozen=True)
+   692→class LimitPriceCheckResult:
+   693→    """涨跌停检查结果."""
+   694→
+   695→    passed: bool
+   696→    original_price: float
+   697→    adjusted_price: float | None
+   698→    reason: str
+   699→
+   700→
+   701→class LimitPriceGuard:
+   702→    """涨跌停保护器.
+   703→
+   704→    功能:
+   705→        - 检查委托价格是否超出涨跌停板
+   706→        - 支持自动调整到涨跌停价
+   707→        - 检测连续涨跌停（流动性风险）
+   708→    """
+   709→
+   710→    def __init__(
+   711→        self,
+   712→        action: LimitPriceAction = LimitPriceAction.REJECT,
+   713→    ) -> None:
+   714→        """初始化涨跌停保护器.
+   715→
+   716→        参数:
+   717→            action: 触发时的处理动作
+   718→        """
+   719→        self._action = action
+   720→        self._consecutive_limits: dict[str, int] = {}  # 连续涨跌停计数
+   721→
+   722→    def check(
+   723→        self,
+   724→        symbol: str,
+   725→        price: float,
+   726→        upper_limit: float,
+   727→        lower_limit: float,
+   728→        last_price: float,
+   729→    ) -> LimitPriceCheckResult:
+   730→        """检查价格是否在涨跌停范围内.
+   731→
+   732→        参数:
+   733→            symbol: 合约代码
+   734→            price: 委托价格
+   735→            upper_limit: 涨停价
+   736→            lower_limit: 跌停价
+   737→            last_price: 最新成交价
+   738→
+   739→        返回:
+   740→            检查结果
+   741→        """
+   742→        # 检查是否已触及涨跌停
+   743→        at_upper_limit = abs(last_price - upper_limit) < 1e-6
+   744→        at_lower_limit = abs(last_price - lower_limit) < 1e-6
+   745→
+   746→        if at_upper_limit or at_lower_limit:
+   747→            # 更新连续涨跌停计数
+   748→            self._consecutive_limits[symbol] = (
+   749→                self._consecutive_limits.get(symbol, 0) + 1
+   750→            )
+   751→        else:
+   752→            self._consecutive_limits[symbol] = 0
+   753→
+   754→        # 价格在范围内
+   755→        if lower_limit <= price <= upper_limit:
+   756→            return LimitPriceCheckResult(
+   757→                passed=True,
+   758→                original_price=price,
+   759→                adjusted_price=None,
+   760→                reason="价格在涨跌停范围内",
+   761→            )
+   762→
+   763→        # 价格超出范围
+   764→        if self._action == LimitPriceAction.REJECT:
+   765→            return LimitPriceCheckResult(
+   766→                passed=False,
+   767→                original_price=price,
+   768→                adjusted_price=None,
+   769→                reason=f"价格 {price} 超出涨跌停范围 [{lower_limit}, {upper_limit}]",
+   770→            )
+   771→
+   772→        if self._action == LimitPriceAction.ADJUST_TO_LIMIT:
+   773→            adjusted = max(lower_limit, min(upper_limit, price))
+   774→            return LimitPriceCheckResult(
+   775→                passed=True,
+   776→                original_price=price,
+   777→                adjusted_price=adjusted,
+   778→                reason=f"价格从 {price} 调整到 {adjusted}",
+   779→            )
+   780→
+   781→        # WARN_AND_PASS
+   782→        return LimitPriceCheckResult(
+   783→            passed=True,
+   784→            original_price=price,
+   785→            adjusted_price=None,
+   786→            reason=f"警告：价格 {price} 超出涨跌停范围，但允许通过",
+   787→        )
+   788→
+   789→    def get_consecutive_limit_count(self, symbol: str) -> int:
+   790→        """获取连续涨跌停次数.
+   791→
+   792→        参数:
+   793→            symbol: 合约代码
+   794→
+   795→        返回:
+   796→            连续涨跌停次数
+   797→        """
+   798→        return self._consecutive_limits.get(symbol, 0)
+   799→```
+   800→
+   801→### 4.2 保证金监控
+   802→
+   803→#### P0-008: 实时保证金计算
+   804→
+   805→```python
+   806→# src/execution/protection/margin_monitor.py
+   807→"""保证金监控模块."""
+   808→
+   809→from dataclasses import dataclass
+   810→from enum import Enum
+   811→
+   812→
+   813→class MarginLevel(Enum):
+   814→    """保证金水平."""
+   815→
+   816→    SAFE = "safe"           # 安全：< 70%
+   817→    WARNING = "warning"     # 警告：70-90%
+   818→    DANGER = "danger"       # 危险：90-100%
+   819→    CRITICAL = "critical"   # 临界：>= 100%（可能强平）
+   820→
+   821→
+   822→@dataclass
+   823→class MarginStatus:
+   824→    """保证金状态."""
+   825→
+   826→    total_equity: float          # 总权益
+   827→    margin_used: float           # 占用保证金
+   828→    margin_available: float      # 可用保证金
+   829→    margin_ratio: float          # 保证金使用率
+   830→    level: MarginLevel           # 风险等级
+   831→    can_open_long: bool          # 可否开多
+   832→    can_open_short: bool         # 可否开空
+   833→
+   834→
+   835→class MarginMonitor:
+   836→    """保证金监控器.
+   837→
+   838→    功能:
+   839→        - 实时计算保证金使用率
+   840→        - 多级预警
+   841→        - 开仓可用性判断
+   842→    """
+   843→
+   844→    # 风险阈值
+   845→    WARNING_THRESHOLD = 0.70     # 70% 警告
+   846→    DANGER_THRESHOLD = 0.90      # 90% 危险
+   847→    CRITICAL_THRESHOLD = 1.00    # 100% 临界
+   848→
+   849→    # 开仓预留保证金比例
+   850→    OPEN_RESERVE_RATIO = 0.80    # 80% 时禁止开仓
+   851→
+   852→    def calculate_margin_status(
+   853→        self,
+   854→        total_equity: float,
+   855→        margin_used: float,
+   856→    ) -> MarginStatus:
+   857→        """计算保证金状态.
+   858→
+   859→        参数:
+   860→            total_equity: 总权益
+   861→            margin_used: 占用保证金
+   862→
+   863→        返回:
+   864→            保证金状态
+   865→        """
+   866→        if total_equity <= 0:
+   867→            return MarginStatus(
+   868→                total_equity=total_equity,
+   869→                margin_used=margin_used,
+   870→                margin_available=0,
+   871→                margin_ratio=1.0,
+   872→                level=MarginLevel.CRITICAL,
+   873→                can_open_long=False,
+   874→                can_open_short=False,
+   875→            )
+   876→
+   877→        margin_ratio = margin_used / total_equity
+   878→        margin_available = total_equity - margin_used
+   879→
+   880→        # 确定风险等级
+   881→        if margin_ratio >= self.CRITICAL_THRESHOLD:
+   882→            level = MarginLevel.CRITICAL
+   883→        elif margin_ratio >= self.DANGER_THRESHOLD:
+   884→            level = MarginLevel.DANGER
+   885→        elif margin_ratio >= self.WARNING_THRESHOLD:
+   886→            level = MarginLevel.WARNING
+   887→        else:
+   888→            level = MarginLevel.SAFE
+   889→
+   890→        # 判断是否可以开仓
+   891→        can_open = margin_ratio < self.OPEN_RESERVE_RATIO
+   892→
+   893→        return MarginStatus(
+   894→            total_equity=total_equity,
+   895→            margin_used=margin_used,
+   896→            margin_available=margin_available,
+   897→            margin_ratio=margin_ratio,
+   898→            level=level,
+   899→            can_open_long=can_open,
+   900→            can_open_short=can_open,
+   901→        )
+   902→
+   903→    def estimate_margin_after_order(
+   904→        self,
+   905→        current_margin: float,
+   906→        order_margin: float,
+   907→        total_equity: float,
+   908→    ) -> tuple[float, MarginLevel]:
+   909→        """估算下单后的保证金状态.
+   910→
+   911→        参数:
+   912→            current_margin: 当前占用保证金
+   913→            order_margin: 订单所需保证金
+   914→            total_equity: 总权益
+   915→
+   916→        返回:
+   917→            (预估保证金比率, 风险等级)
+   918→        """
+   919→        new_margin = current_margin + order_margin
+   920→        new_ratio = new_margin / total_equity if total_equity > 0 else 1.0
+   921→
+   922→        if new_ratio >= self.CRITICAL_THRESHOLD:
+   923→            level = MarginLevel.CRITICAL
+   924→        elif new_ratio >= self.DANGER_THRESHOLD:
+   925→            level = MarginLevel.DANGER
+   926→        elif new_ratio >= self.WARNING_THRESHOLD:
+   927→            level = MarginLevel.WARNING
+   928→        else:
+   929→            level = MarginLevel.SAFE
+   930→
+   931→        return (new_ratio, level)
+   932→```
+   933→
+   934→### 4.3 新增 Required Scenarios
+   935→
+   936→| rule_id | component | 描述 |
+   937→|---------|-----------|------|
+   938→| `EXEC.LIMIT.PRICE_CHECK` | execution.protection.limit_price | 涨跌停价格检查 |
+   939→| `EXEC.LIMIT.CONSECUTIVE` | execution.protection.limit_price | 连续涨跌停检测 |
+   940→| `EXEC.MARGIN.REALTIME` | execution.protection.margin_monitor | 实时保证金计算 |
+   941→| `EXEC.MARGIN.LEVEL_WARN` | execution.protection.margin_monitor | 保证金预警 |
+   942→| `EXEC.MARGIN.OPEN_GATE` | execution.protection.margin_monitor | 保证金开仓门槛 |
+   943→
+   944→---
+   945→
+   946→## 第五部分：Guardian 守护层改进（第6章 Phase 1）
+   947→
+   948→### 5.1 涨跌停触发器
+   949→
+   950→#### P0-009: 涨跌停相关触发器
+   951→
+   952→```python
+   953→# src/guardian/triggers_china.py
+   954→"""中国期货市场特化触发器."""
+   955→
+   956→from dataclasses import dataclass
+   957→from enum import Enum
+   958→
+   959→
+   960→class ChinaTriggerType(Enum):
+   961→    """中国期货市场特化触发器类型."""
+   962→
+   963→    LIMIT_PRICE_HIT = "limit_price_hit"           # 触及涨跌停
+   964→    CONSECUTIVE_LIMIT = "consecutive_limit"       # 连续涨跌停
+   965→    MARGIN_WARNING = "margin_warning"             # 保证金警告
+   966→    MARGIN_DANGER = "margin_danger"               # 保证金危险
+   967→    NIGHT_SESSION_END = "night_session_end"       # 夜盘结束
+   968→    DELIVERY_APPROACHING = "delivery_approaching" # 交割临近
+   969→    TRADING_HALT = "trading_halt"                 # 交易所暂停交易
+   970→
+   971→
+   972→@dataclass
+   973→class ChinaTriggerEvent:
+   974→    """中国期货市场触发事件."""
+   975→
+   976→    trigger_type: ChinaTriggerType
+   977→    symbol: str
+   978→    details: dict
+   979→    suggested_action: str
+   980→
+   981→
+   982→class LimitPriceTrigger:
+   983→    """涨跌停触发器.
+   984→
+   985→    功能:
+   986→        - 检测单个品种触及涨跌停
+   987→        - 检测连续涨跌停（流动性风险）
+   988→        - 建议降级到 REDUCE_ONLY
+   989→    """
+   990→
+   991→    # 连续涨跌停阈值
+   992→    CONSECUTIVE_LIMIT_THRESHOLD = 2
+   993→
+   994→    def __init__(self) -> None:
+   995→        """初始化触发器."""
+   996→        self._limit_counts: dict[str, int] = {}
+   997→
+   998→    def check(
+   999→        self,
+  1000→        symbol: str,
+  1001→        last_price: float,
+  1002→        upper_limit: float,
+  1003→        lower_limit: float,
+  1004→    ) -> ChinaTriggerEvent | None:
+  1005→        """检查涨跌停状态.
+  1006→
+  1007→        参数:
+  1008→            symbol: 合约代码
+  1009→            last_price: 最新价
+  1010→            upper_limit: 涨停价
+  1011→            lower_limit: 跌停价
+  1012→
+  1013→        返回:
+  1014→            触发事件（如果触发）
+  1015→        """
+  1016→        at_upper = abs(last_price - upper_limit) < 1e-6
+  1017→        at_lower = abs(last_price - lower_limit) < 1e-6
+  1018→
+  1019→        if at_upper or at_lower:
+  1020→            self._limit_counts[symbol] = self._limit_counts.get(symbol, 0) + 1
+  1021→            count = self._limit_counts[symbol]
+  1022→
+  1023→            direction = "涨停" if at_upper else "跌停"
+  1024→
+  1025→            if count >= self.CONSECUTIVE_LIMIT_THRESHOLD:
+  1026→                return ChinaTriggerEvent(
+  1027→                    trigger_type=ChinaTriggerType.CONSECUTIVE_LIMIT,
+  1028→                    symbol=symbol,
+  1029→                    details={
+  1030→                        "direction": direction,
+  1031→                        "consecutive_count": count,
+  1032→                        "price": last_price,
+  1033→                    },
+  1034→                    suggested_action="REDUCE_ONLY",
+  1035→                )
+  1036→
+  1037→            return ChinaTriggerEvent(
+  1038→                trigger_type=ChinaTriggerType.LIMIT_PRICE_HIT,
+  1039→                symbol=symbol,
+  1040→                details={
+  1041→                    "direction": direction,
+  1042→                    "price": last_price,
+  1043→                },
+  1044→                suggested_action="WARN",
+  1045→            )
+  1046→
+  1047→        # 重置计数
+  1048→        self._limit_counts[symbol] = 0
+  1049→        return None
+  1050→
+  1051→
+  1052→class MarginTrigger:
+  1053→    """保证金触发器.
+  1054→
+  1055→    功能:
+  1056→        - 监控保证金使用率
+  1057→        - 多级预警
+  1058→        - 建议降级或强平
+  1059→    """
+  1060→
+  1061→    WARNING_RATIO = 0.70
+  1062→    DANGER_RATIO = 0.90
+  1063→
+  1064→    def check(self, margin_ratio: float) -> ChinaTriggerEvent | None:
+  1065→        """检查保证金状态.
+  1066→
+  1067→        参数:
+  1068→            margin_ratio: 保证金使用率
+  1069→
+  1070→        返回:
+  1071→            触发事件（如果触发）
+  1072→        """
+  1073→        if margin_ratio >= self.DANGER_RATIO:
+  1074→            return ChinaTriggerEvent(
+  1075→                trigger_type=ChinaTriggerType.MARGIN_DANGER,
+  1076→                symbol="GLOBAL",
+  1077→                details={"margin_ratio": margin_ratio},
+  1078→                suggested_action="HALTED",  # 停止交易
+  1079→            )
+  1080→
+  1081→        if margin_ratio >= self.WARNING_RATIO:
+  1082→            return ChinaTriggerEvent(
+  1083→                trigger_type=ChinaTriggerType.MARGIN_WARNING,
+  1084→                symbol="GLOBAL",
+  1085→                details={"margin_ratio": margin_ratio},
+  1086→                suggested_action="REDUCE_ONLY",  # 仅允许减仓
+  1087→            )
+  1088→
+  1089→        return None
+  1090→
+  1091→
+  1092→class DeliveryApproachingTrigger:
+  1093→    """交割临近触发器.
+  1094→
+  1095→    功能:
+  1096→        - 检测临近交割月的持仓
+  1097→        - 强制 REDUCE_ONLY
+  1098→        - 避免进入交割程序
+  1099→    """
+  1100→
+  1101→    # 提前天数
+  1102→    REDUCE_ONLY_DAYS = 5
+  1103→    HALT_DAYS = 2
+  1104→
+  1105→    def check(
+  1106→        self,
+  1107→        symbol: str,
+  1108→        days_to_delivery: int,
+  1109→        has_position: bool,
+  1110→    ) -> ChinaTriggerEvent | None:
+  1111→        """检查交割临近状态.
+  1112→
+  1113→        参数:
+  1114→            symbol: 合约代码
+  1115→            days_to_delivery: 距交割日天数
+  1116→            has_position: 是否有持仓
+  1117→
+  1118→        返回:
+  1119→            触发事件（如果触发）
+  1120→        """
+  1121→        if not has_position:
+  1122→            return None
+  1123→
+  1124→        if days_to_delivery <= self.HALT_DAYS:
+  1125→            return ChinaTriggerEvent(
+  1126→                trigger_type=ChinaTriggerType.DELIVERY_APPROACHING,
+  1127→                symbol=symbol,
+  1128→                details={
+  1129→                    "days_to_delivery": days_to_delivery,
+  1130→                    "severity": "CRITICAL",
+  1131→                },
+  1132→                suggested_action="FLATTEN",  # 强制平仓
+  1133→            )
+  1134→
+  1135→        if days_to_delivery <= self.REDUCE_ONLY_DAYS:
+  1136→            return ChinaTriggerEvent(
+  1137→                trigger_type=ChinaTriggerType.DELIVERY_APPROACHING,
+  1138→                symbol=symbol,
+  1139→                details={
+  1140→                    "days_to_delivery": days_to_delivery,
+  1141→                    "severity": "WARNING",
+  1142→                },
+  1143→                suggested_action="REDUCE_ONLY",
+  1144→            )
+  1145→
+  1146→        return None
+  1147→```
+  1148→
+  1149→### 5.2 新增 Required Scenarios
+  1150→
+  1151→| rule_id | component | 描述 |
+  1152→|---------|-----------|------|
+  1153→| `GUARD.TRIGGER.LIMIT_PRICE` | guardian.triggers_china | 涨跌停触发检测 |
+  1154→| `GUARD.TRIGGER.CONSECUTIVE_LIMIT` | guardian.triggers_china | 连续涨跌停检测 |
+  1155→| `GUARD.TRIGGER.MARGIN_LEVEL` | guardian.triggers_china | 保证金水平触发 |
+  1156→| `GUARD.TRIGGER.DELIVERY` | guardian.triggers_china | 交割临近触发 |
+  1157→| `GUARD.ACTION.DELIVERY_FLATTEN` | guardian.actions | 交割临近强平 |
+  1158→
+  1159→---
+  1160→
+  1161→## 第六部分：策略层改进（第8章 Phase 3）
+  1162→
+  1163→### 6.1 套利策略中国期货市场特化
+  1164→
+  1165→#### P1-002: 跨期套利交割月处理
+  1166→
+  1167→```python
+  1168→# src/strategy/calendar_arb/delivery_aware.py
+  1169→"""跨期套利交割月感知模块."""
+  1170→
+  1171→from dataclasses import dataclass
+  1172→from datetime import date
+  1173→
+  1174→
+  1175→@dataclass
+  1176→class DeliveryAwareConfig:
+  1177→    """交割感知配置."""
+  1178→
+  1179→    # 近月合约
+  1180→    near_reduce_only_days: int = 10      # 近月提前10天进入 REDUCE_ONLY
+  1181→    near_close_all_days: int = 5         # 近月提前5天全部平仓
+  1182→
+  1183→    # 远月合约
+  1184→    far_reduce_only_days: int = 5        # 远月提前5天进入 REDUCE_ONLY
+  1185→    far_close_all_days: int = 2          # 远月提前2天全部平仓
+  1186→
+  1187→    # 主力切换
+  1188→    roll_lookahead_days: int = 15        # 提前15天准备换月
+  1189→
+  1190→
+  1191→class DeliveryAwareCalendarArb:
+  1192→    """交割感知的跨期套利.
+  1193→
+  1194→    功能:
+  1195→        - 监控近远月交割日期
+  1196→        - 自动进入 REDUCE_ONLY
+  1197→        - 自动平仓避免交割
+  1198→        - 自动换月到新的近远月组合
+  1199→    """
+  1200→
+  1201→    def __init__(self, config: DeliveryAwareConfig | None = None) -> None:
+  1202→        """初始化.
+  1203→
+  1204→        参数:
+  1205→            config: 交割感知配置
+  1206→        """
+  1207→        self._config = config or DeliveryAwareConfig()
+  1208→
+  1209→    def get_strategy_mode(
+  1210→        self,
+  1211→        near_days_to_delivery: int,
+  1212→        far_days_to_delivery: int,
+  1213→    ) -> str:
+  1214→        """获取策略模式.
+  1215→
+  1216→        参数:
+  1217→            near_days_to_delivery: 近月距交割天数
+  1218→            far_days_to_delivery: 远月距交割天数
+  1219→
+  1220→        返回:
+  1221→            策略模式: "RUNNING" | "REDUCE_ONLY" | "CLOSE_ALL" | "ROLL"
+  1222→        """
+  1223→        # 近月即将交割
+  1224→        if near_days_to_delivery <= self._config.near_close_all_days:
+  1225→            return "CLOSE_ALL"
+  1226→
+  1227→        if near_days_to_delivery <= self._config.near_reduce_only_days:
+  1228→            return "REDUCE_ONLY"
+  1229→
+  1230→        # 远月即将交割
+  1231→        if far_days_to_delivery <= self._config.far_close_all_days:
+  1232→            return "CLOSE_ALL"
+  1233→
+  1234→        if far_days_to_delivery <= self._config.far_reduce_only_days:
+  1235→            return "REDUCE_ONLY"
+  1236→
+  1237→        # 准备换月
+  1238→        if near_days_to_delivery <= self._config.roll_lookahead_days:
+  1239→            return "ROLL"
+  1240→
+  1241→        return "RUNNING"
+  1242→
+  1243→    def should_roll_position(
+  1244→        self,
+  1245→        near_days_to_delivery: int,
+  1246→        new_near_symbol: str | None,
+  1247→        new_far_symbol: str | None,
+  1248→    ) -> bool:
+  1249→        """判断是否应该换月.
+  1250→
+  1251→        参数:
+  1252→            near_days_to_delivery: 近月距交割天数
+  1253→            new_near_symbol: 新的近月合约
+  1254→            new_far_symbol: 新的远月合约
+  1255→
+  1256→        返回:
+  1257→            是否应该换月
+  1258→        """
+  1259→        if near_days_to_delivery > self._config.roll_lookahead_days:
+  1260→            return False
+  1261→
+  1262→        if new_near_symbol is None or new_far_symbol is None:
+  1263→            return False
+  1264→
+  1265→        return True
+  1266→```
+  1267→
+  1268→### 6.2 新增 Required Scenarios
+  1269→
+  1270→| rule_id | component | 描述 |
+  1271→|---------|-----------|------|
+  1272→| `ARB.DELIVERY.NEAR_MONTH_GATE` | strategy.calendar_arb | 近月交割限制 |
+  1273→| `ARB.DELIVERY.AUTO_ROLL` | strategy.calendar_arb | 自动换月 |
+  1274→| `ARB.CHINA.SETTLEMENT_PRICE` | strategy.calendar_arb | 使用结算价计算 |
+  1275→
+  1276→---
+  1277→
+  1278→## 第七部分：风控增强改进（第26章）
+  1279→
+  1280→### 7.1 中国期货市场 VaR 特化
+  1281→
+  1282→#### P0-010: 涨跌停截断效应 VaR
+  1283→
+  1284→**现状**: 现有 VaR 计算器未考虑涨跌停板的截断效应。
+  1285→
+  1286→**改进**: 详细设计见 `docs/CHINA_FUTURES_UPGRADE_REPORT.md` §2.4
+  1287→
+  1288→关键改进点：
+  1289→1. **涨跌停截断修正**: 收益率在 ±limit_pct 处被截断
+  1290→2. **停板风险溢价**: 额外加入 10-20% 的风险溢价
+  1291→3. **连续涨跌停场景**: 模拟连续3天涨跌停的极端情况
+  1292→
+  1293→### 7.2 新增压力测试场景
+  1294→
+  1295→#### P1-003: 中国期货市场历史极端事件
+  1296→
+  1297→| 场景 | 描述 | 冲击参数 |
+  1298→|------|------|----------|
+  1299→| **2015年股灾** | 股指期货连续跌停 | IF -10% × 5天 |
+  1300→| **2016年黑色系暴涨** | 螺纹钢连续涨停 | RB +6% × 3天 |
+  1301→| **2020年原油负价** | 原油期货极端波动 | SC -15% 单日 |
+  1302→| **2021年动力煤暴跌** | 政策调控 | ZC -10% × 3天 |
+  1303→| **2022年碳酸锂暴跌** | 供需逆转 | LC -15% × 5天 |
+  1304→| **流动性枯竭** | 买卖价差扩大 | spread × 10 |
+  1305→| **夜盘跳空** | 外盘影响 | ±5% 开盘跳空 |
+  1306→
+  1307→```python
+  1308→# src/risk/stress_test_china.py
+  1309→"""中国期货市场压力测试模块."""
+  1310→
+  1311→from dataclasses import dataclass
+  1312→from enum import Enum
+  1313→
+  1314→
+  1315→class StressScenario(Enum):
+  1316→    """压力测试场景."""
+  1317→
+  1318→    STOCK_CRASH_2015 = "stock_crash_2015"
+  1319→    BLACK_SERIES_2016 = "black_series_2016"
+  1320→    OIL_NEGATIVE_2020 = "oil_negative_2020"
+  1321→    COAL_POLICY_2021 = "coal_policy_2021"
+  1322→    LITHIUM_CRASH_2022 = "lithium_crash_2022"
+  1323→    LIQUIDITY_DRY_UP = "liquidity_dry_up"
+  1324→    OVERNIGHT_GAP = "overnight_gap"
+  1325→
+  1326→
+  1327→@dataclass
+  1328→class StressTestResult:
+  1329→    """压力测试结果."""
+  1330→
+  1331→    scenario: StressScenario
+  1332→    portfolio_loss: float
+  1333→    var_breach: bool
+  1334→    margin_breach: bool
+  1335→    survival_probability: float
+  1336→    recommended_action: str
+  1337→
+  1338→
+  1339→STRESS_SCENARIO_PARAMS: dict[StressScenario, dict] = {
+  1340→    StressScenario.STOCK_CRASH_2015: {
+  1341→        "description": "2015年股灾：股指期货连续跌停",
+  1342→        "affected_products": ["IF", "IC", "IH", "IM"],
+  1343→        "daily_return": -0.10,
+  1344→        "consecutive_days": 5,
+  1345→        "spread_multiplier": 5.0,
+  1346→    },
+  1347→    StressScenario.BLACK_SERIES_2016: {
+  1348→        "description": "2016年黑色系暴涨",
+  1349→        "affected_products": ["rb", "hc", "i", "j", "jm"],
+  1350→        "daily_return": 0.06,
+  1351→        "consecutive_days": 3,
+  1352→        "spread_multiplier": 3.0,
+  1353→    },
+  1354→    StressScenario.OIL_NEGATIVE_2020: {
+  1355→        "description": "2020年原油负价事件",
+  1356→        "affected_products": ["sc", "fu", "bu"],
+  1357→        "daily_return": -0.15,
+  1358→        "consecutive_days": 1,
+  1359→        "spread_multiplier": 10.0,
+  1360→    },
+  1361→    StressScenario.COAL_POLICY_2021: {
+  1362→        "description": "2021年动力煤政策调控",
+  1363→        "affected_products": ["ZC"],
+  1364→        "daily_return": -0.10,
+  1365→        "consecutive_days": 3,
+  1366→        "spread_multiplier": 5.0,
+  1367→    },
+  1368→    StressScenario.LITHIUM_CRASH_2022: {
+  1369→        "description": "2022年碳酸锂暴跌",
+  1370→        "affected_products": ["lc"],
+  1371→        "daily_return": -0.15,
+  1372→        "consecutive_days": 5,
+  1373→        "spread_multiplier": 8.0,
+  1374→    },
+  1375→    StressScenario.LIQUIDITY_DRY_UP: {
+  1376→        "description": "流动性枯竭",
+  1377→        "affected_products": ["ALL"],
+  1378→        "daily_return": 0,
+  1379→        "consecutive_days": 1,
+  1380→        "spread_multiplier": 10.0,
+  1381→    },
+  1382→    StressScenario.OVERNIGHT_GAP: {
+  1383→        "description": "夜盘跳空",
+  1384→        "affected_products": ["ALL_WITH_NIGHT"],
+  1385→        "gap_pct": 0.05,
+  1386→        "consecutive_days": 1,
+  1387→        "spread_multiplier": 3.0,
+  1388→    },
+  1389→}
+  1390→```
+  1391→
+  1392→### 7.3 新增 Required Scenarios
+  1393→
+  1394→| rule_id | component | 描述 |
+  1395→|---------|-----------|------|
+  1396→| `RISK.VAR.LIMIT_ADJUSTED` | risk.var_calculator | 涨跌停调整 VaR |
+  1397→| `RISK.STRESS.CHINA_2015` | risk.stress_test_china | 2015股灾场景 |
+  1398→| `RISK.STRESS.LIMIT_HALT` | risk.stress_test_china | 连续涨跌停场景 |
+  1399→| `RISK.MARGIN.FORECAST` | risk.margin_forecast | 保证金预测 |
+  1400→
+  1401→---
+  1402→
+  1403→## 第八部分：程序化交易合规（新增章节）
+  1404→
+  1405→### 8.1 2025年新规要求
+  1406→
+  1407→基于证监会《期货市场程序化交易管理规定（试行）》（2025年10月实施）：
+  1408→
+  1409→#### P0-011: 合规检查模块
+  1410→
+  1411→```python
+  1412→# src/compliance/programmatic_trading.py
+  1413→"""程序化交易合规模块.
+  1414→
+  1415→依据: 证监会《期货市场程序化交易管理规定（试行）》(2025年10月实施)
+  1416→"""
+  1417→
+  1418→from dataclasses import dataclass
+  1419→from enum import Enum
+  1420→
+  1421→
+  1422→class ComplianceViolation(Enum):
+  1423→    """合规违规类型."""
+  1424→
+  1425→    ORDER_FREQUENCY_EXCEED = "order_freq_exceed"      # 报撤单频率超限
+  1426→    LARGE_ORDER_NO_REVIEW = "large_order_no_review"   # 大额订单未复核
+  1427→    STRATEGY_NOT_FILED = "strategy_not_filed"         # 策略未备案
+  1428→    RISK_CONTROL_MISSING = "risk_control_missing"     # 风控措施缺失
+  1429→
+  1430→
+  1431→@dataclass
+  1432→class ComplianceReport:
+  1433→    """合规报告."""
+  1434→
+  1435→    timestamp: float
+  1436→    trading_account: str
+  1437→    order_frequency_5s: int       # 5秒内报撤单次数
+  1438→    large_order_count: int        # 大额订单数量
+  1439→    reviewed_order_count: int     # 已复核订单数量
+  1440→    violations: list[ComplianceViolation]
+  1441→    compliant: bool
+  1442→
+  1443→
+  1444→class ProgrammaticTradingCompliance:
+  1445→    """程序化交易合规检查器.
+  1446→
+  1447→    功能:
+  1448→        - 报撤单频率监控（5秒50笔预警）
+  1449→        - 大额订单二次复核（30秒内）
+  1450→        - 策略备案检查
+  1451→        - 风控措施有效性验证
+  1452→    """
+  1453→
+  1454→    # 监管阈值
+  1455→    ORDER_FREQ_THRESHOLD_5S = 50      # 5秒内50笔预警
+  1456→    ORDER_FREQ_THRESHOLD_1MIN = 300   # 1分钟内300笔预警
+  1457→    LARGE_ORDER_THRESHOLD = 100       # 大额订单阈值（手）
+  1458→    REVIEW_TIMEOUT_S = 30             # 复核超时时间
+  1459→
+  1460→    def __init__(self) -> None:
+  1461→        """初始化合规检查器."""
+  1462→        self._order_timestamps: list[float] = []
+  1463→        self._pending_reviews: dict[str, float] = {}  # order_id -> submit_time
+  1464→        self._filed_strategies: set[str] = set()
+  1465→
+  1466→    def register_strategy(self, strategy_id: str) -> None:
+  1467→        """注册备案策略.
+  1468→
+  1469→        参数:
+  1470→            strategy_id: 策略ID
+  1471→        """
+  1472→        self._filed_strategies.add(strategy_id)
+  1473→
+  1474→    def check_order_frequency(self, current_ts: float) -> bool:
+  1475→        """检查报撤单频率.
+  1476→
+  1477→        参数:
+  1478→            current_ts: 当前时间戳
+  1479→
+  1480→        返回:
+  1481→            是否合规
+  1482→        """
+  1483→        # 清理5秒前的记录
+  1484→        cutoff_5s = current_ts - 5.0
+  1485→        self._order_timestamps = [
+  1486→            ts for ts in self._order_timestamps if ts > cutoff_5s
+  1487→        ]
+  1488→
+  1489→        # 添加当前订单
+  1490→        self._order_timestamps.append(current_ts)
+  1491→
+  1492→        return len(self._order_timestamps) <= self.ORDER_FREQ_THRESHOLD_5S
+  1493→
+  1494→    def require_manual_review(self, order_id: str, qty: int) -> bool:
+  1495→        """判断是否需要人工复核.
+  1496→
+  1497→        参数:
+  1498→            order_id: 订单ID
+  1499→            qty: 下单手数
+  1500→
+  1501→        返回:
+  1502→            是否需要人工复核
+  1503→        """
+  1504→        if qty >= self.LARGE_ORDER_THRESHOLD:
+  1505→            return True
+  1506→        return False
+  1507→
+  1508→    def check_strategy_filed(self, strategy_id: str) -> bool:
+  1509→        """检查策略是否已备案.
+  1510→
+  1511→        参数:
+  1512→            strategy_id: 策略ID
+  1513→
+  1514→        返回:
+  1515→            是否已备案
+  1516→        """
+  1517→        return strategy_id in self._filed_strategies
+  1518→
+  1519→    def generate_compliance_report(
+  1520→        self,
+  1521→        trading_account: str,
+  1522→        current_ts: float,
+  1523→    ) -> ComplianceReport:
+  1524→        """生成合规报告.
+  1525→
+  1526→        参数:
+  1527→            trading_account: 交易账户
+  1528→            current_ts: 当前时间戳
+  1529→
+  1530→        返回:
+  1531→            合规报告
+  1532→        """
+  1533→        violations = []
+  1534→
+  1535→        # 检查报撤单频率
+  1536→        order_freq_5s = len(self._order_timestamps)
+  1537→        if order_freq_5s > self.ORDER_FREQ_THRESHOLD_5S:
+  1538→            violations.append(ComplianceViolation.ORDER_FREQUENCY_EXCEED)
+  1539→
+  1540→        # 检查大额订单复核
+  1541→        expired_reviews = [
+  1542→            oid for oid, ts in self._pending_reviews.items()
+  1543→            if current_ts - ts > self.REVIEW_TIMEOUT_S
+  1544→        ]
+  1545→        if expired_reviews:
+  1546→            violations.append(ComplianceViolation.LARGE_ORDER_NO_REVIEW)
+  1547→
+  1548→        return ComplianceReport(
+  1549→            timestamp=current_ts,
+  1550→            trading_account=trading_account,
+  1551→            order_frequency_5s=order_freq_5s,
+  1552→            large_order_count=len(self._pending_reviews),
+  1553→            reviewed_order_count=0,  # TODO: 实现
+  1554→            violations=violations,
+  1555→            compliant=len(violations) == 0,
+  1556→        )
+  1557→```
+  1558→
+  1559→### 8.2 新增 Required Scenarios
+  1560→
+  1561→| rule_id | component | 描述 |
+  1562→|---------|-----------|------|
+  1563→| `COMPLY.ORDER_FREQ.CHECK` | compliance.programmatic | 报撤单频率检查 |
+  1564→| `COMPLY.LARGE_ORDER.REVIEW` | compliance.programmatic | 大额订单复核 |
+  1565→| `COMPLY.STRATEGY.FILED` | compliance.programmatic | 策略备案检查 |
+  1566→| `COMPLY.REPORT.GENERATE` | compliance.programmatic | 合规报告生成 |
+  1567→
+  1568→---
+  1569→
+  1570→## 第九部分：新增文件清单汇总
+  1571→
+  1572→### 9.1 按模块统计
+  1573→
+  1574→| 模块 | 新增文件 | 职责 |
+  1575→|------|----------|------|
+  1576→| `src/compliance/` | 2 | 中国期货合规检查 |
+  1577→| `src/market/` | 2 | 交易所配置、交易日历 |
+  1578→| `src/cost/` | 1 | 中国期货手续费 |
+  1579→| `src/execution/protection/` | 2 | 涨跌停保护、保证金监控 |
+  1580→| `src/guardian/` | 1 | 中国期货触发器 |
+  1581→| `src/risk/` | 1 | 中国期货压力测试 |
+  1582→| `src/strategy/calendar_arb/` | 1 | 交割感知套利 |
+  1583→| **总计** | **10** | - |
+  1584→
+  1585→### 9.2 完整文件路径
+  1586→
+  1587→```text
+  1588→src/
+  1589→├── compliance/                          # 新增目录
+  1590→│   ├── __init__.py
+  1591→│   ├── china_futures_rules.py           # 中国期货合规规则
+  1592→│   └── programmatic_trading.py          # 程序化交易合规
+  1593→│
+  1594→├── market/
+  1595→│   ├── exchange_config.py               # 交易所配置（新增）
+  1596→│   └── trading_calendar.py              # 交易日历（新增）
+  1597→│
+  1598→├── cost/
+  1599→│   └── china_fee_calculator.py          # 中国期货手续费（新增）
+  1600→│
+  1601→├── execution/
+  1602→│   └── protection/
+  1603→│       ├── limit_price.py               # 涨跌停保护（新增）
+  1604→│       └── margin_monitor.py            # 保证金监控（新增）
+  1605→│
+  1606→├── guardian/
+  1607→│   └── triggers_china.py                # 中国期货触发器（新增）
+  1608→│
+  1609→├── risk/
+  1610→│   └── stress_test_china.py             # 中国期货压力测试（新增）
+  1611→│
+  1612→└── strategy/
+  1613→    └── calendar_arb/
+  1614→        └── delivery_aware.py            # 交割感知套利（新增）
+  1615→```
+  1616→
+  1617→---
+  1618→
+  1619→## 第十部分：新增 Required Scenarios 汇总
+  1620→
+  1621→### 10.1 按类别统计
+  1622→
+  1623→| 类别 | 数量 | 说明 |
+  1624→|------|------|------|
+  1625→| 军规合规 | 5 | M12-M16 |
+  1626→| 行情层 | 5 | 涨跌停、保证金、夜盘 |
+  1627→| 成本层 | 4 | 手续费特化 |
+  1628→| 保护层 | 5 | 涨跌停保护、保证金监控 |
+  1629→| 守护层 | 5 | 中国期货触发器 |
+  1630→| 套利策略 | 3 | 交割感知 |
+  1631→| 风控层 | 4 | VaR、压力测试 |
+  1632→| 程序化合规 | 4 | 新规要求 |
+  1633→| **总计** | **35** | - |
+  1634→
+  1635→### 10.2 完整 Scenarios 列表
+  1636→
+  1637→```yaml
+  1638→# 中国期货市场特化 Scenarios (35 条)
+  1639→china_futures_scenarios:
+  1640→
+  1641→  # 军规合规 (5)
+  1642→  - COMPLY.M12.LIMIT_PRICE
+  1643→  - COMPLY.M13.CLOSE_TODAY
+  1644→  - COMPLY.M14.NIGHT_SESSION
+  1645→  - COMPLY.M15.MARGIN_REALTIME
+  1646→  - COMPLY.M16.ORDER_FREQUENCY
+  1647→
+  1648→  # 行情层 (5)
+  1649→  - MKT.INST.LIMIT_PRICE
+  1650→  - MKT.INST.MARGIN_RATE
+  1651→  - MKT.INST.NIGHT_SESSION
+  1652→  - MKT.CALENDAR.TRADING_DATE
+  1653→  - MKT.EXCHANGE.DIFF_CONFIG
+  1654→
+  1655→  # 成本层 (4)
+  1656→  - COST.FEE.PER_LOT
+  1657→  - COST.FEE.RATE_BASED
+  1658→  - COST.FEE.CLOSE_TODAY
+  1659→  - COST.FEE.EXCHANGE_DIFF
+  1660→
+  1661→  # 保护层 (5)
+  1662→  - EXEC.LIMIT.PRICE_CHECK
+  1663→  - EXEC.LIMIT.CONSECUTIVE
+  1664→  - EXEC.MARGIN.REALTIME
+  1665→  - EXEC.MARGIN.LEVEL_WARN
+  1666→  - EXEC.MARGIN.OPEN_GATE
+  1667→
+  1668→  # 守护层 (5)
+  1669→  - GUARD.TRIGGER.LIMIT_PRICE
+  1670→  - GUARD.TRIGGER.CONSECUTIVE_LIMIT
+  1671→  - GUARD.TRIGGER.MARGIN_LEVEL
+  1672→  - GUARD.TRIGGER.DELIVERY
+  1673→  - GUARD.ACTION.DELIVERY_FLATTEN
+  1674→
+  1675→  # 套利策略 (3)
+  1676→  - ARB.DELIVERY.NEAR_MONTH_GATE
+  1677→  - ARB.DELIVERY.AUTO_ROLL
+  1678→  - ARB.CHINA.SETTLEMENT_PRICE
+  1679→
+  1680→  # 风控层 (4)
+  1681→  - RISK.VAR.LIMIT_ADJUSTED
+  1682→  - RISK.STRESS.CHINA_2015
+  1683→  - RISK.STRESS.LIMIT_HALT
+  1684→  - RISK.MARGIN.FORECAST
+  1685→
+  1686→  # 程序化合规 (4)
+  1687→  - COMPLY.ORDER_FREQ.CHECK
+  1688→  - COMPLY.LARGE_ORDER.REVIEW
+  1689→  - COMPLY.STRATEGY.FILED
+  1690→  - COMPLY.REPORT.GENERATE
+  1691→```
+  1692→
+  1693→---
+  1694→
+  1695→## 第十一部分：实施优先级
+  1696→
+  1697→### 11.1 优先级矩阵
+  1698→
+  1699→| 优先级 | 改进项 | 工时 | 阻塞性 |
+  1700→|--------|--------|------|--------|
+  1701→| **P0** | 涨跌停保护 | 8h | 是 |
+  1702→| **P0** | 保证金监控 | 8h | 是 |
+  1703→| **P0** | 军规 M12-M16 | 4h | 是 |
+  1704→| **P0** | 程序化合规检查 | 12h | 是 |
+  1705→| **P1** | 交易所差异化配置 | 8h | 否 |
+  1706→| **P1** | 手续费特化 | 6h | 否 |
+  1707→| **P1** | 中国期货触发器 | 8h | 否 |
+  1708→| **P1** | 交割感知套利 | 8h | 否 |
+  1709→| **P2** | 压力测试场景 | 12h | 否 |
+  1710→| **P2** | VaR 涨跌停调整 | 8h | 否 |
+  1711→| **P2** | 夜盘交易日历 | 6h | 否 |
+  1712→
+  1713→### 11.2 实施阶段
+  1714→
+  1715→```text
+  1716→Phase A: 紧急合规 (32h)
+  1717→├── P0-001: 新增军规 M12-M16
+  1718→├── P0-007: 涨跌停保护
+  1719→├── P0-008: 保证金监控
+  1720→└── P0-011: 程序化合规检查
+  1721→
+  1722→Phase B: 市场特化 (30h)
+  1723→├── P1-001: 六大交易所配置
+  1724→├── P0-004: InstrumentInfo 扩展
+  1725→├── P0-006: 手续费特化
+  1726→└── P0-005: 夜盘交易日历
+  1727→
+  1728→Phase C: 风控增强 (28h)
+  1729→├── P0-009: 涨跌停触发器
+  1730→├── P1-003: 中国期货压力测试
+  1731→├── P0-010: VaR 涨跌停调整
+  1732→└── P1-002: 交割感知套利
+  1733→
+  1734→总计: 90h
+  1735→```
+  1736→
+  1737→---
+  1738→
+  1739→## 第十二部分：门禁检查点
+  1740→
+  1741→### 12.1 中国期货市场特化门禁
+  1742→
+  1743→```powershell
+  1744→# 中国期货市场合规门禁
+  1745→python scripts/compliance_gate.py --china-futures
+  1746→
+  1747→# 涨跌停保护测试
+  1748→python -m pytest tests/test_limit_price_guard.py -v
+  1749→
+  1750→# 保证金监控测试
+  1751→python -m pytest tests/test_margin_monitor.py -v
+  1752→
+  1753→# 手续费计算测试
+  1754→python -m pytest tests/test_china_fee_calculator.py -v
+  1755→
+  1756→# 交易日历测试
+  1757→python -m pytest tests/test_trading_calendar.py -v
+  1758→
+  1759→# 压力测试场景
+  1760→python -m pytest tests/test_stress_test_china.py -v
+  1761→
+  1762→# 全部中国期货市场特化测试
+  1763→python -m pytest tests/ -k "china" -v
+  1764→```
+  1765→
+  1766→### 12.2 导入验证
+  1767→
+  1768→```powershell
+  1769→# 合规模块
+  1770→python -c "from src.compliance import ChinaFuturesComplianceChecker"
+  1771→python -c "from src.compliance import ProgrammaticTradingCompliance"
+  1772→
+  1773→# 市场模块
+  1774→python -c "from src.market.exchange_config import EXCHANGE_CONFIGS"
+  1775→python -c "from src.market.trading_calendar import ChinaTradingCalendar"
+  1776→
+  1777→# 成本模块
+  1778→python -c "from src.cost.china_fee_calculator import ChinaFeeCalculator"
+  1779→
+  1780→# 保护模块
+  1781→python -c "from src.execution.protection.limit_price import LimitPriceGuard"
+  1782→python -c "from src.execution.protection.margin_monitor import MarginMonitor"
+  1783→
+  1784→# 守护模块
+  1785→python -c "from src.guardian.triggers_china import LimitPriceTrigger"
+  1786→
+  1787→# 风控模块
+  1788→python -c "from src.risk.stress_test_china import STRESS_SCENARIO_PARAMS"
+  1789→```
+  1790→
+  1791→---
+  1792→
+  1793→## 附录 A：中国期货市场参考资料来源
+  1794→
+  1795→| 来源 | 说明 | URL |
+  1796→|------|------|-----|
+  1797→| 证监会 | 程序化交易管理规定 | [csrc.gov.cn](http://www.csrc.gov.cn/csrc/c100028/c7564353/content.shtml) |
+  1798→| 上期所 | 交易规则、保证金公告 | [shfe.com.cn](https://www.shfe.com.cn/) |
+  1799→| 中金所 | 金融期货交易规则 | [cffex.com.cn](http://www.cffex.com.cn/jysgz/) |
+  1800→| 九期网 | 交易时间一览表 | [9qihuo.com](https://www.9qihuo.com/qihuo/58370) |
+  1801→| BigQuant | 期货代码数据 | [bigquant.com](https://bigquant.com/data/datasources/cn_future_instruments) |
+  1802→
+  1803→---
+  1804→
+  1805→## 附录 B：变更日志
+  1806→
+  1807→| 版本 | 日期 | 作者 | 变更内容 |
+  1808→|------|------|------|----------|
+  1809→| v1.0 | 2025-12-16 | CLAUDE上校 | 初始版本：全面审查报告 |
+  1810→
+  1811→---
+  1812→
+  1813→> **报告完成。**
+  1814→> **敬请最高指挥部审阅批准。**
+  1815→> **CLAUDE上校 敬礼！** 🎖️
+  1816→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

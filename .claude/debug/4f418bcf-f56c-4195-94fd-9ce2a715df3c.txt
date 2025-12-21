@@ -1,0 +1,108 @@
+2025-12-08T20:37:44.916Z [DEBUG] Watching for changes in setting files C:\Users\1\.claude\settings.json, C:\Users\1\.claude\settings.json...
+2025-12-08T20:37:44.933Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2025-12-08T20:37:44.937Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2025-12-08T20:37:44.937Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2025-12-08T20:37:44.937Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2025-12-08T20:37:44.937Z [DEBUG] [LSP SERVER MANAGER] initialize() called
+2025-12-08T20:37:44.937Z [DEBUG] [LSP SERVER MANAGER] Calling getAllLspServers()
+2025-12-08T20:37:44.946Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2025-12-08T20:37:44.948Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.79960.1765226264948
+2025-12-08T20:37:44.948Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:37:44.949Z [DEBUG] Temp file written successfully, size: 2152 bytes
+2025-12-08T20:37:44.949Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:37:44.949Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.79960.1765226264948 to C:\Users\1\.claude.json
+2025-12-08T20:37:44.950Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:37:44.950Z [DEBUG] Total LSP servers loaded: 0
+2025-12-08T20:37:44.950Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2025-12-08T20:37:44.950Z [DEBUG] LSP manager initialized with 0 servers
+2025-12-08T20:37:44.950Z [DEBUG] LSP server manager initialized successfully
+2025-12-08T20:37:44.950Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2025-12-08T20:37:44.955Z [DEBUG] Loading skills from directories: managed=C:\ProgramData\ClaudeCode\.claude\skills, user=C:\Users\1\.claude\skills, project=C:\Users\1\.claude\skills
+2025-12-08T20:37:44.955Z [DEBUG] >>>>> getPluginSkills CALLED <<<<<
+2025-12-08T20:37:44.959Z [DEBUG] installed_plugins.json doesn't exist yet at C:\Users\1\.claude\plugins\installed_plugins.json, returning empty object
+2025-12-08T20:37:45.039Z [DEBUG] Creating shell snapshot for bash (C:\Program Files\Git\bin\bash.exe)
+2025-12-08T20:37:45.039Z [DEBUG] Looking for shell config file: C:\Users\1\.bashrc
+2025-12-08T20:37:45.039Z [DEBUG] Shell config file not found: C:\Users\1\.bashrc, creating snapshot with Claude Code defaults only
+2025-12-08T20:37:45.039Z [DEBUG] Snapshots directory: C:\Users\1\.claude\shell-snapshots
+2025-12-08T20:37:45.047Z [DEBUG] Creating snapshot at: C:\Users\1\.claude\shell-snapshots\snapshot-bash-1765226265039-r5uvvy.sh
+2025-12-08T20:37:45.047Z [DEBUG] Shell binary exists: true
+2025-12-08T20:37:45.047Z [DEBUG] Execution timeout: 10000ms
+2025-12-08T20:37:45.049Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\4f418bcf-f56c-4195-94fd-9ce2a715df3c-agent-4f418bcf-f56c-4195-94fd-9ce2a715df3c.json.tmp.79960.1765226265049
+2025-12-08T20:37:45.053Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-08T20:37:45.053Z [DEBUG] Renaming C:\Users\1\.claude\todos\4f418bcf-f56c-4195-94fd-9ce2a715df3c-agent-4f418bcf-f56c-4195-94fd-9ce2a715df3c.json.tmp.79960.1765226265049 to C:\Users\1\.claude\todos\4f418bcf-f56c-4195-94fd-9ce2a715df3c-agent-4f418bcf-f56c-4195-94fd-9ce2a715df3c.json
+2025-12-08T20:37:45.053Z [DEBUG] File C:\Users\1\.claude\todos\4f418bcf-f56c-4195-94fd-9ce2a715df3c-agent-4f418bcf-f56c-4195-94fd-9ce2a715df3c.json written atomically
+2025-12-08T20:37:45.054Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2025-12-08T20:37:45.054Z [DEBUG] Total plugin skills loaded: 0
+2025-12-08T20:37:45.054Z [DEBUG] Total plugin commands loaded: 0
+2025-12-08T20:37:45.054Z [DEBUG] Registered 0 hooks from 0 plugins
+2025-12-08T20:37:45.055Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, duplicates removed: 0)
+2025-12-08T20:37:45.055Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills
+2025-12-08T20:37:45.055Z [DEBUG] Total plugin agents loaded: 0
+2025-12-08T20:37:45.065Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.79960.1765226265065
+2025-12-08T20:37:45.065Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:37:45.066Z [DEBUG] Temp file written successfully, size: 2152 bytes
+2025-12-08T20:37:45.066Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:37:45.066Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.79960.1765226265065 to C:\Users\1\.claude.json
+2025-12-08T20:37:45.067Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:37:45.068Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2025-12-08T20:37:45.068Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T20:37:45.068Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2025-12-08T20:37:45.075Z [DEBUG] Total plugin output styles loaded: 0
+2025-12-08T20:37:45.076Z [DEBUG] Git remote URL: null
+2025-12-08T20:37:45.076Z [DEBUG] No git remote URL found
+2025-12-08T20:37:45.076Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2025-12-08T20:37:45.089Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2025-12-08T20:37:45.089Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T20:37:45.089Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2025-12-08T20:37:45.093Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.79960.1765226265093
+2025-12-08T20:37:45.093Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:37:45.094Z [DEBUG] Temp file written successfully, size: 2152 bytes
+2025-12-08T20:37:45.094Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:37:45.094Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.79960.1765226265093 to C:\Users\1\.claude.json
+2025-12-08T20:37:45.094Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:37:45.111Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2025-12-08T20:37:45.111Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T20:37:45.111Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2025-12-08T20:37:45.117Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:37:45.117Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:37:45.117Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:37:45.118Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:37:45.118Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:37:45.118Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:37:45.119Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.79960.1765226265119
+2025-12-08T20:37:45.119Z [DEBUG] Preserving file permissions: 100666
+2025-12-08T20:37:45.121Z [DEBUG] Temp file written successfully, size: 2152 bytes
+2025-12-08T20:37:45.121Z [DEBUG] Applied original permissions to temp file
+2025-12-08T20:37:45.121Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.79960.1765226265119 to C:\Users\1\.claude.json
+2025-12-08T20:37:45.121Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-08T20:37:45.122Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2025-12-08T20:37:45.122Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T20:37:45.122Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-08T20:37:45.126Z [DEBUG] Slash commands included in SlashCommand tool:
+2025-12-08T20:37:45.126Z [DEBUG] Skills and commands included in Skill tool:
+2025-12-08T20:37:45.624Z [DEBUG] Shell snapshot created successfully (338 bytes)
+2025-12-08T20:37:45.803Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:37:46.707Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2025-12-08T20:37:46.707Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T20:37:46.707Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-08T20:37:46.941Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:37:46.942Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:37:47.302Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-08T20:37:47.302Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2025-12-08T20:37:47.302Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T20:37:47.302Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-08T20:37:47.311Z [DEBUG] tree-sitter: loaded from disk
+2025-12-08T20:37:48.099Z [DEBUG] Permission suggestions for Bash: []
+2025-12-08T20:37:48.116Z [DEBUG] [TeammateMailbox] getTeammateMailboxAttachments called: agentId=undefined, CLAUDE_CODE_AGENT_NAME=undefined, CLAUDE_CODE_AGENT_TYPE=undefined, resolved agentName=undefined, teamName=undefined
+2025-12-08T20:37:48.116Z [DEBUG] [TeammateMailbox] Not checking inbox - no agent name (neither CLAUDE_CODE_AGENT_NAME nor CLAUDE_CODE_AGENT_TYPE set)
+2025-12-08T20:37:48.116Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-08T20:37:48.116Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-08T20:37:48.116Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-08T20:37:48.116Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-08T20:37:48.812Z [DEBUG] Stream started - received first chunk
+2025-12-08T20:37:49.955Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2025-12-08T20:37:49.955Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T20:37:49.955Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-08T20:37:49.956Z [DEBUG] Getting matching hook commands for SessionEnd with query: other
+2025-12-08T20:37:49.956Z [DEBUG] Found 0 hook matchers in settings
+2025-12-08T20:37:49.956Z [DEBUG] Matched 0 unique hooks for query "other" (0 before deduplication)

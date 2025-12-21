@@ -1,0 +1,89 @@
+"""
+市场网关事件定义
+"""
+
+from dataclasses import dataclass, field
+from typing import Any, Dict, Optional
+from datetime import datetime
+from enum import Enum
+
+class EventType(Enum):
+    """事件类型枚举"""
+    # 连接事件
+    CONNECTED = "connected"
+    DISCONNECTED = "disconnected"
+    RECONNECTING = "reconnecting"
+    CONNECTION_ERROR = "connection_error"
+    
+    # 订阅事件
+    SUBSCRIBED = "subscribed"
+    UNSUBSCRIBED = "unsubscribed"
+    SUBSCRIPTION_ERROR = "subscription_error"
+    
+    # 数据事件
+    TICK_DATA = "tick_data"
+    KLINE_DATA = "kline_data"
+    ORDER_BOOK = "order_book"
+    
+    # 系统事件
+    CONFIG_UPDATED = "config_updated"
+    ALERT = "alert"
+    METRICS_UPDATE = "metrics_update"
+
+@dataclass
+class BaseEvent:
+    """基础事件类"""
+    event_type: EventType
+    timestamp: datetime = field(default_factory=datetime.now)
+    source: str = "unknown"
+    data: Any = None
+    metadata: Optional[Dict[str, Any]] = field(default_factory=dict)
+
+@dataclass
+class ConnectionEvent(BaseEvent):
+    """连接事件 - 继承自BaseEvent"""
+    reason: Optional[str] = None  # 连接/断开原因
+
+@dataclass
+class SubscriptionEvent:
+    """订阅事件"""
+    event_type: EventType
+    symbol: str
+    success: bool
+    timestamp: datetime = field(default_factory=datetime.now)
+    source: str = "unknown"
+    data: Any = None
+    error_message: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = field(default_factory=dict)
+
+@dataclass
+class TickDataEvent:
+    """Tick数据事件"""
+    symbol: str
+    tick_data: Dict[str, Any]  # 标准化后的Tick数据
+    event_type: EventType = EventType.TICK_DATA
+    timestamp: datetime = field(default_factory=datetime.now)
+    source: str = "unknown"
+    data: Any = None
+    metadata: Optional[Dict[str, Any]] = field(default_factory=dict)
+
+@dataclass
+class AlertEvent:
+    """告警事件"""
+    event_type: EventType
+    level: str  # INFO, WARNING, ERROR, CRITICAL
+    message: str
+    timestamp: datetime = field(default_factory=datetime.now)
+    source: str = "unknown"
+    data: Any = None
+    details: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, Any]] = field(default_factory=dict)
+
+__all__ = [
+    'EventType',
+    'BaseEvent',
+    'ConnectionEvent',
+    'SubscriptionEvent',
+    'TickDataEvent',
+    'AlertEvent'
+]

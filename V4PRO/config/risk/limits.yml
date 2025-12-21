@@ -1,0 +1,70 @@
+# =============================================================================
+# V4PRO 风控限额配置 (Risk Limits Configuration)
+# =============================================================================
+# 军规级 v4.0 | M6熔断保护 | M16保证金监控
+# =============================================================================
+
+# 全局风控限额
+global_limits:
+  # 单日亏损限额
+  daily_loss:
+    warning: 50000      # 预警线(元)
+    critical: 80000     # 临界线(元)
+    max: 100000         # 熔断线(元)
+
+  # 持仓限额
+  position:
+    max_single: 50      # 单合约最大持仓(手)
+    max_total: 200      # 总持仓上限(手)
+
+  # 保证金监控
+  margin:
+    warning: 0.6        # 预警线(60%)
+    critical: 0.8       # 临界线(80%)
+    force_close: 0.9    # 强平线(90%)
+
+  # 订单限额
+  order:
+    max_value: 500000   # 单笔最大金额(元)
+    max_qty: 20         # 单笔最大数量(手)
+
+# 品种特定限额
+product_limits:
+  # 股指期货(高保证金)
+  IF: { max_position: 10, margin_multiplier: 1.5 }
+  IC: { max_position: 10, margin_multiplier: 1.5 }
+  IH: { max_position: 10, margin_multiplier: 1.5 }
+
+  # 波动性品种
+  SC: { max_position: 20, margin_multiplier: 1.3 }  # 原油
+  LC: { max_position: 10, margin_multiplier: 1.5 }  # 碳酸锂
+
+  # 普通品种
+  default: { max_position: 50, margin_multiplier: 1.0 }
+
+# 熔断规则 (M6)
+circuit_breaker:
+  # 触发条件
+  triggers:
+    - type: daily_loss
+      threshold: 100000
+      action: kill_switch
+    - type: margin_usage
+      threshold: 0.9
+      action: reduce_position
+    - type: order_reject_rate
+      threshold: 0.5     # 拒单率超50%
+      action: pause_trading
+
+  # 冷却时间(秒)
+  cooldown:
+    kill_switch: 3600    # 熔断后1小时
+    reduce_position: 600 # 减仓后10分钟
+    pause_trading: 300   # 暂停后5分钟
+
+# VaR限额
+var_limits:
+  confidence: 0.99       # 置信度99%
+  horizon_days: 1        # 1日VaR
+  max_var: 100000        # 最大VaR(元)
+  max_es: 150000         # 最大ES(元)

@@ -1,0 +1,1597 @@
+     1→# V4PRO 自动闭环系统报告 - 军规级自动化运维
+     2→
+     3→> **文档版本**: v4.0 SUPREME AUTOMATION
+     4→> **生成日期**: 2025-12-16
+     5→> **文档等级**: 最高机密 - 军规级
+     6→> **Schema版本**: v4.0
+     7→> **退出码范围**: 0-20
+     8→
+     9→---
+    10→
+    11→## 目录
+    12→
+    13→- [§1 系统概述](#1-系统概述)
+    14→- [§2 退出码标准](#2-退出码标准)
+    15→- [§3 Schema定义](#3-schema定义)
+    16→- [§4 CI报告规范](#4-ci报告规范)
+    17→- [§5 SIM报告规范](#5-sim报告规范)
+    18→- [§6 闭环流程](#6-闭环流程)
+    19→- [§7 命令日志规范](#7-命令日志规范)
+    20→- [§8 轮次摘要规范](#8-轮次摘要规范)
+    21→- [§9 策略违规检测](#9-策略违规检测)
+    22→- [§10 中国期货市场合规检查](#10-中国期货市场合规检查)
+    23→- [§11 实验性策略门禁检查](#11-实验性策略门禁检查)
+    24→- [§12 告警与通知](#12-告警与通知)
+    25→- [§13 自动恢复机制](#13-自动恢复机制)
+    26→- [§14 脚本实现](#14-脚本实现)
+    27→- [§15 验收标准](#15-验收标准)
+    28→
+    29→---
+    30→
+    31→## §1 系统概述
+    32→
+    33→### 1.1 设计目标
+    34→
+    35→```
+    36→V4PRO 自动闭环系统设计目标：
+    37→┌─────────────────────────────────────────────────────────────────────┐
+    38→│ 1. 无人值守自动化运行                                                │
+    39→│ 2. 军规级错误检测与恢复                                              │
+    40→│ 3. 完整的审计追溯能力                                                │
+    41→│ 4. 中国期货市场合规保障                                              │
+    42→│ 5. 实验性策略安全门禁                                                │
+    43→│ 6. 多层次告警与通知                                                  │
+    44→└─────────────────────────────────────────────────────────────────────┘
+    45→```
+    46→
+    47→### 1.2 系统架构
+    48→
+    49→```
+    50→┌─────────────────────────────────────────────────────────────────────┐
+    51→│                     V4PRO 自动闭环系统架构                           │
+    52→├─────────────────────────────────────────────────────────────────────┤
+    53→│                                                                     │
+    54→│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐            │
+    55→│   │  CI 门禁    │───▶│  SIM 门禁   │───▶│  PROD 部署  │            │
+    56→│   │ (schema v4) │    │ (scenario)  │    │ (canary)    │            │
+    57→│   └──────┬──────┘    └──────┬──────┘    └──────┬──────┘            │
+    58→│          │                  │                  │                    │
+    59→│          ▼                  ▼                  ▼                    │
+    60→│   ┌─────────────────────────────────────────────────────┐          │
+    61→│   │              审计日志层 (JSONL)                      │          │
+    62→│   │     commands.log · round_summary · ci_report        │          │
+    63→│   └─────────────────────────────────────────────────────┘          │
+    64→│          │                  │                  │                    │
+    65→│          ▼                  ▼                  ▼                    │
+    66→│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐            │
+    67→│   │  策略违规   │    │  合规检查   │    │  门禁检查   │            │
+    68→│   │   检测器    │    │ (2025新规)  │    │ (实验性)    │            │
+    69→│   └──────┬──────┘    └──────┬──────┘    └──────┬──────┘            │
+    70→│          │                  │                  │                    │
+    71→│          └──────────────────┼──────────────────┘                    │
+    72→│                             ▼                                       │
+    73→│                      ┌─────────────┐                                │
+    74→│                      │  告警系统   │                                │
+    75→│                      │ (多渠道)    │                                │
+    76→│                      └─────────────┘                                │
+    77→│                                                                     │
+    78→└─────────────────────────────────────────────────────────────────────┘
+    79→```
+    80→
+    81→### 1.3 版本历史
+    82→
+    83→| 版本 | 日期 | 变更说明 |
+    84→|------|------|----------|
+    85→| v1.0 | 2025-12-14 | 初始版本，退出码0-6 |
+    86→| v2.0 | 2025-12-15 | 添加退出码7-12 |
+    87→| v3.0 | 2025-12-15 | Schema升级，添加场景验证 |
+    88→| **v4.0** | **2025-12-16** | **退出码13-20，中国期货市场合规** |
+    89→
+    90→---
+    91→
+    92→## §2 退出码标准
+    93→
+    94→### 2.1 退出码总表
+    95→
+    96→| 退出码 | 名称 | 描述 | 严重级别 | 自动恢复 |
+    97→|--------|------|------|----------|----------|
+    98→| 0 | SUCCESS | 全部通过 | INFO | - |
+    99→| 1 | GENERAL_ERROR | 通用错误 | ERROR | 否 |
+   100→| 2 | LINT_FAIL | Ruff检查失败 | ERROR | 是 |
+   101→| 3 | TYPE_FAIL | Mypy检查失败 | ERROR | 是 |
+   102→| 4 | TEST_FAIL | Pytest失败 | ERROR | 是 |
+   103→| 5 | COVERAGE_FAIL | 覆盖率不足 | WARNING | 是 |
+   104→| 6 | BUILD_FAIL | 构建失败 | ERROR | 否 |
+   105→| 7 | DEPENDENCY_FAIL | 依赖安装失败 | ERROR | 是 |
+   106→| 8 | CONFIG_FAIL | 配置错误 | ERROR | 否 |
+   107→| 9 | SIM_FAIL | 仿真门禁失败 | ERROR | 否 |
+   108→| 10 | SCENARIO_MISSING | 场景缺失 | ERROR | 是 |
+   109→| 11 | SCHEMA_INVALID | Schema无效 | ERROR | 否 |
+   110→| **12** | **POLICY_VIOLATION** | **策略违规** | **FATAL** | **否** |
+   111→| **13** | **COMPLIANCE_FAIL** | **合规检查失败** | **FATAL** | **否** |
+   112→| **14** | **ANCHOR_DRIFT** | **锚点漂移** | **WARNING** | **是** |
+   113→| **15** | **MARGIN_INSUFFICIENT** | **保证金不足** | **FATAL** | **否** |
+   114→| **16** | **LIMIT_PRICE_TRIGGER** | **涨跌停触发** | **WARNING** | **是** |
+   115→| **17** | **EXP_GATE_FAIL** | **实验性门禁失败** | **ERROR** | **否** |
+   116→| **18** | **MATURITY_INSUFFICIENT** | **成熟度不足** | **ERROR** | **否** |
+   117→| **19** | **NIGHT_SESSION_ERROR** | **夜盘跨日错误** | **ERROR** | **是** |
+   118→| **20** | **REPORT_CANCEL_EXCEED** | **报撤单频率超限** | **FATAL** | **否** |
+   119→
+   120→### 2.2 退出码分类
+   121→
+   122→```
+   123→退出码分类：
+   124→┌─────────────────────────────────────────────────────────────────────┐
+   125→│ 0:       成功                                                       │
+   126→│ 1-6:     CI基础检查 (lint/type/test/coverage/build)                 │
+   127→│ 7-8:     环境问题 (dependency/config)                               │
+   128→│ 9-11:    仿真门禁 (sim/scenario/schema)                             │
+   129→│ 12:      策略违规 (最严重，不可自动恢复)                             │
+   130→│ 13-20:   中国期货市场特化检查 (v4.0新增)                             │
+   131→└─────────────────────────────────────────────────────────────────────┘
+   132→```
+   133→
+   134→### 2.3 退出码详细说明
+   135→
+   136→#### 退出码 12: POLICY_VIOLATION
+   137→
+   138→```
+   139→触发条件：
+   140→- 违反军规 M1-M20 任一条
+   141→- 检测到禁止的命令或操作
+   142→- 上传了调试文件到生产环境
+   143→- JSON路径格式不符合规范
+   144→- 命令白名单之外的操作
+   145→
+   146→处理措施：
+   147→- 立即停止所有操作
+   148→- 记录违规详情到审计日志
+   149→- 发送FATAL级别告警
+   150→- 需要人工介入处理
+   151→- 不允许自动恢复
+   152→```
+   153→
+   154→#### 退出码 13: COMPLIANCE_FAIL
+   155→
+   156→```
+   157→触发条件：
+   158→- 程序化交易备案检查失败
+   159→- 算法备案记录不完整
+   160→- 违反2025年新规要求
+   161→- 技术系统合规检查失败
+   162→
+   163→处理措施：
+   164→- 暂停程序化交易
+   165→- 记录合规违规详情
+   166→- 通知合规部门
+   167→- 需要人工审核后恢复
+   168→```
+   169→
+   170→#### 退出码 15: MARGIN_INSUFFICIENT
+   171→
+   172→```
+   173→触发条件：
+   174→- 保证金使用率 ≥ 100%
+   175→- 追加保证金通知未响应
+   176→- 强平预警触发
+   177→
+   178→处理措施：
+   179→- 立即停止开仓
+   180→- 按优先级平仓释放保证金
+   181→- 发送FATAL告警
+   182→- 记录保证金状态
+   183→- 需要资金补充后恢复
+   184→```
+   185→
+   186→#### 退出码 20: REPORT_CANCEL_EXCEED
+   187→
+   188→```
+   189→触发条件：
+   190→- 5秒内报撤单 ≥ 50笔
+   191→- 日内报撤单 ≥ 20000笔
+   192→- 被判定为高频交易
+   193→
+   194→处理措施：
+   195→- 立即停止所有报撤单
+   196→- 记录违规时间和数量
+   197→- 通知合规部门
+   198→- 等待下一交易日自动恢复
+   199→- 或人工确认后恢复
+   200→```
+   201→
+   202→---
+   203→
+   204→## §3 Schema定义
+   205→
+   206→### 3.1 CI报告Schema (v4.0)
+   207→
+   208→```json
+   209→{
+   210→  "$schema": "http://json-schema.org/draft-07/schema#",
+   211→  "title": "CI Report Schema v4.0",
+   212→  "type": "object",
+   213→  "required": [
+   214→    "schema_version",
+   215→    "timestamp",
+   216→    "run_id",
+   217→    "exit_code",
+   218→    "checks"
+   219→  ],
+   220→  "properties": {
+   221→    "schema_version": {
+   222→      "type": "string",
+   223→      "const": "4.0"
+   224→    },
+   225→    "timestamp": {
+   226→      "type": "string",
+   227→      "format": "date-time"
+   228→    },
+   229→    "run_id": {
+   230→      "type": "string",
+   231→      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+   232→    },
+   233→    "exit_code": {
+   234→      "type": "integer",
+   235→      "minimum": 0,
+   236→      "maximum": 20
+   237→    },
+   238→    "checks": {
+   239→      "type": "object",
+   240→      "properties": {
+   241→        "lint": {
+   242→          "$ref": "#/definitions/check_result"
+   243→        },
+   244→        "type_check": {
+   245→          "$ref": "#/definitions/check_result"
+   246→        },
+   247→        "test": {
+   248→          "$ref": "#/definitions/check_result"
+   249→        },
+   250→        "coverage": {
+   251→          "$ref": "#/definitions/coverage_result"
+   252→        },
+   253→        "policy": {
+   254→          "$ref": "#/definitions/check_result"
+   255→        },
+   256→        "compliance": {
+   257→          "$ref": "#/definitions/compliance_result"
+   258→        },
+   259→        "maturity": {
+   260→          "$ref": "#/definitions/maturity_result"
+   261→        }
+   262→      },
+   263→      "required": ["lint", "type_check", "test", "coverage", "policy"]
+   264→    },
+   265→    "metadata": {
+   266→      "type": "object",
+   267→      "properties": {
+   268→        "branch": {"type": "string"},
+   269→        "commit": {"type": "string"},
+   270→        "author": {"type": "string"},
+   271→        "duration_ms": {"type": "integer"}
+   272→      }
+   273→    }
+   274→  },
+   275→  "definitions": {
+   276→    "check_result": {
+   277→      "type": "object",
+   278→      "required": ["passed", "message"],
+   279→      "properties": {
+   280→        "passed": {"type": "boolean"},
+   281→        "message": {"type": "string"},
+   282→        "details": {"type": "array", "items": {"type": "string"}}
+   283→      }
+   284→    },
+   285→    "coverage_result": {
+   286→      "type": "object",
+   287→      "required": ["passed", "percentage", "threshold"],
+   288→      "properties": {
+   289→        "passed": {"type": "boolean"},
+   290→        "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+   291→        "threshold": {"type": "number", "minimum": 0, "maximum": 100},
+   292→        "uncovered_files": {"type": "array", "items": {"type": "string"}}
+   293→      }
+   294→    },
+   295→    "compliance_result": {
+   296→      "type": "object",
+   297→      "required": ["passed", "checks"],
+   298→      "properties": {
+   299→        "passed": {"type": "boolean"},
+   300→        "checks": {
+   301→          "type": "array",
+   302→          "items": {
+   303→            "type": "object",
+   304→            "required": ["rule_id", "passed"],
+   305→            "properties": {
+   306→              "rule_id": {"type": "string"},
+   307→              "passed": {"type": "boolean"},
+   308→              "message": {"type": "string"}
+   309→            }
+   310→          }
+   311→        }
+   312→      }
+   313→    },
+   314→    "maturity_result": {
+   315→      "type": "object",
+   316→      "required": ["passed", "strategies"],
+   317→      "properties": {
+   318→        "passed": {"type": "boolean"},
+   319→        "strategies": {
+   320→          "type": "array",
+   321→          "items": {
+   322→            "type": "object",
+   323→            "required": ["name", "maturity_score", "can_activate"],
+   324→            "properties": {
+   325→              "name": {"type": "string"},
+   326→              "maturity_score": {"type": "number", "minimum": 0, "maximum": 100},
+   327→              "can_activate": {"type": "boolean"},
+   328→              "training_days": {"type": "integer"}
+   329→            }
+   330→          }
+   331→        }
+   332→      }
+   333→    }
+   334→  }
+   335→}
+   336→```
+   337→
+   338→### 3.2 SIM报告Schema (v4.0)
+   339→
+   340→```json
+   341→{
+   342→  "$schema": "http://json-schema.org/draft-07/schema#",
+   343→  "title": "SIM Report Schema v4.0",
+   344→  "type": "object",
+   345→  "required": [
+   346→    "schema_version",
+   347→    "timestamp",
+   348→    "run_id",
+   349→    "exit_code",
+   350→    "scenarios",
+   351→    "summary"
+   352→  ],
+   353→  "properties": {
+   354→    "schema_version": {
+   355→      "type": "string",
+   356→      "const": "4.0"
+   357→    },
+   358→    "timestamp": {
+   359→      "type": "string",
+   360→      "format": "date-time"
+   361→    },
+   362→    "run_id": {
+   363→      "type": "string"
+   364→    },
+   365→    "exit_code": {
+   366→      "type": "integer",
+   367→      "minimum": 0,
+   368→      "maximum": 20
+   369→    },
+   370→    "scenarios": {
+   371→      "type": "array",
+   372→      "items": {
+   373→        "$ref": "#/definitions/scenario_result"
+   374→      }
+   375→    },
+   376→    "summary": {
+   377→      "type": "object",
+   378→      "required": ["total", "passed", "failed", "skipped"],
+   379→      "properties": {
+   380→        "total": {"type": "integer"},
+   381→        "passed": {"type": "integer"},
+   382→        "failed": {"type": "integer"},
+   383→        "skipped": {"type": "integer"},
+   384→        "pass_rate": {"type": "number"}
+   385→      }
+   386→    },
+   387→    "china_futures": {
+   388→      "$ref": "#/definitions/china_futures_result"
+   389→    }
+   390→  },
+   391→  "definitions": {
+   392→    "scenario_result": {
+   393→      "type": "object",
+   394→      "required": ["rule_id", "component", "passed"],
+   395→      "properties": {
+   396→        "rule_id": {"type": "string"},
+   397→        "component": {"type": "string"},
+   398→        "passed": {"type": "boolean"},
+   399→        "evidence": {"type": "string"},
+   400→        "duration_ms": {"type": "integer"},
+   401→        "military_rule": {"type": "string"}
+   402→      }
+   403→    },
+   404→    "china_futures_result": {
+   405→      "type": "object",
+   406→      "properties": {
+   407→        "exchange_config": {"type": "boolean"},
+   408→        "limit_price_check": {"type": "boolean"},
+   409→        "margin_monitor": {"type": "boolean"},
+   410→        "night_session": {"type": "boolean"},
+   411→        "compliance_check": {"type": "boolean"},
+   412→        "report_cancel_rate": {
+   413→          "type": "object",
+   414→          "properties": {
+   415→            "5s_count": {"type": "integer"},
+   416→            "daily_count": {"type": "integer"},
+   417→            "within_limit": {"type": "boolean"}
+   418→          }
+   419→        }
+   420→      }
+   421→    }
+   422→  }
+   423→}
+   424→```
+   425→
+   426→---
+   427→
+   428→## §4 CI报告规范
+   429→
+   430→### 4.1 报告文件路径
+   431→
+   432→```
+   433→报告路径规范：
+   434→├── reports/
+   435→│   ├── ci/
+   436→│   │   ├── ci_report_{run_id}_{date}.json
+   437→│   │   └── ci_summary_{date}.json
+   438→│   ├── sim/
+   439→│   │   ├── sim_report_{run_id}_{date}.json
+   440→│   │   └── sim_summary_{date}.json
+   441→│   └── compliance/
+   442→│       ├── compliance_{run_id}_{date}.json
+   443→│       └── maturity_{run_id}_{date}.json
+   444→```
+   445→
+   446→### 4.2 报告生成示例
+   447→
+   448→```python
+   449→def generate_ci_report(
+   450→    run_id: str,
+   451→    checks: dict,
+   452→    exit_code: int,
+   453→) -> dict:
+   454→    """生成CI报告 (Schema v4.0)"""
+   455→
+   456→    report = {
+   457→        "schema_version": "4.0",
+   458→        "timestamp": datetime.now().isoformat(),
+   459→        "run_id": run_id,
+   460→        "exit_code": exit_code,
+   461→        "checks": {
+   462→            "lint": {
+   463→                "passed": checks.get("lint_passed", False),
+   464→                "message": checks.get("lint_message", ""),
+   465→                "details": checks.get("lint_details", []),
+   466→            },
+   467→            "type_check": {
+   468→                "passed": checks.get("type_passed", False),
+   469→                "message": checks.get("type_message", ""),
+   470→            },
+   471→            "test": {
+   472→                "passed": checks.get("test_passed", False),
+   473→                "message": checks.get("test_message", ""),
+   474→                "details": checks.get("test_failures", []),
+   475→            },
+   476→            "coverage": {
+   477→                "passed": checks.get("coverage_passed", False),
+   478→                "percentage": checks.get("coverage_pct", 0),
+   479→                "threshold": 85.0,
+   480→            },
+   481→            "policy": {
+   482→                "passed": checks.get("policy_passed", False),
+   483→                "message": checks.get("policy_message", ""),
+   484→            },
+   485→        },
+   486→        "metadata": {
+   487→            "branch": checks.get("branch", "unknown"),
+   488→            "commit": checks.get("commit", "unknown"),
+   489→            "duration_ms": checks.get("duration_ms", 0),
+   490→        },
+   491→    }
+   492→
+   493→    return report
+   494→```
+   495→
+   496→### 4.3 CI门禁顺序
+   497→
+   498→```
+   499→CI门禁执行顺序：
+   500→┌─────────────────────────────────────────────────────────────────────┐
+   501→│ Step 1: Ruff Check (lint)                                           │
+   502→│         └─ 失败: exit 2                                             │
+   503→│ Step 2: Ruff Format (format)                                        │
+   504→│         └─ 失败: exit 2                                             │
+   505→│ Step 3: Mypy (type)                                                 │
+   506→│         └─ 失败: exit 3                                             │
+   507→│ Step 4: Pytest (test)                                               │
+   508→│         └─ 失败: exit 4                                             │
+   509→│ Step 5: Coverage Check                                              │
+   510→│         └─ < 85%: exit 5                                            │
+   511→│ Step 6: Policy Check                                                │
+   512→│         └─ 违规: exit 12                                            │
+   513→│ Step 7: Compliance Check (v4.0新增)                                 │
+   514→│         └─ 失败: exit 13                                            │
+   515→│ Step 8: Maturity Check (v4.0新增)                                   │
+   516→│         └─ 失败: exit 17/18                                         │
+   517→│ Step 9: 生成报告                                                    │
+   518→│         └─ 成功: exit 0                                             │
+   519→└─────────────────────────────────────────────────────────────────────┘
+   520→```
+   521→
+   522→---
+   523→
+   524→## §5 SIM报告规范
+   525→
+   526→### 5.1 必过场景列表
+   527→
+   528→```yaml
+   529→# scripts/v4_required_scenarios.yml
+   530→
+   531→version: "4.0"
+   532→description: "V4PRO必过场景列表"
+   533→
+   534→required_scenarios:
+   535→  # Phase A: 基础设施 (15)
+   536→  - INFRA.CI.GATE_PASS
+   537→  - INFRA.CI.LINT_PASS
+   538→  - INFRA.CI.TYPE_PASS
+   539→  - INFRA.CI.TEST_PASS
+   540→  - INFRA.CI.COVERAGE_MIN
+   541→  - INFRA.SIM.GATE_PASS
+   542→  - INFRA.SIM.SCENARIO_ALL
+   543→  - INFRA.CTP.CONNECT
+   544→  - INFRA.CTP.AUTH
+   545→  - INFRA.CTP.SUBSCRIBE
+   546→  - INFRA.CTP.RECONNECT
+   547→  - INFRA.CONFIG.LOAD
+   548→  - INFRA.CONFIG.VALIDATE
+   549→  - INFRA.CONFIG.ENV_ISOLATE
+   550→  - INFRA.LOG.FORMAT
+   551→
+   552→  # Phase B: 行情层 (12)
+   553→  - MKT.SUBSCRIBER.DIFF_UPDATE
+   554→  - MKT.SUBSCRIBER.CALLBACK
+   555→  - MKT.SUBSCRIBER.CLEAR
+   556→  - MKT.CACHE.INSTRUMENT_INFO
+   557→  - MKT.CACHE.EXPIRE_CHECK
+   558→  - MKT.CACHE.UPDATE
+   559→  - MKT.TICK.BUFFER_OVERFLOW
+   560→  - MKT.TICK.TIMESTAMP_ORDER
+   561→  - MKT.KLINE.BUILD_CORRECT
+   562→  - MKT.KLINE.GAP_HANDLE
+   563→  - MKT.SNAPSHOT.CAPTURE
+   564→  - MKT.SNAPSHOT.RESTORE
+   565→
+   566→  # Phase C: 审计层 (18)
+   567→  - AUDIT.EVENT.STRUCTURE
+   568→  - AUDIT.EVENT.JSONL_FORMAT
+   569→  - AUDIT.CORRELATION.RUN_EXEC
+   570→  - AUDIT.WRITER.PROPERTIES
+   571→  - AUDIT.WRITER.CLOSE_BEHAVIOR
+   572→  - AUDIT.WRITER.CONTEXT_MANAGER
+   573→  - AUDIT.VALIDATE.MISSING_TS
+   574→  - AUDIT.VALIDATE.MISSING_TYPE
+   575→  - AUDIT.VALIDATE.REQUIRED_FIELDS
+   576→  - AUDIT.DICT.WRITE
+   577→  - AUDIT.DICT.MISSING_REQUIRED
+   578→  - AUDIT.READ.EMPTY_FILE
+   579→  - AUDIT.READ.CORRUPTED
+   580→  - AUDIT.EXPORT.CSV
+   581→  - AUDIT.EXPORT.PARQUET
+   582→  - AUDIT.COMPRESS.GZIP
+   583→  - AUDIT.RETENTION.POLICY
+   584→  - AUDIT.SIGNAL_SOURCE.TRACK
+   585→
+   586→  # Phase D: 策略降级 (12)
+   587→  - STRAT.FALLBACK.ON_EXCEPTION
+   588→  - STRAT.FALLBACK.ON_TIMEOUT
+   589→  - STRAT.FALLBACK.CHAIN_DEFINED
+   590→  - ARB.KALMAN.BETA_ESTIMATE
+   591→  - ARB.KALMAN.RESIDUAL_ZSCORE
+   592→  - ARB.KALMAN.BETA_BOUND
+   593→  - ARB.LEGS.FIXED_NEAR_FAR
+   594→  - ARB.SIGNAL.HALF_LIFE_GATE
+   595→  - ARB.SIGNAL.STOP_Z_BREAKER
+   596→  - ARB.SIGNAL.EXPIRY_GATE
+   597→  - ARB.SIGNAL.CORRELATION_BREAK
+   598→  - ARB.COST.ENTRY_GATE
+   599→
+   600→  # Phase E: 回放验证 (2)
+   601→  - REPLAY.DETERMINISTIC.DECISION
+   602→  - REPLAY.DETERMINISTIC.GUARDIAN
+   603→
+   604→  # Phase H: 实验性门禁 (8)
+   605→  - EXP.MATURITY.80_THRESHOLD
+   606→  - EXP.MATURITY.60_DIMENSION
+   607→  - EXP.MATURITY.90_DAYS
+   608→  - EXP.GATE.NO_BYPASS
+   609→  - EXP.GATE.MANUAL_APPROVAL
+   610→  - EXP.MONITOR.PROGRESS
+   611→  - EXP.MONITOR.ALERT
+   612→  - EXP.MONITOR.ETA
+   613→
+   614→exemptions:
+   615→  # 非核心豁免列表 (必须带原因)
+   616→  - rule_id: "DL.LSTM.PREDICT"
+   617→    reason: "B类模型Phase 6待实现"
+   618→  - rule_id: "RL.PPO.ACTION"
+   619→    reason: "B类模型Phase 6待实现"
+   620→```
+   621→
+   622→### 5.2 场景验证逻辑
+   623→
+   624→```python
+   625→def validate_required_scenarios(
+   626→    report: dict,
+   627→    required: list[str],
+   628→) -> tuple[bool, list[str]]:
+   629→    """验证必过场景"""
+   630→
+   631→    passed_scenarios = {
+   632→        s["rule_id"]
+   633→        for s in report["scenarios"]
+   634→        if s["passed"]
+   635→    }
+   636→
+   637→    missing = [
+   638→        rule_id
+   639→        for rule_id in required
+   640→        if rule_id not in passed_scenarios
+   641→    ]
+   642→
+   643→    return len(missing) == 0, missing
+   644→```
+   645→
+   646→---
+   647→
+   648→## §6 闭环流程
+   649→
+   650→### 6.1 完整闭环流程图
+   651→
+   652→```
+   653→┌─────────────────────────────────────────────────────────────────────┐
+   654→│                      V4PRO 自动闭环流程                              │
+   655→├─────────────────────────────────────────────────────────────────────┤
+   656→│                                                                     │
+   657→│   ┌─────────┐                                                       │
+   658→│   │  开始   │                                                       │
+   659→│   └────┬────┘                                                       │
+   660→│        ▼                                                            │
+   661→│   ┌─────────┐    失败    ┌─────────┐                               │
+   662→│   │ CI门禁  │───────────▶│自动修复 │──┐                            │
+   663→│   └────┬────┘            └─────────┘  │                            │
+   664→│        │ 通过                         │ 重试                        │
+   665→│        ▼                              │                             │
+   666→│   ┌─────────┐    失败    ┌─────────┐  │                            │
+   667→│   │SIM门禁  │───────────▶│分析失败 │◀─┘                            │
+   668→│   └────┬────┘            └────┬────┘                               │
+   669→│        │ 通过                 │ 不可修复                            │
+   670→│        ▼                      ▼                                     │
+   671→│   ┌─────────┐            ┌─────────┐                               │
+   672→│   │合规检查 │            │人工介入 │                               │
+   673→│   └────┬────┘            └─────────┘                               │
+   674→│        │ 通过                                                       │
+   675→│        ▼                                                            │
+   676→│   ┌─────────┐    失败    ┌─────────┐                               │
+   677→│   │门禁检查 │───────────▶│策略隔离 │                               │
+   678→│   │(实验性) │            │(B轨)    │                               │
+   679→│   └────┬────┘            └─────────┘                               │
+   680→│        │ 通过                                                       │
+   681→│        ▼                                                            │
+   682→│   ┌─────────┐                                                       │
+   683→│   │生成报告 │                                                       │
+   684→│   └────┬────┘                                                       │
+   685→│        ▼                                                            │
+   686→│   ┌─────────┐                                                       │
+   687→│   │ 部署    │                                                       │
+   688→│   └────┬────┘                                                       │
+   689→│        ▼                                                            │
+   690→│   ┌─────────┐                                                       │
+   691→│   │  结束   │                                                       │
+   692→│   └─────────┘                                                       │
+   693→│                                                                     │
+   694→└─────────────────────────────────────────────────────────────────────┘
+   695→```
+   696→
+   697→### 6.2 轮次执行逻辑
+   698→
+   699→```python
+   700→class ClaudeLoop:
+   701→    """CLAUDE自动闭环执行器"""
+   702→
+   703→    MAX_ROUNDS = 10
+   704→    MAX_RETRY_PER_CHECK = 3
+   705→
+   706→    def __init__(self):
+   707→        self.round = 0
+   708→        self.commands_log: list[dict] = []
+   709→        self.violations: list[dict] = []
+   710→
+   711→    def run(self) -> int:
+   712→        """执行闭环流程"""
+   713→
+   714→        while self.round < self.MAX_ROUNDS:
+   715→            self.round += 1
+   716→            self._log_round_start()
+   717→
+   718→            # Step 1: CI门禁
+   719→            ci_result = self._run_ci_gate()
+   720→            if not ci_result.passed:
+   721→                if ci_result.can_auto_fix:
+   722→                    self._auto_fix(ci_result)
+   723→                    continue
+   724→                else:
+   725→                    return ci_result.exit_code
+   726→
+   727→            # Step 2: SIM门禁
+   728→            sim_result = self._run_sim_gate()
+   729→            if not sim_result.passed:
+   730→                if sim_result.missing_scenarios:
+   731→                    self._report_missing(sim_result)
+   732→                return sim_result.exit_code
+   733→
+   734→            # Step 3: 合规检查
+   735→            compliance_result = self._run_compliance_check()
+   736→            if not compliance_result.passed:
+   737→                self._handle_compliance_violation(compliance_result)
+   738→                return 13
+   739→
+   740→            # Step 4: 实验性门禁
+   741→            maturity_result = self._run_maturity_check()
+   742→            if not maturity_result.passed:
+   743→                self._isolate_immature_strategies(maturity_result)
+   744→                # 继续执行，只是隔离策略
+   745→
+   746→            # Step 5: 生成报告
+   747→            self._generate_reports()
+   748→
+   749→            # Step 6: 成功
+   750→            self._log_round_end(success=True)
+   751→            return 0
+   752→
+   753→        # 超过最大轮次
+   754→        return 1
+   755→
+   756→    def _log_round_start(self) -> None:
+   757→        """记录轮次开始"""
+   758→        self.commands_log.append({
+   759→            "event": "ROUND_START",
+   760→            "round": self.round,
+   761→            "timestamp": datetime.now().isoformat(),
+   762→        })
+   763→
+   764→    def _log_round_end(self, success: bool) -> None:
+   765→        """记录轮次结束"""
+   766→        self.commands_log.append({
+   767→            "event": "ROUND_END",
+   768→            "round": self.round,
+   769→            "success": success,
+   770→            "timestamp": datetime.now().isoformat(),
+   771→        })
+   772→```
+   773→
+   774→---
+   775→
+   776→## §7 命令日志规范
+   777→
+   778→### 7.1 日志格式
+   779→
+   780→```json
+   781→{
+   782→  "timestamp": "2025-12-16T10:30:00.000Z",
+   783→  "round": 1,
+   784→  "event": "COMMAND_EXECUTE",
+   785→  "command": "ruff check .",
+   786→  "exit_code": 0,
+   787→  "duration_ms": 1234,
+   788→  "stdout_lines": 10,
+   789→  "stderr_lines": 0
+   790→}
+   791→```
+   792→
+   793→### 7.2 日志事件类型
+   794→
+   795→| 事件类型 | 描述 |
+   796→|----------|------|
+   797→| `ROUND_START` | 轮次开始 |
+   798→| `ROUND_END` | 轮次结束 |
+   799→| `COMMAND_EXECUTE` | 命令执行 |
+   800→| `CHECK_PASS` | 检查通过 |
+   801→| `CHECK_FAIL` | 检查失败 |
+   802→| `AUTO_FIX` | 自动修复 |
+   803→| `VIOLATION_DETECT` | 违规检测 |
+   804→| `ALERT_SEND` | 告警发送 |
+   805→| `COMPLIANCE_CHECK` | 合规检查 |
+   806→| `MATURITY_CHECK` | 成熟度检查 |
+   807→
+   808→### 7.3 命令白名单
+   809→
+   810→```python
+   811→COMMAND_WHITELIST = [
+   812→    # Ruff
+   813→    r"^ruff check",
+   814→    r"^ruff format",
+   815→
+   816→    # Mypy
+   817→    r"^mypy \.",
+   818→    r"^mypy src/",
+   819→
+   820→    # Pytest
+   821→    r"^pytest",
+   822→    r"^python -m pytest",
+   823→
+   824→    # 脚本
+   825→    r"^python scripts/validate_policy\.py",
+   826→    r"^python scripts/sim_gate\.py",
+   827→    r"^python scripts/coverage_gate\.py",
+   828→
+   829→    # Git (只读)
+   830→    r"^git status",
+   831→    r"^git log",
+   832→    r"^git diff",
+   833→
+   834→    # 其他
+   835→    r"^python -c",
+   836→    r"^pip install -r",
+   837→]
+   838→
+   839→# 禁止的命令模式
+   840→COMMAND_BLACKLIST = [
+   841→    r"rm -rf",
+   842→    r"sudo",
+   843→    r"curl.*\|.*bash",
+   844→    r"wget.*\|.*sh",
+   845→    r"git push --force",
+   846→    r"git reset --hard",
+   847→]
+   848→```
+   849→
+   850→---
+   851→
+   852→## §8 轮次摘要规范
+   853→
+   854→### 8.1 摘要格式
+   855→
+   856→```json
+   857→{
+   858→  "round_summary": {
+   859→    "round": 1,
+   860→    "start_time": "2025-12-16T10:30:00.000Z",
+   861→    "end_time": "2025-12-16T10:35:00.000Z",
+   862→    "duration_ms": 300000,
+   863→    "exit_code": 0,
+   864→    "checks": {
+   865→      "lint": {"passed": true, "duration_ms": 5000},
+   866→      "type": {"passed": true, "duration_ms": 30000},
+   867→      "test": {"passed": true, "duration_ms": 180000, "test_count": 765},
+   868→      "coverage": {"passed": true, "percentage": 88.22},
+   869→      "policy": {"passed": true},
+   870→      "compliance": {"passed": true},
+   871→      "maturity": {"passed": true, "strategies_checked": 4}
+   872→    },
+   873→    "violations": [],
+   874→    "auto_fixes": []
+   875→  }
+   876→}
+   877→```
+   878→
+   879→### 8.2 摘要生成
+   880→
+   881→```python
+   882→def generate_round_summary(
+   883→    round_num: int,
+   884→    start_time: datetime,
+   885→    end_time: datetime,
+   886→    checks: dict,
+   887→    violations: list,
+   888→    auto_fixes: list,
+   889→) -> dict:
+   890→    """生成轮次摘要"""
+   891→
+   892→    return {
+   893→        "round_summary": {
+   894→            "round": round_num,
+   895→            "start_time": start_time.isoformat(),
+   896→            "end_time": end_time.isoformat(),
+   897→            "duration_ms": int((end_time - start_time).total_seconds() * 1000),
+   898→            "exit_code": _calculate_exit_code(checks, violations),
+   899→            "checks": checks,
+   900→            "violations": violations,
+   901→            "auto_fixes": auto_fixes,
+   902→        }
+   903→    }
+   904→```
+   905→
+   906→---
+   907→
+   908→## §9 策略违规检测
+   909→
+   910→### 9.1 违规类型
+   911→
+   912→| 违规代码 | 描述 | 严重级别 |
+   913→|----------|------|----------|
+   914→| `POL001` | 禁止命令执行 | FATAL |
+   915→| `POL002` | 路径格式错误 | ERROR |
+   916→| `POL003` | 调试文件上传 | FATAL |
+   917→| `POL004` | Schema版本不匹配 | ERROR |
+   918→| `POL005` | 军规违反 | FATAL |
+   919→| `POL006` | 白名单外命令 | ERROR |
+   920→| `POL007` | 敏感信息泄露 | FATAL |
+   921→
+   922→### 9.2 违规检测逻辑
+   923→
+   924→```python
+   925→def detect_violations(
+   926→    commands: list[dict],
+   927→    files_modified: list[str],
+   928→) -> list[dict]:
+   929→    """检测策略违规"""
+   930→
+   931→    violations = []
+   932→
+   933→    for cmd in commands:
+   934→        # 检查禁止命令
+   935→        for pattern in COMMAND_BLACKLIST:
+   936→            if re.match(pattern, cmd["command"]):
+   937→                violations.append({
+   938→                    "code": "POL001",
+   939→                    "message": f"禁止命令: {cmd['command']}",
+   940→                    "severity": "FATAL",
+   941→                    "timestamp": cmd["timestamp"],
+   942→                })
+   943→
+   944→        # 检查白名单外命令
+   945→        if not any(re.match(p, cmd["command"]) for p in COMMAND_WHITELIST):
+   946→            violations.append({
+   947→                "code": "POL006",
+   948→                "message": f"白名单外命令: {cmd['command']}",
+   949→                "severity": "ERROR",
+   950→                "timestamp": cmd["timestamp"],
+   951→            })
+   952→
+   953→    for file_path in files_modified:
+   954→        # 检查路径格式
+   955→        if not file_path.replace("\\", "/").startswith(("src/", "tests/", "scripts/")):
+   956→            violations.append({
+   957→                "code": "POL002",
+   958→                "message": f"非法路径: {file_path}",
+   959→                "severity": "ERROR",
+   960→            })
+   961→
+   962→        # 检查调试文件
+   963→        if any(pattern in file_path for pattern in [".debug", ".tmp", "__pycache__"]):
+   964→            violations.append({
+   965→                "code": "POL003",
+   966→                "message": f"调试文件: {file_path}",
+   967→                "severity": "FATAL",
+   968→            })
+   969→
+   970→    return violations
+   971→```
+   972→
+   973→---
+   974→
+   975→## §10 中国期货市场合规检查
+   976→
+   977→### 10.1 合规检查项
+   978→
+   979→| 检查项 | 规则来源 | 检查方式 |
+   980→|--------|----------|----------|
+   981→| 程序化交易备案 | 2025年新规 | 配置验证 |
+   982→| 报撤单频率 | 5秒50笔 | 实时监控 |
+   983→| 高频交易判定 | 300笔/秒或2万笔/日 | 统计分析 |
+   984→| 大额订单复核 | 内部规定 | 流程检查 |
+   985→| 算法备案 | 交易所要求 | 配置验证 |
+   986→
+   987→### 10.2 合规检查实现
+   988→
+   989→```python
+   990→class ComplianceChecker:
+   991→    """中国期货市场合规检查器"""
+   992→
+   993→    # 监管阈值
+   994→    REPORT_CANCEL_LIMIT_5S = 50
+   995→    HIGH_FREQ_LIMIT_PER_SEC = 300
+   996→    HIGH_FREQ_LIMIT_DAILY = 20000
+   997→
+   998→    def check_all(self) -> ComplianceResult:
+   999→        """执行全部合规检查"""
+  1000→
+  1001→        checks = []
+  1002→
+  1003→        # 1. 程序化交易备案
+  1004→        checks.append(self._check_registration())
+  1005→
+  1006→        # 2. 报撤单频率
+  1007→        checks.append(self._check_report_cancel_rate())
+  1008→
+  1009→        # 3. 高频交易判定
+  1010→        checks.append(self._check_high_freq())
+  1011→
+  1012→        # 4. 算法备案
+  1013→        checks.append(self._check_algo_registration())
+  1014→
+  1015→        return ComplianceResult(
+  1016→            passed=all(c["passed"] for c in checks),
+  1017→            checks=checks,
+  1018→        )
+  1019→
+  1020→    def _check_report_cancel_rate(self) -> dict:
+  1021→        """检查报撤单频率"""
+  1022→
+  1023→        # 获取5秒窗口内的报撤单数
+  1024→        count_5s = self._get_5s_count()
+  1025→
+  1026→        return {
+  1027→            "rule_id": "COMPLIANCE.REPORT_CANCEL",
+  1028→            "passed": count_5s < self.REPORT_CANCEL_LIMIT_5S,
+  1029→            "message": f"5秒报撤单: {count_5s}/{self.REPORT_CANCEL_LIMIT_5S}",
+  1030→            "count": count_5s,
+  1031→            "limit": self.REPORT_CANCEL_LIMIT_5S,
+  1032→        }
+  1033→```
+  1034→
+  1035→### 10.3 合规告警等级
+  1036→
+  1037→```python
+  1038→class ComplianceLevel(Enum):
+  1039→    """合规等级"""
+  1040→
+  1041→    NORMAL = "正常"      # 正常交易
+  1042→    WARNING = "预警"     # 接近阈值 (80%)
+  1043→    CRITICAL = "临界"    # 接近上限 (95%)
+  1044→    EXCEEDED = "超限"    # 已超限
+  1045→
+  1046→def get_compliance_level(count: int, limit: int) -> ComplianceLevel:
+  1047→    """获取合规等级"""
+  1048→
+  1049→    ratio = count / limit
+  1050→    if ratio < 0.8:
+  1051→        return ComplianceLevel.NORMAL
+  1052→    elif ratio < 0.95:
+  1053→        return ComplianceLevel.WARNING
+  1054→    elif ratio < 1.0:
+  1055→        return ComplianceLevel.CRITICAL
+  1056→    else:
+  1057→        return ComplianceLevel.EXCEEDED
+  1058→```
+  1059→
+  1060→---
+  1061→
+  1062→## §11 实验性策略门禁检查
+  1063→
+  1064→### 11.1 门禁检查流程
+  1065→
+  1066→```
+  1067→实验性策略门禁检查流程：
+  1068→┌─────────────────────────────────────────────────────────────────────┐
+  1069→│                                                                     │
+  1070→│   ┌─────────────┐                                                   │
+  1071→│   │ 策略列表    │                                                   │
+  1072→│   └──────┬──────┘                                                   │
+  1073→│          ▼                                                          │
+  1074→│   ┌─────────────┐     否     ┌─────────────┐                       │
+  1075→│   │ 是实验性？  │───────────▶│ 跳过检查    │                       │
+  1076→│   └──────┬──────┘            └─────────────┘                       │
+  1077→│          │ 是                                                       │
+  1078→│          ▼                                                          │
+  1079→│   ┌─────────────┐     否     ┌─────────────┐                       │
+  1080→│   │成熟度≥80%？ │───────────▶│ 隔离策略    │                       │
+  1081→│   └──────┬──────┘            │ exit 18     │                       │
+  1082→│          │ 是                └─────────────┘                       │
+  1083→│          ▼                                                          │
+  1084→│   ┌─────────────┐     否     ┌─────────────┐                       │
+  1085→│   │维度≥60%？   │───────────▶│ 隔离策略    │                       │
+  1086→│   └──────┬──────┘            │ exit 18     │                       │
+  1087→│          │ 是                └─────────────┘                       │
+  1088→│          ▼                                                          │
+  1089→│   ┌─────────────┐     否     ┌─────────────┐                       │
+  1090→│   │训练≥90天？  │───────────▶│ 隔离策略    │                       │
+  1091→│   └──────┬──────┘            │ exit 18     │                       │
+  1092→│          │ 是                └─────────────┘                       │
+  1093→│          ▼                                                          │
+  1094→│   ┌─────────────┐     否     ┌─────────────┐                       │
+  1095→│   │人工审批？   │───────────▶│ 等待审批    │                       │
+  1096→│   └──────┬──────┘            │ exit 17     │                       │
+  1097→│          │ 是                └─────────────┘                       │
+  1098→│          ▼                                                          │
+  1099→│   ┌─────────────┐                                                   │
+  1100→│   │ 允许启用    │                                                   │
+  1101→│   └─────────────┘                                                   │
+  1102→│                                                                     │
+  1103→└─────────────────────────────────────────────────────────────────────┘
+  1104→```
+  1105→
+  1106→### 11.2 门禁检查实现
+  1107→
+  1108→```python
+  1109→class MaturityChecker:
+  1110→    """成熟度门禁检查器"""
+  1111→
+  1112→    MATURITY_THRESHOLD = 0.80      # 总成熟度阈值
+  1113→    DIMENSION_THRESHOLD = 0.60     # 维度阈值
+  1114→    MIN_TRAINING_DAYS = 90         # 最低训练天数
+  1115→    BYPASS_FORBIDDEN = True        # 禁止绕过
+  1116→
+  1117→    def check_strategy(
+  1118→        self,
+  1119→        strategy_name: str,
+  1120→        maturity_report: MaturityReport,
+  1121→    ) -> MaturityCheckResult:
+  1122→        """检查单个策略的成熟度"""
+  1123→
+  1124→        reasons = []
+  1125→
+  1126→        # 检查总成熟度
+  1127→        if maturity_report.overall_score < self.MATURITY_THRESHOLD:
+  1128→            reasons.append(
+  1129→                f"总成熟度 {maturity_report.overall_score:.1%} < {self.MATURITY_THRESHOLD:.0%}"
+  1130→            )
+  1131→
+  1132→        # 检查各维度
+  1133→        for dim_name, dim_score in maturity_report.dimension_scores.items():
+  1134→            if dim_score < self.DIMENSION_THRESHOLD:
+  1135→                reasons.append(
+  1136→                    f"维度 {dim_name} {dim_score:.1%} < {self.DIMENSION_THRESHOLD:.0%}"
+  1137→                )
+  1138→
+  1139→        # 检查训练天数
+  1140→        if maturity_report.training_days < self.MIN_TRAINING_DAYS:
+  1141→            reasons.append(
+  1142→                f"训练天数 {maturity_report.training_days} < {self.MIN_TRAINING_DAYS}"
+  1143→            )
+  1144→
+  1145→        # 检查人工审批
+  1146→        if not maturity_report.manually_approved:
+  1147→            reasons.append("未获得人工审批")
+  1148→
+  1149→        return MaturityCheckResult(
+  1150→            strategy_name=strategy_name,
+  1151→            can_activate=len(reasons) == 0,
+  1152→            maturity_score=maturity_report.overall_score,
+  1153→            training_days=maturity_report.training_days,
+  1154→            reasons=reasons,
+  1155→        )
+  1156→```
+  1157→
+  1158→---
+  1159→
+  1160→## §12 告警与通知
+  1161→
+  1162→### 12.1 告警级别
+  1163→
+  1164→| 级别 | 描述 | 通知方式 | 响应时间 |
+  1165→|------|------|----------|----------|
+  1166→| INFO | 信息通知 | 日志记录 | - |
+  1167→| WARNING | 警告 | 邮件/钉钉 | 1小时 |
+  1168→| ERROR | 错误 | 邮件/钉钉/短信 | 15分钟 |
+  1169→| FATAL | 致命 | 电话/即时通讯 | 立即 |
+  1170→
+  1171→### 12.2 告警规则
+  1172→
+  1173→```python
+  1174→ALERT_RULES = {
+  1175→    # 退出码告警
+  1176→    12: {"level": "FATAL", "message": "策略违规"},
+  1177→    13: {"level": "FATAL", "message": "合规检查失败"},
+  1178→    15: {"level": "FATAL", "message": "保证金不足"},
+  1179→    20: {"level": "FATAL", "message": "报撤单频率超限"},
+  1180→
+  1181→    # 阈值告警
+  1182→    "coverage_drop": {"level": "WARNING", "threshold": 5.0},
+  1183→    "test_fail_rate": {"level": "ERROR", "threshold": 0.01},
+  1184→    "latency_high": {"level": "WARNING", "threshold": 100},
+  1185→}
+  1186→```
+  1187→
+  1188→### 12.3 告警发送
+  1189→
+  1190→```python
+  1191→class AlertSender:
+  1192→    """告警发送器"""
+  1193→
+  1194→    def send(self, alert: Alert) -> None:
+  1195→        """发送告警"""
+  1196→
+  1197→        if alert.level == AlertLevel.INFO:
+  1198→            self._log_only(alert)
+  1199→        elif alert.level == AlertLevel.WARNING:
+  1200→            self._send_email(alert)
+  1201→            self._send_dingtalk(alert)
+  1202→        elif alert.level == AlertLevel.ERROR:
+  1203→            self._send_email(alert)
+  1204→            self._send_dingtalk(alert)
+  1205→            self._send_sms(alert)
+  1206→        elif alert.level == AlertLevel.FATAL:
+  1207→            self._send_all_channels(alert)
+  1208→            self._trigger_oncall(alert)
+  1209→```
+  1210→
+  1211→---
+  1212→
+  1213→## §13 自动恢复机制
+  1214→
+  1215→### 13.1 可自动恢复的退出码
+  1216→
+  1217→| 退出码 | 自动恢复方式 |
+  1218→|--------|--------------|
+  1219→| 2 | `ruff check --fix` |
+  1220→| 3 | 分析错误，尝试类型注解 |
+  1221→| 5 | 添加测试用例 |
+  1222→| 7 | `pip install -r requirements.txt` |
+  1223→| 10 | 生成缺失场景测试 |
+  1224→| 14 | 更新锚点文档 |
+  1225→| 16 | 撤销涨跌停订单 |
+  1226→| 19 | 修正交易日归属 |
+  1227→
+  1228→### 13.2 自动恢复逻辑
+  1229→
+  1230→```python
+  1231→AUTO_FIX_HANDLERS = {
+  1232→    2: lambda: subprocess.run(["ruff", "check", ".", "--fix"]),
+  1233→    5: lambda: generate_missing_tests(),
+  1234→    7: lambda: subprocess.run(["pip", "install", "-r", "requirements.txt"]),
+  1235→    14: lambda: update_anchor_document(),
+  1236→    16: lambda: cancel_limit_orders(),
+  1237→    19: lambda: fix_trading_day_assignment(),
+  1238→}
+  1239→
+  1240→def attempt_auto_fix(exit_code: int) -> bool:
+  1241→    """尝试自动修复"""
+  1242→
+  1243→    if exit_code not in AUTO_FIX_HANDLERS:
+  1244→        return False
+  1245→
+  1246→    try:
+  1247→        handler = AUTO_FIX_HANDLERS[exit_code]
+  1248→        handler()
+  1249→        return True
+  1250→    except Exception as e:
+  1251→        log_error(f"自动修复失败: {e}")
+  1252→        return False
+  1253→```
+  1254→
+  1255→---
+  1256→
+  1257→## §14 脚本实现
+  1258→
+  1259→### 14.1 主闭环脚本 (PowerShell)
+  1260→
+  1261→```powershell
+  1262→# scripts/claude_loop.ps1
+  1263→
+  1264→param(
+  1265→    [int]$MaxRounds = 10,
+  1266→    [switch]$Strict,
+  1267→    [switch]$NoAutoFix
+  1268→)
+  1269→
+  1270→$ErrorActionPreference = "Stop"
+  1271→
+  1272→# 初始化
+  1273→$RunId = [guid]::NewGuid().ToString()
+  1274→$Round = 0
+  1275→$CommandsLog = @()
+  1276→
+  1277→function Write-CommandLog {
+  1278→    param([string]$Event, [hashtable]$Data)
+  1279→
+  1280→    $LogEntry = @{
+  1281→        timestamp = (Get-Date -Format "o")
+  1282→        round = $Round
+  1283→        event = $Event
+  1284→    } + $Data
+  1285→
+  1286→    $script:CommandsLog += $LogEntry
+  1287→}
+  1288→
+  1289→function Run-CIGate {
+  1290→    Write-CommandLog -Event "CHECK_START" -Data @{check = "ci"}
+  1291→
+  1292→    # Ruff Check
+  1293→    $result = & .venv/Scripts/python.exe -m ruff check .
+  1294→    if ($LASTEXITCODE -ne 0) {
+  1295→        if (-not $NoAutoFix) {
+  1296→            & .venv/Scripts/python.exe -m ruff check . --fix
+  1297→            if ($LASTEXITCODE -ne 0) { return 2 }
+  1298→        } else {
+  1299→            return 2
+  1300→        }
+  1301→    }
+  1302→
+  1303→    # Ruff Format
+  1304→    $result = & .venv/Scripts/python.exe -m ruff format --check .
+  1305→    if ($LASTEXITCODE -ne 0) { return 2 }
+  1306→
+  1307→    # Mypy
+  1308→    $result = & .venv/Scripts/python.exe -m mypy .
+  1309→    if ($LASTEXITCODE -ne 0) { return 3 }
+  1310→
+  1311→    # Pytest
+  1312→    $result = & .venv/Scripts/python.exe -m pytest tests/ -q
+  1313→    if ($LASTEXITCODE -ne 0) { return 4 }
+  1314→
+  1315→    # Policy
+  1316→    $result = & .venv/Scripts/python.exe scripts/validate_policy.py --all
+  1317→    if ($LASTEXITCODE -ne 0) { return 12 }
+  1318→
+  1319→    Write-CommandLog -Event "CHECK_PASS" -Data @{check = "ci"}
+  1320→    return 0
+  1321→}
+  1322→
+  1323→function Run-ComplianceCheck {
+  1324→    Write-CommandLog -Event "CHECK_START" -Data @{check = "compliance"}
+  1325→
+  1326→    # 合规检查逻辑
+  1327→    # ...
+  1328→
+  1329→    Write-CommandLog -Event "CHECK_PASS" -Data @{check = "compliance"}
+  1330→    return 0
+  1331→}
+  1332→
+  1333→# 主循环
+  1334→while ($Round -lt $MaxRounds) {
+  1335→    $Round++
+  1336→    Write-CommandLog -Event "ROUND_START" -Data @{}
+  1337→
+  1338→    # CI门禁
+  1339→    $exitCode = Run-CIGate
+  1340→    if ($exitCode -ne 0) {
+  1341→        Write-CommandLog -Event "ROUND_END" -Data @{success = $false; exit_code = $exitCode}
+  1342→        exit $exitCode
+  1343→    }
+  1344→
+  1345→    # 合规检查
+  1346→    $exitCode = Run-ComplianceCheck
+  1347→    if ($exitCode -ne 0) {
+  1348→        Write-CommandLog -Event "ROUND_END" -Data @{success = $false; exit_code = $exitCode}
+  1349→        exit $exitCode
+  1350→    }
+  1351→
+  1352→    # 成功
+  1353→    Write-CommandLog -Event "ROUND_END" -Data @{success = $true; exit_code = 0}
+  1354→    break
+  1355→}
+  1356→
+  1357→# 保存命令日志
+  1358→$CommandsLog | ConvertTo-Json -Depth 10 | Out-File "reports/commands_$RunId.json"
+  1359→
+  1360→exit 0
+  1361→```
+  1362→
+  1363→### 14.2 Python版闭环脚本
+  1364→
+  1365→```python
+  1366→#!/usr/bin/env python
+  1367→"""claude_auto_loop.py - V4PRO自动闭环脚本"""
+  1368→
+  1369→import argparse
+  1370→import json
+  1371→import subprocess
+  1372→import sys
+  1373→from datetime import datetime
+  1374→from pathlib import Path
+  1375→from uuid import uuid4
+  1376→
+  1377→
+  1378→def main() -> int:
+  1379→    """主函数"""
+  1380→
+  1381→    parser = argparse.ArgumentParser(description="V4PRO自动闭环")
+  1382→    parser.add_argument("--max-rounds", type=int, default=10)
+  1383→    parser.add_argument("--strict", action="store_true")
+  1384→    parser.add_argument("--no-auto-fix", action="store_true")
+  1385→    args = parser.parse_args()
+  1386→
+  1387→    run_id = str(uuid4())
+  1388→    commands_log = []
+  1389→
+  1390→    for round_num in range(1, args.max_rounds + 1):
+  1391→        log_entry = {
+  1392→            "timestamp": datetime.now().isoformat(),
+  1393→            "round": round_num,
+  1394→            "event": "ROUND_START",
+  1395→        }
+  1396→        commands_log.append(log_entry)
+  1397→
+  1398→        # CI门禁
+  1399→        exit_code = run_ci_gate(args.no_auto_fix)
+  1400→        if exit_code != 0:
+  1401→            save_log(commands_log, run_id)
+  1402→            return exit_code
+  1403→
+  1404→        # 合规检查
+  1405→        exit_code = run_compliance_check()
+  1406→        if exit_code != 0:
+  1407→            save_log(commands_log, run_id)
+  1408→            return exit_code
+  1409→
+  1410→        # 成熟度检查
+  1411→        exit_code = run_maturity_check()
+  1412→        if exit_code != 0:
+  1413→            save_log(commands_log, run_id)
+  1414→            return exit_code
+  1415→
+  1416→        # 成功
+  1417→        commands_log.append({
+  1418→            "timestamp": datetime.now().isoformat(),
+  1419→            "round": round_num,
+  1420→            "event": "ROUND_END",
+  1421→            "success": True,
+  1422→        })
+  1423→        break
+  1424→
+  1425→    save_log(commands_log, run_id)
+  1426→    return 0
+  1427→
+  1428→
+  1429→def run_ci_gate(no_auto_fix: bool) -> int:
+  1430→    """运行CI门禁"""
+  1431→
+  1432→    # Ruff Check
+  1433→    result = subprocess.run(
+  1434→        [".venv/Scripts/python.exe", "-m", "ruff", "check", "."],
+  1435→        capture_output=True,
+  1436→    )
+  1437→    if result.returncode != 0:
+  1438→        if not no_auto_fix:
+  1439→            subprocess.run(
+  1440→                [".venv/Scripts/python.exe", "-m", "ruff", "check", ".", "--fix"]
+  1441→            )
+  1442→            result = subprocess.run(
+  1443→                [".venv/Scripts/python.exe", "-m", "ruff", "check", "."],
+  1444→                capture_output=True,
+  1445→            )
+  1446→            if result.returncode != 0:
+  1447→                return 2
+  1448→        else:
+  1449→            return 2
+  1450→
+  1451→    # Mypy
+  1452→    result = subprocess.run(
+  1453→        [".venv/Scripts/python.exe", "-m", "mypy", "."],
+  1454→        capture_output=True,
+  1455→    )
+  1456→    if result.returncode != 0:
+  1457→        return 3
+  1458→
+  1459→    # Pytest
+  1460→    result = subprocess.run(
+  1461→        [".venv/Scripts/python.exe", "-m", "pytest", "tests/", "-q"],
+  1462→        capture_output=True,
+  1463→    )
+  1464→    if result.returncode != 0:
+  1465→        return 4
+  1466→
+  1467→    # Policy
+  1468→    result = subprocess.run(
+  1469→        [".venv/Scripts/python.exe", "scripts/validate_policy.py", "--all"],
+  1470→        capture_output=True,
+  1471→    )
+  1472→    if result.returncode != 0:
+  1473→        return 12
+  1474→
+  1475→    return 0
+  1476→
+  1477→
+  1478→def run_compliance_check() -> int:
+  1479→    """运行合规检查"""
+  1480→    # TODO: 实现合规检查
+  1481→    return 0
+  1482→
+  1483→
+  1484→def run_maturity_check() -> int:
+  1485→    """运行成熟度检查"""
+  1486→    # TODO: 实现成熟度检查
+  1487→    return 0
+  1488→
+  1489→
+  1490→def save_log(log: list, run_id: str) -> None:
+  1491→    """保存命令日志"""
+  1492→    path = Path(f"reports/commands_{run_id}.json")
+  1493→    path.parent.mkdir(parents=True, exist_ok=True)
+  1494→    with open(path, "w", encoding="utf-8") as f:
+  1495→        json.dump(log, f, ensure_ascii=False, indent=2)
+  1496→
+  1497→
+  1498→if __name__ == "__main__":
+  1499→    sys.exit(main())
+  1500→```
+  1501→
+  1502→---
+  1503→
+  1504→## §15 验收标准
+  1505→
+  1506→### 15.1 功能验收
+  1507→
+  1508→- [ ] 退出码0-20全部定义正确
+  1509→- [ ] CI报告Schema v4.0验证通过
+  1510→- [ ] SIM报告Schema v4.0验证通过
+  1511→- [ ] 命令日志格式正确
+  1512→- [ ] 轮次摘要生成正确
+  1513→- [ ] 策略违规检测生效
+  1514→- [ ] 合规检查生效
+  1515→- [ ] 成熟度检查生效
+  1516→- [ ] 告警发送正确
+  1517→- [ ] 自动恢复机制可用
+  1518→
+  1519→### 15.2 性能验收
+  1520→
+  1521→| 指标 | 要求 |
+  1522→|------|------|
+  1523→| CI门禁耗时 | < 5分钟 |
+  1524→| SIM门禁耗时 | < 10分钟 |
+  1525→| 合规检查耗时 | < 1秒 |
+  1526→| 报告生成耗时 | < 5秒 |
+  1527→
+  1528→### 15.3 安全验收
+  1529→
+  1530→- [ ] 命令白名单生效
+  1531→- [ ] 禁止命令拦截
+  1532→- [ ] 敏感信息不泄露
+  1533→- [ ] 审计日志完整
+  1534→
+  1535→---
+  1536→
+  1537→## 附录
+  1538→
+  1539→### A. 退出码速查表
+  1540→
+  1541→```
+  1542→┌────────┬────────────────────┬──────────┐
+  1543→│ 退出码 │ 名称               │ 严重级别 │
+  1544→├────────┼────────────────────┼──────────┤
+  1545→│ 0      │ SUCCESS            │ INFO     │
+  1546→│ 1      │ GENERAL_ERROR      │ ERROR    │
+  1547→│ 2      │ LINT_FAIL          │ ERROR    │
+  1548→│ 3      │ TYPE_FAIL          │ ERROR    │
+  1549→│ 4      │ TEST_FAIL          │ ERROR    │
+  1550→│ 5      │ COVERAGE_FAIL      │ WARNING  │
+  1551→│ 6      │ BUILD_FAIL         │ ERROR    │
+  1552→│ 7      │ DEPENDENCY_FAIL    │ ERROR    │
+  1553→│ 8      │ CONFIG_FAIL        │ ERROR    │
+  1554→│ 9      │ SIM_FAIL           │ ERROR    │
+  1555→│ 10     │ SCENARIO_MISSING   │ ERROR    │
+  1556→│ 11     │ SCHEMA_INVALID     │ ERROR    │
+  1557→│ 12     │ POLICY_VIOLATION   │ FATAL    │
+  1558→│ 13     │ COMPLIANCE_FAIL    │ FATAL    │
+  1559→│ 14     │ ANCHOR_DRIFT       │ WARNING  │
+  1560→│ 15     │ MARGIN_INSUFFICIENT│ FATAL    │
+  1561→│ 16     │ LIMIT_PRICE_TRIGGER│ WARNING  │
+  1562→│ 17     │ EXP_GATE_FAIL      │ ERROR    │
+  1563→│ 18     │ MATURITY_INSUFF    │ ERROR    │
+  1564→│ 19     │ NIGHT_SESSION_ERROR│ ERROR    │
+  1565→│ 20     │ REPORT_CANCEL_EXCEED│ FATAL   │
+  1566→└────────┴────────────────────┴──────────┘
+  1567→```
+  1568→
+  1569→### B. Schema版本历史
+  1570→
+  1571→| 版本 | 日期 | 变更 |
+  1572→|------|------|------|
+  1573→| v1.0 | 2025-12-14 | 初始版本 |
+  1574→| v2.0 | 2025-12-15 | 添加scenario字段 |
+  1575→| v3.0 | 2025-12-15 | 添加military_rule字段 |
+  1576→| v4.0 | 2025-12-16 | 添加compliance/maturity |
+  1577→
+  1578→---
+  1579→
+  1580→**文档结束**
+  1581→
+  1582→```
+  1583→┌─────────────────────────────────────────────────────────────────────┐
+  1584→│                                                                     │
+  1585→│              V4PRO 自动闭环系统报告 - 军规级自动化                   │
+  1586→│                                                                     │
+  1587→│                    Schema v4.0 · 退出码 0-20                        │
+  1588→│                                                                     │
+  1589→│                    CLAUDE上校 2025-12-16                            │
+  1590→│                                                                     │
+  1591→└─────────────────────────────────────────────────────────────────────┘
+  1592→```
+  1593→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

@@ -1,0 +1,2306 @@
+     1→# V3PRO+ 策略层与全自动下单智能升级报告
+     2→
+     3→> **版本**: v1.0
+     4→> **日期**: 2025-12-16
+     5→> **作者**: CLAUDE上校（军规级别国家伟大工程的总工程师）
+     6→> **文档类型**: 策略层与执行层智能升级军规级报告
+     7→> **目标**: 让国家从中国期货市场捞金！
+     8→
+     9→---
+    10→
+    11→## 执行摘要
+    12→
+    13→本报告基于2024-2025年全球量化交易最新技术发展，对V3PRO+系统的**策略层**和**全自动下单层**提出军规级别的智能升级方案。
+    14→
+    15→### 关键数据
+    16→
+    17→| 项目 | 数据 |
+    18→|------|------|
+    19→| 全球算法交易市场规模（2024） | 157.6-210.6 亿美元 |
+    20→| 预计市场规模（2030） | 284.4-429.9 亿美元 |
+    21→| 复合年增长率 | 8.71%-12.9% |
+    22→| 强化学习市场规模（2024） | 527.1 亿美元 |
+    23→| 预计强化学习市场（2037） | 37.12 万亿美元 |
+    24→
+    25→### 技术革命趋势
+    26→
+    27→```
+    28→2024-2025 量化交易技术演进路线
+    29→
+    30→传统量化 ──────────> AI赋能量化 ──────────> AI原生量化
+    31→│                    │                      │
+    32→├─ 规则策略          ├─ ML增强因子          ├─ 端到端RL
+    33→├─ 线性模型          ├─ LSTM/GRU            ├─ Transformer
+    34→├─ 手动特征          ├─ 自动特征            ├─ LLM驱动
+    35→└─ 固定执行          └─ 算法执行            └─ 自适应执行
+    36→```
+    37→
+    38→---
+    39→
+    40→## 第一部分：策略层智能升级
+    41→
+    42→### 1.1 强化学习策略升级
+    43→
+    44→#### 1.1.1 现状分析
+    45→
+    46→**当前V3PRO+策略层**:
+    47→- `simple_ai`: 简单规则策略
+    48→- `linear_ai`: 线性因子模型
+    49→- `ensemble_moe`: 专家混合模型
+    50→- `dl_torch`: 深度学习策略
+    51→- `top_tier`: 顶级策略
+    52→- `calendar_arb`: 跨期套利
+    53→
+    54→**问题**:
+    55→1. 策略独立运行，缺乏自适应能力
+    56→2. 未使用强化学习进行动态调整
+    57→3. 缺乏端到端的投资组合优化
+    58→
+    59→#### 1.1.2 强化学习策略升级方案
+    60→
+    61→```python
+    62→# src/strategy/rl/__init__.py
+    63→"""强化学习策略模块.
+    64→
+    65→功能特性:
+    66→    - DQN: 离散动作空间（买/卖/持有）
+    67→    - PPO: 连续动作空间（仓位比例）
+    68→    - A2C: 异步Actor-Critic
+    69→    - SAC: 软Actor-Critic（探索性强）
+    70→    - TD3: 双延迟深度确定性策略梯度
+    71→
+    72→参考来源:
+    73→    - FinRL: 哥伦比亚大学开源量化RL库
+    74→    - ICLR 2025: AlphaQCM分布强化学习
+    75→"""
+    76→
+    77→from dataclasses import dataclass
+    78→from enum import Enum
+    79→from typing import Protocol
+    80→
+    81→
+    82→class RLAlgorithm(Enum):
+    83→    """强化学习算法枚举."""
+    84→
+    85→    DQN = "dqn"              # Deep Q-Network
+    86→    DOUBLE_DQN = "ddqn"      # Double DQN
+    87→    DUELING_DQN = "dueling"  # Dueling DQN
+    88→    PPO = "ppo"              # Proximal Policy Optimization
+    89→    A2C = "a2c"              # Advantage Actor-Critic
+    90→    A3C = "a3c"              # Asynchronous A3C
+    91→    SAC = "sac"              # Soft Actor-Critic
+    92→    TD3 = "td3"              # Twin Delayed DDPG
+    93→    DDPG = "ddpg"            # Deep Deterministic Policy Gradient
+    94→
+    95→
+    96→@dataclass(frozen=True)
+    97→class RLConfig:
+    98→    """强化学习配置.
+    99→
+   100→    属性:
+   101→        algorithm: 算法类型
+   102→        state_dim: 状态空间维度
+   103→        action_dim: 动作空间维度
+   104→        hidden_dim: 隐藏层维度
+   105→        learning_rate: 学习率
+   106→        gamma: 折扣因子
+   107→        epsilon: 探索率（DQN系列）
+   108→        tau: 软更新系数
+   109→        batch_size: 批次大小
+   110→        buffer_size: 经验回放缓冲区大小
+   111→    """
+   112→
+   113→    algorithm: RLAlgorithm = RLAlgorithm.PPO
+   114→    state_dim: int = 64
+   115→    action_dim: int = 3           # 买/卖/持有 或 连续仓位
+   116→    hidden_dim: int = 256
+   117→    learning_rate: float = 3e-4
+   118→    gamma: float = 0.99           # 折扣因子
+   119→    epsilon: float = 0.1          # 探索率
+   120→    tau: float = 0.005            # 软更新系数
+   121→    batch_size: int = 256
+   122→    buffer_size: int = 100000
+   123→
+   124→
+   125→class RLAgent(Protocol):
+   126→    """强化学习智能体协议."""
+   127→
+   128→    def select_action(self, state: list[float]) -> int | float:
+   129→        """选择动作.
+   130→
+   131→        参数:
+   132→            state: 当前状态向量
+   133→
+   134→        返回:
+   135→            动作（离散或连续）
+   136→        """
+   137→        ...
+   138→
+   139→    def update(
+   140→        self,
+   141→        state: list[float],
+   142→        action: int | float,
+   143→        reward: float,
+   144→        next_state: list[float],
+   145→        done: bool,
+   146→    ) -> dict[str, float]:
+   147→        """更新模型.
+   148→
+   149→        参数:
+   150→            state: 当前状态
+   151→            action: 执行的动作
+   152→            reward: 获得的奖励
+   153→            next_state: 下一状态
+   154→            done: 是否结束
+   155→
+   156→        返回:
+   157→            训练指标字典
+   158→        """
+   159→        ...
+   160→
+   161→    def save(self, path: str) -> None:
+   162→        """保存模型."""
+   163→        ...
+   164→
+   165→    def load(self, path: str) -> None:
+   166→        """加载模型."""
+   167→        ...
+   168→```
+   169→
+   170→#### 1.1.3 PPO策略实现
+   171→
+   172→```python
+   173→# src/strategy/rl/ppo_strategy.py
+   174→"""PPO强化学习策略.
+   175→
+   176→PPO (Proximal Policy Optimization) 是OpenAI提出的策略梯度算法，
+   177→在连续动作空间中表现优异，适合期货仓位管理。
+   178→
+   179→参考:
+   180→    - Schulman et al., 2017: Proximal Policy Optimization Algorithms
+   181→    - FinRL库: PPO在投资组合管理中的应用
+   182→"""
+   183→
+   184→import math
+   185→from dataclasses import dataclass, field
+   186→from typing import ClassVar
+   187→
+   188→
+   189→@dataclass
+   190→class PPOConfig:
+   191→    """PPO配置."""
+   192→
+   193→    # 网络结构
+   194→    state_dim: int = 64
+   195→    action_dim: int = 1           # 连续动作：仓位比例 [-1, 1]
+   196→    hidden_dims: tuple[int, ...] = (256, 128)
+   197→
+   198→    # PPO超参数
+   199→    clip_epsilon: float = 0.2     # PPO裁剪系数
+   200→    value_coef: float = 0.5       # 价值损失系数
+   201→    entropy_coef: float = 0.01    # 熵正则化系数
+   202→    max_grad_norm: float = 0.5    # 梯度裁剪
+   203→
+   204→    # 训练参数
+   205→    learning_rate: float = 3e-4
+   206→    gamma: float = 0.99
+   207→    gae_lambda: float = 0.95      # GAE参数
+   208→    n_epochs: int = 10            # 每次更新的epoch数
+   209→    batch_size: int = 64
+   210→    buffer_size: int = 2048       # 收集多少步后更新
+   211→
+   212→
+   213→@dataclass
+   214→class PPOState:
+   215→    """PPO状态向量构造.
+   216→
+   217→    状态向量包含:
+   218→        1. 价格特征 (20维): 收益率、波动率、动量等
+   219→        2. 技术指标 (15维): MACD、RSI、布林带等
+   220→        3. 订单簿特征 (10维): 买卖价差、深度等
+   221→        4. 持仓特征 (5维): 当前仓位、浮盈等
+   222→        5. 市场特征 (14维): 主力资金流、成交量等
+   223→    """
+   224→
+   225→    # 价格特征
+   226→    returns_1d: float = 0.0       # 1日收益率
+   227→    returns_5d: float = 0.0       # 5日收益率
+   228→    returns_20d: float = 0.0      # 20日收益率
+   229→    volatility_5d: float = 0.0    # 5日波动率
+   230→    volatility_20d: float = 0.0   # 20日波动率
+   231→    momentum_5d: float = 0.0      # 5日动量
+   232→    momentum_20d: float = 0.0     # 20日动量
+   233→    skewness_20d: float = 0.0     # 20日偏度
+   234→    kurtosis_20d: float = 0.0     # 20日峰度
+   235→    # ... 更多价格特征
+   236→
+   237→    # 技术指标
+   238→    macd: float = 0.0
+   239→    macd_signal: float = 0.0
+   240→    rsi_14: float = 0.0
+   241→    bollinger_upper: float = 0.0
+   242→    bollinger_lower: float = 0.0
+   243→    atr_14: float = 0.0
+   244→    # ... 更多技术指标
+   245→
+   246→    # 订单簿特征
+   247→    bid_ask_spread: float = 0.0
+   248→    bid_depth: float = 0.0
+   249→    ask_depth: float = 0.0
+   250→    imbalance: float = 0.0
+   251→    # ... 更多订单簿特征
+   252→
+   253→    # 持仓特征
+   254→    current_position: float = 0.0
+   255→    unrealized_pnl: float = 0.0
+   256→    margin_ratio: float = 0.0
+   257→    # ... 更多持仓特征
+   258→
+   259→    def to_vector(self) -> list[float]:
+   260→        """转换为状态向量."""
+   261→        return [
+   262→            self.returns_1d,
+   263→            self.returns_5d,
+   264→            self.returns_20d,
+   265→            self.volatility_5d,
+   266→            self.volatility_20d,
+   267→            self.momentum_5d,
+   268→            self.momentum_20d,
+   269→            self.skewness_20d,
+   270→            self.kurtosis_20d,
+   271→            self.macd,
+   272→            self.macd_signal,
+   273→            self.rsi_14,
+   274→            self.bollinger_upper,
+   275→            self.bollinger_lower,
+   276→            self.atr_14,
+   277→            self.bid_ask_spread,
+   278→            self.bid_depth,
+   279→            self.ask_depth,
+   280→            self.imbalance,
+   281→            self.current_position,
+   282→            self.unrealized_pnl,
+   283→            self.margin_ratio,
+   284→            # ... 填充到64维
+   285→        ]
+   286→
+   287→
+   288→@dataclass
+   289→class PPOReward:
+   290→    """PPO奖励函数设计.
+   291→
+   292→    奖励 = 收益奖励 + 风险惩罚 + 交易成本惩罚 + 夏普奖励
+   293→
+   294→    设计原则:
+   295→        1. 鼓励盈利
+   296→        2. 惩罚过度风险
+   297→        3. 惩罚频繁交易
+   298→        4. 鼓励稳定收益
+   299→    """
+   300→
+   301→    # 奖励系数
+   302→    RETURN_COEF: ClassVar[float] = 1.0      # 收益系数
+   303→    RISK_COEF: ClassVar[float] = 0.1        # 风险惩罚系数
+   304→    COST_COEF: ClassVar[float] = 0.01       # 交易成本系数
+   305→    SHARPE_COEF: ClassVar[float] = 0.5      # 夏普奖励系数
+   306→
+   307→    # 当期数据
+   308→    pnl: float = 0.0                        # 盈亏
+   309→    position_change: float = 0.0            # 仓位变化
+   310→    volatility: float = 0.0                 # 波动率
+   311→    transaction_cost: float = 0.0           # 交易成本
+   312→
+   313→    # 历史数据（用于计算夏普）
+   314→    returns_history: list[float] = field(default_factory=list)
+   315→
+   316→    def calculate(self) -> float:
+   317→        """计算奖励.
+   318→
+   319→        返回:
+   320→            总奖励值
+   321→        """
+   322→        # 1. 收益奖励
+   323→        return_reward = self.RETURN_COEF * self.pnl
+   324→
+   325→        # 2. 风险惩罚（波动率惩罚）
+   326→        risk_penalty = -self.RISK_COEF * self.volatility * abs(self.pnl)
+   327→
+   328→        # 3. 交易成本惩罚
+   329→        cost_penalty = -self.COST_COEF * self.transaction_cost
+   330→
+   331→        # 4. 夏普奖励（如果有足够历史）
+   332→        sharpe_reward = 0.0
+   333→        if len(self.returns_history) >= 20:
+   334→            mean_return = sum(self.returns_history) / len(self.returns_history)
+   335→            std_return = math.sqrt(
+   336→                sum((r - mean_return) ** 2 for r in self.returns_history)
+   337→                / len(self.returns_history)
+   338→            )
+   339→            if std_return > 1e-6:
+   340→                sharpe = mean_return / std_return * math.sqrt(252)
+   341→                sharpe_reward = self.SHARPE_COEF * max(0, sharpe)
+   342→
+   343→        return return_reward + risk_penalty + cost_penalty + sharpe_reward
+   344→
+   345→
+   346→class PPOStrategy:
+   347→    """PPO强化学习策略.
+   348→
+   349→    功能:
+   350→        - 自适应仓位管理
+   351→        - 动态风险调整
+   352→        - 端到端决策优化
+   353→    """
+   354→
+   355→    def __init__(self, config: PPOConfig | None = None) -> None:
+   356→        """初始化PPO策略.
+   357→
+   358→        参数:
+   359→            config: PPO配置
+   360→        """
+   361→        self._config = config or PPOConfig()
+   362→        self._actor_weights: list[list[float]] = []   # Actor网络权重
+   363→        self._critic_weights: list[list[float]] = []  # Critic网络权重
+   364→        self._buffer: list[tuple] = []                # 经验缓冲区
+   365→
+   366→    def get_action(self, state: PPOState) -> float:
+   367→        """获取动作（目标仓位）.
+   368→
+   369→        参数:
+   370→            state: 当前状态
+   371→
+   372→        返回:
+   373→            目标仓位 [-1, 1]，-1表示满仓做空，1表示满仓做多
+   374→        """
+   375→        state_vec = state.to_vector()
+   376→
+   377→        # 前向传播（简化版）
+   378→        # 实际实现需要完整的神经网络
+   379→        action_mean = self._forward_actor(state_vec)
+   380→
+   381→        # 添加探索噪声
+   382→        noise = self._sample_noise()
+   383→        action = action_mean + noise
+   384→
+   385→        # 裁剪到有效范围
+   386→        return max(-1.0, min(1.0, action))
+   387→
+   388→    def _forward_actor(self, state: list[float]) -> float:
+   389→        """Actor网络前向传播.
+   390→
+   391→        参数:
+   392→            state: 状态向量
+   393→
+   394→        返回:
+   395→            动作均值
+   396→        """
+   397→        # 简化实现，实际需要PyTorch神经网络
+   398→        if not self._actor_weights:
+   399→            return 0.0
+   400→
+   401→        # 多层前向传播
+   402→        x = state
+   403→        for weights in self._actor_weights:
+   404→            x = [sum(w * s for w, s in zip(row, x)) for row in weights]
+   405→            x = [max(0, v) for v in x]  # ReLU
+   406→
+   407→        return x[0] if x else 0.0
+   408→
+   409→    def _sample_noise(self) -> float:
+   410→        """采样探索噪声.
+   411→
+   412→        返回:
+   413→            高斯噪声
+   414→        """
+   415→        # 简化实现，实际使用torch.randn
+   416→        import random
+   417→        return random.gauss(0, 0.1)
+   418→
+   419→    def update(self, transitions: list[tuple]) -> dict[str, float]:
+   420→        """更新策略.
+   421→
+   422→        参数:
+   423→            transitions: (state, action, reward, next_state, done) 列表
+   424→
+   425→        返回:
+   426→            训练指标
+   427→        """
+   428→        # PPO更新算法
+   429→        # 1. 计算优势函数 (GAE)
+   430→        # 2. 多epoch更新
+   431→        # 3. 裁剪策略更新
+   432→
+   433→        # 简化实现，返回占位指标
+   434→        return {
+   435→            "actor_loss": 0.0,
+   436→            "critic_loss": 0.0,
+   437→            "entropy": 0.0,
+   438→            "kl_divergence": 0.0,
+   439→        }
+   440→```
+   441→
+   442→### 1.2 Transformer策略升级
+   443→
+   444→#### 1.2.1 LSTM-Transformer混合模型
+   445→
+   446→```python
+   447→# src/strategy/dl/transformer_strategy.py
+   448→"""Transformer-LSTM混合策略.
+   449→
+   450→结合LSTM的短期依赖捕捉能力和Transformer的长期依赖建模能力。
+   451→
+   452→参考:
+   453→    - ICLR 2025: 双注意力金融时序预测
+   454→    - 2025年研究: Transformer-LSTM股票预测
+   455→"""
+   456→
+   457→from dataclasses import dataclass
+   458→from enum import Enum
+   459→from typing import ClassVar
+   460→
+   461→
+   462→class AttentionType(Enum):
+   463→    """注意力类型."""
+   464→
+   465→    SELF = "self"               # 自注意力
+   466→    CROSS = "cross"             # 交叉注意力
+   467→    MULTI_HEAD = "multi_head"   # 多头注意力
+   468→    SPARSE = "sparse"           # 稀疏注意力
+   469→
+   470→
+   471→@dataclass(frozen=True)
+   472→class TransformerConfig:
+   473→    """Transformer配置.
+   474→
+   475→    属性:
+   476→        d_model: 模型维度
+   477→        n_heads: 注意力头数
+   478→        n_encoder_layers: 编码器层数
+   479→        n_decoder_layers: 解码器层数
+   480→        d_ff: 前馈网络维度
+   481→        dropout: Dropout率
+   482→        max_seq_len: 最大序列长度
+   483→        lstm_hidden: LSTM隐藏层维度
+   484→        lstm_layers: LSTM层数
+   485→    """
+   486→
+   487→    d_model: int = 128
+   488→    n_heads: int = 8
+   489→    n_encoder_layers: int = 4
+   490→    n_decoder_layers: int = 4
+   491→    d_ff: int = 512
+   492→    dropout: float = 0.1
+   493→    max_seq_len: int = 60        # 60个交易日
+   494→    lstm_hidden: int = 64
+   495→    lstm_layers: int = 2
+   496→
+   497→
+   498→@dataclass
+   499→class TimeSeriesInput:
+   500→    """时序输入数据.
+   501→
+   502→    属性:
+   503→        prices: 价格序列 [seq_len, features]
+   504→        volumes: 成交量序列
+   505→        technical: 技术指标序列
+   506→        fundamental: 基本面特征（可选）
+   507→        sentiment: 情感特征（可选，来自新闻/社交媒体）
+   508→    """
+   509→
+   510→    prices: list[list[float]]      # [seq_len, price_features]
+   511→    volumes: list[float]           # [seq_len]
+   512→    technical: list[list[float]]   # [seq_len, tech_features]
+   513→    fundamental: list[float] | None = None
+   514→    sentiment: list[float] | None = None
+   515→
+   516→
+   517→class PositionalEncoding:
+   518→    """位置编码.
+   519→
+   520→    为Transformer添加位置信息。
+   521→    """
+   522→
+   523→    def __init__(self, d_model: int, max_len: int = 5000) -> None:
+   524→        """初始化位置编码.
+   525→
+   526→        参数:
+   527→            d_model: 模型维度
+   528→            max_len: 最大序列长度
+   529→        """
+   530→        self._d_model = d_model
+   531→        self._max_len = max_len
+   532→        self._pe = self._compute_pe()
+   533→
+   534→    def _compute_pe(self) -> list[list[float]]:
+   535→        """计算位置编码矩阵.
+   536→
+   537→        返回:
+   538→            位置编码 [max_len, d_model]
+   539→        """
+   540→        import math
+   541→
+   542→        pe = []
+   543→        for pos in range(self._max_len):
+   544→            row = []
+   545→            for i in range(self._d_model):
+   546→                if i % 2 == 0:
+   547→                    row.append(math.sin(pos / (10000 ** (i / self._d_model))))
+   548→                else:
+   549→                    row.append(math.cos(pos / (10000 ** ((i - 1) / self._d_model))))
+   550→            pe.append(row)
+   551→        return pe
+   552→
+   553→    def encode(self, seq_len: int) -> list[list[float]]:
+   554→        """获取位置编码.
+   555→
+   556→        参数:
+   557→            seq_len: 序列长度
+   558→
+   559→        返回:
+   560→            位置编码 [seq_len, d_model]
+   561→        """
+   562→        return self._pe[:seq_len]
+   563→
+   564→
+   565→class MultiHeadAttention:
+   566→    """多头注意力机制.
+   567→
+   568→    Attention(Q, K, V) = softmax(QK^T / sqrt(d_k)) * V
+   569→    """
+   570→
+   571→    def __init__(self, d_model: int, n_heads: int) -> None:
+   572→        """初始化多头注意力.
+   573→
+   574→        参数:
+   575→            d_model: 模型维度
+   576→            n_heads: 注意力头数
+   577→        """
+   578→        self._d_model = d_model
+   579→        self._n_heads = n_heads
+   580→        self._d_k = d_model // n_heads
+   581→
+   582→    def forward(
+   583→        self,
+   584→        query: list[list[float]],
+   585→        key: list[list[float]],
+   586→        value: list[list[float]],
+   587→        mask: list[list[bool]] | None = None,
+   588→    ) -> list[list[float]]:
+   589→        """前向传播.
+   590→
+   591→        参数:
+   592→            query: 查询矩阵 [seq_len, d_model]
+   593→            key: 键矩阵 [seq_len, d_model]
+   594→            value: 值矩阵 [seq_len, d_model]
+   595→            mask: 注意力掩码
+   596→
+   597→        返回:
+   598→            注意力输出 [seq_len, d_model]
+   599→        """
+   600→        # 简化实现
+   601→        # 实际需要矩阵运算和softmax
+   602→        return query  # 占位
+   603→
+   604→
+   605→class TransformerLSTMStrategy:
+   606→    """Transformer-LSTM混合策略.
+   607→
+   608→    架构:
+   609→        1. LSTM编码短期时序依赖
+   610→        2. Transformer编码长期时序依赖
+   611→        3. 融合层结合两者输出
+   612→        4. 输出层预测信号
+   613→
+   614→    性能基准:
+   615→        - 在CSI300数据集上年化收益提升7.3%
+   616→        - 在CSI800数据集上年化收益提升22.1%
+   617→    """
+   618→
+   619→    # 模型性能基准
+   620→    CSI300_IMPROVEMENT: ClassVar[float] = 0.073   # 7.3%
+   621→    CSI800_IMPROVEMENT: ClassVar[float] = 0.221   # 22.1%
+   622→
+   623→    def __init__(self, config: TransformerConfig | None = None) -> None:
+   624→        """初始化策略.
+   625→
+   626→        参数:
+   627→            config: Transformer配置
+   628→        """
+   629→        self._config = config or TransformerConfig()
+   630→        self._pos_encoder = PositionalEncoding(
+   631→            self._config.d_model,
+   632→            self._config.max_seq_len,
+   633→        )
+   634→        self._attention = MultiHeadAttention(
+   635→            self._config.d_model,
+   636→            self._config.n_heads,
+   637→        )
+   638→
+   639→    def predict(self, input_data: TimeSeriesInput) -> float:
+   640→        """预测交易信号.
+   641→
+   642→        参数:
+   643→            input_data: 时序输入数据
+   644→
+   645→        返回:
+   646→            信号值 [-1, 1]，负值做空，正值做多
+   647→        """
+   648→        # 1. LSTM编码短期特征
+   649→        lstm_output = self._lstm_encode(input_data)
+   650→
+   651→        # 2. Transformer编码长期特征
+   652→        transformer_output = self._transformer_encode(input_data)
+   653→
+   654→        # 3. 融合
+   655→        fused = self._fuse(lstm_output, transformer_output)
+   656→
+   657→        # 4. 输出信号
+   658→        signal = self._output_layer(fused)
+   659→
+   660→        return max(-1.0, min(1.0, signal))
+   661→
+   662→    def _lstm_encode(self, input_data: TimeSeriesInput) -> list[float]:
+   663→        """LSTM编码.
+   664→
+   665→        参数:
+   666→            input_data: 输入数据
+   667→
+   668→        返回:
+   669→            LSTM隐藏状态
+   670→        """
+   671→        # 简化实现
+   672→        return [0.0] * self._config.lstm_hidden
+   673→
+   674→    def _transformer_encode(self, input_data: TimeSeriesInput) -> list[float]:
+   675→        """Transformer编码.
+   676→
+   677→        参数:
+   678→            input_data: 输入数据
+   679→
+   680→        返回:
+   681→            Transformer输出
+   682→        """
+   683→        # 简化实现
+   684→        return [0.0] * self._config.d_model
+   685→
+   686→    def _fuse(
+   687→        self,
+   688→        lstm_out: list[float],
+   689→        transformer_out: list[float],
+   690→    ) -> list[float]:
+   691→        """融合LSTM和Transformer输出.
+   692→
+   693→        参数:
+   694→            lstm_out: LSTM输出
+   695→            transformer_out: Transformer输出
+   696→
+   697→        返回:
+   698→            融合特征
+   699→        """
+   700→        # 简单拼接，实际可用注意力机制融合
+   701→        return lstm_out + transformer_out
+   702→
+   703→    def _output_layer(self, features: list[float]) -> float:
+   704→        """输出层.
+   705→
+   706→        参数:
+   707→            features: 融合特征
+   708→
+   709→        返回:
+   710→            信号值
+   711→        """
+   712→        # 简化实现，实际需要MLP
+   713→        if not features:
+   714→            return 0.0
+   715→        return sum(features) / len(features)
+   716→```
+   717→
+   718→### 1.3 多因子智能挖掘
+   719→
+   720→#### 1.3.1 自动因子发现系统
+   721→
+   722→```python
+   723→# src/strategy/alpha/factor_mining.py
+   724→"""自动因子挖掘模块.
+   725→
+   726→使用遗传规划(GP)和深度学习自动发现Alpha因子。
+   727→
+   728→参考:
+   729→    - 2024年AI量化论文: 自动化因子发现
+   730→    - WorldQuant: Alpha挖掘方法论
+   731→"""
+   732→
+   733→from dataclasses import dataclass, field
+   734→from enum import Enum
+   735→from typing import Callable
+   736→
+   737→
+   738→class OperatorType(Enum):
+   739→    """算子类型."""
+   740→
+   741→    # 时序算子
+   742→    TS_MEAN = "ts_mean"           # 时序均值
+   743→    TS_STD = "ts_std"             # 时序标准差
+   744→    TS_MAX = "ts_max"             # 时序最大
+   745→    TS_MIN = "ts_min"             # 时序最小
+   746→    TS_RANK = "ts_rank"           # 时序排名
+   747→    TS_DELAY = "ts_delay"         # 时序延迟
+   748→    TS_DELTA = "ts_delta"         # 时序差分
+   749→    TS_CORR = "ts_corr"           # 时序相关性
+   750→    TS_COV = "ts_cov"             # 时序协方差
+   751→
+   752→    # 截面算子
+   753→    CS_RANK = "cs_rank"           # 截面排名
+   754→    CS_ZSCORE = "cs_zscore"       # 截面Z分数
+   755→    CS_DEMEAN = "cs_demean"       # 截面去均值
+   756→
+   757→    # 算术算子
+   758→    ADD = "add"
+   759→    SUB = "sub"
+   760→    MUL = "mul"
+   761→    DIV = "div"
+   762→    POW = "pow"
+   763→    LOG = "log"
+   764→    ABS = "abs"
+   765→    SIGN = "sign"
+   766→
+   767→
+   768→@dataclass
+   769→class FactorExpression:
+   770→    """因子表达式.
+   771→
+   772→    表示一个因子的计算公式树。
+   773→    """
+   774→
+   775→    operator: OperatorType
+   776→    operands: list["FactorExpression | str | float"] = field(default_factory=list)
+   777→    window: int = 20
+   778→
+   779→    def to_formula(self) -> str:
+   780→        """转换为公式字符串.
+   781→
+   782→        返回:
+   783→            公式字符串
+   784→        """
+   785→        if not self.operands:
+   786→            return f"{self.operator.value}({self.window})"
+   787→
+   788→        operand_strs = []
+   789→        for op in self.operands:
+   790→            if isinstance(op, FactorExpression):
+   791→                operand_strs.append(op.to_formula())
+   792→            else:
+   793→                operand_strs.append(str(op))
+   794→
+   795→        return f"{self.operator.value}({', '.join(operand_strs)}, {self.window})"
+   796→
+   797→
+   798→@dataclass
+   799→class FactorStats:
+   800→    """因子统计指标.
+   801→
+   802→    属性:
+   803→        ic: 信息系数（IC）
+   804→        ir: 信息比率（IR）
+   805→        ic_mean: IC均值
+   806→        ic_std: IC标准差
+   807→        turnover: 换手率
+   808→        sharpe: 因子夏普比率
+   809→        max_drawdown: 最大回撤
+   810→    """
+   811→
+   812→    ic: float = 0.0
+   813→    ir: float = 0.0
+   814→    ic_mean: float = 0.0
+   815→    ic_std: float = 0.0
+   816→    turnover: float = 0.0
+   817→    sharpe: float = 0.0
+   818→    max_drawdown: float = 0.0
+   819→
+   820→    def is_valid(
+   821→        self,
+   822→        min_ic: float = 0.02,
+   823→        min_ir: float = 0.5,
+   824→        max_turnover: float = 0.5,
+   825→    ) -> bool:
+   826→        """判断因子是否有效.
+   827→
+   828→        参数:
+   829→            min_ic: 最小IC阈值
+   830→            min_ir: 最小IR阈值
+   831→            max_turnover: 最大换手率
+   832→
+   833→        返回:
+   834→            是否有效
+   835→        """
+   836→        return (
+   837→            abs(self.ic_mean) >= min_ic
+   838→            and abs(self.ir) >= min_ir
+   839→            and self.turnover <= max_turnover
+   840→        )
+   841→
+   842→
+   843→class GeneticFactorMiner:
+   844→    """遗传规划因子挖掘器.
+   845→
+   846→    使用遗传算法自动发现Alpha因子。
+   847→
+   848→    算法流程:
+   849→        1. 初始化随机因子种群
+   850→        2. 评估因子表现（IC、IR、夏普）
+   851→        3. 选择优秀因子
+   852→        4. 交叉变异产生新因子
+   853→        5. 重复直到收敛
+   854→    """
+   855→
+   856→    def __init__(
+   857→        self,
+   858→        population_size: int = 100,
+   859→        generations: int = 50,
+   860→        mutation_rate: float = 0.1,
+   861→        crossover_rate: float = 0.7,
+   862→    ) -> None:
+   863→        """初始化挖掘器.
+   864→
+   865→        参数:
+   866→            population_size: 种群大小
+   867→            generations: 迭代代数
+   868→            mutation_rate: 变异率
+   869→            crossover_rate: 交叉率
+   870→        """
+   871→        self._pop_size = population_size
+   872→        self._generations = generations
+   873→        self._mutation_rate = mutation_rate
+   874→        self._crossover_rate = crossover_rate
+   875→        self._population: list[FactorExpression] = []
+   876→
+   877→    def mine(
+   878→        self,
+   879→        data: dict[str, list[float]],
+   880→        target: list[float],
+   881→    ) -> list[tuple[FactorExpression, FactorStats]]:
+   882→        """挖掘因子.
+   883→
+   884→        参数:
+   885→            data: 原始数据（字段名 -> 时序数据）
+   886→            target: 目标收益率
+   887→
+   888→        返回:
+   889→            (因子表达式, 统计指标) 列表，按IR排序
+   890→        """
+   891→        # 1. 初始化种群
+   892→        self._init_population(list(data.keys()))
+   893→
+   894→        # 2. 迭代进化
+   895→        for gen in range(self._generations):
+   896→            # 评估适应度
+   897→            fitness = self._evaluate(data, target)
+   898→
+   899→            # 选择
+   900→            selected = self._select(fitness)
+   901→
+   902→            # 交叉变异
+   903→            self._population = self._evolve(selected)
+   904→
+   905→        # 3. 返回最优因子
+   906→        results = []
+   907→        for factor in self._population:
+   908→            stats = self._compute_stats(factor, data, target)
+   909→            if stats.is_valid():
+   910→                results.append((factor, stats))
+   911→
+   912→        # 按IR排序
+   913→        results.sort(key=lambda x: abs(x[1].ir), reverse=True)
+   914→        return results
+   915→
+   916→    def _init_population(self, fields: list[str]) -> None:
+   917→        """初始化种群.
+   918→
+   919→        参数:
+   920→            fields: 可用字段列表
+   921→        """
+   922→        import random
+   923→
+   924→        self._population = []
+   925→        for _ in range(self._pop_size):
+   926→            # 随机生成因子表达式
+   927→            factor = self._random_factor(fields, depth=3)
+   928→            self._population.append(factor)
+   929→
+   930→    def _random_factor(
+   931→        self,
+   932→        fields: list[str],
+   933→        depth: int,
+   934→    ) -> FactorExpression:
+   935→        """随机生成因子.
+   936→
+   937→        参数:
+   938→            fields: 可用字段
+   939→            depth: 表达式深度
+   940→
+   941→        返回:
+   942→            因子表达式
+   943→        """
+   944→        import random
+   945→
+   946→        if depth <= 0:
+   947→            # 叶子节点：字段或常数
+   948→            return FactorExpression(
+   949→                operator=OperatorType.TS_MEAN,
+   950→                operands=[random.choice(fields)],
+   951→                window=random.choice([5, 10, 20, 60]),
+   952→            )
+   953→
+   954→        # 随机选择算子
+   955→        op = random.choice(list(OperatorType))
+   956→
+   957→        # 递归生成操作数
+   958→        n_operands = 2 if op in {
+   959→            OperatorType.ADD, OperatorType.SUB,
+   960→            OperatorType.MUL, OperatorType.DIV,
+   961→            OperatorType.TS_CORR, OperatorType.TS_COV,
+   962→        } else 1
+   963→
+   964→        operands = [self._random_factor(fields, depth - 1) for _ in range(n_operands)]
+   965→
+   966→        return FactorExpression(
+   967→            operator=op,
+   968→            operands=operands,
+   969→            window=random.choice([5, 10, 20, 60]),
+   970→        )
+   971→
+   972→    def _evaluate(
+   973→        self,
+   974→        data: dict[str, list[float]],
+   975→        target: list[float],
+   976→    ) -> list[float]:
+   977→        """评估种群适应度.
+   978→
+   979→        参数:
+   980→            data: 原始数据
+   981→            target: 目标收益
+   982→
+   983→        返回:
+   984→            适应度列表
+   985→        """
+   986→        fitness = []
+   987→        for factor in self._population:
+   988→            stats = self._compute_stats(factor, data, target)
+   989→            # 适应度 = IR的绝对值
+   990→            fitness.append(abs(stats.ir))
+   991→        return fitness
+   992→
+   993→    def _compute_stats(
+   994→        self,
+   995→        factor: FactorExpression,
+   996→        data: dict[str, list[float]],
+   997→        target: list[float],
+   998→    ) -> FactorStats:
+   999→        """计算因子统计指标.
+  1000→
+  1001→        参数:
+  1002→            factor: 因子表达式
+  1003→            data: 原始数据
+  1004→            target: 目标收益
+  1005→
+  1006→        返回:
+  1007→            统计指标
+  1008→        """
+  1009→        # 简化实现，实际需要完整计算
+  1010→        return FactorStats(
+  1011→            ic=0.05,
+  1012→            ir=0.8,
+  1013→            ic_mean=0.05,
+  1014→            ic_std=0.06,
+  1015→            turnover=0.3,
+  1016→            sharpe=1.5,
+  1017→            max_drawdown=0.15,
+  1018→        )
+  1019→
+  1020→    def _select(self, fitness: list[float]) -> list[FactorExpression]:
+  1021→        """选择操作.
+  1022→
+  1023→        参数:
+  1024→            fitness: 适应度列表
+  1025→
+  1026→        返回:
+  1027→            选中的个体
+  1028→        """
+  1029→        import random
+  1030→
+  1031→        # 轮盘赌选择
+  1032→        total = sum(fitness) or 1
+  1033→        probs = [f / total for f in fitness]
+  1034→
+  1035→        selected = []
+  1036→        for _ in range(self._pop_size // 2):
+  1037→            idx = self._roulette_select(probs)
+  1038→            selected.append(self._population[idx])
+  1039→
+  1040→        return selected
+  1041→
+  1042→    def _roulette_select(self, probs: list[float]) -> int:
+  1043→        """轮盘赌选择.
+  1044→
+  1045→        参数:
+  1046→            probs: 概率列表
+  1047→
+  1048→        返回:
+  1049→            选中的索引
+  1050→        """
+  1051→        import random
+  1052→
+  1053→        r = random.random()
+  1054→        cumsum = 0.0
+  1055→        for i, p in enumerate(probs):
+  1056→            cumsum += p
+  1057→            if r <= cumsum:
+  1058→                return i
+  1059→        return len(probs) - 1
+  1060→
+  1061→    def _evolve(
+  1062→        self,
+  1063→        selected: list[FactorExpression],
+  1064→    ) -> list[FactorExpression]:
+  1065→        """进化操作.
+  1066→
+  1067→        参数:
+  1068→            selected: 选中的个体
+  1069→
+  1070→        返回:
+  1071→            新种群
+  1072→        """
+  1073→        import random
+  1074→
+  1075→        new_pop = list(selected)  # 保留精英
+  1076→
+  1077→        while len(new_pop) < self._pop_size:
+  1078→            parent1 = random.choice(selected)
+  1079→            parent2 = random.choice(selected)
+  1080→
+  1081→            # 交叉
+  1082→            if random.random() < self._crossover_rate:
+  1083→                child = self._crossover(parent1, parent2)
+  1084→            else:
+  1085→                child = parent1
+  1086→
+  1087→            # 变异
+  1088→            if random.random() < self._mutation_rate:
+  1089→                child = self._mutate(child)
+  1090→
+  1091→            new_pop.append(child)
+  1092→
+  1093→        return new_pop
+  1094→
+  1095→    def _crossover(
+  1096→        self,
+  1097→        parent1: FactorExpression,
+  1098→        parent2: FactorExpression,
+  1099→    ) -> FactorExpression:
+  1100→        """交叉操作.
+  1101→
+  1102→        参数:
+  1103→            parent1: 父代1
+  1104→            parent2: 父代2
+  1105→
+  1106→        返回:
+  1107→            子代
+  1108→        """
+  1109→        import random
+  1110→
+  1111→        # 简单交叉：交换算子
+  1112→        return FactorExpression(
+  1113→            operator=random.choice([parent1.operator, parent2.operator]),
+  1114→            operands=parent1.operands[:1] + parent2.operands[:1],
+  1115→            window=random.choice([parent1.window, parent2.window]),
+  1116→        )
+  1117→
+  1118→    def _mutate(self, factor: FactorExpression) -> FactorExpression:
+  1119→        """变异操作.
+  1120→
+  1121→        参数:
+  1122→            factor: 因子
+  1123→
+  1124→        返回:
+  1125→            变异后的因子
+  1126→        """
+  1127→        import random
+  1128→
+  1129→        return FactorExpression(
+  1130→            operator=random.choice(list(OperatorType)),
+  1131→            operands=factor.operands,
+  1132→            window=random.choice([5, 10, 20, 60]),
+  1133→        )
+  1134→```
+  1135→
+  1136→### 1.4 新增 Required Scenarios（策略层）
+  1137→
+  1138→| rule_id | component | 描述 |
+  1139→|---------|-----------|------|
+  1140→| `STRAT.RL.PPO_TRAIN` | strategy.rl.ppo | PPO训练收敛 |
+  1141→| `STRAT.RL.ACTION_VALID` | strategy.rl | 动作在有效范围内 |
+  1142→| `STRAT.RL.REWARD_DESIGN` | strategy.rl | 奖励函数设计合理 |
+  1143→| `STRAT.RL.STATE_NORMALIZE` | strategy.rl | 状态标准化 |
+  1144→| `STRAT.TRANSFORMER.ATTENTION` | strategy.dl.transformer | 注意力机制正确 |
+  1145→| `STRAT.TRANSFORMER.POSITION` | strategy.dl.transformer | 位置编码正确 |
+  1146→| `STRAT.LSTM_TF.FUSION` | strategy.dl.transformer | LSTM-Transformer融合 |
+  1147→| `STRAT.FACTOR.GP_MINE` | strategy.alpha.factor_mining | 遗传规划挖掘 |
+  1148→| `STRAT.FACTOR.IC_VALID` | strategy.alpha.factor_mining | IC有效性检验 |
+  1149→| `STRAT.FACTOR.TURNOVER` | strategy.alpha.factor_mining | 换手率控制 |
+  1150→
+  1151→---
+  1152→
+  1153→## 第二部分：全自动下单智能升级
+  1154→
+  1155→### 2.1 智能执行算法
+  1156→
+  1157→#### 2.1.1 TWAP/VWAP 算法
+  1158→
+  1159→```python
+  1160→# src/execution/algo/twap_vwap.py
+  1161→"""TWAP/VWAP执行算法.
+  1162→
+  1163→TWAP: 时间加权平均价格
+  1164→VWAP: 成交量加权平均价格
+  1165→
+  1166→参考:
+  1167→    - 华创算法: 2024年A股市场交易额4万亿
+  1168→    - 证监会新规: 算法交易合规要求
+  1169→"""
+  1170→
+  1171→from dataclasses import dataclass
+  1172→from datetime import datetime, timedelta
+  1173→from enum import Enum
+  1174→from typing import ClassVar
+  1175→
+  1176→
+  1177→class AlgoType(Enum):
+  1178→    """执行算法类型."""
+  1179→
+  1180→    TWAP = "twap"                 # 时间加权
+  1181→    VWAP = "vwap"                 # 成交量加权
+  1182→    POV = "pov"                   # 成交量占比
+  1183→    ICEBERG = "iceberg"          # 冰山单
+  1184→    SNIPER = "sniper"            # 狙击手（等待流动性）
+  1185→    SMART = "smart"              # 智能路由
+  1186→
+  1187→
+  1188→@dataclass
+  1189→class AlgoConfig:
+  1190→    """执行算法配置.
+  1191→
+  1192→    属性:
+  1193→        algo_type: 算法类型
+  1194→        total_qty: 总委托量
+  1195→        start_time: 开始时间
+  1196→        end_time: 结束时间
+  1197→        min_slice: 最小切片量
+  1198→        max_slice: 最大切片量
+  1199→        pov_rate: POV目标比例
+  1200→        price_limit: 价格限制
+  1201→        urgency: 紧急程度 (0-1)
+  1202→    """
+  1203→
+  1204→    algo_type: AlgoType = AlgoType.TWAP
+  1205→    total_qty: int = 100
+  1206→    start_time: datetime | None = None
+  1207→    end_time: datetime | None = None
+  1208→    min_slice: int = 1
+  1209→    max_slice: int = 10
+  1210→    pov_rate: float = 0.1         # POV: 占市场成交量10%
+  1211→    price_limit: float | None = None
+  1212→    urgency: float = 0.5          # 紧急程度
+  1213→
+  1214→
+  1215→@dataclass
+  1216→class SliceOrder:
+  1217→    """切片订单.
+  1218→
+  1219→    属性:
+  1220→        slice_id: 切片ID
+  1221→        qty: 数量
+  1222→        target_time: 目标执行时间
+  1223→        price_type: 价格类型（限价/市价）
+  1224→        limit_price: 限价（如果是限价单）
+  1225→    """
+  1226→
+  1227→    slice_id: int
+  1228→    qty: int
+  1229→    target_time: datetime
+  1230→    price_type: str = "limit"     # "limit" | "market"
+  1231→    limit_price: float | None = None
+  1232→
+  1233→
+  1234→class TWAPAlgo:
+  1235→    """TWAP算法.
+  1236→
+  1237→    将大单均匀分割到指定时间段内执行。
+  1238→
+  1239→    优点:
+  1240→        - 实现简单
+  1241→        - 执行确定性高
+  1242→        - 市场冲击分散
+  1243→
+  1244→    缺点:
+  1245→        - 不考虑市场流动性变化
+  1246→        - 可能在低流动性时段执行
+  1247→    """
+  1248→
+  1249→    def __init__(self, config: AlgoConfig) -> None:
+  1250→        """初始化TWAP算法.
+  1251→
+  1252→        参数:
+  1253→            config: 算法配置
+  1254→        """
+  1255→        self._config = config
+  1256→        self._slices: list[SliceOrder] = []
+  1257→        self._executed_qty: int = 0
+  1258→
+  1259→    def plan(self) -> list[SliceOrder]:
+  1260→        """生成执行计划.
+  1261→
+  1262→        返回:
+  1263→            切片订单列表
+  1264→        """
+  1265→        if self._config.start_time is None or self._config.end_time is None:
+  1266→            raise ValueError("TWAP需要指定开始和结束时间")
+  1267→
+  1268→        total_seconds = (
+  1269→            self._config.end_time - self._config.start_time
+  1270→        ).total_seconds()
+  1271→
+  1272→        # 计算切片数量
+  1273→        slice_qty = max(self._config.min_slice, min(
+  1274→            self._config.max_slice,
+  1275→            self._config.total_qty // 10,  # 默认分10片
+  1276→        ))
+  1277→        n_slices = (self._config.total_qty + slice_qty - 1) // slice_qty
+  1278→
+  1279→        # 时间间隔
+  1280→        interval_seconds = total_seconds / n_slices
+  1281→
+  1282→        self._slices = []
+  1283→        remaining = self._config.total_qty
+  1284→
+  1285→        for i in range(n_slices):
+  1286→            qty = min(slice_qty, remaining)
+  1287→            if qty <= 0:
+  1288→                break
+  1289→
+  1290→            target_time = self._config.start_time + timedelta(
+  1291→                seconds=i * interval_seconds
+  1292→            )
+  1293→
+  1294→            self._slices.append(SliceOrder(
+  1295→                slice_id=i,
+  1296→                qty=qty,
+  1297→                target_time=target_time,
+  1298→                price_type="limit",
+  1299→                limit_price=self._config.price_limit,
+  1300→            ))
+  1301→
+  1302→            remaining -= qty
+  1303→
+  1304→        return self._slices
+  1305→
+  1306→    def get_next_slice(self, current_time: datetime) -> SliceOrder | None:
+  1307→        """获取下一个待执行切片.
+  1308→
+  1309→        参数:
+  1310→            current_time: 当前时间
+  1311→
+  1312→        返回:
+  1313→            待执行的切片订单，如果没有则返回None
+  1314→        """
+  1315→        for slice_order in self._slices:
+  1316→            if slice_order.target_time <= current_time:
+  1317→                return slice_order
+  1318→        return None
+  1319→
+  1320→    def mark_executed(self, slice_id: int, filled_qty: int) -> None:
+  1321→        """标记切片已执行.
+  1322→
+  1323→        参数:
+  1324→            slice_id: 切片ID
+  1325→            filled_qty: 已成交数量
+  1326→        """
+  1327→        self._executed_qty += filled_qty
+  1328→        self._slices = [s for s in self._slices if s.slice_id != slice_id]
+  1329→
+  1330→    @property
+  1331→    def progress(self) -> float:
+  1332→        """执行进度.
+  1333→
+  1334→        返回:
+  1335→            进度百分比 [0, 1]
+  1336→        """
+  1337→        if self._config.total_qty == 0:
+  1338→            return 1.0
+  1339→        return self._executed_qty / self._config.total_qty
+  1340→
+  1341→
+  1342→class VWAPAlgo:
+  1343→    """VWAP算法.
+  1344→
+  1345→    根据历史成交量分布分配执行量。
+  1346→
+  1347→    优点:
+  1348→        - 顺应市场流动性
+  1349→        - 执行质量通常优于TWAP
+  1350→        - 业界标准基准
+  1351→
+  1352→    缺点:
+  1353→        - 需要历史成交量数据
+  1354→        - 可能被预测和利用
+  1355→    """
+  1356→
+  1357→    # 典型A股市场成交量分布（占全天比例）
+  1358→    TYPICAL_VOLUME_PROFILE: ClassVar[list[tuple[str, float]]] = [
+  1359→        ("09:30-09:45", 0.08),
+  1360→        ("09:45-10:00", 0.06),
+  1361→        ("10:00-10:15", 0.05),
+  1362→        ("10:15-10:30", 0.04),
+  1363→        ("10:30-10:45", 0.04),
+  1364→        ("10:45-11:00", 0.04),
+  1365→        ("11:00-11:15", 0.04),
+  1366→        ("11:15-11:30", 0.05),
+  1367→        ("13:00-13:15", 0.06),
+  1368→        ("13:15-13:30", 0.05),
+  1369→        ("13:30-13:45", 0.05),
+  1370→        ("13:45-14:00", 0.05),
+  1371→        ("14:00-14:15", 0.05),
+  1372→        ("14:15-14:30", 0.06),
+  1373→        ("14:30-14:45", 0.08),
+  1374→        ("14:45-15:00", 0.20),  # 尾盘成交量大
+  1375→    ]
+  1376→
+  1377→    def __init__(
+  1378→        self,
+  1379→        config: AlgoConfig,
+  1380→        volume_profile: list[tuple[str, float]] | None = None,
+  1381→    ) -> None:
+  1382→        """初始化VWAP算法.
+  1383→
+  1384→        参数:
+  1385→            config: 算法配置
+  1386→            volume_profile: 成交量分布（时段, 比例）
+  1387→        """
+  1388→        self._config = config
+  1389→        self._profile = volume_profile or self.TYPICAL_VOLUME_PROFILE
+  1390→        self._slices: list[SliceOrder] = []
+  1391→        self._executed_qty: int = 0
+  1392→
+  1393→    def plan(self) -> list[SliceOrder]:
+  1394→        """生成执行计划.
+  1395→
+  1396→        返回:
+  1397→            切片订单列表
+  1398→        """
+  1399→        self._slices = []
+  1400→        slice_id = 0
+  1401→
+  1402→        for time_range, vol_pct in self._profile:
+  1403→            # 根据成交量比例分配数量
+  1404→            qty = int(self._config.total_qty * vol_pct)
+  1405→            if qty < self._config.min_slice:
+  1406→                qty = self._config.min_slice
+  1407→            if qty > self._config.max_slice:
+  1408→                qty = self._config.max_slice
+  1409→
+  1410→            # 解析时间（简化处理）
+  1411→            start_str, end_str = time_range.split("-")
+  1412→            # 实际需要完整的时间解析
+  1413→
+  1414→            target_time = datetime.now()  # 占位，实际需要计算
+  1415→
+  1416→            self._slices.append(SliceOrder(
+  1417→                slice_id=slice_id,
+  1418→                qty=qty,
+  1419→                target_time=target_time,
+  1420→                price_type="limit",
+  1421→                limit_price=self._config.price_limit,
+  1422→            ))
+  1423→            slice_id += 1
+  1424→
+  1425→        return self._slices
+  1426→
+  1427→
+  1428→class IcebergAlgo:
+  1429→    """冰山单算法.
+  1430→
+  1431→    只显示一小部分订单，随着成交逐步补充。
+  1432→
+  1433→    注意:
+  1434→        中国交易所不直接支持冰山单，需通过算法模拟。
+  1435→
+  1436→    参数:
+  1437→        display_qty: 显示数量（冰山露出部分）
+  1438→        total_qty: 总数量
+  1439→        replenish_ratio: 补充比例
+  1440→    """
+  1441→
+  1442→    def __init__(
+  1443→        self,
+  1444→        total_qty: int,
+  1445→        display_qty: int,
+  1446→        replenish_ratio: float = 1.0,
+  1447→    ) -> None:
+  1448→        """初始化冰山单.
+  1449→
+  1450→        参数:
+  1451→            total_qty: 总数量
+  1452→            display_qty: 显示数量
+  1453→            replenish_ratio: 补充比例
+  1454→        """
+  1455→        self._total_qty = total_qty
+  1456→        self._display_qty = display_qty
+  1457→        self._replenish_ratio = replenish_ratio
+  1458→        self._remaining_qty = total_qty
+  1459→        self._current_order_qty = 0
+  1460→
+  1461→    def get_order_qty(self) -> int:
+  1462→        """获取当前应下单数量.
+  1463→
+  1464→        返回:
+  1465→            下单数量
+  1466→        """
+  1467→        if self._remaining_qty <= 0:
+  1468→            return 0
+  1469→
+  1470→        qty = min(self._display_qty, self._remaining_qty)
+  1471→        self._current_order_qty = qty
+  1472→        return qty
+  1473→
+  1474→    def on_fill(self, filled_qty: int) -> int:
+  1475→        """处理成交.
+  1476→
+  1477→        参数:
+  1478→            filled_qty: 成交数量
+  1479→
+  1480→        返回:
+  1481→            需要补充的数量
+  1482→        """
+  1483→        self._remaining_qty -= filled_qty
+  1484→
+  1485→        # 计算补充数量
+  1486→        replenish = int(filled_qty * self._replenish_ratio)
+  1487→        replenish = min(replenish, self._remaining_qty)
+  1488→
+  1489→        return replenish
+  1490→
+  1491→    @property
+  1492→    def is_complete(self) -> bool:
+  1493→        """是否完成.
+  1494→
+  1495→        返回:
+  1496→            是否全部成交
+  1497→        """
+  1498→        return self._remaining_qty <= 0
+  1499→```
+  1500→
+  1501→### 2.2 智能订单路由
+  1502→
+  1503→#### 2.2.1 自适应执行引擎
+  1504→
+  1505→```python
+  1506→# src/execution/smart/adaptive_engine.py
+  1507→"""自适应执行引擎.
+  1508→
+  1509→根据市场状态动态调整执行策略。
+  1510→
+  1511→功能:
+  1512→    - 市场冲击预估
+  1513→    - 最优执行时机选择
+  1514→    - 算法切换决策
+  1515→    - 紧急程度自适应
+  1516→"""
+  1517→
+  1518→from dataclasses import dataclass
+  1519→from datetime import datetime
+  1520→from enum import Enum
+  1521→from typing import ClassVar
+  1522→
+  1523→
+  1524→class MarketCondition(Enum):
+  1525→    """市场状态."""
+  1526→
+  1527→    NORMAL = "normal"             # 正常
+  1528→    HIGH_VOLATILITY = "high_vol"  # 高波动
+  1529→    LOW_LIQUIDITY = "low_liq"     # 低流动性
+  1530→    TRENDING = "trending"         # 趋势行情
+  1531→    LIMIT_UP = "limit_up"         # 涨停
+  1532→    LIMIT_DOWN = "limit_down"     # 跌停
+  1533→
+  1534→
+  1535→@dataclass
+  1536→class MarketState:
+  1537→    """市场状态.
+  1538→
+  1539→    属性:
+  1540→        spread: 买卖价差
+  1541→        depth: 盘口深度
+  1542→        volatility: 当前波动率
+  1543→        volume: 近期成交量
+  1544→        imbalance: 买卖不平衡度
+  1545→        trend: 趋势方向 (-1, 0, 1)
+  1546→        at_limit: 是否触及涨跌停
+  1547→    """
+  1548→
+  1549→    spread: float
+  1550→    depth: float
+  1551→    volatility: float
+  1552→    volume: float
+  1553→    imbalance: float
+  1554→    trend: int
+  1555→    at_limit: bool
+  1556→
+  1557→
+  1558→@dataclass
+  1559→class ExecutionDecision:
+  1560→    """执行决策.
+  1561→
+  1562→    属性:
+  1563→        algo_type: 推荐算法
+  1564→        slice_size: 切片大小
+  1565→        price_type: 价格类型
+  1566→        urgency: 调整后的紧急程度
+  1567→        wait: 是否等待更好时机
+  1568→        reason: 决策原因
+  1569→    """
+  1570→
+  1571→    algo_type: str
+  1572→    slice_size: int
+  1573→    price_type: str
+  1574→    urgency: float
+  1575→    wait: bool
+  1576→    reason: str
+  1577→
+  1578→
+  1579→class AdaptiveExecutionEngine:
+  1580→    """自适应执行引擎.
+  1581→
+  1582→    根据市场状态智能选择执行策略。
+  1583→
+  1584→    决策逻辑:
+  1585→        1. 评估市场状态
+  1586→        2. 预估市场冲击
+  1587→        3. 选择最优算法
+  1588→        4. 动态调整参数
+  1589→    """
+  1590→
+  1591→    # 市场冲击模型参数
+  1592→    IMPACT_COEF: ClassVar[float] = 0.1      # 冲击系数
+  1593→    SPREAD_THRESHOLD: ClassVar[float] = 5.0  # 价差阈值（tick）
+  1594→    DEPTH_THRESHOLD: ClassVar[float] = 100   # 深度阈值（手）
+  1595→    VOL_THRESHOLD: ClassVar[float] = 0.02    # 波动率阈值
+  1596→
+  1597→    def __init__(self) -> None:
+  1598→        """初始化自适应引擎."""
+  1599→        self._history: list[ExecutionDecision] = []
+  1600→
+  1601→    def analyze_market(self, state: MarketState) -> MarketCondition:
+  1602→        """分析市场状态.
+  1603→
+  1604→        参数:
+  1605→            state: 市场状态
+  1606→
+  1607→        返回:
+  1608→            市场条件
+  1609→        """
+  1610→        if state.at_limit:
+  1611→            if state.trend > 0:
+  1612→                return MarketCondition.LIMIT_UP
+  1613→            return MarketCondition.LIMIT_DOWN
+  1614→
+  1615→        if state.volatility > self.VOL_THRESHOLD:
+  1616→            return MarketCondition.HIGH_VOLATILITY
+  1617→
+  1618→        if state.depth < self.DEPTH_THRESHOLD:
+  1619→            return MarketCondition.LOW_LIQUIDITY
+  1620→
+  1621→        if abs(state.trend) > 0:
+  1622→            return MarketCondition.TRENDING
+  1623→
+  1624→        return MarketCondition.NORMAL
+  1625→
+  1626→    def estimate_impact(
+  1627→        self,
+  1628→        qty: int,
+  1629→        state: MarketState,
+  1630→    ) -> float:
+  1631→        """预估市场冲击.
+  1632→
+  1633→        使用简化的Almgren-Chriss模型。
+  1634→
+  1635→        参数:
+  1636→            qty: 订单数量
+  1637→            state: 市场状态
+  1638→
+  1639→        返回:
+  1640→            预估冲击（价格变动比例）
+  1641→        """
+  1642→        # 简化的市场冲击模型
+  1643→        # Impact = coef * sqrt(qty / ADV) * volatility
+  1644→        import math
+  1645→
+  1646→        adv = state.volume if state.volume > 0 else 1000
+  1647→        participation = qty / adv
+  1648→
+  1649→        impact = (
+  1650→            self.IMPACT_COEF
+  1651→            * math.sqrt(participation)
+  1652→            * state.volatility
+  1653→        )
+  1654→
+  1655→        # 流动性调整
+  1656→        if state.depth < self.DEPTH_THRESHOLD:
+  1657→            impact *= 1.5
+  1658→
+  1659→        # 价差调整
+  1660→        if state.spread > self.SPREAD_THRESHOLD:
+  1661→            impact *= 1.2
+  1662→
+  1663→        return impact
+  1664→
+  1665→    def decide(
+  1666→        self,
+  1667→        qty: int,
+  1668→        state: MarketState,
+  1669→        base_urgency: float,
+  1670→    ) -> ExecutionDecision:
+  1671→        """做出执行决策.
+  1672→
+  1673→        参数:
+  1674→            qty: 订单数量
+  1675→            state: 市场状态
+  1676→            base_urgency: 基础紧急程度
+  1677→
+  1678→        返回:
+  1679→            执行决策
+  1680→        """
+  1681→        condition = self.analyze_market(state)
+  1682→        impact = self.estimate_impact(qty, state)
+  1683→
+  1684→        # 根据市场状态决策
+  1685→        if condition == MarketCondition.LIMIT_UP:
+  1686→            return ExecutionDecision(
+  1687→                algo_type="sniper",
+  1688→                slice_size=qty,  # 全量等待
+  1689→                price_type="limit",
+  1690→                urgency=1.0,
+  1691→                wait=True,
+  1692→                reason="涨停板，等待开板后执行",
+  1693→            )
+  1694→
+  1695→        if condition == MarketCondition.LIMIT_DOWN:
+  1696→            return ExecutionDecision(
+  1697→                algo_type="sniper",
+  1698→                slice_size=qty,
+  1699→                price_type="limit",
+  1700→                urgency=1.0,
+  1701→                wait=True,
+  1702→                reason="跌停板，等待开板后执行",
+  1703→            )
+  1704→
+  1705→        if condition == MarketCondition.LOW_LIQUIDITY:
+  1706→            return ExecutionDecision(
+  1707→                algo_type="iceberg",
+  1708→                slice_size=min(qty // 10, int(state.depth * 0.1)),
+  1709→                price_type="limit",
+  1710→                urgency=base_urgency * 0.5,
+  1711→                wait=False,
+  1712→                reason="低流动性，使用冰山单小量执行",
+  1713→            )
+  1714→
+  1715→        if condition == MarketCondition.HIGH_VOLATILITY:
+  1716→            return ExecutionDecision(
+  1717→                algo_type="twap",
+  1718→                slice_size=qty // 20,  # 更小的切片
+  1719→                price_type="limit",
+  1720→                urgency=base_urgency * 0.7,
+  1721→                wait=False,
+  1722→                reason="高波动，使用TWAP分散风险",
+  1723→            )
+  1724→
+  1725→        if condition == MarketCondition.TRENDING:
+  1726→            if (state.trend > 0 and qty > 0) or (state.trend < 0 and qty < 0):
+  1727→                # 顺势
+  1728→                return ExecutionDecision(
+  1729→                    algo_type="pov",
+  1730→                    slice_size=qty // 5,
+  1731→                    price_type="limit",
+  1732→                    urgency=base_urgency * 1.2,
+  1733→                    wait=False,
+  1734→                    reason="顺势行情，加快执行速度",
+  1735→                )
+  1736→            else:
+  1737→                # 逆势
+  1738→                return ExecutionDecision(
+  1739→                    algo_type="twap",
+  1740→                    slice_size=qty // 20,
+  1741→                    price_type="limit",
+  1742→                    urgency=base_urgency * 0.5,
+  1743→                    wait=True,
+  1744→                    reason="逆势行情，等待回调执行",
+  1745→                )
+  1746→
+  1747→        # 正常市场
+  1748→        if impact < 0.001:  # 冲击很小
+  1749→            return ExecutionDecision(
+  1750→                algo_type="market",
+  1751→                slice_size=qty,
+  1752→                price_type="market",
+  1753→                urgency=1.0,
+  1754→                wait=False,
+  1755→                reason="冲击很小，直接市价执行",
+  1756→            )
+  1757→
+  1758→        return ExecutionDecision(
+  1759→            algo_type="vwap",
+  1760→            slice_size=qty // 10,
+  1761→            price_type="limit",
+  1762→            urgency=base_urgency,
+  1763→            wait=False,
+  1764→            reason="正常市场，使用VWAP执行",
+  1765→        )
+  1766→```
+  1767→
+  1768→### 2.3 报撤单频率控制
+  1769→
+  1770→#### 2.3.1 合规节流器
+  1771→
+  1772→```python
+  1773→# src/execution/throttle/compliance_throttle.py
+  1774→"""合规节流器.
+  1775→
+  1776→严格遵守证监会《期货市场程序化交易管理规定》:
+  1777→    - 5秒内50笔预警阈值
+  1778→    - 大额订单人工复核
+  1779→    - 策略备案要求
+  1780→
+  1781→参考:
+  1782→    - 证监会新规 (2025年10月实施)
+  1783→    - 上交所5秒50笔预警指标
+  1784→"""
+  1785→
+  1786→from dataclasses import dataclass, field
+  1787→from datetime import datetime
+  1788→from enum import Enum
+  1789→from typing import ClassVar
+  1790→
+  1791→
+  1792→class ThrottleLevel(Enum):
+  1793→    """节流级别."""
+  1794→
+  1795→    NORMAL = "normal"       # 正常：<30笔/5秒
+  1796→    WARNING = "warning"     # 警告：30-45笔/5秒
+  1797→    CRITICAL = "critical"   # 临界：45-50笔/5秒
+  1798→    EXCEEDED = "exceeded"   # 超限：>50笔/5秒
+  1799→
+  1800→
+  1801→@dataclass
+  1802→class ThrottleStatus:
+  1803→    """节流状态.
+  1804→
+  1805→    属性:
+  1806→        current_count: 当前计数
+  1807→        level: 节流级别
+  1808→        can_submit: 是否可以提交
+  1809→        wait_ms: 建议等待时间
+  1810→        reason: 原因说明
+  1811→    """
+  1812→
+  1813→    current_count: int
+  1814→    level: ThrottleLevel
+  1815→    can_submit: bool
+  1816→    wait_ms: int
+  1817→    reason: str
+  1818→
+  1819→
+  1820→class ComplianceThrottle:
+  1821→    """合规节流器.
+  1822→
+  1823→    确保报撤单频率在监管阈值内。
+  1824→
+  1825→    阈值设置:
+  1826→        - 警告阈值: 30笔/5秒 (60%)
+  1827→        - 临界阈值: 45笔/5秒 (90%)
+  1828→        - 超限阈值: 50笔/5秒 (100%)
+  1829→    """
+  1830→
+  1831→    # 监管阈值
+  1832→    WINDOW_SECONDS: ClassVar[float] = 5.0
+  1833→    LIMIT_COUNT: ClassVar[int] = 50
+  1834→    WARNING_RATIO: ClassVar[float] = 0.6   # 60%
+  1835→    CRITICAL_RATIO: ClassVar[float] = 0.9  # 90%
+  1836→
+  1837→    def __init__(self) -> None:
+  1838→        """初始化节流器."""
+  1839→        self._timestamps: list[float] = []
+  1840→        self._blocked_count: int = 0
+  1841→
+  1842→    def check(self, current_ts: float) -> ThrottleStatus:
+  1843→        """检查是否可以提交订单.
+  1844→
+  1845→        参数:
+  1846→            current_ts: 当前时间戳
+  1847→
+  1848→        返回:
+  1849→            节流状态
+  1850→        """
+  1851→        # 清理过期记录
+  1852→        cutoff = current_ts - self.WINDOW_SECONDS
+  1853→        self._timestamps = [ts for ts in self._timestamps if ts > cutoff]
+  1854→
+  1855→        count = len(self._timestamps)
+  1856→
+  1857→        # 确定级别
+  1858→        if count >= self.LIMIT_COUNT:
+  1859→            return ThrottleStatus(
+  1860→                current_count=count,
+  1861→                level=ThrottleLevel.EXCEEDED,
+  1862→                can_submit=False,
+  1863→                wait_ms=int(self.WINDOW_SECONDS * 1000),
+  1864→                reason=f"已超限: {count}/{self.LIMIT_COUNT}",
+  1865→            )
+  1866→
+  1867→        if count >= int(self.LIMIT_COUNT * self.CRITICAL_RATIO):
+  1868→            # 临界状态：需要等待
+  1869→            wait_ms = int((self.WINDOW_SECONDS - (current_ts - self._timestamps[0])) * 1000)
+  1870→            return ThrottleStatus(
+  1871→                current_count=count,
+  1872→                level=ThrottleLevel.CRITICAL,
+  1873→                can_submit=False,
+  1874→                wait_ms=max(100, wait_ms),
+  1875→                reason=f"临界状态: {count}/{self.LIMIT_COUNT}，建议等待",
+  1876→            )
+  1877→
+  1878→        if count >= int(self.LIMIT_COUNT * self.WARNING_RATIO):
+  1879→            return ThrottleStatus(
+  1880→                current_count=count,
+  1881→                level=ThrottleLevel.WARNING,
+  1882→                can_submit=True,
+  1883→                wait_ms=0,
+  1884→                reason=f"警告状态: {count}/{self.LIMIT_COUNT}，注意控制",
+  1885→            )
+  1886→
+  1887→        return ThrottleStatus(
+  1888→            current_count=count,
+  1889→            level=ThrottleLevel.NORMAL,
+  1890→            can_submit=True,
+  1891→            wait_ms=0,
+  1892→            reason=f"正常: {count}/{self.LIMIT_COUNT}",
+  1893→        )
+  1894→
+  1895→    def record_order(self, current_ts: float) -> None:
+  1896→        """记录一次下单.
+  1897→
+  1898→        参数:
+  1899→            current_ts: 当前时间戳
+  1900→        """
+  1901→        self._timestamps.append(current_ts)
+  1902→
+  1903→    def record_cancel(self, current_ts: float) -> None:
+  1904→        """记录一次撤单.
+  1905→
+  1906→        参数:
+  1907→            current_ts: 当前时间戳
+  1908→        """
+  1909→        # 撤单也计入频率限制
+  1910→        self._timestamps.append(current_ts)
+  1911→
+  1912→    @property
+  1913→    def blocked_count(self) -> int:
+  1914→        """被阻止的订单数.
+  1915→
+  1916→        返回:
+  1917→            阻止次数
+  1918→        """
+  1919→        return self._blocked_count
+  1920→
+  1921→    def get_optimal_batch_size(self) -> int:
+  1922→        """获取最优批量大小.
+  1923→
+  1924→        在合规前提下，计算最优的批量下单数量。
+  1925→
+  1926→        返回:
+  1927→            建议的批量大小
+  1928→        """
+  1929→        current_count = len(self._timestamps)
+  1930→        remaining = self.LIMIT_COUNT - current_count
+  1931→
+  1932→        # 保留20%缓冲
+  1933→        return max(1, int(remaining * 0.8))
+  1934→```
+  1935→
+  1936→### 2.4 新增 Required Scenarios（执行层）
+  1937→
+  1938→| rule_id | component | 描述 |
+  1939→|---------|-----------|------|
+  1940→| `EXEC.ALGO.TWAP_PLAN` | execution.algo.twap | TWAP计划生成 |
+  1941→| `EXEC.ALGO.VWAP_PROFILE` | execution.algo.vwap | VWAP成交量分布 |
+  1942→| `EXEC.ALGO.ICEBERG_DISPLAY` | execution.algo.iceberg | 冰山单显示量 |
+  1943→| `EXEC.SMART.CONDITION` | execution.smart | 市场状态识别 |
+  1944→| `EXEC.SMART.IMPACT` | execution.smart | 市场冲击预估 |
+  1945→| `EXEC.SMART.DECISION` | execution.smart | 执行决策正确 |
+  1946→| `EXEC.THROTTLE.5S_LIMIT` | execution.throttle | 5秒50笔限制 |
+  1947→| `EXEC.THROTTLE.LEVEL` | execution.throttle | 节流级别正确 |
+  1948→| `EXEC.COMPLY.ORDER_FREQ` | execution.throttle | 报撤单频率合规 |
+  1949→
+  1950→---
+  1951→
+  1952→## 第三部分：新增模块汇总
+  1953→
+  1954→### 3.1 文件清单
+  1955→
+  1956→| 模块 | 新增文件 | 职责 |
+  1957→|------|----------|------|
+  1958→| `src/strategy/rl/` | 4 | 强化学习策略 |
+  1959→| `src/strategy/dl/` | 2 | 深度学习策略（Transformer） |
+  1960→| `src/strategy/alpha/` | 2 | 因子挖掘 |
+  1961→| `src/execution/algo/` | 2 | 执行算法（TWAP/VWAP/冰山） |
+  1962→| `src/execution/smart/` | 1 | 智能执行引擎 |
+  1963→| `src/execution/throttle/` | 1 | 合规节流器 |
+  1964→| **总计** | **12** | - |
+  1965→
+  1966→### 3.2 完整文件路径
+  1967→
+  1968→```text
+  1969→src/
+  1970→├── strategy/
+  1971→│   ├── rl/                              # 强化学习策略
+  1972→│   │   ├── __init__.py
+  1973→│   │   ├── config.py                    # RL配置
+  1974→│   │   ├── ppo_strategy.py              # PPO策略
+  1975→│   │   ├── dqn_strategy.py              # DQN策略
+  1976→│   │   └── replay_buffer.py             # 经验回放
+  1977→│   │
+  1978→│   ├── dl/                              # 深度学习策略
+  1979→│   │   ├── __init__.py
+  1980→│   │   └── transformer_strategy.py      # Transformer-LSTM
+  1981→│   │
+  1982→│   └── alpha/                           # 因子挖掘
+  1983→│       ├── __init__.py
+  1984→│       └── factor_mining.py             # 遗传规划因子挖掘
+  1985→│
+  1986→└── execution/
+  1987→    ├── algo/                            # 执行算法
+  1988→    │   ├── __init__.py
+  1989→    │   └── twap_vwap.py                 # TWAP/VWAP/冰山
+  1990→    │
+  1991→    ├── smart/                           # 智能执行
+  1992→    │   ├── __init__.py
+  1993→    │   └── adaptive_engine.py           # 自适应执行引擎
+  1994→    │
+  1995→    └── throttle/                        # 节流控制
+  1996→        ├── __init__.py
+  1997→        └── compliance_throttle.py       # 合规节流器
+  1998→```
+  1999→
+  2000→---
+  2001→
+  2002→## 第四部分：实施计划
+  2003→
+  2004→### 4.1 优先级矩阵
+  2005→
+  2006→| 优先级 | 模块 | 工时 | 预期收益 |
+  2007→|--------|------|------|----------|
+  2008→| **P0** | 合规节流器 | 8h | 避免监管风险 |
+  2009→| **P0** | TWAP/VWAP算法 | 16h | 降低冲击成本30% |
+  2010→| **P1** | 智能执行引擎 | 20h | 提升执行质量 |
+  2011→| **P1** | PPO强化学习策略 | 32h | 动态策略优化 |
+  2012→| **P2** | Transformer策略 | 24h | 长期依赖捕捉 |
+  2013→| **P2** | 因子挖掘 | 24h | 自动Alpha发现 |
+  2014→| **P3** | DQN策略 | 16h | 离散动作优化 |
+  2015→
+  2016→### 4.2 实施阶段
+  2017→
+  2018→```text
+  2019→Phase A: 合规基础 (24h)
+  2020→├── 合规节流器
+  2021→├── TWAP算法
+  2022→└── VWAP算法
+  2023→
+  2024→Phase B: 智能执行 (40h)
+  2025→├── 智能执行引擎
+  2026→├── 冰山单算法
+  2027→└── 市场冲击模型
+  2028→
+  2029→Phase C: 强化学习 (48h)
+  2030→├── PPO策略
+  2031→├── DQN策略
+  2032→└── 经验回放
+  2033→
+  2034→Phase D: 深度学习 (48h)
+  2035→├── Transformer策略
+  2036→├── LSTM-Transformer融合
+  2037→└── 因子挖掘
+  2038→
+  2039→总计: 160h
+  2040→```
+  2041→
+  2042→### 4.3 预期收益
+  2043→
+  2044→| 指标 | 当前 | 目标 | 提升 |
+  2045→|------|------|------|------|
+  2046→| 执行滑点 | 2 ticks | 1 tick | 50% |
+  2047→| 市场冲击 | 0.1% | 0.05% | 50% |
+  2048→| 策略夏普 | 1.5 | 2.5 | 67% |
+  2049→| 因子IC | 0.03 | 0.05 | 67% |
+  2050→| 合规风险 | 高 | 极低 | 100% |
+  2051→
+  2052→---
+  2053→
+  2054→## 第五部分：新增 Required Scenarios 汇总
+  2055→
+  2056→### 5.1 总计（19条）
+  2057→
+  2058→| 类别 | 数量 |
+  2059→|------|------|
+  2060→| 强化学习策略 | 4 |
+  2061→| 深度学习策略 | 3 |
+  2062→| 因子挖掘 | 3 |
+  2063→| 执行算法 | 3 |
+  2064→| 智能执行 | 3 |
+  2065→| 合规节流 | 3 |
+  2066→| **总计** | **19** |
+  2067→
+  2068→### 5.2 完整列表
+  2069→
+  2070→```yaml
+  2071→# 策略层与执行层智能升级 Scenarios (19条)
+  2072→intelligent_upgrade_scenarios:
+  2073→
+  2074→  # 强化学习策略 (4)
+  2075→  - STRAT.RL.PPO_TRAIN
+  2076→  - STRAT.RL.ACTION_VALID
+  2077→  - STRAT.RL.REWARD_DESIGN
+  2078→  - STRAT.RL.STATE_NORMALIZE
+  2079→
+  2080→  # 深度学习策略 (3)
+  2081→  - STRAT.TRANSFORMER.ATTENTION
+  2082→  - STRAT.TRANSFORMER.POSITION
+  2083→  - STRAT.LSTM_TF.FUSION
+  2084→
+  2085→  # 因子挖掘 (3)
+  2086→  - STRAT.FACTOR.GP_MINE
+  2087→  - STRAT.FACTOR.IC_VALID
+  2088→  - STRAT.FACTOR.TURNOVER
+  2089→
+  2090→  # 执行算法 (3)
+  2091→  - EXEC.ALGO.TWAP_PLAN
+  2092→  - EXEC.ALGO.VWAP_PROFILE
+  2093→  - EXEC.ALGO.ICEBERG_DISPLAY
+  2094→
+  2095→  # 智能执行 (3)
+  2096→  - EXEC.SMART.CONDITION
+  2097→  - EXEC.SMART.IMPACT
+  2098→  - EXEC.SMART.DECISION
+  2099→
+  2100→  # 合规节流 (3)
+  2101→  - EXEC.THROTTLE.5S_LIMIT
+  2102→  - EXEC.THROTTLE.LEVEL
+  2103→  - EXEC.COMPLY.ORDER_FREQ
+  2104→```
+  2105→
+  2106→---
+  2107→
+  2108→## 第六部分：实验性策略训练成熟度评估系统 (已实现)
+  2109→
+  2110→> **状态**: ✅ 已实现
+  2111→> **文件位置**: `src/strategy/experimental/`
+  2112→
+  2113→### 6.1 设计原则
+  2114→
+  2115→根据总统指示，学术前沿模块（强化学习、Transformer等）可以先进行训练，但**在达到80%成熟度之前禁止启用**。
+  2116→
+  2117→```
+  2118→┌─────────────────────────────────────────────────────────────┐
+  2119→│              训练成熟度评估系统架构                           │
+  2120→├─────────────────────────────────────────────────────────────┤
+  2121→│                                                              │
+  2122→│   TrainingHistory  ──▶  MaturityEvaluator  ──▶  MaturityReport
+  2123→│        │                      │                      │
+  2124→│        │                      ▼                      │
+  2125→│        │              5维度评估算法                   │
+  2126→│        │              ├─ 收益稳定性 (25%)            │
+  2127→│        │              ├─ 风险控制 (25%)              │
+  2128→│        │              ├─ 市场适应性 (20%)            │
+  2129→│        │              ├─ 训练充分度 (20%)            │
+  2130→│        │              └─ 一致性检验 (10%)            │
+  2131→│        │                      │                      │
+  2132→│        ▼                      ▼                      ▼
+  2133→│   TrainingMonitor  ──▶  TrainingGate  ──▶  ActivationDecision
+  2134→│   (实时进度监控)        (启用门禁)         (是否可启用)
+  2135→│                                                              │
+  2136→└─────────────────────────────────────────────────────────────┘
+  2137→```
+  2138→
+  2139→### 6.2 军规要求
+  2140→
+  2141→| 军规编号 | 要求 | 说明 |
+  2142→|----------|------|------|
+  2143→| **M-EXP-1** | 总成熟度 >= 80% | 才能启用 |
+  2144→| **M-EXP-2** | 每个维度 >= 60% | 任何短板都阻止启用 |
+  2145→| **M-EXP-3** | 训练时间 >= 90天 | 最低3个月训练期 |
+  2146→| **M-EXP-4** | 人工审批 | 达标后仍需人工确认 |
+  2147→| **M-EXP-5** | 审计记录 | 所有操作必须可追溯 |
+  2148→
+  2149→### 6.3 成熟度评估算法 (CLAUDE上校算法)
+  2150→
+  2151→#### 5个评估维度
+  2152→
+  2153→```python
+  2154→# 权重配置
+  2155→WEIGHT_RETURN_STABILITY = 0.25      # 收益稳定性
+  2156→WEIGHT_RISK_CONTROL = 0.25          # 风险控制
+  2157→WEIGHT_MARKET_ADAPTABILITY = 0.20   # 市场适应性
+  2158→WEIGHT_TRAINING_SUFFICIENCY = 0.20  # 训练充分度
+  2159→WEIGHT_CONSISTENCY = 0.10           # 一致性
+  2160→
+  2161→# 门槛配置
+  2162→ACTIVATION_THRESHOLD = 0.80         # 总成熟度门槛80%
+  2163→DIMENSION_THRESHOLD = 0.60          # 单维度门槛60%
+  2164→MIN_TRAINING_DAYS = 90              # 最低训练90天
+  2165→```
+  2166→
+  2167→#### 各维度评分标准
+  2168→
+  2169→| 维度 | 子指标 | 优秀 | 良好 | 及格 |
+  2170→|------|--------|------|------|------|
+  2171→| **收益稳定性** | 夏普比率 | ≥2.0 | ≥1.5 | ≥1.0 |
+  2172→| **风险控制** | 最大回撤 | ≤10% | ≤15% | ≤20% |
+  2173→| **风险控制** | 胜率 | ≥55% | ≥50% | ≥45% |
+  2174→| **风险控制** | 盈亏比 | ≥2.0 | ≥1.5 | ≥1.2 |
+  2175→| **市场适应性** | 市场状态覆盖 | 5/5 | 4/5 | 3/5 |
+  2176→| **训练充分度** | 训练天数 | ≥180天 | ≥120天 | ≥90天 |
+  2177→| **训练充分度** | 交易次数 | ≥500次 | ≥300次 | ≥100次 |
+  2178→
+  2179→### 6.4 进度监控面板
+  2180→
+  2181→操作人员可以随时查看训练进度：
+  2182→
+  2183→```
+  2184→┌──────────────────────────────────────────────────────────┐
+  2185→│        📊 策略训练进度监控面板                             │
+  2186→├──────────────────────────────────────────────────────────┤
+  2187→
+  2188→  策略名称: PPO强化学习策略 v1
+  2189→  策略类型: reinforcement_learning
+  2190→  状态: 🟢 训练中
+  2191→
+  2192→  训练进度:
+  2193→  [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░|░░░░] 65.2%
+  2194→  当前成熟度: 65.2% / 80% (启用门槛)
+  2195→
+  2196→  📅 时间统计:
+  2197→     已训练: 75 天
+  2198→     最低要求: 90 天
+  2199→     预估剩余: 15 天
+  2200→     预估完成: 2025-12-31
+  2201→
+  2202→  📈 各维度得分:
+  2203→     ✅ 收益稳定性: ███████████████░ 72.5%
+  2204→     ✅ 风险控制:   ██████████████░░ 68.3%
+  2205→     ❌ 市场适应性: ████████████░░░░ 58.1%
+  2206→     ❌ 训练充分度: ██████████░░░░░░ 55.0%
+  2207→     ✅ 一致性检验: █████████████░░░ 70.2%
+  2208→
+  2209→  趋势: 📈 improving
+  2210→
+  2211→  ⚠️ 告警:
+  2212→     • 市场适应性未达标 (58.1%), 需要改善
+  2213→     • 训练充分度未达标 (55.0%), 需要改善
+  2214→
+  2215→  ⏳ 距离启用门槛还差: 14.8%
+  2216→  ⏳ 距离最低训练时间还差: 15 天
+  2217→
+  2218→└──────────────────────────────────────────────────────────┘
+  2219→```
+  2220→
+  2221→### 6.5 启用流程
+  2222→
+  2223→```
+  2224→训练开始
+  2225→    │
+  2226→    ▼
+  2227→┌─────────────┐
+  2228→│ 每日数据更新 │ ◄────────────────────────┐
+  2229→└─────────────┘                           │
+  2230→    │                                     │
+  2231→    ▼                                     │
+  2232→┌─────────────┐                           │
+  2233→│ 成熟度评估   │                           │
+  2234→└─────────────┘                           │
+  2235→    │                                     │
+  2236→    ├─── < 80% ───────────────────────────┘
+  2237→    │
+  2238→    ├─── >= 80% 但 < 90天
+  2239→    │       │
+  2240→    │       ▼
+  2241→    │   ⏳ 继续训练
+  2242→    │
+  2243→    └─── >= 80% 且 >= 90天
+  2244→            │
+  2245→            ▼
+  2246→    ┌─────────────┐
+  2247→    │ 等待人工审批 │
+  2248→    └─────────────┘
+  2249→            │
+  2250→            ├─── 拒绝 ───▶ 继续训练
+  2251→            │
+  2252→            └─── 批准
+  2253→                    │
+  2254→                    ▼
+  2255→            ┌─────────────┐
+  2256→            │ ✅ 策略启用  │
+  2257→            └─────────────┘
+  2258→```
+  2259→
+  2260→### 6.6 新增文件
+  2261→
+  2262→| 文件 | 行数 | 职责 |
+  2263→|------|------|------|
+  2264→| `src/strategy/experimental/__init__.py` | ~65 | 模块导出 |
+  2265→| `src/strategy/experimental/maturity_evaluator.py` | ~810 | 成熟度评估算法 |
+  2266→| `src/strategy/experimental/training_gate.py` | ~375 | 启用门禁 |
+  2267→| `src/strategy/experimental/training_monitor.py` | ~615 | 进度监控 |
+  2268→| **总计** | **~1865** | - |
+  2269→
+  2270→### 6.7 新增 Required Scenarios
+  2271→
+  2272→| rule_id | component | 描述 |
+  2273→|---------|-----------|------|
+  2274→| `EXP.MATURITY.80_THRESHOLD` | experimental.maturity_evaluator | 80%成熟度门槛 |
+  2275→| `EXP.MATURITY.60_DIMENSION` | experimental.maturity_evaluator | 60%维度门槛 |
+  2276→| `EXP.MATURITY.90_DAYS` | experimental.maturity_evaluator | 90天最低训练 |
+  2277→| `EXP.GATE.NO_BYPASS` | experimental.training_gate | 禁止绕过门禁 |
+  2278→| `EXP.GATE.MANUAL_APPROVAL` | experimental.training_gate | 人工审批要求 |
+  2279→| `EXP.MONITOR.PROGRESS` | experimental.training_monitor | 进度监控正确 |
+  2280→| `EXP.MONITOR.ALERT` | experimental.training_monitor | 告警生成正确 |
+  2281→
+  2282→---
+  2283→
+  2284→## 附录：参考来源
+  2285→
+  2286→| 来源 | 说明 | URL |
+  2287→|------|------|-----|
+  2288→| ICLR 2025 | 量化论文前沿 | [知乎](https://zhuanlan.zhihu.com/p/1903528598360560074) |
+  2289→| FinRL | 哥大开源RL量化库 | [极术社区](https://aijishu.com/a/1060000000191280) |
+  2290→| 深度强化学习综述 | DRL在量化交易应用 | [CJIST](https://www.cjist.com.cn/zh/article/doi/10.11959/j.issn.2096-6652.202439/) |
+  2291→| 2024 AI量化论文 | 年度精选 | [Quant Wiki](https://quant-wiki.com/ai/2024-ai-paper/) |
+  2292→| 证监会新规 | 程序化交易管理 | [证监会](http://www.csrc.gov.cn/csrc/c100028/c7564353/content.shtml) |
+  2293→| 华创算法 | A股算法交易 | [发现报告](https://www.fxbaogao.com/detail/4718363) |
+  2294→| 多因子框架 | 量化投资框架 | [知乎](https://zhuanlan.zhihu.com/p/684300637) |
+  2295→| Transformer金融预测 | 双注意力架构 | [Springer](https://link.springer.com/article/10.1007/s44443-025-00045-y) |
+  2296→
+  2297→---
+  2298→
+  2299→> **报告完成。**
+  2300→> **愿国家从中国期货市场捞金！**
+  2301→> **CLAUDE上校 敬礼！** 🎖️
+  2302→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

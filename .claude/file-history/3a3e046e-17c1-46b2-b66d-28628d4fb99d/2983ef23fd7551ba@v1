@@ -1,0 +1,507 @@
+"""
+市场网关自定义异常
+
+提供网关系统使用的所有异常类，支持错误代码和详细信息。
+"""
+
+from typing import Optional, Dict, Any
+
+
+class GatewayError(Exception):
+    """网关基础异常类
+
+    所有网关相关异常的基类。
+
+    Attributes:
+        message: 错误消息
+        error_code: 错误代码
+        details: 错误详情
+    """
+
+    def __init__(
+        self,
+        message: str = "Gateway error occurred",
+        error_code: int = 1000,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        """初始化异常
+
+        Args:
+            message: 错误消息
+            error_code: 错误代码
+            details: 额外的错误详情
+        """
+        super().__init__(message)
+        self.message = message
+        self.error_code = error_code
+        self.details = details or {}
+
+    def __str__(self) -> str:
+        """返回异常的字符串表示"""
+        if self.details:
+            return f"[{self.error_code}] {self.message} - {self.details}"
+        return f"[{self.error_code}] {self.message}"
+
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典格式
+
+        Returns:
+            Dict[str, Any]: 包含错误信息的字典
+        """
+        return {
+            "error_type": self.__class__.__name__,
+            "error_code": self.error_code,
+            "message": self.message,
+            "details": self.details
+        }
+
+
+class ConnectionError(GatewayError):
+    """连接异常
+
+    当网关连接失败时抛出。
+
+    错误代码范围: 1100-1199
+    """
+
+    def __init__(
+        self,
+        message: str = "Connection failed",
+        error_code: int = 1100,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code, details)
+
+
+class ConnectionTimeoutError(ConnectionError):
+    """连接超时异常
+
+    当连接超时时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Connection timeout",
+        timeout_seconds: Optional[float] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if timeout_seconds is not None:
+            details["timeout_seconds"] = timeout_seconds
+        super().__init__(message, error_code=1101, details=details)
+
+
+class ConnectionRefusedError(ConnectionError):
+    """连接被拒绝异常
+
+    当服务器拒绝连接时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Connection refused",
+        host: Optional[str] = None,
+        port: Optional[int] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if host:
+            details["host"] = host
+        if port:
+            details["port"] = port
+        super().__init__(message, error_code=1102, details=details)
+
+
+class AuthenticationError(GatewayError):
+    """认证异常
+
+    当用户认证失败时抛出。
+
+    错误代码范围: 1200-1299
+    """
+
+    def __init__(
+        self,
+        message: str = "Authentication failed",
+        error_code: int = 1200,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code, details)
+
+
+class InvalidCredentialsError(AuthenticationError):
+    """无效凭证异常
+
+    当用户名或密码错误时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Invalid username or password",
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code=1201, details=details)
+
+
+class SessionExpiredError(AuthenticationError):
+    """会话过期异常
+
+    当登录会话过期时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Session expired",
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code=1202, details=details)
+
+
+class SubscriptionError(GatewayError):
+    """订阅异常
+
+    当订阅或取消订阅失败时抛出。
+
+    错误代码范围: 1300-1399
+    """
+
+    def __init__(
+        self,
+        message: str = "Subscription failed",
+        error_code: int = 1300,
+        symbols: Optional[list] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if symbols:
+            details["symbols"] = symbols
+        super().__init__(message, error_code, details)
+
+
+class SubscriptionLimitError(SubscriptionError):
+    """订阅限制异常
+
+    当订阅数量超过限制时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Subscription limit exceeded",
+        current_count: Optional[int] = None,
+        max_limit: Optional[int] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if current_count is not None:
+            details["current_count"] = current_count
+        if max_limit is not None:
+            details["max_limit"] = max_limit
+        super().__init__(message, error_code=1301, details=details)
+
+
+class InvalidSymbolError(SubscriptionError):
+    """无效合约异常
+
+    当合约代码无效时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Invalid symbol",
+        symbol: Optional[str] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if symbol:
+            details["symbol"] = symbol
+        super().__init__(message, error_code=1302, symbols=[symbol] if symbol else None, details=details)
+
+
+class ConfigError(GatewayError):
+    """配置异常
+
+    当配置无效或缺失时抛出。
+
+    错误代码范围: 1400-1499
+    """
+
+    def __init__(
+        self,
+        message: str = "Configuration error",
+        error_code: int = 1400,
+        config_key: Optional[str] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if config_key:
+            details["config_key"] = config_key
+        super().__init__(message, error_code, details)
+
+
+class MissingConfigError(ConfigError):
+    """缺失配置异常
+
+    当必需的配置项缺失时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Required configuration missing",
+        config_key: Optional[str] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code=1401, config_key=config_key, details=details)
+
+
+class InvalidConfigValueError(ConfigError):
+    """无效配置值异常
+
+    当配置值不符合要求时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Invalid configuration value",
+        config_key: Optional[str] = None,
+        expected: Optional[str] = None,
+        actual: Optional[Any] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if expected:
+            details["expected"] = expected
+        if actual is not None:
+            details["actual"] = str(actual)
+        super().__init__(message, error_code=1402, config_key=config_key, details=details)
+
+
+class DataValidationError(GatewayError):
+    """数据验证异常
+
+    当数据验证失败时抛出。
+
+    错误代码范围: 1500-1599
+    """
+
+    def __init__(
+        self,
+        message: str = "Data validation failed",
+        error_code: int = 1500,
+        field_name: Optional[str] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if field_name:
+            details["field_name"] = field_name
+        super().__init__(message, error_code, details)
+
+
+class InvalidPriceError(DataValidationError):
+    """无效价格异常
+
+    当价格数据无效时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Invalid price data",
+        price: Optional[float] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if price is not None:
+            details["price"] = price
+        super().__init__(message, error_code=1501, field_name="price", details=details)
+
+
+class InvalidVolumeError(DataValidationError):
+    """无效成交量异常
+
+    当成交量数据无效时抛出。
+    """
+
+    def __init__(
+        self,
+        message: str = "Invalid volume data",
+        volume: Optional[int] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if volume is not None:
+            details["volume"] = volume
+        super().__init__(message, error_code=1502, field_name="volume", details=details)
+
+
+class DataProcessingError(GatewayError):
+    """数据处理异常
+
+    当数据处理失败时抛出。
+
+    错误代码范围: 1600-1699
+    """
+
+    def __init__(
+        self,
+        message: str = "Data processing failed",
+        error_code: int = 1600,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code, details)
+
+
+class StorageError(GatewayError):
+    """存储异常
+
+    当数据存储失败时抛出。
+
+    错误代码范围: 1700-1799
+    """
+
+    def __init__(
+        self,
+        message: str = "Storage operation failed",
+        error_code: int = 1700,
+        storage_type: Optional[str] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if storage_type:
+            details["storage_type"] = storage_type
+        super().__init__(message, error_code, details)
+
+
+class RedisStorageError(StorageError):
+    """Redis存储异常"""
+
+    def __init__(
+        self,
+        message: str = "Redis storage operation failed",
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code=1701, storage_type="redis", details=details)
+
+
+class ClickHouseStorageError(StorageError):
+    """ClickHouse存储异常"""
+
+    def __init__(
+        self,
+        message: str = "ClickHouse storage operation failed",
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code=1702, storage_type="clickhouse", details=details)
+
+
+class RateLimitError(GatewayError):
+    """速率限制异常
+
+    当超过速率限制时抛出。
+
+    错误代码范围: 1800-1899
+    """
+
+    def __init__(
+        self,
+        message: str = "Rate limit exceeded",
+        error_code: int = 1800,
+        retry_after: Optional[float] = None,
+        details: Optional[Dict[str, Any]] = None
+    ):
+        details = details or {}
+        if retry_after is not None:
+            details["retry_after_seconds"] = retry_after
+        super().__init__(message, error_code, details)
+
+
+class GatewayNotConnectedError(GatewayError):
+    """网关未连接异常
+
+    当尝试在未连接状态下执行操作时抛出。
+
+    错误代码: 1900
+    """
+
+    def __init__(
+        self,
+        message: str = "Gateway is not connected",
+        details: Optional[Dict[str, Any]] = None
+    ):
+        super().__init__(message, error_code=1900, details=details)
+
+
+# 错误代码映射表
+ERROR_CODE_MESSAGES: Dict[int, str] = {
+    1000: "通用网关错误",
+    1100: "连接失败",
+    1101: "连接超时",
+    1102: "连接被拒绝",
+    1200: "认证失败",
+    1201: "用户名或密码错误",
+    1202: "会话已过期",
+    1300: "订阅失败",
+    1301: "订阅数量超过限制",
+    1302: "无效的合约代码",
+    1400: "配置错误",
+    1401: "缺少必需的配置",
+    1402: "配置值无效",
+    1500: "数据验证失败",
+    1501: "无效的价格数据",
+    1502: "无效的成交量数据",
+    1600: "数据处理失败",
+    1700: "存储操作失败",
+    1701: "Redis存储失败",
+    1702: "ClickHouse存储失败",
+    1800: "超过速率限制",
+    1900: "网关未连接",
+}
+
+
+def get_error_message(error_code: int) -> str:
+    """根据错误代码获取错误消息
+
+    Args:
+        error_code: 错误代码
+
+    Returns:
+        str: 错误消息
+    """
+    return ERROR_CODE_MESSAGES.get(error_code, f"未知错误 ({error_code})")
+
+
+__all__ = [
+    # 基础异常
+    'GatewayError',
+    # 连接异常
+    'ConnectionError',
+    'ConnectionTimeoutError',
+    'ConnectionRefusedError',
+    # 认证异常
+    'AuthenticationError',
+    'InvalidCredentialsError',
+    'SessionExpiredError',
+    # 订阅异常
+    'SubscriptionError',
+    'SubscriptionLimitError',
+    'InvalidSymbolError',
+    # 配置异常
+    'ConfigError',
+    'MissingConfigError',
+    'InvalidConfigValueError',
+    # 数据验证异常
+    'DataValidationError',
+    'InvalidPriceError',
+    'InvalidVolumeError',
+    # 数据处理异常
+    'DataProcessingError',
+    # 存储异常
+    'StorageError',
+    'RedisStorageError',
+    'ClickHouseStorageError',
+    # 速率限制异常
+    'RateLimitError',
+    # 网关状态异常
+    'GatewayNotConnectedError',
+    # 辅助函数
+    'get_error_message',
+    'ERROR_CODE_MESSAGES',
+]

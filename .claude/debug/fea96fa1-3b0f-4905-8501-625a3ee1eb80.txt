@@ -1,0 +1,30 @@
+2025-12-08T01:41:49.438Z [DEBUG] Watching for changes in setting files C:\Users\1\.claude\settings.json, C:\Users\1\.claude\settings.json...
+2025-12-08T01:41:49.456Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2025-12-08T01:41:49.460Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2025-12-08T01:41:49.460Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2025-12-08T01:41:49.460Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2025-12-08T01:41:49.460Z [DEBUG] [LSP SERVER MANAGER] initialize() called
+2025-12-08T01:41:49.460Z [DEBUG] [LSP SERVER MANAGER] Calling getAllLspServers()
+2025-12-08T01:41:49.470Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2025-12-08T01:41:49.470Z [DEBUG] Total LSP servers loaded: 0
+2025-12-08T01:41:49.470Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2025-12-08T01:41:49.470Z [DEBUG] LSP manager initialized with 0 servers
+2025-12-08T01:41:49.470Z [DEBUG] LSP server manager initialized successfully
+2025-12-08T01:41:49.470Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2025-12-08T01:41:49.485Z [DEBUG] Git remote URL: null
+2025-12-08T01:41:49.485Z [DEBUG] No git remote URL found
+2025-12-08T01:41:49.485Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2025-12-08T01:41:49.520Z [DEBUG] Total plugin commands loaded: 0
+2025-12-08T01:41:49.521Z [DEBUG] Total plugin agents loaded: 0
+2025-12-08T01:41:49.521Z [DEBUG] Registered 0 hooks from 0 plugins
+2025-12-08T01:41:49.521Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2025-12-08T20:12:53.565Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-08T20:15:54.076Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-08T20:22:05.660Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-08T20:34:51.734Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-08T20:52:01.466Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-08T23:07:08.075Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-08T23:09:01.349Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-09T00:12:03.276Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-09T12:30:50.049Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json
+2025-12-09T12:31:00.945Z [DEBUG] Detected change to C:\Users\1\.claude\settings.json

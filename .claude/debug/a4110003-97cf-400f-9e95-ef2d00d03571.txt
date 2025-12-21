@@ -1,0 +1,231 @@
+2025-12-15T14:06:27.625Z [DEBUG] Watching for changes in setting files C:\Users\1\.claude\settings.json, C:\Users\1\2468\3579\.claude\settings.local.json...
+2025-12-15T14:06:27.649Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2025-12-15T14:06:27.657Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2025-12-15T14:06:27.657Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2025-12-15T14:06:27.657Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2025-12-15T14:06:27.660Z [DEBUG] LSP server manager initialized successfully
+2025-12-15T14:06:27.660Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2025-12-15T14:06:27.681Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2025-12-15T14:06:27.686Z [DEBUG] Stats cache stale (2025-12-13), processing 2025-12-14 to 2025-12-14 in background
+2025-12-15T14:06:27.691Z [DEBUG] Loading skills from directories: managed=C:\ProgramData\ClaudeCode\.claude\skills, user=C:\Users\1\.claude\skills, project=[]
+2025-12-15T14:06:27.698Z [DEBUG] Loaded 0 installed plugins from C:\Users\1\.claude\plugins\installed_plugins.json
+2025-12-15T14:06:27.699Z [DEBUG] Official marketplace auto-install already attempted, skipping
+2025-12-15T14:06:27.728Z [DEBUG] Creating shell snapshot for bash (C:\Program Files\Git\bin\bash.exe)
+2025-12-15T14:06:27.728Z [DEBUG] Looking for shell config file: C:\Users\1\.bashrc
+2025-12-15T14:06:27.728Z [DEBUG] Snapshots directory: C:\Users\1\.claude\shell-snapshots
+2025-12-15T14:06:27.738Z [DEBUG] Creating snapshot at: C:\Users\1\.claude\shell-snapshots\snapshot-bash-1765807587728-gvty9t.sh
+2025-12-15T14:06:27.738Z [DEBUG] Shell binary exists: true
+2025-12-15T14:06:27.738Z [DEBUG] Execution timeout: 10000ms
+2025-12-15T14:06:27.742Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a4110003-97cf-400f-9e95-ef2d00d03571-agent-a4110003-97cf-400f-9e95-ef2d00d03571.json.tmp.102584.1765807587742
+2025-12-15T14:06:27.744Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-15T14:06:27.744Z [DEBUG] Renaming C:\Users\1\.claude\todos\a4110003-97cf-400f-9e95-ef2d00d03571-agent-a4110003-97cf-400f-9e95-ef2d00d03571.json.tmp.102584.1765807587742 to C:\Users\1\.claude\todos\a4110003-97cf-400f-9e95-ef2d00d03571-agent-a4110003-97cf-400f-9e95-ef2d00d03571.json
+2025-12-15T14:06:27.745Z [DEBUG] File C:\Users\1\.claude\todos\a4110003-97cf-400f-9e95-ef2d00d03571-agent-a4110003-97cf-400f-9e95-ef2d00d03571.json written atomically
+2025-12-15T14:06:27.747Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2025-12-15T14:06:27.747Z [DEBUG] Total plugin skills loaded: 0
+2025-12-15T14:06:27.747Z [DEBUG] Total plugin commands loaded: 0
+2025-12-15T14:06:27.747Z [DEBUG] Registered 0 hooks from 0 plugins
+2025-12-15T14:06:27.856Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, duplicates removed: 0)
+2025-12-15T14:06:27.866Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills
+2025-12-15T14:06:27.868Z [DEBUG] Total plugin agents loaded: 0
+2025-12-15T14:06:27.879Z [DEBUG] Git remote URL: https://github.com/linxiaotutututu1123/3579.git
+2025-12-15T14:06:27.879Z [DEBUG] Parsed repository: linxiaotutututu1123/3579 from https://github.com/linxiaotutututu1123/3579.git
+2025-12-15T14:06:27.879Z [DEBUG] Parsed repository: linxiaotutututu1123/3579 from URL: https://github.com/linxiaotutututu1123/3579.git
+2025-12-15T14:06:27.880Z [DEBUG] Path C:\Users\1\2468\3579 already tracked for repo linxiaotutututu1123/3579
+2025-12-15T14:06:27.906Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=C:\Users\1\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\vendor\ripgrep\x64-win32\rg.exe)
+2025-12-15T14:06:27.999Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2025-12-15T14:06:28.003Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.102584.1765807588003
+2025-12-15T14:06:28.003Z [DEBUG] Preserving file permissions: 100666
+2025-12-15T14:06:28.006Z [DEBUG] Temp file written successfully, size: 54475 bytes
+2025-12-15T14:06:28.006Z [DEBUG] Applied original permissions to temp file
+2025-12-15T14:06:28.006Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.102584.1765807588003 to C:\Users\1\.claude.json
+2025-12-15T14:06:28.006Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-15T14:06:28.013Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2025-12-15T14:06:28.013Z [DEBUG] Found 0 hook matchers in settings
+2025-12-15T14:06:28.013Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2025-12-15T14:06:28.016Z [DEBUG] Skills and commands included in Skill tool:
+2025-12-15T14:06:28.016Z [DEBUG] Slash commands included in SlashCommand tool:
+2025-12-15T14:06:28.025Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2025-12-15T14:06:28.025Z [DEBUG] Found 0 hook matchers in settings
+2025-12-15T14:06:28.025Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2025-12-15T14:06:28.031Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2025-12-15T14:06:28.031Z [DEBUG] Found 0 hook matchers in settings
+2025-12-15T14:06:28.031Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2025-12-15T14:06:28.064Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.102584.1765807588064
+2025-12-15T14:06:28.064Z [DEBUG] Preserving file permissions: 100666
+2025-12-15T14:06:28.066Z [DEBUG] Temp file written successfully, size: 54402 bytes
+2025-12-15T14:06:28.066Z [DEBUG] Applied original permissions to temp file
+2025-12-15T14:06:28.066Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.102584.1765807588064 to C:\Users\1\.claude.json
+2025-12-15T14:06:28.066Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-15T14:06:28.070Z [DEBUG] performStartupChecks called
+2025-12-15T14:06:28.070Z [DEBUG] Starting background plugin installations
+2025-12-15T14:06:28.071Z [DEBUG] performBackgroundPluginInstallations called
+2025-12-15T14:06:28.090Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-15T14:06:28.886Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (794.0ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=44940\").Pare
+2025-12-15T14:06:29.485Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (599.7ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=1500\").Paren
+2025-12-15T14:06:29.486Z [DEBUG] Setting installation status: 0 marketplaces, 0 installable plugins, 0 uninstallable plugins
+2025-12-15T14:06:29.486Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2025-12-15T14:06:29.527Z [DEBUG] MCP server "ide": Starting connection with timeout of 30000ms
+2025-12-15T14:06:29.528Z [DEBUG] Shell snapshot created successfully (2310 bytes)
+2025-12-15T14:06:29.562Z [DEBUG] Summarizing all 361 messages (~106080 tokens)
+2025-12-15T14:06:29.566Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.102584.1765807589566
+2025-12-15T14:06:29.566Z [DEBUG] Preserving file permissions: 100666
+2025-12-15T14:06:29.567Z [DEBUG] Temp file written successfully, size: 54402 bytes
+2025-12-15T14:06:29.567Z [DEBUG] Applied original permissions to temp file
+2025-12-15T14:06:29.567Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.102584.1765807589566 to C:\Users\1\.claude.json
+2025-12-15T14:06:29.568Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-15T14:06:29.577Z [DEBUG] MCP server "ide": Successfully connected to ws-ide server in 67ms
+2025-12-15T14:06:29.577Z [DEBUG] MCP server "ide": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"serverVersion":{"name":"Claude Code VSCode MCP","version":"2.0.62"}}
+2025-12-15T14:06:29.591Z [DEBUG] Stats cache saved successfully (lastComputedDate: 2025-12-14)
+2025-12-15T14:06:29.591Z [DEBUG] Stats cache updated with 4 new sessions
+2025-12-15T14:06:29.794Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at I9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:458:10483)
+    at pR.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:2195)
+    at pR.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:3503
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2262
+    at async pL3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:944:16943)
+    at async LWB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2195)
+    at async RMA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1764:52)
+    at async BB1 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1764:261)
+2025-12-15T14:06:30.670Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.102584.1765807590670
+2025-12-15T14:06:30.670Z [DEBUG] Preserving file permissions: 100666
+2025-12-15T14:06:30.671Z [DEBUG] Temp file written successfully, size: 54402 bytes
+2025-12-15T14:06:30.671Z [DEBUG] Applied original permissions to temp file
+2025-12-15T14:06:30.671Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.102584.1765807590670 to C:\Users\1\.claude.json
+2025-12-15T14:06:30.672Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-15T14:06:30.677Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.102584.1765807590677
+2025-12-15T14:06:30.678Z [DEBUG] Preserving file permissions: 100666
+2025-12-15T14:06:30.679Z [DEBUG] Temp file written successfully, size: 54475 bytes
+2025-12-15T14:06:30.679Z [DEBUG] Applied original permissions to temp file
+2025-12-15T14:06:30.679Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.102584.1765807590677 to C:\Users\1\.claude.json
+2025-12-15T14:06:30.679Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-15T14:06:30.812Z [ERROR] Error streaming, falling back to non-streaming mode: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.590714 (request id: 20251215220630829671232TmELXpmG)"},"type":"error"}
+2025-12-15T14:06:30.876Z [ERROR] Error streaming, falling back to non-streaming mode: 403 {"error":{"code":"","message":"该令牌无权访问模型 claude-haiku-4-5-20251001 (request id: 20251215220630938178196t4uYnQHC)","type":"new_api_error"}}
+2025-12-15T14:06:30.900Z [ERROR] Error streaming, falling back to non-streaming mode: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.522060 (request id: 202512152206309583138598rDiUkFW)"},"type":"error"}
+2025-12-15T14:06:30.926Z [ERROR] Error in non-streaming fallback: 403 {"error":{"code":"","message":"该令牌无权访问模型 claude-haiku-4-5-20251001 (request id: 20251215220630989355595tJVirMs6)","type":"new_api_error"}}
+2025-12-15T14:06:30.927Z [ERROR] Error: Error: 403 {"error":{"code":"","message":"该令牌无权访问模型 claude-haiku-4-5-20251001 (request id: 20251215220630989355595tJVirMs6)","type":"new_api_error"}}
+    at I9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:458:10448)
+    at pR.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:2195)
+    at pR.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async feA.model (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11207)
+    at async feA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1220:18703)
+    at async xg2 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11361)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3787
+    at async yd1 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2037)
+    at async dYA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3757)
+2025-12-15T14:06:30.958Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2025-12-15T14:06:30.958Z [DEBUG] Found 0 hook matchers in settings
+2025-12-15T14:06:30.958Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-15T14:06:30.979Z [ERROR] Error in non-streaming fallback: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.362054 (request id: 2025121522063112396283GBae8NO1)"},"type":"error"}
+2025-12-15T14:06:30.979Z [ERROR] Error: Error: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.362054 (request id: 2025121522063112396283GBae8NO1)"},"type":"error"}
+    at I9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:458:10448)
+    at pR.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:2195)
+    at pR.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async feA.model (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11207)
+    at async feA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1220:18703)
+    at async xg2 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11361)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3787
+    at async yd1 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2037)
+    at async dYA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3757)
+2025-12-15T14:06:31.001Z [ERROR] Error in non-streaming fallback: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.430710 (request id: 2025121522063156214948we6APrPn)"},"type":"error"}
+2025-12-15T14:06:31.001Z [ERROR] Error: Error: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.430710 (request id: 2025121522063156214948we6APrPn)"},"type":"error"}
+    at I9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:458:10448)
+    at pR.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:2195)
+    at pR.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async feA.model (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11207)
+    at async feA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1220:18703)
+    at async xg2 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11361)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3545
+    at async yd1 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2037)
+    at async Wh (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3516)
+2025-12-15T14:06:31.010Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2025-12-15T14:06:31.010Z [DEBUG] Found 0 hook matchers in settings
+2025-12-15T14:06:31.010Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-15T14:06:32.201Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (587.1ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=44940\").Pare
+2025-12-15T14:06:32.783Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (582.2ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=1500\").Paren
+2025-12-15T14:06:33.120Z [ERROR] Error: Error: 1P event logging: 51 events failed to export
+    at Pj1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90771)
+    at Pj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:89870)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-15T14:06:33.120Z [ERROR] Error: Error: {"stack":"Error: Failed to export 51 events\n    at Pj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:89960)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 51 events","name":"Error"}
+    at ne1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1558:35484)
+    at I_1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at TO6 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-15T14:08:48.662Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-15T14:08:48.662Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-15T14:08:48.662Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-15T14:08:48.662Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-15T14:08:48.837Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2025-12-15T14:08:48.837Z [DEBUG] Found 0 hook matchers in settings
+2025-12-15T14:08:48.837Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-15T14:08:48.838Z [DEBUG] FileHistory: Added snapshot for bbbeb334-fb68-4426-85e2-92422cdbef4d, tracking 0 files
+2025-12-15T14:08:48.849Z [DEBUG] MCP server "ide": Calling MCP tool: closeAllDiffTabs
+2025-12-15T14:08:48.868Z [DEBUG] Total plugin output styles loaded: 0
+2025-12-15T14:08:48.875Z [DEBUG] MCP server "ide": Tool 'closeAllDiffTabs' completed successfully in 26ms
+2025-12-15T14:08:49.022Z [ERROR] Error streaming, falling back to non-streaming mode: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.495000 (request id: 2025121522084980352009x6eVUi9S)"},"type":"error"}
+2025-12-15T14:08:49.171Z [ERROR] Error streaming, falling back to non-streaming mode: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.553290 (request id: 20251215220849215878256Msi94KzC)"},"type":"error"}
+2025-12-15T14:08:49.292Z [ERROR] Error in non-streaming fallback: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.334994 (request id: 20251215220849269356838zHrA7Xqr)"},"type":"error"}
+2025-12-15T14:08:49.292Z [ERROR] Error: Error: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.334994 (request id: 20251215220849269356838zHrA7Xqr)"},"type":"error"}
+    at I9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:458:10448)
+    at pR.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:2195)
+    at pR.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async feA.model (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11207)
+    at async feA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1220:18703)
+    at async xg2 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11361)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3545
+    at async yd1 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2037)
+    at async Wh (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3516)
+2025-12-15T14:08:49.294Z [ERROR] SyntaxError: SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at JSON.parse (<anonymous>)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:75:715
+    at B (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:8:6526)
+    at yWB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:2834)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-15T14:08:49.332Z [ERROR] Error in non-streaming fallback: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.393284 (request id: 20251215220849385345970yUKxuvgd)"},"type":"error"}
+2025-12-15T14:08:49.332Z [ERROR] Error: Error: 403 {"error":{"type":"new_api_error","message":"预扣费额度失败, 用户剩余额度: ＄0.333078, 需要预扣费额度: ＄0.393284 (request id: 20251215220849385345970yUKxuvgd)"},"type":"error"}
+    at I9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:458:10448)
+    at pR.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:2195)
+    at pR.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async feA.model (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11207)
+    at async feA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1220:18703)
+    at async xg2 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:11361)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3787
+    at async yd1 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2037)
+    at async dYA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4235:3757)
+2025-12-15T14:08:49.347Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2025-12-15T14:08:49.347Z [DEBUG] Found 0 hook matchers in settings
+2025-12-15T14:08:49.347Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-15T14:08:53.862Z [ERROR] Error: Error: 1P event logging: 25 events failed to export
+    at Pj1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90771)
+    at Pj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:89870)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-15T14:08:53.862Z [ERROR] Error: Error: {"stack":"Error: Failed to export 25 events\n    at Pj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:89960)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 25 events","name":"Error"}
+    at ne1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1558:35484)
+    at I_1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at TO6 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-15T14:09:49.372Z [DEBUG] Getting matching hook commands for Notification with query: idle_prompt
+2025-12-15T14:09:49.372Z [DEBUG] Found 0 hook matchers in settings
+2025-12-15T14:09:49.372Z [DEBUG] Matched 0 unique hooks for query "idle_prompt" (0 before deduplication)
+2025-12-15T14:09:54.549Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at Pj1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90771)
+    at Pj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:89870)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-15T14:09:54.549Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at Pj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:89960)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at ne1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1558:35484)
+    at I_1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at TO6 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)

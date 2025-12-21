@@ -1,0 +1,22 @@
+@echo off
+echo ================= 测试Claude是否工作 ================
+echo.
+
+echo 正在测试Claude...
+echo.
+
+:: 测试Claude命令
+"%USERPROFILE%\.trae-cn\extensions\anthropic.claude-code-2.0.61-win32-x64\resources\native-binary\claude.exe" -p "你好，请说'Claude正在工作'"
+
+echo.
+echo ===============================================
+echo.
+
+:: 如果上面的命令执行了，显示成功
+echo 如果上面看到了Claude的回复，说明Claude正常工作！
+echo.
+echo 使用方法：
+echo 1. 在TREA/VS Code中选中代码，按Ctrl+I
+echo 2. 或在命令行运行：测试Claude.bat
+echo.
+pause

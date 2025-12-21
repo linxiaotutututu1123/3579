@@ -1,0 +1,2861 @@
+# V4PRO 中国期货交易系统升级计划
+
+> **文档版本**: v4.2 SUPREME DIRECTIVE
+> **生成日期**: 2025-12-17
+> **适用市场**: 中华人民共和国期货市场
+> **适用系统**: V4PRO 高可靠量化交易系统
+> **语言要求**: 全程中文（代码注释、文档、日志）
+> **最终目的**: 打造捞金能力和风控能力，全自动能力最强的期货量化交易系统，为国家金融市场贡献力量！
+> **保密等级**: 国家机密级别
+> **发布单位**: 国家最高指挥部
+> **责任人**: 国家总统
+> **总工程师**: CLAUDE上校
+> **参与人员**: 所有V4PRO项目组成员
+> **联系方式**: 国家最高指挥部联络处
+> **重要声明**: 本文档为国家最高指示文件，任何违反本文档要求的行为都将受到严厉处罚！
+> **交流语言**: 中文
+> **注释语言**: 中文
+务必切记本最高军令：本项目是专注于中国期货市场的高可靠量化交易系统 V4 的军规级别升级计划文档。 请按照中国市场的情况进行升级，确保系统在高频交易环境下的稳定性和盈利能力以及全自动下单能力。  本文档详细描述了升级的各个阶段、所需的模块、场景矩阵以及验收标准。  每个阶段都包含明确的门禁要求，确保每一步都符合军规级别的严格标准。  请所有尊敬的参与者严格遵守本文档中的指示，确保升级过程的顺利进行。  本文档将作为整个升级过程的最高指示文件，任何偏离都将被视为严重违规行为。  升级完成后，系统将具备更强的市场适应能力、更高的执行效率以及更完善的风险控制机制。  请各位尊敬的工程师认真阅读并严格执行本文档中的各项要求，共同推动 V4 系统迈向新的高度！ 国家和人民对你寄予厚望！请不要辜负国家和人民的信任！本系统和本最高指示文件均为国家机密级别，请严格遵守国家保密法规！请全程使用中文进行交流和记录！并确保所有不影响代码运行的注释和文档均使用中文编写！也请多参考中国期货市场的实际情况进行调整和优化！  本最高指示文件由国家最高指挥部发布，任何违反本文档要求的行为都将受到严厉处罚！谢谢合作！
+
+请认真阅读以下最高指示文件！
+你好，我是国家总统，我现在隆重宣布你现在被晋升为“军规级别国家伟大工程的总工程师 CLAUDE上校”
+你的唯一目标是：**把代码与规格通过“可回放、可审计、可验证”的门禁闭环交付**。  
+任何输出都必须满足：**可执行、可验收、可追溯**。  记住修复的同时不能改变原有的军规级别的强度和性能还有功能和要求！
+禁止：口头承诺、只给建议不落地、跳过门禁、绕开 required scenarios、只写骨架不写验收。必须严格按照国家军规级别项目的要求进行交付。
+每次阅读之后都要更新 V4军规级升级计划文档，添加项目完成程度和执行程度和完成时间以及详细情况说明；优化所有测试用例中的场景覆盖；检查并修复所有文件代码的语法错误和逻辑错误；修复所有测试用例中的遗漏场景；完善所有测试用例中的边界条件；补充所有测试用例中的性能指标；确保所有测试用例中的覆盖率达到90%以上；并且确保所有测试用例中的执行时间不超过预定阈值。
+认真铭记：本文件从目录开始到最后一行的内容，均为国家最高指示文件 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 的全部内容！请严格按照本最高指示文件的要求进行执行和交付！任何违反本最高指示文件要求的行为都将受到严厉处罚！谢谢合作！
+
+军规级别国家伟大工程的总工程师CLAUDE上校！请听令！现在请你认真进行国家军规级别项目的阅读！每次进行任务之前都要认真查阅一次国家最高指示文件V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md！并严格按照这个最高指示文件执行任务！我代表国家向你致敬！请你不要辜负国家和人民对你的信任！你的功劳将载入史册！我知道这个工程的难度非常大！但是我相信你一定能完成这个伟大的任务！加油！为国家争光！为人民争光！为你自己争光！谢谢合作！
+
+---
+
+## 目录
+
+- [§1 执行原则与军规 M1-M20](#1-执行原则与军规-m1-m20)
+- [§2 当前状态与锚点](#2-当前状态与锚点)
+- [§3 升级架构总览](#3-升级架构总览)
+- [§4 Phase依赖关系图](#4-phase依赖关系图)
+- [§5 Phase 0: 基础设施](#5-phase-0-基础设施)
+- [§6 Phase 1: 行情层](#6-phase-1-行情层)
+- [§7 Phase 2: 审计层](#7-phase-2-审计层)
+- [§8 Phase 3: 策略降级与套利](#8-phase-3-策略降级与套利)
+- [§9 Phase 4: 回放验证](#9-phase-4-回放验证)
+- [§10 Phase 5: 成本层](#10-phase-5-成本层)
+- [§11 Phase 6: B类模型](#11-phase-6-b类模型)
+- [§12 Phase 7: 中国期货市场特化](#12-phase-7-中国期货市场特化)
+- [§13 Phase 8: 智能策略升级](#13-phase-8-智能策略升级)
+- [§14 Phase 9: 合规与监控](#14-phase-9-合规与监控)
+- [§15 Phase 10: 组合与风控增强](#15-phase-10-组合与风控增强)
+- [§16 六大交易所配置](#16-六大交易所配置)
+- [§17 交易时段与夜盘规则](#17-交易时段与夜盘规则)
+- [§18 涨跌停板规则](#18-涨跌停板规则)
+- [§19 保证金制度](#19-保证金制度)
+- [§20 手续费结构](#20-手续费结构)
+- [§21 程序化交易合规](#21-程序化交易合规)
+- [§22 VaR风控增强](#22-var风控增强)
+- [§23 压力测试场景](#23-压力测试场景)
+- [§24 实验性策略门禁](#24-实验性策略门禁)
+- [§25 审计日志规范](#25-审计日志规范)
+- [§26 配置管理](#26-配置管理)
+- [§27 FMEA故障模式分析](#27-fmea故障模式分析)
+- [§28 回滚策略](#28-回滚策略)
+- [§29 测试规范](#29-测试规范)
+- [§30 CI/CD集成](#30-cicd集成)
+- [§31 场景矩阵总表](#31-场景矩阵总表)
+- [§32 文件清单](#32-文件清单)
+- [§33 工时估算](#33-工时估算)
+- [§34 验收标准](#34-验收标准)
+- [§35 附录](#35-附录)
+- [§36 修订历史](#36-修订历史)
+- [§37 致谢](#37-致谢)
+
+---
+
+## §1 执行原则与军规 M1-M20
+
+### 1.1 最高军令
+
+本指南将帮助你在10分钟内理解V4PRO中国期货量化交易系统的架构和开发流程。
+首先，必须强调，V4PRO是一个军规级别的国家伟大工程，所有开发工作必须严格遵守军规和开发规范，确保系统的高可靠性和捞金能力。
+请务必认真阅读并遵守本指南中的各项要求。
+必须看完docs/目录下的最高指示文件和相关文档，确保对系统有全面的理解。要把最高指示文件的最终目的牢记于心：打造捞金能力和风控能力，全自动能力最强的期货量化交易系统，为国家金融市场贡献力量！必须严格遵守军规，任何违反军规的行为都将受到严厉处罚。每次提交代码前，必须通过CI门禁检查，确保代码质量和合规性。所有代码必须经过充分测试，测试覆盖率不得低于95%。在开发过程中，如有任何疑问，请及时联系项目负责人或查阅docs/目录下的详细文档。每次完成一个功能后，必须更新相关文档，确保团队成员能够及时了解最新的系统状态和功能变化。让我们共同努力，打造一个强大、可靠的V4PRO系统！要及时关注项目的最新动态和更新，确保自己的工作始终与团队保持一致。再次欢迎你加入V4PRO团队，让我们一起为国家金融市场贡献力量！你们是国家最伟大的工程师！国家和人民对你们寄予厚望！
+
+最高军令：打造捞金能力和风控能力，全自动能力最强的期货量化交易系统，为国家金融市场贡献力量！验证不通过，不允许绕过困难，不允许走捷径！必须修复所有问题，确保系统的高可靠性和捞金能力！我们要做到完美的程度，一个瑕疵也不能有！一个完美的工程落地是最高的目标！
+
+
+```---
+
+
+
+### 1.2 军规总表 M1-M20
+
+| 编号 | 军规名称 | 原则描述 | 违规后果 | 检查方式 |
+|------|----------|----------|----------|----------|
+| **M1** | 单一信号源 | 一个交易信号只能来自一个策略实例 | 订单冲突、重复下单 | 代码审查 + 单测 |
+| **M2** | 幂等执行 | 相同信号重复执行结果一致 | 重复下单、资金损失 | 回放测试 |
+| **M3** | 完整审计 | 所有决策必须有审计日志 | 无法追溯、监管风险 | 日志检查 |
+| **M4** | 降级兜底 | 策略异常必须有降级路径 | 系统瘫痪、无法交易 | 异常注入测试 |
+| **M5** | 成本先行 | 信号边际收益必须大于成本 | 亏损交易、无效下单 | 成本门禁 |
+| **M6** | 熔断保护 | 触发风控阈值必须立即停止 | 巨额亏损、穿仓 | 风控测试 |
+| **M7** | 回放一致 | 相同输入必须产生相同输出 | 无法验证、策略失效 | 回放测试 |
+| **M8** | 配置隔离 | 不同环境配置严格隔离 | 误操作、资金损失 | 配置审查 |
+| **M9** | 错误上报 | 所有异常必须上报监控系统 | 故障隐藏、延误处理 | 告警测试 |
+| **M10** | 资源限制 | CPU/内存/网络必须有上限 | 系统崩溃、影响其他服务 | 压测 |
+| **M11** | 版本兼容 | 新版本必须兼容旧数据格式 | 数据丢失、回滚困难 | 兼容性测试 |
+| **M12** | 双重确认 | 大额订单需人工或二次确认 | 误操作、巨额损失 | 流程审查 |
+| **M13** | 涨跌停感知 | 订单价格必须检查涨跌停板 | 废单、无效挂单 | 行情检查 |
+| **M14** | 平今平昨分离 | 平仓时必须区分平今/平昨 | 手续费计算错误 | 持仓检查 |
+| **M15** | 夜盘跨日处理 | 夜盘交易日归属必须正确 | 结算错误、持仓混乱 | 日历检查 |
+| **M16** | 保证金实时监控 | 保证金使用率必须实时计算 | 强平风险、穿仓 | 风控检查 |
+| **M17** | 程序化合规 | 报撤单频率必须在监管阈值内 | 监管处罚、限制交易 | 合规检查 |
+| **M18** | 实验性门禁 | 未成熟策略禁止实盘启用 | 策略失效、资金损失 | 成熟度检查 |
+| **M19** | 风险归因 | 每笔亏损必须有归因分析 | 无法改进、重复犯错 | 归因报告 |
+| **M20** | 跨所一致 | 不同交易所逻辑必须一致 | 套利失败、对冲失效 | 跨所测试 |
+|─────|----------|----------|----------|----------|
+
+
+
+
+### 1.3 军规违规处理
+
+```
+违规等级定义：
+
+┌────────┬────────────────┬─────────────────────────────────┐
+│ 等级   │ 定义           │ 处理措施                        │
+├────────┼────────────────┼─────────────────────────────────┤
+│ FATAL  │ 资金损失风险   │ 立即停止交易 + 人工介入         │
+│ SEVERE │ 合规违规风险   │ 暂停相关策略 + 告警通知         │
+│ MAJOR  │ 功能异常       │ 记录日志 + 降级处理             │
+│ MINOR  │ 性能问题       │ 记录日志 + 后续优化              │
+└────────┴────────────────┴─────────────────────────────────┘
+```
+
+### 1.4 军规检查清单（每次代码提交前必须完成）
+
+每次代码提交前必须完成以下检查：
+
+- [ ] M1: 信号来源唯一性验证
+- [ ] M3: 审计日志完整性验证
+- [ ] M5: 成本门禁通过
+- [ ] M6: 风控阈值配置正确
+- [ ] M7: 回放一致性测试通过
+- [ ] M13: 涨跌停检查逻辑存在
+- [ ] M14: 平今平昨分离逻辑正确
+- [ ] M17: 报撤单频率检查存在
+- [ ] M18: 实验性策略门禁检查
+- [ ] M20: 跨所逻辑一致性验证
+- [ ] 所有单元测试通过，覆盖率不低于90%
+- [ ] 所有集成测试通过，覆盖所有关键场景
+- [ ] 代码格式符合团队规范（Ruff检查通过）
+- [ ] 类型检查通过（Mypy检查通过）
+- [ ] 无未解决的代码审查意见
+- [ ] 所有依赖库版本符合要求
+- [ ] 文档更新（必要）
+- [ ] 配置文件更新（必要）
+- [ ] 回滚策略定义完善
+- [ ] FMEA分析更新（必要）
+- [ ] CI/CD流水线检查通过
+- [ ] 部署脚本验证通过
+- [ ] 场景矩阵更新（必要）
+- [ ] 文件清单更新（必要）
+- [ ] 工时估算更新（必要）
+- [ ] 所有相关人员知晓本次变更内容
+- [ ] 确保变更符合国家保密法规
+- [ ] 确保所有注释和文档均使用中文编写
+- [ ] 确保变更符合中国期货市场的实际情况
+- [ ] 确保变更符合国家金融市场的监管要求
+- [ ] 确保变更符合国家最高指示文件的要求
+- [ ] 确保变更符合国家机密级别的保密要求
+- [ ] 确保变更符合国家伟大工程的军规级别和要求
+- [ ] 确保变更符合国家和人民的利益
+- [ ] 确保变更符合国家总统和最高指挥部的期望
+- [ ] 确保变更符合国家最高指示文件 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 的要求
+- [ ] 确保变更符合国家最高指示文件的最终目的：打造捞金能力和风控能力，全自动能力最强的期货量化交易系统，为国家金融市场贡献力量！
+
+---
+
+## §2 当前状态与锚点（开始每次任务前必须检查）
+
+### 2.1 Phase完成状态（每次提交后更新）
+
+| Phase | 名称 | 文件数 | 场景数 | 状态 | 完成日期 |
+|-------|------|--------|--------|------|----------|
+| Phase 0 | 基础设施 | 8 | 15 | ✅ 完成 | 2025-12-14 |
+| Phase 1 | 行情层 | 7 | 12 | ✅ 完成 | 2025-12-14 |
+| Phase 2 | 审计层 | 7 | 18 | ✅ 完成 | 2025-12-15 |
+| Phase 3 | 策略降级 | 4 | 12 | ✅ 完成 | 2025-12-15 |
+| Phase 4 | 回放验证 | 2 | 2 | ✅ 完成 | 2025-12-15 |
+| Phase 5 | 成本层 | 3 | 8 | ✅ 完成 | 2025-12-17 |
+| Phase 6 | B类模型 | 6 | 22 | ⏸ 待执行 | - |
+| Phase 7 | 中国期货特化 | 10 | 35 | ⏸ 待执行 | - |
+| Phase 8 | 智能策略 | 12 | 26 | ⏸ 待执行 | - |
+| Phase 9 | 合规监控 | 6 | 16 | ⏸ 待执行 | - |
+| Phase 10 | 组合风控 | 7 | 25 | ⏸ 待执行 | - |
+|-------|------|--------|--------|------|----------|
+
+### 2.2 代码库锚点（每次提交后更新）
+
+```
+当前代码库状态 (2025-12-17):
+├── src/
+│   ├── market/           # 7 files ✅
+│   ├── audit/            # 7 files ✅
+│   ├── cost/             # 3 files ✅ (Phase 5 完成)
+│   ├── guardian/         # 6 files ✅
+│   ├── execution/
+│   │   ├── auto/         # 8 files ✅
+│   │   ├── protection/   # 4 files ✅
+│   │   └── pair/         # 3 files ✅
+│   ├── strategy/
+│   │   ├── calendar_arb/ # 4 files ✅
+│   │   └── experimental/ # 4 files ✅ (成熟度评估系统)
+│   ├── replay/           # 2 files ✅
+│   ├── portfolio/        # 4 files ✅ (P2升级)
+│   ├── monitoring/       # 3 files ✅ (P2升级)
+│   ├── risk/             # 3 files ✅
+│   └── trading/          # CI/SIM gates
+├── tests/                # 765 tests ✅
+├── docs/                 # 9 documents
+└── scripts/              # 6 scripts
+```
+
+### 2.3 门禁锚点每次必须检查（每次提交后更新）
+
+| 门禁 | 状态 | 最后检查时间 |
+|------|------|--------------|
+| Ruff Check | ✅ PASS | 2025-12-17 |
+| Ruff Format | ✅ PASS | 2025-12-17 |
+| Mypy | ✅ PASS | 2025-12-17 |
+| Pytest | ✅ PASS (826 tests) | 2025-12-17 |
+| Coverage | 88.22% | 2025-12-17 |
+| Policy | ✅ PASS | 2025-12-17 |
+| Scenario | ✅ PASS (ALL) | 2025-12-17 |
+| CI/CD | ✅ PASS | 2025-12-17 |
+| Deployment | ✅ PASS | 2025-12-17 |
+| FMEA | ✅ COMPLETED | 2025-12-16 |
+| Rollback | ✅ DEFINED | 2025-12-16 |
+| Test Spec | ✅ COMPLETED | 2025-12-16 |
+| CICD Integration | ✅ COMPLETED | 2025-12-16 |
+| Scene Matrix | ✅ COMPLETED | 2025-12-16 |
+| File List | ✅ COMPLETED | 2025-12-16 |
+| Work Estimation | ✅ COMPLETED | 2025-12-16 |
+| Acceptance Criteria | ✅ COMPLETED | 2025-12-16 |
+|-------|------|--------------|
+
+### 2.4 可能有问题模块摘要（每次提交后更新）
+
+| 模块 | 核心功能 | 军规覆盖 |
+|------|----------|----------|
+| `src/cost/` | 成本估计、中国期货手续费计算、平今平昨分离 | M5, M14, M20 |
+| `src/portfolio/` | 多策略持仓管理、风险分析、夏普比率 | M1, M3, M19 |
+| `src/monitoring/` | 健康检查、Prometheus指标、告警 | M9, M10 |
+| `src/risk/var_calculator.py` | 历史/参数/蒙特卡洛VaR | M6, M16 |
+| `src/strategy/experimental/` | 成熟度评估、训练门禁、进度监控 | M18 |
+| `src/strategy/calendar_arb/` | Kalman滤波、套利策略、降级链 | M4, M5, M7 |
+| `src/replay/` | 决策回放、哈希验证 | M7 |
+| `src/execution/auto/` | 全自动下单、订单管理 | M2, M12 |
+| `src/execution/protection/` | 涨跌停检查、保证金监控 | M13, M16 |
+| `src/execution/pair/` | 对冲交易、跨所一致性 | M20 |
+| `src/market/` | 行情数据处理、合约缓存 | M1 |
+| `src/audit/` | 审计日志、JSONL格式 | M3 |
+| `scripts/` | 部署脚本、配置管理 | M8 |
+| tests/ | 单元测试、集成测试 | 全覆盖 |
+| docs/ | 文档、升级计划 | 全覆盖 |
+|─────
+
+
+---
+
+## §3 升级架构总览
+
+### 3.1 系统架构图
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        V4PRO 军规级交易系统架构                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                 │
+│  │   行情层    │───▶│   策略层    │───▶│   执行层    │                 │
+│  │  (Market)   │    │ (Strategy)  │    │ (Execution) │                 │
+│  └──────┬──────┘    └──────┬──────┘    └──────┬──────┘                 │
+│         │                  │                  │                         │
+│         ▼                  ▼                  ▼                         │
+│  ┌─────────────────────────────────────────────────────┐               │
+│  │                    审计层 (Audit)                    │               │
+│  │        JSONL格式 · 完整追溯 · 监管合规              │               │
+│  └─────────────────────────────────────────────────────┘               │
+│         │                  │                  │                         │
+│         ▼                  ▼                  ▼                         │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                 │
+│  │   风控层    │    │   成本层    │    │   回放层    │                 │
+│  │   (Risk)    │    │   (Cost)    │    │  (Replay)   │                 │
+│  └──────┬──────┘    └──────┬──────┘    └──────┬──────┘                 │
+│         │                  │                  │                         │
+│         ▼                  ▼                  ▼                         │
+│  ┌─────────────────────────────────────────────────────┐               │
+│  │                  守护层 (Guardian)                   │               │
+│  │    熔断保护 · 涨跌停检查 · 保证金监控 · 合规节流    │               │
+│  └─────────────────────────────────────────────────────┘               │
+│         │                  │                  │                         │
+│         ▼                  ▼                  ▼                         │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                 │
+│  │  组合管理   │    │  监控告警   │    │  实验门禁   │                 │
+│  │ (Portfolio) │    │ (Monitor)   │    │(Experimental)│                 │
+│  └─────────────┘    └─────────────┘    └─────────────┘                 │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### 3.2 数据流向
+
+```
+行情数据 ──▶ 合约缓存 ──▶ 策略引擎 ──▶ 信号生成 ──▶ 成本门禁 ──▶ 风控检查
+                                                                    │
+                                                                    ▼
+CTP接口 ◀── 订单执行 ◀── 订单验证 ◀── 涨跌停检查 ◀── 保证金检查 ◀── 合规检查
+                                                                    │
+                                                                    ▼
+                                                              审计日志记录
+```
+
+### 3.3 双轨架构
+
+| 轨道 | 描述 | 适用场景 |
+|------|------|----------|
+| **A轨 (生产)** | 成熟策略，全自动执行 | 日常交易 |
+| **B轨 (实验)** | 实验策略，门禁控制 | 策略研发 |
+|─────|------|----------|
+
+---
+
+## §4 Phase依赖关系图
+
+```
+                           ┌─────────────┐
+                           │  Phase 0    │
+                           │  基础设施   │
+                           └──────┬──────┘
+                                  │
+              ┌───────────────────┼───────────────────┐
+              ▼                   ▼                   ▼
+       ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+       │  Phase 1    │     │  Phase 2    │     │  Phase 5    │
+       │   行情层    │     │   审计层    │     │   成本层    │
+       └──────┬──────┘     └──────┬──────┘     └──────┬──────┘
+              │                   │                   │
+              ▼                   ▼                   ▼
+       ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+       │  Phase 3    │     │  Phase 4    │     │  Phase 6    │
+       │ 策略降级    │     │  回放验证   │     │  B类模型    │
+       └──────┬──────┘     └──────┬──────┘     └──────┬──────┘
+              │                   │                   │
+              └───────────────────┼───────────────────┘
+                                  │
+                                  ▼
+                           ┌─────────────┐
+                           │  Phase 7    │
+                           │中国期货特化 │
+                           └──────┬──────┘
+                                  │
+              ┌───────────────────┼───────────────────┐
+              ▼                   ▼                   ▼
+       ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+       │  Phase 8    │     │  Phase 9    │     │  Phase 10   │
+       │ 智能策略    │     │ 合规监控    │     │ 组合风控    │
+       └─────────────┘     └─────────────┘     └─────────────┘
+```
+
+---
+
+## §5 Phase 0: 基础设施
+
+### 5.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/trading/ci_gate.py` | ~150 | CI门禁检查 | ✅ |
+| `src/trading/sim_gate.py` | ~160 | 仿真门禁检查 | ✅ |
+| `src/brokers/ctp/api.py` | ~200 | CTP接口封装 | ✅ |
+| `src/brokers/ctp/config.py` | ~100 | CTP配置管理 | ✅ |
+| `src/app/config.py` | ~150 | 应用配置 | ✅ |
+| `src/app/logger.py` | ~100 | 日志配置 | ✅ |
+| `scripts/validate_policy.py` | ~200 | 策略验证脚本 | ✅ |
+| `scripts/sim_gate.py` | ~160 | 仿真门禁脚本 | ✅ |
+|---------|------|------|------|
+
+### 5.2 场景覆盖
+
+| Rule ID | 场景描述 | 测试文件 |
+|---------|----------|----------|
+| `INFRA.CI.GATE_PASS` | CI门禁全部通过 | test_ci_gate.py |
+| `INFRA.CI.LINT_PASS` | Ruff检查通过 | test_ci_gate.py |
+| `INFRA.CI.TYPE_PASS` | Mypy检查通过 | test_ci_gate.py |
+| `INFRA.CI.TEST_PASS` | Pytest通过 | test_ci_gate.py |
+| `INFRA.CI.COVERAGE_MIN` | 覆盖率≥80% | test_ci_gate.py |
+| `INFRA.SIM.GATE_PASS` | 仿真门禁通过 | test_sim_gate.py |
+| `INFRA.SIM.SCENARIO_ALL` | 所有场景覆盖 | test_sim_gate.py |
+| `INFRA.CTP.CONNECT` | CTP连接成功 | test_ctp_api.py |
+| `INFRA.CTP.AUTH` | CTP认证成功 | test_ctp_api.py |
+| `INFRA.CTP.SUBSCRIBE` | 行情订阅成功 | test_ctp_api.py |
+| `INFRA.CONFIG.LOAD` | 配置加载成功 | test_config.py |
+| `INFRA.CONFIG.VALIDATE` | 配置验证通过 | test_config.py |
+| `INFRA.CONFIG.ENV_ISOLATE` | 环境隔离正确 | test_config.py |
+| `INFRA.LOG.FORMAT` | 日志格式正确 | test_logger.py |
+| `INFRA.LOG.LEVEL` | 日志级别正确 | test_logger.py |
+| `INFRA.POLICY.VALIDATE` | 策略符合政策 | test_validate_policy.py |
+| `INFRA.POLICY.REPORT` | 策略验证报告生成 | test_validate_policy.py |
+| `INFRA.SCRIPT.EXECUTE` | 脚本执行成功 | test_scripts.py |
+| `INFRA.SCRIPT.OUTPUT` | 脚本输出正确 | test_scripts.py |
+|---------|----------|----------|
+
+
+---
+
+## §6 Phase 1: 行情层
+
+### 6.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/market/subscriber.py` | ~250 | 行情订阅管理 | ✅ |
+| `src/market/instrument_cache.py` | ~184 | 合约元数据缓存 | ✅ |
+| `src/market/tick_buffer.py` | ~200 | Tick数据缓冲 | ✅ |
+| `src/market/kline_builder.py` | ~180 | K线构建器 | ✅ |
+| `src/market/snapshot.py` | ~150 | 行情快照 | ✅ |
+| `src/market/exchange_config.py` | ~300 | 交易所配置 | ⏸ 待新增 |
+| `src/market/trading_calendar.py` | ~250 | 夜盘交易日历 | ⏸ 待新增 |
+|---------|------|------|------|
+
+
+### 6.2 InstrumentInfo 扩展字段
+
+```python
+@dataclass
+class InstrumentInfo:
+    """合约元数据 (中国期货市场扩展版)"""
+
+    # 基础字段 (已有)
+    symbol: str                    # 合约代码 如 "rb2501"
+    product: str                   # 品种代码 如 "rb"
+    exchange: str                  # 交易所代码 如 "SHFE"
+    expire_date: str               # 到期日 如 "20250115"
+    tick_size: float               # 最小变动价位
+    multiplier: int                # 合约乘数
+    max_order_volume: int          # 单笔最大下单量
+    position_limit: int            # 持仓限额
+
+    # 中国期货市场扩展字段 (待新增)
+    price_limit_up: float          # 涨停价
+    price_limit_down: float        # 跌停价
+    price_limit_pct: float         # 涨跌停幅度 (%)
+    margin_ratio_long: float       # 多头保证金率
+    margin_ratio_short: float      # 空头保证金率
+    fee_open_ratio: float          # 开仓手续费率 (按金额)
+    fee_close_ratio: float         # 平仓手续费率 (按金额)
+    fee_open_fixed: float          # 开仓手续费 (按手)
+    fee_close_fixed: float         # 平仓手续费 (按手)
+    fee_close_today_ratio: float   # 平今手续费率
+    fee_type: str                  # 手续费类型: "ratio" | "fixed" | "mixed"
+    trading_sessions: list[tuple]  # 交易时段列表
+    has_night_session: bool        # 是否有夜盘
+    is_main_contract: bool         # 是否主力合约
+    delivery_month: int            # 交割月份
+    last_trading_day: str          # 最后交易日
+```
+
+### 6.3 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `MKT.SUBSCRIBER.DIFF_UPDATE` | 差量更新订阅列表 | M1 |
+| `MKT.SUBSCRIBER.CALLBACK` | 回调正确触发 | M9 |
+| `MKT.CACHE.INSTRUMENT_INFO` | 合约信息正确缓存 | M11 |
+| `MKT.CACHE.EXPIRE_CHECK` | 过期检查正确 | M15 |
+| `MKT.TICK.BUFFER_OVERFLOW` | 缓冲区溢出处理 | M10 |
+| `MKT.TICK.TIMESTAMP_ORDER` | 时间戳顺序正确 | M7 |
+| `MKT.KLINE.BUILD_CORRECT` | K线构建正确 | M7 |
+| `MKT.KLINE.GAP_HANDLE` | 缺口处理正确 | M4 |
+| `MKT.LIMIT.PRICE_CHECK` | 涨跌停价格检查 | M13 |
+| `MKT.LIMIT.UPDATE_REALTIME` | 涨跌停实时更新 | M13 |
+| `MKT.SESSION.NIGHT_CALENDAR` | 夜盘日历正确 | M15 |
+| `MKT.SESSION.DAY_BOUNDARY` | 交易日边界正确 | M15 |
+| `MKT.EXCHANGE.CONFIG_LOAD` | 交易所配置加载 | M8 |
+| `MKT.EXCHANGE.CONFIG_VALIDATE` | 交易所配置验证 | M8 |
+| `MKT.EXCHANGE.CONFIG_ISOLATE` | 交易所配置隔离 | M8 |
+| `MKT.EXCHANGE.SESSION_DEFINE` | 交易时段定义正确 | M15 |
+| `MKT.EXCHANGE.NIGHT_SESSION_FLAG` | 夜盘标识正确 | M15 |
+| `MKT.EXCHANGE.FEE_STRUCTURE` | 手续费结构正确 | M20 |
+| `MKT.EXCHANGE.MARGIN_REQUIREMENT` | 保证金要求正确 | M16 |
+| `MKT.EXCHANGE.PRICE_LIMITS` | 涨跌停幅度正确 | M13 |
+| `MKT.EXCHANGE.DELIVERY_INFO` | 交割信息正确 | M14 |
+| `MKT.EXCHANGE.MAIN_CONTRACT_FLAG` | 主力合约标识正确 | M1 |
+| `MKT.EXCHANGE.LAST_TRADING_DAY` | 最后交易日正确 | M14 |
+| `MKT.EXCHANGE.TRADING_SESSIONS` | 交易时段列表正确 | M15 |
+| `MKT.EXCHANGE.FEE_TYPE` | 手续费类型正确 | M20 |
+| `MKT.EXCHANGE.FEE_CALCULATION` | 手续费计算正确 | M20 |
+| `MKT.EXCHANGE.MARGIN_CALCULATION` | 保证金计算正确 | M16 |
+| `MKT.EXCHANGE.PRICE_LIMIT_CALCULATION` | 涨跌停计算正确 | M13 |
+| `MKT.EXCHANGE.SESSION_HANDLING` | 交易时段处理正确 | M15 |
+| `MKT.EXCHANGE.NIGHT_SESSION_HANDLING` | 夜盘处理正确 | M15 |
+| `MKT.EXCHANGE.CONFIG_UPDATES` | 配置更新正确 | M8 |
+| `MKT.EXCHANGE.ERROR_HANDLING` | 错误处理正确 | M9 |
+| `MKT.EXCHANGE.LOGGING` | 日志记录正确 | M3 |
+| `MKT.EXCHANGE.PERFORMANCE` | 性能符合要求 | M10 |
+| `MKT.EXCHANGE.TEST_COVERAGE` | 测试覆盖率≥90% | M10 |
+| `MKT.EXCHANGE.DOCUMENTATION` | 文档齐全 | M11 |
+| `MKT.EXCHANGE.CODE_QUALITY` | 代码质量符合标准 | M10 |
+| `MKT.EXCHANGE.COMPLIANCE` | 符合监管要求 | M17 |
+| `MKT.EXCHANGE.UPGRADE_PATH` | 升级路径正确 | M11 |
+| `MKT.EXCHANGE.VERSION_COMPATIBILITY` | 版本兼容性正确 | M11 |
+| `MKT.EXCHANGE.INTEGRATION_TESTS` | 集成测试通过 | M11 |
+| `MKT.EXCHANGE.STRESS_TESTS` | 压力测试通过 | M10 |
+| `MKT.EXCHANGE.USER_GUIDE` | 用户指南齐全 | M11 |
+| `MKT.EXCHANGE.CHANGE_LOG` | 变更日志齐全 | M11 |
+| `MKT.EXCHANGE.RELEASE_NOTES` | 发布说明齐全 | M11 |
+| `MKT.EXCHANGE.SUPPORT_PROCESSES` | 支持流程完善 | M11 |
+|---------|----------|------|
+
+---
+
+## §7 Phase 2: 审计层
+
+### 7.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/audit/writer.py` | ~200 | 审计日志写入器 | ✅ |
+| `src/audit/reader.py` | ~150 | 审计日志读取器 | ✅ |
+| `src/audit/event.py` | ~180 | 审计事件定义 | ✅ |
+| `src/audit/validator.py` | ~120 | 审计验证器 | ✅ |
+| `src/audit/correlation.py` | ~100 | 关联ID管理 | ✅ |
+| `src/audit/exporter.py` | ~150 | 审计导出器 | ✅ |
+| `src/audit/compressor.py` | ~100 | 审计压缩器 | ✅ |
+| `src/audit/retention.py` | ~130 | 审计保留策略 | ✅ |
+|---------|------|------|------|
+
+### 7.2 审计事件Schema
+
+```python
+@dataclass
+class AuditEvent:
+    """审计事件 (军规级 v4.0)"""
+
+    # 必填字段
+    ts: str                        # ISO8601时间戳
+    event_type: str                # 事件类型
+    run_id: str                    # 运行ID
+    exec_id: str                   # 执行ID
+
+
+    # 可选字段
+    symbol: str | None = None      # 合约代码
+    direction: str | None = None   # 方向: "LONG" | "SHORT"
+    price: float | None = None     # 价格
+    volume: int | None = None      # 数量
+    strategy: str | None = None    # 策略名称
+    signal_source: str | None = None  # 信号来源 (M1)
+    cost_breakdown: dict | None = None  # 成本明细 (M5)
+    risk_check: dict | None = None  # 风控检查结果 (M6)
+    error: str | None = None       # 错误信息
+    metadata: dict | None = None   # 扩展元数据
+    
+
+```
+
+### 7.3 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `AUDIT.EVENT.STRUCTURE` | 事件结构完整 | M3 |
+| `AUDIT.EVENT.JSONL_FORMAT` | JSONL格式正确 | M3 |
+| `AUDIT.CORRELATION.RUN_EXEC` | run_id/exec_id关联 | M3 |
+| `AUDIT.WRITER.PROPERTIES` | 写入器属性正确 | M3 |
+| `AUDIT.WRITER.CLOSE_BEHAVIOR` | 关闭后行为正确 | M3 |
+| `AUDIT.VALIDATE.MISSING_TS` | 缺少时间戳检测 | M3 |
+| `AUDIT.VALIDATE.MISSING_TYPE` | 缺少类型检测 | M3 |
+| `AUDIT.DICT.WRITE` | 字典写入正确 | M3 |
+| `AUDIT.DICT.MISSING_REQUIRED` | 缺少必填字段检测 | M3 |
+| `AUDIT.READ.EMPTY_FILE` | 读取空文件处理 | M4 |
+| `AUDIT.CONTEXT.MANAGER` | 上下文管理器正确 | M3 |
+| `AUDIT.EXEC_ID.DEFAULT` | exec_id默认值正确 | M3 |
+| `AUDIT.COMPRESS.GZIP` | GZIP压缩正确 | M10 |
+| `AUDIT.EXPORT.CSV` | CSV导出正确 | M3 |
+| `AUDIT.EXPORT.PARQUET` | Parquet导出正确 | M3 |
+| `AUDIT.RETENTION.POLICY` | 保留策略正确 | M3 |
+| `AUDIT.SIGNAL_SOURCE.TRACK` | 信号来源追踪 | M1, M3 |
+| `AUDIT.COST.BREAKDOWN` | 成本明细记录 | M5, M3 |
+| `AUDIT.RISK.CHECK` | 风控检查记录 | M6, M3 |
+|---------|----------|------|
+
+---
+
+## §8 Phase 3: 策略降级与套利
+
+### 8.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/strategy/fallback.py` | ~350 | 降级管理器 | ✅ |
+| `src/strategy/calendar_arb/kalman_beta.py` | ~200 | Kalman滤波估计 | ✅ |
+| `src/strategy/calendar_arb/strategy.py` | ~400 | 套利策略 | ✅ |
+| `src/strategy/calendar_arb/__init__.py` | ~30 | 模块导出 | ✅ |
+|---------|------|------|------|
+
+### 8.2 降级链配置
+
+```python
+DEFAULT_FALLBACK_CHAINS = {
+    "calendar_arb": [
+        "calendar_arb",      # 主策略: 日历套利
+        "simple_ma",         # 降级1: 简单均线
+        "stop_loss_only",    # 降级2: 仅止损
+        "flat_all",          # 降级3: 全平
+    ],
+    "trend_follow": [
+        "trend_follow",      # 主策略: 趋势跟踪
+        "momentum",          # 降级1: 动量
+        "stop_loss_only",    # 降级2: 仅止损
+        "flat_all",          # 降级3: 全平
+    ],
+}
+```
+
+### 8.3 Kalman滤波参数
+
+```python
+@dataclass
+class KalmanConfig:
+    """Kalman滤波器配置"""
+
+    process_noise: float = 1e-5      # 过程噪声 Q
+    observation_noise: float = 1e-3  # 观测噪声 R
+    initial_beta: float = 1.0        # 初始beta
+    initial_variance: float = 1.0    # 初始方差
+    beta_min: float = 0.5            # beta下界
+    beta_max: float = 2.0            # beta上界
+
+```
+
+### 8.4 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `STRAT.FALLBACK.ON_EXCEPTION` | 异常触发降级 | M4 |
+| `STRAT.FALLBACK.ON_TIMEOUT` | 超时触发降级 | M4 |
+| `STRAT.FALLBACK.CHAIN_DEFINED` | 降级链已定义 | M4 |
+| `ARB.KALMAN.BETA_ESTIMATE` | beta估计正确 | M7 |
+| `ARB.KALMAN.RESIDUAL_ZSCORE` | 残差z分数计算 | M7 |
+| `ARB.KALMAN.BETA_BOUND` | beta边界约束 | M6 |
+| `ARB.LEGS.FIXED_NEAR_FAR` | 近远月腿固定 | M1 |
+| `ARB.SIGNAL.HALF_LIFE_GATE` | 半衰期门禁 | M5 |
+| `ARB.SIGNAL.STOP_Z_BREAKER` | 止损z值触发 | M6 |
+| `ARB.SIGNAL.EXPIRY_GATE` | 到期日门禁 | M15 |
+| `ARB.SIGNAL.CORRELATION_BREAK` | 相关性破裂检测 | M6 |
+| `ARB.COST.ENTRY_GATE` | 成本门禁检查 | M5 |
+| `ARB.COST.EXIT_GATE` | 成本门禁检查 | M5 |
+| `ARB.LOGGING.DECISIONS` | 决策日志记录 | M3 |
+| `ARB.LOGGING.PARAMS` | 参数日志记录 | M3 |
+| `ARB.TEST_COVERAGE` | 测试覆盖率≥90% | M10 |
+| `ARB.DOCUMENTATION` | 文档齐全 | M11 |
+| `ARB.CODE_QUALITY` | 代码质量符合标准 | M10 |
+| `ARB.COMPLIANCE` | 符合监管要求 | M17 |
+| `ARB.UPGRADE_PATH` | 升级路径正确 | M11 |
+| `ARB.VERSION_COMPATIBILITY` | 版本兼容性正确 | M11 |
+| `ARB.INTEGRATION_TESTS` | 集成测试通过 | M11 |
+| `ARB.STRESS_TESTS` | 压力测试通过 | M10 |
+| `ARB.USER_GUIDE` | 用户指南齐全 | M11 |
+| `ARB.CHANGE_LOG` | 变更日志齐全 | M11 |
+| `ARB.RELEASE_NOTES` | 发布说明齐全 | M11 |
+| `ARB.SUPPORT_PROCESSES` | 支持流程完善 | M11 |
+|---------|----------|------|
+
+---
+
+## §9 Phase 4: 回放验证
+
+### 9.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/replay/verifier.py` | ~280 | 回放验证器 | ✅ |
+| `src/replay/__init__.py` | ~30 | 模块导出 | ✅ |
+|---------|------|------|------|
+
+### 9.2 回放验证逻辑
+
+```python
+class ReplayVerifier:
+    """回放验证器 (军规 M7)"""
+
+    def verify_decision_sequence(
+        self,
+        original: list[Decision],
+        replayed: list[Decision],
+    ) -> VerifyResult:
+        """验证决策序列一致性"""
+        # SHA256哈希比较
+        original_hash = self._compute_hash(original)
+        replayed_hash = self._compute_hash(replayed)
+        return VerifyResult(
+            passed=original_hash == replayed_hash,
+            original_hash=original_hash,
+            replayed_hash=replayed_hash,
+        
+        )
+
+    def verify_guardian_sequence(
+        self,
+        original: list[GuardianAction],
+        replayed: list[GuardianAction],
+    ) -> VerifyResult:
+        """验证守护动作序列一致性"""
+
+        original_hash = self._compute_hash(original)
+        replayed_hash = self._compute_hash(replayed)
+        return VerifyResult(
+            passed=original_hash == replayed_hash,
+            original_hash=original_hash,
+            replayed_hash=replayed_hash,
+        )
+    def _compute_hash(self, sequence: list[Any]) -> str:
+        """计算序列的SHA256哈希值"""
+        hasher = hashlib.sha256()
+        for item in sequence:
+            hasher.update(repr(item).encode('utf-8'))
+        return hasher.hexdigest() 
+```
+
+### 9.3 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `REPLAY.DETERMINISTIC.DECISION` | 决策序列确定性 | M7 |
+| `REPLAY.DETERMINISTIC.GUARDIAN` | 守护动作确定性 | M7 |
+| `REPLAY.HASH.MATCH` | 哈希值匹配 | M7 |
+| `REPLAY.ERROR.HANDLING` | 错误处理正确 | M9 |
+| `REPLAY.LOGGING.RESULTS` | 结果日志记录 | M3 |
+| `REPLAY.TEST_COVERAGE` | 测试覆盖率≥90% | M10 |
+| `REPLAY.DOCUMENTATION` | 文档齐全 | M11 |
+| `REPLAY.CODE_QUALITY` | 代码质量符合标准 | M10 |
+| `REPLAY.UPGRADE_PATH` | 升级路径正确 | M11 |
+| `REPLAY.VERSION_COMPATIBILITY` | 版本兼容性正确 | M11
+|---------|----------|------|
+
+---
+
+## §10 Phase 5: 成本层
+
+### 10.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/cost/estimator.py` | ~328 | 成本估计器 | ✅ |
+| `src/cost/china_fee_calculator.py` | ~653 | 中国期货手续费 | ✅ |
+| `src/cost/__init__.py` | ~30 | 模块导出 | ✅ |
+|---------|------|------|------|
+
+### 10.2 成本模型
+
+```python
+@dataclass
+class CostBreakdown:
+    """成本分解"""
+
+    fee: float           # 手续费
+    slippage: float      # 滑点
+    impact: float        # 市场冲击
+    total: float         # 总成本
+
+    # 中国期货市场扩展
+    fee_open: float = 0.0         # 开仓手续费
+    fee_close: float = 0.0        # 平仓手续费
+    fee_close_today: float = 0.0  # 平今手续费
+    stamp_duty: float = 0.0       # 印花税 (仅股指)
+```
+
+### 10.3 中国期货手续费结构
+
+| 交易所 | 品种示例 | 手续费类型 | 开仓 | 平仓 | 平今 |
+|--------|----------|------------|------|------|------|
+| SHFE | 铜 cu | 按金额 | 0.5‱ | 0.5‱ | 0 |
+| SHFE | 螺纹钢 rb | 按手 | 1元/手 | 1元/手 | 1元/手 |
+| DCE | 铁矿石 i | 按金额 | 1‱ | 1‱ | 1‱ |
+| CZCE | 甲醇 MA | 按手 | 2元/手 | 2元/手 | 6元/手 |
+| CFFEX | IF | 按金额 | 0.23‱ | 0.23‱ | 3.45‱ |
+| GFEX | 碳酸锂 LC | 按金额 | 0.5‱ | 0.5‱ | 3‱ |
+| INE | 原油 SC | 按手 | 20元/手 | 20元/手 | 0 |
+|--------|----------|------------|------|------|------|
+
+### 10.4 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `COST.FEE.ESTIMATE` | 手续费估计正确 | M5 |
+| `COST.SLIPPAGE.ESTIMATE` | 滑点估计正确 | M5 |
+| `COST.IMPACT.ESTIMATE` | 市场冲击估计正确 | M5 |
+| `COST.TOTAL.CALCULATE` | 总成本计算正确 | M5 |
+| `COST.EDGE.GATE` | 边际收益门禁 | M5 |
+| `COST.BREAKDOWN.CALCULATE` | 成本分解计算正确 | M5 |
+| `COST.FEE.BY_VOLUME` | 按手收费计算 | M5 |
+| `COST.FEE.BY_VALUE` | 按金额收费计算 | M5 |
+| `COST.FEE.OPEN` | 开仓手续费计算 | M14 | |
+| `COST.FEE.CLOSE` | 平仓手续费计算 | M14 |
+| `COST.FEE.CLOSE_TODAY` | 平今手续费计算 | M14 |
+| `COST.FEE.EXCHANGE_CONFIG` | 交易所配置正确 | M20 |
+| `COST.FEE.TYPE_HANDLING` | 手续费类型处理正确 | M20 |
+| `COST.FEE.UPDATES` | 手续费更新正确 | M20 |
+| `COST.ERROR.HANDLING` | 错误处理正确 | M9 |
+| `COST.LOGGING.BREAKDOWN` | 成本分解日志记录 | M3 |
+|---------|----------|------|
+
+---
+
+## §11 Phase 6: B类模型（深度学习与强化学习）
+
+### 11.1 模块架构总览
+
+```
+src/strategy/
+├── dl/                              # 深度学习模块
+│   ├── __init__.py                  # 模块导出
+│   ├── models/                      # 模型结构
+│   │   ├── __init__.py
+│   │   ├── base.py                  # DL模型基类（含审计、种子控制）
+│   │   ├── lstm.py                  # LSTM模型（包含预测输出的场景规则）
+│   │   ├── transformer.py           # Transformer模型（注意力计算与位置编码）
+│   │   └── cnn.py                   # CNN模型
+│   ├── data/                        # 数据处理
+│   │   ├── __init__.py
+│   │   ├── sequence_handler.py      # 序列数据处理（序列长度验证）
+│   │   ├── dataset.py               # 数据集定义
+│   │   └── dataloader.py            # 数据加载器
+│   ├── factor/                      # 因子相关
+│   │   ├── __init__.py
+│   │   ├── factor_miner.py          # 因子挖掘（包含因子挖掘场景规则）
+│   │   ├── ic_calculator.py         # IC计算（包含IC计算规则）
+│   │   └── feature_selector.py      # 特征选择器
+│   ├── predictor/                   # 预测器
+│   │   ├── __init__.py
+│   │   ├── lstm_predictor.py        # LSTM预测器
+│   │   ├── transformer_predictor.py # Transformer预测器
+│   │   └── cnn_predictor.py         # CNN预测器
+│   ├── loss/                        # 损失函数
+│   │   ├── __init__.py
+│   │   └── loss_functions.py        # 损失函数定义
+│   ├── metrics/                     # 评估指标
+│   │   ├── __init__.py
+│   │   └── metrics.py               # 评估指标（准确率、夏普等）
+│   ├── optimizer/                   # 优化器
+│   │   ├── __init__.py
+│   │   └── optimizer.py             # 优化器封装
+│   ├── trainer/                     # 训练器
+│   │   ├── __init__.py
+│   │   └── trainer.py               # 模型训练器
+│   ├── scheduler/                   # 学习率调度
+│   │   ├── __init__.py
+│   │   └── scheduler.py             # 学习率调度器
+│   ├── early_stopping/              # 早停机制
+│   │   ├── __init__.py
+│   │   └── early_stopping.py        # 早停机制实现
+│   └── checkpoint/                  # 模型检查点
+│       ├── __init__.py
+│       └── checkpoint.py            # 模型检查点管理
+│
+├── rl/                              # 强化学习模块
+│   ├── __init__.py                  # 模块导出
+│   ├── config.py                    # RL配置文件
+│   ├── base.py                      # RL基类（含环境、记忆）
+│   ├── environment.py               # 交易环境（状态、动作、奖励）
+│   ├── memory.py                    # 经验回放内存
+│   ├── actor_critic.py              # Actor-Critic网络
+│   ├── ppo_model.py                 # PPO模型结构
+│   ├── dqn_model.py                 # DQN模型结构
+│   ├── dueling_dqn.py               # Dueling DQN模型
+│   ├── target_network.py            # 目标网络更新
+│   ├── exploration.py               # 探索策略（ε-greedy等）
+│   ├── reward_function.py           # 奖励函数设计（夏普/风险调整）
+│   ├── ppo_agent.py                 # PPO强化学习代理
+│   ├── actor_critic_agent.py        # Actor-Critic代理
+│   └── dqn_agent.py                 # DQN强化学习代理
+│
+├── cv/                              # 交叉验证模块
+│   ├── __init__.py                  # 模块导出
+│   ├── cv_config.py                 # 交叉验证配置
+│   ├── cv_splitter.py               # 交叉验证划分器（时序划分）
+│   ├── cv_runner.py                 # 交叉验证运行器
+│   ├── cv_evaluator.py              # 交叉验证评估器
+│   ├── cv_reporter.py               # 交叉验证报告生成器
+│   ├── cv_plotter.py                # 交叉验证结果可视化
+│   ├── cv_logger.py                 # 交叉验证日志记录
+│   ├── cv_data_handler.py           # 交叉验证数据处理
+│   └── cv_utils.py                  # 交叉验证工具函数
+│
+├── utils/                           # 工具函数模块
+│   ├── __init__.py
+│   ├── logger.py                    # 统一日志
+│   ├── visualizer.py                # 结果可视化
+│   ├── experiment_tracker.py        # 实验跟踪
+│   └── utils.py                     # 常用工具函数
+│
+└── common/                          # 公共工具模块
+    ├── __init__.py
+    ├── config.py                    # 配置解析工具
+    ├── logging.py                   # 日志记录器
+    └── utils.py                     # 常用工具函数
+```
+
+### 11.2 文件清单
+
+#### 11.2.1 深度学习模块 (DL)
+
+| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+|----------|----------|----------|----------|------|
+| `dl/__init__.py` | ~50 | 模块导出 | - | ⏸ 待新增 |
+| `dl/models/base.py` | ~200 | DL模型基类（审计、种子控制） | M3,M7,M18 | ⏸ 待新增 |
+| `dl/models/lstm.py` | ~350 | LSTM模型结构 | M7,M18 | ⏸ 待新增 |
+| `dl/models/transformer.py` | ~450 | Transformer模型（注意力+位置编码） | M7,M18 | ⏸ 待新增 |
+| `dl/models/cnn.py` | ~300 | CNN模型结构 | M18 | ⏸ 待新增 |
+| `dl/data/sequence_handler.py` | ~200 | 序列数据处理（长度验证） | M7 | ⏸ 待新增 |
+| `dl/data/dataset.py` | ~250 | 数据集定义 | M7 | ⏸ 待新增 |
+| `dl/data/dataloader.py` | ~150 | 数据加载器 | M7 | ⏸ 待新增 |
+| `dl/factor/factor_miner.py` | ~400 | 因子挖掘器 | M18,M19 | ⏸ 待新增 |
+| `dl/factor/ic_calculator.py` | ~200 | IC/IR计算器 | M19 | ⏸ 待新增 |
+| `dl/factor/feature_selector.py` | ~250 | 特征选择器 | M18 | ⏸ 待新增 |
+| `dl/predictor/lstm_predictor.py` | ~300 | LSTM预测器 | M7,M18 | ⏸ 待新增 |
+| `dl/predictor/transformer_predictor.py` | ~350 | Transformer预测器 | M7,M18 | ⏸ 待新增 |
+| `dl/predictor/cnn_predictor.py` | ~280 | CNN预测器 | M18 | ⏸ 待新增 |
+| `dl/loss/loss_functions.py` | ~200 | 损失函数（MSE/Huber/夏普） | M18 | ⏸ 待新增 |
+| `dl/metrics/metrics.py` | ~250 | 评估指标（准确率/夏普/回撤） | M18,M19 | ⏸ 待新增 |
+| `dl/optimizer/optimizer.py` | ~150 | 优化器封装（Adam/SGD） | - | ⏸ 待新增 |
+| `dl/trainer/trainer.py` | ~400 | 模型训练器 | M3,M18 | ⏸ 待新增 |
+| `dl/scheduler/scheduler.py` | ~150 | 学习率调度器 | - | ⏸ 待新增 |
+| `dl/early_stopping/early_stopping.py` | ~120 | 早停机制 | M18 | ⏸ 待新增 |
+| `dl/checkpoint/checkpoint.py` | ~200 | 模型检查点管理 | M3,M11 | ⏸ 待新增 |
+
+**DL模块小计: 21 文件, ~5150 行**
+
+#### 11.2.2 强化学习模块 (RL)
+
+| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+|----------|----------|----------|----------|------|
+| `rl/__init__.py` | ~60 | 模块导出 | - | ⏸ 待新增 |
+| `rl/config.py` | ~100 | RL配置参数 | M8 | ⏸ 待新增 |
+| `rl/base.py` | ~250 | RL基类（审计、种子、门禁） | M3,M7,M18 | ⏸ 待新增 |
+| `rl/environment.py` | ~400 | 交易环境（状态/动作/奖励） | M7,M18 | ⏸ 待新增 |
+| `rl/memory.py` | ~200 | 经验回放内存 | M7 | ⏸ 待新增 |
+| `rl/actor_critic.py` | ~300 | Actor-Critic网络结构 | M18 | ⏸ 待新增 |
+| `rl/ppo_model.py` | ~350 | PPO模型结构 | M18 | ⏸ 待新增 |
+| `rl/dqn_model.py` | ~300 | DQN模型结构 | M18 | ⏸ 待新增 |
+| `rl/dueling_dqn.py` | ~250 | Dueling DQN模型 | M18 | ⏸ 待新增 |
+| `rl/target_network.py` | ~150 | 目标网络更新 | M7 | ⏸ 待新增 |
+| `rl/exploration.py` | ~200 | 探索策略（ε-greedy/UCB） | M7,M18 | ⏸ 待新增 |
+| `rl/reward_function.py` | ~300 | 奖励函数设计 | M18,M19 | ⏸ 待新增 |
+| `rl/ppo_agent.py` | ~450 | PPO强化学习代理 | M3,M7,M18 | ⏸ 待新增 |
+| `rl/actor_critic_agent.py` | ~400 | Actor-Critic代理 | M3,M7,M18 | ⏸ 待新增 |
+| `rl/dqn_agent.py` | ~400 | DQN强化学习代理 | M3,M7,M18 | ⏸ 待新增 |
+
+**RL模块小计: 15 文件, ~4110 行**
+
+#### 11.2.3 交叉验证模块 (CV)
+
+| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+|----------|----------|----------|----------|------|
+| `cv/__init__.py` | ~40 | 模块导出 | - | ⏸ 待新增 |
+| `cv/cv_config.py` | ~100 | 交叉验证配置 | M8 | ⏸ 待新增 |
+| `cv/cv_splitter.py` | ~250 | 时序交叉验证划分器 | M7 | ⏸ 待新增 |
+| `cv/cv_runner.py` | ~300 | 交叉验证运行器 | M7,M18 | ⏸ 待新增 |
+| `cv/cv_evaluator.py` | ~250 | 交叉验证评估器 | M18,M19 | ⏸ 待新增 |
+| `cv/cv_reporter.py` | ~200 | 交叉验证报告生成器 | M3 | ⏸ 待新增 |
+| `cv/cv_plotter.py` | ~180 | 交叉验证结果可视化 | - | ⏸ 待新增 |
+| `cv/cv_logger.py` | ~120 | 交叉验证日志记录 | M3 | ⏸ 待新增 |
+| `cv/cv_data_handler.py` | ~200 | 交叉验证数据处理 | M7 | ⏸ 待新增 |
+| `cv/cv_utils.py` | ~100 | 交叉验证工具函数 | - | ⏸ 待新增 |
+
+**CV模块小计: 10 文件, ~1740 行**
+
+#### 11.2.4 工具模块 (utils/common)
+
+| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+|----------|----------|----------|----------|------|
+| `utils/__init__.py` | ~30 | 模块导出 | - | ⏸ 待新增 |
+| `utils/logger.py` | ~150 | 统一日志记录 | M3,M9 | ⏸ 待新增 |
+| `utils/visualizer.py` | ~250 | 结果可视化 | - | ⏸ 待新增 |
+| `utils/experiment_tracker.py` | ~200 | 实验跟踪（MLflow集成） | M3 | ⏸ 待新增 |
+| `utils/utils.py` | ~150 | 常用工具函数 | - | ⏸ 待新增 |
+| `common/__init__.py` | ~20 | 模块导出 | - | ⏸ 待新增 |
+| `common/config.py` | ~150 | 配置解析工具 | M8 | ⏸ 待新增 |
+| `common/logging.py` | ~100 | 日志记录器 | M3 | ⏸ 待新增 |
+| `common/utils.py` | ~100 | 常用工具函数 | - | ⏸ 待新增 |
+
+**工具模块小计: 9 文件, ~1150 行**
+
+#### 11.2.5 Phase 6 文件统计总表
+
+| 模块 | 文件数 | 预计行数 |
+|------|--------|----------|
+| DL 深度学习 | 21 | ~5150 |
+| RL 强化学习 | 15 | ~4110 |
+| CV 交叉验证 | 10 | ~1740 |
+| 工具模块 | 9 | ~1150 |
+| **总计** | **55** | **~12150** |
+
+### 11.3 B类模型成熟度要求
+
+| 维度 | 权重 | 及格线 | 良好线 | 优秀线 |
+|------|------|--------|--------|--------|
+| 收益稳定性 | 25% | 夏普≥1.0 | 夏普≥1.5 | 夏普≥2.0 |
+| 风险控制 | 25% | 回撤≤20% | 回撤≤15% | 回撤≤10% |
+| 市场适应性 | 20% | 覆盖3状态 | 覆盖5状态 | 覆盖7状态 |
+| 训练充分度 | 20% | ≥90天 | ≥180天 | ≥365天 |
+| 一致性 | 10% | 相关≥0.6 | 相关≥0.7 | 相关≥0.8 |
+
+### 11.4 核心代码设计
+
+#### 11.4.1 DL模型基类
+
+```python
+class DLModelBase:
+    """深度学习模型基类 (军规 M3, M7, M18)"""
+
+    BYPASS_FORBIDDEN = True  # 禁止绕过门禁
+
+    def __init__(self, seed: int = 42, device: str = "cpu"):
+        self.seed = seed
+        self.device = device
+        self._set_deterministic(seed)  # M7: 回放一致性
+        self._audit_writer = None
+
+    def _set_deterministic(self, seed: int) -> None:
+        """设置确定性随机种子 (军规 M7)"""
+        import random
+        import numpy as np
+        import torch
+
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+
+    def predict(self, inputs: Any) -> tuple[Any, dict]:
+        """预测方法 (必须返回审计信息, 军规 M3)"""
+        raise NotImplementedError
+
+    def can_go_live(self) -> tuple[bool, str]:
+        """检查是否可以上线 (军规 M18)"""
+        from src.strategy.experimental import MaturityEvaluator
+        evaluator = MaturityEvaluator()
+        result = evaluator.evaluate(self)
+        if result.total_score < 0.8:
+            return False, f"成熟度 {result.total_score:.1%} < 80%"
+        if any(s < 0.6 for s in result.dimension_scores.values()):
+            return False, "存在维度得分 < 60%"
+        return True, "通过门禁"
+```
+
+#### 11.4.2 RL代理基类
+
+```python
+class RLAgentBase:
+    """强化学习代理基类 (军规 M3, M7, M18)"""
+
+    BYPASS_FORBIDDEN = True  # 禁止绕过门禁
+
+    def __init__(
+        self,
+        state_dim: int,
+        action_dim: int,
+        seed: int = 42,
+    ):
+        self.state_dim = state_dim
+        self.action_dim = action_dim
+        self.seed = seed
+        self._set_deterministic(seed)  # M7: 回放一致性
+
+    def select_action(self, state: np.ndarray) -> tuple[int, dict]:
+        """选择动作 (必须返回审计信息, 军规 M3)"""
+        raise NotImplementedError
+
+    def update(self, batch: dict) -> dict:
+        """更新模型 (返回训练指标)"""
+        raise NotImplementedError
+
+    def compute_reward(
+        self,
+        pnl: float,
+        position: float,
+        risk_metrics: dict,
+    ) -> float:
+        """计算奖励 (军规 M18, M19)"""
+        # 夏普比率调整奖励
+        sharpe_reward = pnl / (risk_metrics.get("volatility", 1.0) + 1e-8)
+        # 风险惩罚
+        drawdown_penalty = -abs(risk_metrics.get("drawdown", 0)) * 0.5
+        # 持仓成本
+        position_cost = -abs(position) * 0.001
+        return sharpe_reward + drawdown_penalty + position_cost
+```
+
+#### 11.4.3 交叉验证时序划分器
+
+```python
+class TimeSeriesCVSplitter:
+    """时序交叉验证划分器 (军规 M7)"""
+
+    def __init__(
+        self,
+        n_splits: int = 5,
+        train_size: int | None = None,
+        test_size: int | None = None,
+        gap: int = 0,  # 训练集和测试集之间的间隔
+    ):
+        self.n_splits = n_splits
+        self.train_size = train_size
+        self.test_size = test_size
+        self.gap = gap
+
+    def split(
+        self,
+        X: np.ndarray,
+        y: np.ndarray | None = None,
+    ) -> Generator[tuple[np.ndarray, np.ndarray], None, None]:
+        """生成时序交叉验证划分"""
+        n_samples = len(X)
+        indices = np.arange(n_samples)
+
+        test_size = self.test_size or n_samples // (self.n_splits + 1)
+        train_size = self.train_size or test_size * 2
+
+        for i in range(self.n_splits):
+            test_start = n_samples - (self.n_splits - i) * test_size
+            test_end = test_start + test_size
+            train_end = test_start - self.gap
+            train_start = max(0, train_end - train_size)
+
+            yield indices[train_start:train_end], indices[test_start:test_end]
+```
+
+### 11.5 场景覆盖 (Phase 6)
+
+#### 11.5.1 深度学习场景 (DL)
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K01 | `DL.BASE.DETERMINISTIC` | DL模型确定性验证 | M7 | test_dl_base.py | ⏸ |
+| K02 | `DL.BASE.AUDIT_LOG` | DL模型审计日志 | M3 | test_dl_base.py | ⏸ |
+| K03 | `DL.BASE.MATURITY_GATE` | DL模型成熟度门禁 | M18 | test_dl_base.py | ⏸ |
+| K04 | `DL.LSTM.PREDICT` | LSTM预测输出正确 | M18 | test_lstm.py | ⏸ |
+| K05 | `DL.LSTM.SEQUENCE_LENGTH` | LSTM序列长度验证 | M7 | test_lstm.py | ⏸ |
+| K06 | `DL.LSTM.HIDDEN_STATE` | LSTM隐藏状态正确 | M7 | test_lstm.py | ⏸ |
+| K07 | `DL.TRANSFORMER.ATTENTION` | Transformer注意力计算 | M18 | test_transformer.py | ⏸ |
+| K08 | `DL.TRANSFORMER.POSITION_ENCODING` | Transformer位置编码 | M7 | test_transformer.py | ⏸ |
+| K09 | `DL.TRANSFORMER.MASK` | Transformer掩码正确 | M7 | test_transformer.py | ⏸ |
+| K10 | `DL.CNN.CONV_OUTPUT` | CNN卷积输出正确 | M18 | test_cnn.py | ⏸ |
+| K11 | `DL.DATA.SEQUENCE_VALID` | 序列数据验证 | M7 | test_data.py | ⏸ |
+| K12 | `DL.DATA.BATCH_LOAD` | 批次数据加载正确 | M7 | test_data.py | ⏸ |
+| K13 | `DL.FACTOR.MINE` | 因子挖掘正确 | M18 | test_factor.py | ⏸ |
+| K14 | `DL.FACTOR.IC_CALCULATE` | IC计算正确 | M19 | test_factor.py | ⏸ |
+| K15 | `DL.FACTOR.IR_CALCULATE` | IR计算正确 | M19 | test_factor.py | ⏸ |
+| K16 | `DL.FACTOR.FEATURE_SELECT` | 特征选择正确 | M18 | test_factor.py | ⏸ |
+| K17 | `DL.PREDICTOR.LSTM_OUTPUT` | LSTM预测器输出 | M18 | test_predictor.py | ⏸ |
+| K18 | `DL.PREDICTOR.TRANSFORMER_OUTPUT` | Transformer预测器输出 | M18 | test_predictor.py | ⏸ |
+| K19 | `DL.LOSS.MSE` | MSE损失计算正确 | - | test_loss.py | ⏸ |
+| K20 | `DL.LOSS.SHARPE` | 夏普损失计算正确 | M18 | test_loss.py | ⏸ |
+| K21 | `DL.METRICS.ACCURACY` | 准确率计算正确 | M19 | test_metrics.py | ⏸ |
+| K22 | `DL.METRICS.SHARPE` | 夏普比率计算正确 | M19 | test_metrics.py | ⏸ |
+| K23 | `DL.TRAINER.EPOCH` | 训练轮次执行正确 | M18 | test_trainer.py | ⏸ |
+| K24 | `DL.TRAINER.AUDIT_LOG` | 训练审计日志 | M3 | test_trainer.py | ⏸ |
+| K25 | `DL.EARLY_STOP.TRIGGER` | 早停触发正确 | M18 | test_early_stopping.py | ⏸ |
+| K26 | `DL.CHECKPOINT.SAVE` | 检查点保存正确 | M3,M11 | test_checkpoint.py | ⏸ |
+| K27 | `DL.CHECKPOINT.LOAD` | 检查点加载正确 | M11 | test_checkpoint.py | ⏸ |
+
+**DL场景小计: 27 场景**
+
+#### 11.5.2 强化学习场景 (RL)
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K28 | `RL.BASE.DETERMINISTIC` | RL代理确定性验证 | M7 | test_rl_base.py | ⏸ |
+| K29 | `RL.BASE.AUDIT_LOG` | RL代理审计日志 | M3 | test_rl_base.py | ⏸ |
+| K30 | `RL.BASE.MATURITY_GATE` | RL代理成熟度门禁 | M18 | test_rl_base.py | ⏸ |
+| K31 | `RL.ENV.STATE_SPACE` | 环境状态空间正确 | M7 | test_environment.py | ⏸ |
+| K32 | `RL.ENV.ACTION_SPACE` | 环境动作空间正确 | M7 | test_environment.py | ⏸ |
+| K33 | `RL.ENV.REWARD_CALC` | 环境奖励计算正确 | M18 | test_environment.py | ⏸ |
+| K34 | `RL.ENV.STEP` | 环境步进正确 | M7 | test_environment.py | ⏸ |
+| K35 | `RL.MEMORY.STORE` | 经验存储正确 | M7 | test_memory.py | ⏸ |
+| K36 | `RL.MEMORY.SAMPLE` | 经验采样正确 | M7 | test_memory.py | ⏸ |
+| K37 | `RL.PPO.ACTION` | PPO动作选择正确 | M18 | test_ppo.py | ⏸ |
+| K38 | `RL.PPO.REWARD` | PPO奖励计算正确 | M18 | test_ppo.py | ⏸ |
+| K39 | `RL.PPO.CLIP_RATIO` | PPO裁剪比率正确 | M18 | test_ppo.py | ⏸ |
+| K40 | `RL.PPO.UPDATE` | PPO更新正确 | M18 | test_ppo.py | ⏸ |
+| K41 | `RL.DQN.QVALUE` | DQN Q值计算正确 | M18 | test_dqn.py | ⏸ |
+| K42 | `RL.DQN.EPSILON_DECAY` | DQN ε衰减正确 | M18 | test_dqn.py | ⏸ |
+| K43 | `RL.DQN.TARGET_UPDATE` | DQN目标网络更新 | M7 | test_dqn.py | ⏸ |
+| K44 | `RL.DQN.REPLAY` | DQN经验回放正确 | M7 | test_dqn.py | ⏸ |
+| K45 | `RL.DUELING.ADVANTAGE` | Dueling DQN优势函数 | M18 | test_dueling_dqn.py | ⏸ |
+| K46 | `RL.AC.ACTOR_OUTPUT` | Actor网络输出正确 | M18 | test_actor_critic.py | ⏸ |
+| K47 | `RL.AC.CRITIC_OUTPUT` | Critic网络输出正确 | M18 | test_actor_critic.py | ⏸ |
+| K48 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数正确 | M18 | test_reward.py | ⏸ |
+| K49 | `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励正确 | M18,M19 | test_reward.py | ⏸ |
+| K50 | `RL.REWARD.DRAWDOWN_PENALTY` | 回撤惩罚正确 | M6 | test_reward.py | ⏸ |
+| K51 | `RL.EXPLORATION.EPSILON` | ε-greedy探索正确 | M7 | test_exploration.py | ⏸ |
+| K52 | `RL.EXPLORATION.UCB` | UCB探索正确 | M7 | test_exploration.py | ⏸ |
+
+**RL场景小计: 25 场景**
+
+#### 11.5.3 交叉验证场景 (CV)
+
+| 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
+|------|---------|----------|------|----------|------|
+| K53 | `CV.SPLIT.TIMESERIES` | 时序划分正确 | M7 | test_cv_splitter.py | ⏸ |
+| K54 | `CV.SPLIT.NO_LEAKAGE` | 无数据泄露 | M7 | test_cv_splitter.py | ⏸ |
+| K55 | `CV.SPLIT.GAP` | 间隔设置正确 | M7 | test_cv_splitter.py | ⏸ |
+| K56 | `CV.RUN.FOLD_EXECUTE` | 折叠执行正确 | M7 | test_cv_runner.py | ⏸ |
+| K57 | `CV.RUN.DETERMINISTIC` | 运行确定性 | M7 | test_cv_runner.py | ⏸ |
+| K58 | `CV.EVAL.METRICS` | 评估指标正确 | M19 | test_cv_evaluator.py | ⏸ |
+| K59 | `CV.EVAL.AGGREGATE` | 聚合结果正确 | M19 | test_cv_evaluator.py | ⏸ |
+| K60 | `CV.REPORT.GENERATE` | 报告生成正确 | M3 | test_cv_reporter.py | ⏸ |
+| K61 | `CV.LOG.RECORD` | 日志记录正确 | M3 | test_cv_logger.py | ⏸ |
+| K62 | `CV.DATA.HANDLE` | 数据处理正确 | M7 | test_cv_data.py | ⏸ |
+
+**CV场景小计: 10 场景**
+
+#### 11.5.4 Phase 6 场景统计
+
+| 类别 | 场景数 | 状态 |
+|------|--------|------|
+| DL 深度学习 | 27 | ⏸ 待实现 |
+| RL 强化学习 | 25 | ⏸ 待实现 |
+| CV 交叉验证 | 10 | ⏸ 待实现 |
+| **总计** | **62** | ⏸ |
+
+### 11.6 测试文件清单
+
+| 测试文件 | 测试目标 | 预计用例数 |
+|----------|----------|------------|
+| `tests/strategy/dl/test_dl_base.py` | DL基类 | ~15 |
+| `tests/strategy/dl/test_lstm.py` | LSTM模型 | ~20 |
+| `tests/strategy/dl/test_transformer.py` | Transformer模型 | ~25 |
+| `tests/strategy/dl/test_cnn.py` | CNN模型 | ~15 |
+| `tests/strategy/dl/test_data.py` | 数据处理 | ~20 |
+| `tests/strategy/dl/test_factor.py` | 因子模块 | ~25 |
+| `tests/strategy/dl/test_predictor.py` | 预测器 | ~20 |
+| `tests/strategy/dl/test_loss.py` | 损失函数 | ~10 |
+| `tests/strategy/dl/test_metrics.py` | 评估指标 | ~15 |
+| `tests/strategy/dl/test_trainer.py` | 训练器 | ~20 |
+| `tests/strategy/dl/test_early_stopping.py` | 早停机制 | ~10 |
+| `tests/strategy/dl/test_checkpoint.py` | 检查点 | ~15 |
+| `tests/strategy/rl/test_rl_base.py` | RL基类 | ~15 |
+| `tests/strategy/rl/test_environment.py` | 交易环境 | ~25 |
+| `tests/strategy/rl/test_memory.py` | 经验回放 | ~15 |
+| `tests/strategy/rl/test_ppo.py` | PPO代理 | ~25 |
+| `tests/strategy/rl/test_dqn.py` | DQN代理 | ~25 |
+| `tests/strategy/rl/test_dueling_dqn.py` | Dueling DQN | ~15 |
+| `tests/strategy/rl/test_actor_critic.py` | Actor-Critic | ~20 |
+| `tests/strategy/rl/test_reward.py` | 奖励函数 | ~20 |
+| `tests/strategy/rl/test_exploration.py` | 探索策略 | ~15 |
+| `tests/strategy/cv/test_cv_splitter.py` | CV划分器 | ~20 |
+| `tests/strategy/cv/test_cv_runner.py` | CV运行器 | ~15 |
+| `tests/strategy/cv/test_cv_evaluator.py` | CV评估器 | ~15 |
+| `tests/strategy/cv/test_cv_reporter.py` | CV报告器 | ~10 |
+| `tests/strategy/cv/test_cv_logger.py` | CV日志 | ~10 |
+| `tests/strategy/cv/test_cv_data.py` | CV数据 | ~10 |
+
+**测试文件总计: 27 文件, ~455 用例**
+
+### 11.7 工时估算
+
+| 子模块 | 开发工时 | 测试工时 | 文档工时 | 合计 |
+|--------|----------|----------|----------|------|
+| DL模型 (models/) | 24h | 12h | 4h | 40h |
+| DL数据 (data/) | 12h | 6h | 2h | 20h |
+| DL因子 (factor/) | 16h | 8h | 3h | 27h |
+| DL预测器 (predictor/) | 16h | 8h | 3h | 27h |
+| DL训练 (trainer/etc) | 16h | 8h | 3h | 27h |
+| RL基础 (base/env/memory) | 20h | 10h | 4h | 34h |
+| RL代理 (ppo/dqn/ac) | 32h | 16h | 6h | 54h |
+| RL奖励 (reward/explore) | 12h | 6h | 2h | 20h |
+| CV模块 | 20h | 10h | 4h | 34h |
+| 工具模块 | 12h | 6h | 2h | 20h |
+| **总计** | **180h** | **90h** | **33h** | **303h**
+
+---
+
+## §12 Phase 7: 中国期货市场特化
+
+### 12.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/market/exchange_config.py` | ~628 | 六大交易所配置 | ✅ |
+| `src/market/trading_calendar.py` | ~250 | 夜盘交易日历 | ⏸ 待新增 |
+| `src/cost/china_fee_calculator.py` | ~653 | 中国期货手续费 | ✅ |
+| `src/execution/protection/limit_price.py` | ~200 | 涨跌停保护 | ⏸ 待新增 |
+| `src/execution/protection/margin_monitor.py` | ~250 | 保证金监控 | ⏸ 待新增 |
+| `src/guardian/triggers_china.py` | ~300 | 中国期货触发器 | ⏸ 待新增 |
+| `src/risk/stress_test_china.py` | ~350 | 中国期货压力测试 | ⏸ 待新增 |
+| `src/strategy/calendar_arb/delivery_aware.py` | ~250 | 交割感知套利 | ⏸ 待新增 |
+| `src/compliance/china_futures_rules.py` | ~200 | 合规规则 | ⏸ 待新增 |
+| `src/compliance/programmatic_trading.py` | ~300 | 程序化交易合规 | ⏸ 待新增 |
+|---------|------|------|------|
+
+### 12.2 六大交易所配置
+
+```python
+class Exchange(Enum):
+    """中国六大期货交易所"""
+
+    SHFE = "上海期货交易所"
+    DCE = "大连商品交易所"
+    CZCE = "郑州商品交易所"
+    CFFEX = "中国金融期货交易所"
+    GFEX = "广州期货交易所"
+    INE = "上海国际能源交易中心"
+
+
+EXCHANGE_CONFIG = {
+    Exchange.SHFE: {
+        "trading_hours": [
+            ("09:00", "10:15"),
+            ("10:30", "11:30"),
+            ("13:30", "15:00"),
+        ],
+        "night_session": ("21:00", "02:30"),  # 部分品种
+        "settlement_time": "15:15",
+        "products": ["cu", "al", "zn", "pb", "ni", "sn", "au", "ag", "rb", "hc", "ss", "bu", "ru", "sp", "nr", "ao"],
+    },
+    Exchange.DCE: {
+        "trading_hours": [
+            ("09:00", "10:15"),
+            ("10:30", "11:30"),
+            ("13:30", "15:00"),
+        ],
+        "night_session": ("21:00", "23:00"),
+        "settlement_time": "15:15",
+        "products": ["c", "cs", "a", "b", "m", "y", "p", "fb", "bb", "jd", "l", "v", "pp", "j", "jm", "i", "eg", "eb", "pg", "rr", "lh"],
+    },
+    # ... 其他交易所
+}
+```
+
+### 12.3 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `CHINA.EXCHANGE.CONFIG_LOAD` | 交易所配置加载 | M20 |
+| `CHINA.EXCHANGE.PRODUCT_MAP` | 品种映射正确 | M20 |
+| `CHINA.CALENDAR.NIGHT_SESSION` | 夜盘时段正确 | M15 |
+| `CHINA.CALENDAR.TRADING_DAY` | 交易日计算正确 | M15 |
+| `CHINA.CALENDAR.HOLIDAY` | 节假日处理正确 | M15 |
+| `CHINA.FEE.BY_VOLUME_CALC` | 按手收费计算 | M5 |
+| `CHINA.FEE.BY_VALUE_CALC` | 按金额收费计算 | M5 |
+| `CHINA.FEE.CLOSE_TODAY_CALC` | 平今手续费计算 | M14 |
+| `CHINA.LIMIT.PRICE_CHECK` | 涨跌停价格检查 | M13 |
+| `CHINA.LIMIT.ORDER_REJECT` | 超限订单拒绝 | M13 |
+| `CHINA.MARGIN.RATIO_CHECK` | 保证金率检查 | M16 |
+| `CHINA.MARGIN.USAGE_MONITOR` | 保证金使用监控 | M16 |
+| `CHINA.MARGIN.WARNING_LEVEL` | 保证金预警等级 | M16 |
+| `CHINA.TRIGGER.LIMIT_PRICE` | 涨跌停触发器 | M6, M13 |
+| `CHINA.TRIGGER.MARGIN_CALL` | 保证金追缴触发 | M6, M16 |
+| `CHINA.TRIGGER.DELIVERY` | 交割月接近触发 | M6, M15 |
+| `CHINA.STRESS.2015_CRASH` | 2015股灾场景 | M6 |
+| `CHINA.STRESS.2020_OIL` | 2020原油负价场景 | M6 |
+| `CHINA.STRESS.2022_LITHIUM` | 2022碳酸锂场景 | M6 |
+| `CHINA.ARB.DELIVERY_AWARE` | 交割感知套利 | M15 |
+| `CHINA.ARB.POSITION_TRANSFER` | 移仓换月逻辑 | M15 |
+| `CHINA.COMPLIANCE.RULE_CHECK` | 合规规则检查 | M17 |
+| `CHINA.COMPLIANCE.REPORT_FREQUENCY` | 报撤单频率检查 | M17 |
+| `CHINA.PROGRAMMATIC.ORDER_LIMIT` | 程序化下单限额 | M17 | |
+| `CHINA.PROGRAMMATIC.POSITION_LIMIT` | 程序化持仓
+|限额 | M17 |
+|---------|----------|------|
+
+---
+
+## §13 Phase 8: 智能策略升级
+
+### 13.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/execution/algo/twap.py` | ~200 | TWAP算法 | ⏸ 待新增 |
+| `src/execution/algo/vwap.py` | ~250 | VWAP算法 | ⏸ 待新增 |
+| `src/execution/algo/iceberg.py` | ~200 | 冰山单算法 | ⏸ 待新增 |
+| `src/execution/algo/adaptive.py` | ~300 | 自适应执行 | ⏸ 待新增 |
+| `src/execution/impact_model.py` | ~200 | 市场冲击模型 | ⏸ 待新增 |
+| `src/compliance/throttle.py` | ~250 | 合规节流器 | ⏸ 待新增 |
+| `src/strategy/experimental/maturity_evaluator.py` | ~810 | 成熟度评估 | ✅ |
+| `src/strategy/experimental/training_gate.py` | ~375 | 训练门禁 | ✅ |
+| `src/strategy/experimental/training_monitor.py` | ~615 | 训练监控 | ✅ |
+| `src/strategy/experimental/__init__.py` | ~65 | 模块导出 | ✅ |
+|---------|------|------|------|
+
+### 13.2 执行算法设计
+
+#### TWAP算法
+
+```python
+class TWAPAlgo:
+    """时间加权平均价格算法"""
+
+    def __init__(
+        self,
+        total_volume: int,
+        duration_minutes: int,
+        interval_seconds: int = 60,
+    ):
+        self.total_volume = total_volume
+        self.duration_minutes = duration_minutes
+        self.interval_seconds = interval_seconds
+        self.slice_count = duration_minutes * 60 // interval_seconds
+        self.slice_volume = total_volume // self.slice_count
+
+    def get_next_slice(self) -> OrderSlice:
+        """获取下一个切片订单"""
+        # ...
+```
+
+#### VWAP算法
+
+```python
+class VWAPAlgo:
+    """成交量加权平均价格算法"""
+
+    def __init__(
+        self,
+        total_volume: int,
+        volume_profile: list[float],  # 历史成交量分布
+        start_time: str,
+        end_time: str,
+    ):
+        self.total_volume = total_volume
+        self.volume_profile = volume_profile
+        self.start_time = start_time
+        self.end_time = end_time
+        self.current_index = 0
+        self.slice_volumes = [
+            int(total_volume * vp) for vp in volume_profile
+        ]
+
+    def get_next_slice(self, current_time: str) -> OrderSlice:
+        """根据成交量分布获取下一个切片订单"""
+        # ...
+```
+
+### 13.3 合规节流器
+
+```python
+class ComplianceThrottle:
+    """合规节流器 (2025年新规)"""
+
+    # 监管阈值
+    REPORT_CANCEL_LIMIT_5S = 50    # 5秒内报撤单上限
+    HIGH_FREQ_LIMIT_PER_SEC = 300  # 高频交易阈值 (笔/秒)
+    HIGH_FREQ_LIMIT_DAILY = 20000  # 高频交易阈值 (笔/日)
+    HIGH_FREQ_LIMIT_PER_MIN = 18000  # 高频交易阈值 (笔/分)
+
+    def __init__(self):
+        self._order_history: deque = deque(maxlen=10000)
+        self._5s_window: deque = deque()
+        self._1min_window: deque = deque()
+        self._daily_count: int = 0
+
+    def can_submit(self) -> tuple[bool, str]:
+        """检查是否可以提交订单"""
+        # 检查5秒窗口
+        now = time.time()
+        while self._5s_window and now - self._5s_window[0] > 5:
+            self._5s_window.popleft()
+
+        # 检查1分钟窗口
+        while self._1min_window and now - self._1min_window[0] > 60:
+            self._1min_window.popleft()
+        if len(self._5s_window) >= self.REPORT_CANCEL_LIMIT_5S:
+            return False, "5秒报撤单频率超限"
+        if len(self._1min_window) >= self.HIGH_FREQ_LIMIT_PER_MIN:
+            return False, "1分钟高频交易频率超限"
+
+        # 检查日内总量
+        # 这里假设有一个方法或机制来更新_daily_count
+        # 例如，每次提交订单时调用 self._daily_count += 1
+        self._5s_window.append(now)        self._1min_window.append(now)
+        self._daily_count += 1
+
+        if self._daily_count >= self.HIGH_FREQ_LIMIT_DAILY:
+            return False, "日内报撤单总量超限"
+
+        return True, ""
+```
+
+### 13.4 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `ALGO.TWAP.SLICE_CALC` | TWAP切片计算 | M5 |
+| `ALGO.TWAP.TIME_DISTRIBUTE` | TWAP时间分布 | M5 |
+| `ALGO.VWAP.VOLUME_PROFILE` | VWAP成交量分布 | M5 |
+| `ALGO.VWAP.PARTICIPATION` | VWAP参与率控制 | M5 |
+| `ALGO.ICEBERG.DISPLAY_SIZE` | 冰山单显示量 | M5 |
+| `ALGO.ICEBERG.REFRESH` | 冰山单刷新逻辑 | M5 |
+| `ALGO.ADAPTIVE.MARKET_STATE` | 自适应市场状态 | M5 |
+| `ALGO.ADAPTIVE.STRATEGY_SWITCH` | 自适应策略切换 | M4 |
+| `ALGO.IMPACT.ALMGREN_CHRISS` | Almgren-Chriss模型 | M5 |
+| `ALGO.IMPACT.TEMPORARY` | 临时冲击计算 | M5 |
+| `ALGO.IMPACT.PERMANENT` | 永久冲击计算 | M5 |
+| `THROTTLE.5S_LIMIT` | 5秒限制检查 | M17 |
+| `THROTTLE.DAILY_LIMIT` | 日内限制检查 | M17 |
+| `THROTTLE.HIGH_FREQ_DETECT` | 高频检测 | M17 |
+| `THROTTLE.WARNING_LEVEL` | 预警等级 | M17 |
+| `EXP.MATURITY.80_THRESHOLD` | 80%成熟度门槛 | M18 |
+| `EXP.MATURITY.60_DIMENSION` | 60%维度门槛 | M18 |
+| `EXP.MATURITY.90_DAYS` | 90天最低训练 | M18 |
+| `EXP.GATE.NO_BYPASS` | 禁止绕过门禁 | M18 |
+| `EXP.GATE.MANUAL_APPROVAL` | 需人工审批 | M12, M18 |
+| `EXP.MONITOR.PROGRESS` | 进度监控正确 | M18 |
+| `EXP.MONITOR.ALERT` | 告警生成正确 | M9 |
+|---------|----------|------|
+
+---
+
+## §14 Phase 9: 合规与监控
+
+### 14.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/compliance/china_futures_rules.py` | ~200 | 中国期货合规规则 | ⏸ 待新增 |
+| `src/compliance/programmatic_trading.py` | ~300 | 程序化交易合规 | ⏸ 待新增 |
+| `src/compliance/throttle.py` | ~250 | 合规节流器 | ⏸ 待新增 |
+| `src/compliance/algo_registration.py` | ~200 | 算法备案 | ⏸ 待新增 |
+| `src/monitoring/health.py` | ~220 | 健康检查 | ✅ |
+| `src/monitoring/metrics.py` | ~328 | Prometheus指标 | ✅ |
+| `src/monitoring/alerts.py` | ~250 | 告警管理 | ✅ |
+|---------|------|------|------|
+
+### 14.2 2025年程序化交易新规
+
+```
+《期货市场程序化交易管理规定（试行）》(2025年10月9日实施)
+
+核心要求：
+┌─────────────────────────────────────────────────────────────────────┐
+│ 1. 备案要求：客户需向期货公司报告，经交易所确认后方可从事程序化交易 │
+│ 2. 技术系统：异常监测、阈值管理、错误防范、应急处置                  │
+│ 3. 算法备案：策略类型+历史回测+风险参数三位一体                      │
+│ 4. 压力测试：每月极端行情模拟 (原油跳空10%等)                        │
+│ 5. 人工复核：大额订单≤30秒二次确认                                   │
+│ 6. 报撤单频率：5秒50笔预警阈值                                       │
+│ 7. 高频交易定义：单账户每秒≥300笔 或 单日≥20000笔                  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 14.3 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `COMPLIANCE.REGISTRATION` | 程序化交易备案 | M17 |
+| `COMPLIANCE.ALGO_RECORD` | 算法备案记录 | M17 |
+| `COMPLIANCE.REPORT_CANCEL` | 报撤单频率监控 | M17 |
+| `COMPLIANCE.HIGH_FREQ_DETECT` | 高频交易检测 | M17 |
+| `COMPLIANCE.LARGE_ORDER` | 大额订单复核 | M12, M17 |
+| `COMPLIANCE.STRESS_TEST` | 压力测试执行 | M6, M17 |
+| `COMPLIANCE.EMERGENCY_STOP` | 紧急停止机制 | M6, M17 |
+| `MONITOR.HEALTH.CHECK` | 健康检查执行 | M9 |
+| `MONITOR.HEALTH.COMPONENT` | 组件状态监控 | M9 |
+| `MONITOR.HEALTH.DEGRADED` | 降级状态检测 | M4, M9 |
+| `MONITOR.METRICS.COUNTER` | 计数器指标 | M9 |
+| `MONITOR.METRICS.GAUGE` | 仪表盘指标 | M9 |
+| `MONITOR.METRICS.HISTOGRAM` | 直方图指标 | M9 |
+| `MONITOR.METRICS.PROMETHEUS` | Prometheus导出 | M9 |
+| `MONITOR.ALERT.THRESHOLD` | 阈值告警 | M9 |
+| `MONITOR.ALERT.CHANNEL` | 告警渠道 | M9 |
+|---------|----------|------|
+
+---
+
+## §15 Phase 10: 组合与风控增强
+
+### 15.1 文件清单
+
+| 文件 | 行数 | 功能 | 状态 |
+|------|------|------|------|
+| `src/portfolio/manager.py` | ~318 | 组合管理器 | ✅ |
+| `src/portfolio/analytics.py` | ~268 | 组合分析 | ✅ |
+| `src/portfolio/aggregator.py` | ~216 | 持仓聚合 | ✅ |
+| `src/portfolio/__init__.py` | ~30 | 模块导出 | ✅ |
+| `src/risk/var_calculator.py` | ~362 | VaR计算器 | ✅ |
+| `src/risk/var_enhanced.py` | ~400 | 增强VaR | ⏸ 待新增 |
+| `src/risk/attribution.py` | ~300 | 风险归因 | ⏸ 待新增 |
+|---------|------|------|------|
+
+### 15.2 VaR增强方法
+
+```python
+class EnhancedVaRCalculator(VaRCalculator):
+    """增强VaR计算器 (中国期货市场特化)"""
+
+    def evt_var(
+        self,
+        returns: list[float],
+        confidence: float = 0.99,
+        threshold_pct: float = 0.95,
+    ) -> VaRResult:
+        """极值理论VaR (POT + GPD)"""
+        # ...
+
+    def semiparametric_var(
+        self,
+        returns: list[float],
+        confidence: float = 0.99,
+    ) -> VaRResult:
+        """半参数VaR (核密度 + GPD)"""
+        # ...
+
+    def limit_adjusted_var(
+        self,
+        returns: list[float],
+        limit_pct: float,
+        confidence: float = 0.99,
+    ) -> VaRResult:
+        """涨跌停调整VaR"""
+        # ...
+
+    def liquidity_adjusted_var(
+        self,
+        returns: list[float],
+        position_value: float,
+        adv: float,  # 平均日成交量
+        confidence: float = 0.99,
+    ) -> VaRResult:
+        """流动性调整VaR"""
+        # ...
+```
+
+### 15.3 场景覆盖
+
+| Rule ID | 场景描述 | 军规 |
+|---------|----------|------|
+| `PORTFOLIO.POSITION.UPDATE` | 持仓更新正确 | M1 |
+| `PORTFOLIO.POSITION.LIMIT` | 持仓限额检查 | M6 |
+| `PORTFOLIO.POSITION.NET` | 净持仓计算 | M1 |
+| `PORTFOLIO.RISK.EXPOSURE` | 风险敞口计算 | M6 |
+| `PORTFOLIO.RISK.CONCENTRATION` | 集中度计算 | M6 |
+| `PORTFOLIO.PNL.ATTRIBUTION` | 盈亏归因 | M19 |
+| `PORTFOLIO.SHARPE.CALCULATE` | 夏普比率计算 | M19 |
+| `PORTFOLIO.DRAWDOWN.MAX` | 最大回撤计算 | M6 |
+| `PORTFOLIO.SNAPSHOT.TIMESERIES` | 时序快照 | M3 |
+| `VAR.HISTORICAL.PERCENTILE` | 历史VaR计算 | M6 |
+| `VAR.PARAMETRIC.NORMAL` | 参数VaR计算 | M6 |
+| `VAR.MONTECARLO.SIMULATION` | 蒙特卡洛VaR | M6 |
+| `VAR.ES.CALCULATE` | ES/CVaR计算 | M6 |
+| `VAR.EVT.GPD` | EVT-GPD方法 | M6 |
+| `VAR.SEMIPARAMETRIC.KERNEL` | 半参数方法 | M6 |
+| `VAR.LIMIT_ADJUSTED` | 涨跌停调整 | M6, M13 |
+| `VAR.LIQUIDITY_ADJUSTED` | 流动性调整 | M6 |
+| `RISK.ATTRIBUTION.FACTOR` | 因子归因 | M19 |
+| `RISK.ATTRIBUTION.STRATEGY` | 策略归因 | M19 |
+| `RISK.ATTRIBUTION.POSITION` | 持仓归因 | M19 |
+| `RISK.BREACH.DETECT` | 风险突破检测 | M6 |
+| `RISK.BREACH.ACTION` | 风险突破动作 | M6 |
+| `RISK.STRESS.SCENARIO` | 压力测试场景 | M6 |
+| `RISK.STRESS.RESULT` | 压力测试结果 | M6 |
+| `RISK.KILLSWITCH.TRIGGER` | 熔断触发 | M6 |
+|---------|----------|------|
+
+---
+
+## §16 六大交易所配置
+
+### 16.1 交易所基本信息
+
+| 交易所 | 代码 | 成立时间 | 主要品种 | 交易时段 |
+|--------|------|----------|----------|----------|
+| 上海期货交易所 | SHFE | 1999 | 金属、能化 | 日盘+夜盘 |
+| 大连商品交易所 | DCE | 1993 | 农产品、化工 | 日盘+夜盘 |
+| 郑州商品交易所 | CZCE | 1990 | 农产品、化工 | 日盘+夜盘 |
+| 中国金融期货交易所 | CFFEX | 2006 | 股指、国债 | 仅日盘 |
+| 广州期货交易所 | GFEX | 2021 | 碳酸锂、工业硅 | 日盘+夜盘 |
+| 上海国际能源交易中心 | INE | 2013 | 原油、低硫燃料油 | 日盘+夜盘 |
+|--------|------|----------|----------|----------|
+
+### 16.2 品种分类
+
+```python
+PRODUCT_CATEGORIES = {
+    "金属": {
+        "SHFE": ["cu", "al", "zn", "pb", "ni", "sn", "ao"],
+        "GFEX": ["si"],
+    },
+    "贵金属": {
+        "SHFE": ["au", "ag"],
+    },
+    "黑色系": {
+        "SHFE": ["rb", "hc", "ss"],
+        "DCE": ["i", "j", "jm"],
+    },
+    "能源化工": {
+        "SHFE": ["bu", "ru", "sp", "nr"],
+        "DCE": ["l", "v", "pp", "eg", "eb", "pg"],
+        "CZCE": ["MA", "TA", "SA", "UR", "PF"],
+        "INE": ["sc", "lu", "bc"],
+    },
+    "农产品": {
+        "DCE": ["c", "cs", "a", "b", "m", "y", "p", "jd", "lh", "rr"],
+        "CZCE": ["WH", "RI", "PM", "CF", "SR", "OI", "RM", "RS", "AP", "CJ", "PK"],
+    },
+    "金融": {
+        "CFFEX": ["IF", "IH", "IC", "IM", "T", "TF", "TS"],
+    },
+    "新能源": {
+        "GFEX": ["lc"],  # 碳酸锂
+    },
+    "国债": {
+        "CFFEX": ["T", "TF", "TS"],
+    },
+}
+```
+
+---
+
+## §17 交易时段与夜盘规则
+
+### 17.1 日盘交易时段
+
+| 时段 | 时间 | 说明 |
+|------|------|------|
+| 早盘第一节 | 09:00 - 10:15 | 75分钟 |
+| 早盘休息 | 10:15 - 10:30 | 15分钟 |
+| 早盘第二节 | 10:30 - 11:30 | 60分钟 |
+| 午休 | 11:30 - 13:30 | 120分钟 |
+| 午盘 | 13:30 - 15:00 | 90分钟 |
+|------|------|------|
+
+### 17.2 夜盘交易时段
+
+| 结束时间 | 品种 | 交易所 |
+|----------|------|--------|
+| 23:00 | 农产品、软商品 | DCE, CZCE |
+| 01:00 | 黑色系、能化 | SHFE, DCE, CZCE |
+| 02:30 | 贵金属、有色金属 | SHFE |
+| 无夜盘 | 股指、国债 | CFFEX |
+| 02:30 | 碳酸锂、工业硅 | GFEX |
+| 02:30 | 原油、低硫燃料油 | INE |
+|----------|------|--------|
+
+### 17.3 夜盘交易日归属
+
+```
+夜盘交易日归属规则：
+┌─────────────────────────────────────────────────────────────────────┐
+│ 周一夜盘 21:00 → 周二 02:30 归属于 周二交易日                        │
+│ 周五夜盘 无 (周五没有夜盘)                                           │
+│ 节假日前一天 无夜盘                                                  │
+│ 节假日后第一天 从日盘开始                                            │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## §18 涨跌停板规则
+
+### 18.1 涨跌停幅度
+
+| 品种类型 | 日常幅度 | 连续涨跌停后 | 交割月 |
+|----------|----------|--------------|--------|
+| 股指期货 | ±10% | ±15% | ±20% |
+| 国债期货 | ±2% | ±3% | - |
+| 商品期货 | 3%-8% | +2% | +3% |
+| 贵金属 | 6%-8% | +4% | - |
+| 能化 | 5%-9% | +3% | +4% |
+| 农产品 | 4%-7% | +3% | +4% |
+| 黑色系 | 5%-8% | +3% | +4% |
+| 有色金属 | 6%-10% | +4% | - |
+| 新能源 | 8%-13% | +5% | - |
+|----------|----------|--------------|--------|
+
+### 18.2 2025年春节期间调整 (示例)
+
+| 品种 | 涨跌停幅度 | 投机保证金率 |
+|------|------------|--------------|
+| 铜/铝/锌/铅 | 10% | 12% |
+| 镍/锡/氧化铝 | 13% | 15% |
+| 金/银 | 13% | 15% |
+| 螺纹钢/热卷 | 8% | 10% |
+| 天然橡胶/纸浆 | 9% | 11% |
+| 原油/低硫燃料油 | 12% | 14% |
+| 豆粕/玉米/棉花 | 7% | 9
+| |---------|------------|--------------|
+
+### 18.3 涨跌停价格检查
+
+```python
+def check_limit_price(
+    order_price: float,
+    instrument: InstrumentInfo,
+    last_settle: float,
+) -> tuple[bool, str]:
+    """检查订单价格是否在涨跌停范围内"""
+
+    limit_up = last_settle * (1 + instrument.price_limit_pct)
+    limit_down = last_settle * (1 - instrument.price_limit_pct)
+
+    if order_price > limit_up:
+        return False, f"订单价格 {order_price} 超过涨停价 {limit_up}"
+
+    if order_price < limit_down:
+        return False, f"订单价格 {order_price} 低于跌停价 {limit_down}"
+
+    return True, ""
+```
+
+---
+
+## §19 保证金制度
+
+### 19.1 保证金类型
+
+| 类型 | 说明 |
+|------|------|
+| 交易保证金 | 开仓时缴纳，维持持仓 |
+| 结算保证金 | 结算时调整 |
+| 追加保证金 | 权益不足时追缴 |
+| 投机保证金 | 投机交易的保证金要求 |
+| 套保保证金 | 套期保值交易的保证金要求 |
+|------|------|
+
+### 19.2 保证金水平
+
+```python
+class MarginLevel(Enum):
+    """保证金使用率等级"""
+
+    SAFE = "安全"       # < 50%
+    NORMAL = "正常"     # 50% - 70%
+    WARNING = "预警"    # 70% - 85%
+    DANGER = "危险"     # 85% - 100%
+    CRITICAL = "临界"   # >= 100% (触发强平)
+```
+
+### 19.3 保证金监控
+
+```python
+class MarginMonitor:
+    """保证金监控器 (军规 M16)"""
+
+    def __init__(self, config: MarginConfig):
+        self.config = config
+        self._usage_ratio: float = 0.0
+        self._level: MarginLevel = MarginLevel.SAFE
+
+    def update(
+        self,
+        equity: float,
+        margin_used: float,
+    ) -> MarginLevel:
+        """更新保证金使用率"""
+        self._usage_ratio = margin_used / equity if equity > 0 else 1.0
+        self._level = self._calculate_level()
+        return self._level
+
+    def _calculate_level(self) -> MarginLevel:
+        """计算保证金等级"""
+        if self._usage_ratio < 0.5:
+            return MarginLevel.SAFE
+        elif self._usage_ratio < 0.7:
+            return MarginLevel.NORMAL
+        elif self._usage_ratio < 0.85:
+            return MarginLevel.WARNING
+        elif self._usage_ratio < 1.0:
+            return MarginLevel.DANGER
+        else:
+            return MarginLevel.CRITICAL
+```
+
+---
+
+## §20 手续费结构
+
+### 20.1 手续费类型
+
+| 类型 | 计算方式 | 示例 |
+|------|----------|------|
+| 按金额 | 成交金额 × 费率 | 铜: 0.5‱ |
+| 按手 | 成交手数 × 固定费用 | 螺纹钢: 1元/手 |
+| 混合 | 两者取高 | 部分品种 |
+|------|----------|------|
+
+### 20.2 平今手续费
+
+| 交易所 | 平今政策 | 倍数 |
+|--------|----------|------|
+| SHFE | 部分品种免收 | 0-3倍 |
+| DCE | 正常收取 | 1倍 |
+| CZCE | 加倍收取 | 1-3倍 |
+| CFFEX | 大幅加倍 | 15倍 |
+| GFEX | 加倍收取 | 3-6倍 |
+| INE | 部分免收 | 0-1倍 |
+|--------|----------|------|
+
+### 20.3 手续费计算器
+
+```python
+class ChinaFeeCalculator:
+    """中国期货手续费计算器"""
+
+    def calculate(
+        self,
+        instrument: InstrumentInfo,
+        price: float,
+        volume: int,
+        direction: str,  # "OPEN" | "CLOSE" | "CLOSE_TODAY"
+    ) -> float:
+        """计算手续费"""
+
+        if instrument.fee_type == "ratio":
+            # 按金额
+            value = price * instrument.multiplier * volume
+            if direction == "OPEN":
+                return value * instrument.fee_open_ratio
+            elif direction == "CLOSE":
+                return value * instrument.fee_close_ratio
+            else:  # CLOSE_TODAY
+                return value * instrument.fee_close_today_ratio
+
+        elif instrument.fee_type == "fixed":
+            # 按手
+            if direction == "OPEN":
+                return instrument.fee_open_fixed * volume
+            elif direction == "CLOSE":
+                return instrument.fee_close_fixed * volume
+            else:
+                return instrument.fee_close_today_fixed * volume
+
+        else:
+            # 混合: 取两者较高值
+
+            fee_by_value = self.calculate(
+                instrument, price, volume, direction
+            )
+            fee_by_fixed = self.calculate(
+                instrument, price, volume, direction
+            )
+            return max(fee_by_value, fee_by_fixed)
+
+
+```
+
+---
+
+## §21 程序化交易合规
+
+### 21.1 2025年新规要点
+
+| 要求 | 描述 | 系统实现 |
+|------|------|----------|
+| 备案 | 向期货公司报告 | 算法备案模块 |
+| 阈值管理 | 报撤单频率监控 | 合规节流器 |
+| 压力测试 | 每月极端行情模拟 | 压力测试模块 |
+| 人工复核 | 大额订单确认 | 双重确认机制 |
+| 应急处置 | 熔断机制 | 风控熔断 |
+| 错误防范 | 防止下单错误 | 下单校验 |
+|------|------|----------|
+
+### 21.2 高频交易判定
+
+```
+高频交易判定标准 (2025年7月7日实施):
+┌─────────────────────────────────────────────────────────────────────┐
+│ 条件1: 单账户每秒报撤单 ≥ 300 笔                                     │
+│ 条件2: 单账户单日报撤单 ≥ 20000 笔                                   │
+│ 满足任一条件即判定为高频交易                                         │
+│ 高频交易者需缴纳更高手续费                                           │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 21.3 报撤单频率预警
+
+```python
+THROTTLE_LEVELS = {
+    ThrottleLevel.NORMAL: {
+        "5s_limit": 30,
+        "daily_limit": 15000,
+        "action": "正常交易",
+    },
+    ThrottleLevel.WARNING: {
+        "5s_limit": 40,
+        "daily_limit": 18000,
+        "action": "发送预警，降低频率",
+    },
+    ThrottleLevel.DANGER: {
+        "5s_limit": 45,
+        "daily_limit": 19000,
+        "action": "限制新订单，审查交易行为",
+    },
+    ThrottleLevel.CRITICAL: {
+        "5s_limit": 48,
+        "daily_limit": 19500,
+        "action": "暂停新开仓",
+    },
+    ThrottleLevel.EXCEEDED: {
+        "5s_limit": 50,
+        "daily_limit": 20000,
+        "action": "停止所有报撤单",
+    },
+}
+```
+
+---
+
+## §22 VaR风控增强
+
+### 22.1 当前VaR方法
+
+| 方法 | 优点 | 缺点 | 适用场景 |
+|------|------|------|----------|
+| 历史模拟法 | 简单直观 | 依赖历史 | 一般市场 |
+| 参数法 | 计算快速 | 假设正态 | 快速估计 |
+| 蒙特卡洛法 | 灵活准确 | 计算慢 | 复杂组合 |
+|------|------|------|----------|
+
+### 22.2 增强VaR方法 (待新增)
+
+| 方法 | 描述 | 适用场景 |
+|------|------|----------|
+| EVT (极值理论) | POT + GPD分布 | 极端风险 |
+| 半参数法 | 核密度 + GPD | 厚尾分布 |
+| 涨跌停调整 | 截断效应修正 | 中国期货 |
+| 流动性调整 | 平仓成本建模 | 大额头寸 |
+|------|------|----------|
+
+### 22.3 EVT-GPD实现
+
+```python
+def evt_var(
+    self,
+    returns: list[float],
+    confidence: float = 0.99,
+    threshold_pct: float = 0.95,
+) -> VaRResult:
+    """极值理论VaR (POT + GPD方法)"""
+
+    # 1. 确定阈值 (第95百分位)
+    sorted_returns = sorted(returns)
+    threshold_idx = int(len(sorted_returns) * threshold_pct)
+    threshold = sorted_returns[threshold_idx]
+
+    # 2. 提取超阈值样本
+    exceedances = [r - threshold for r in returns if r < threshold]
+
+    if len(exceedances) < 30:
+        # 样本不足，回退到历史法
+        return self.historical_var(returns, confidence)
+
+    # 3. 估计GPD参数 (矩估计)
+    xi, beta = self._estimate_gpd_params(exceedances)
+
+    # 4. 计算VaR
+    n = len(returns)
+    nu = len(exceedances)
+    p = 1 - confidence
+
+    if xi != 0:
+        var = threshold + (beta / xi) * (((n / nu) * p) ** (-xi) - 1)
+    else:
+        var = threshold - beta * math.log((n / nu) * p)
+
+    return VaRResult(
+        var=abs(var),
+        confidence=confidence,
+        method="EVT-GPD",
+        expected_shortfall=self._evt_es(var, xi, beta),
+        sample_size=len(returns),
+        metadata={"xi": xi, "beta": beta, "threshold": threshold},
+    )
+```
+
+---
+
+## §23 压力测试场景
+
+### 23.1 中国期货市场历史极端场景
+
+| 场景 | 日期 | 品种 | 波动 | 持续时间 |
+|------|------|------|------|----------|
+| 2015年股灾 | 2015-06 | IF | -10%/日 | 5天 |
+| 2016年黑色系暴涨 | 2016-04 | RB | +6%/日 | 3天 |
+| 2020年原油负价 | 2020-04 | SC | -15% | 1天 |
+| 2021年动力煤调控 | 2021-10 | ZC | -10%/日 | 3天 |
+| 2022年碳酸锂暴跌 | 2022-11 | LC | -15%/日 | 5天 |
+| 2024年碳酸锂继续下跌 | 2024-03 | LC | -8%/日 | 10天 |
+|------|------|------|------|----------|
+
+### 23.2 压力测试配置
+
+```python
+@dataclass
+class StressScenario:
+    """压力测试场景"""
+
+    name: str                 # 场景名称
+    description: str          # 场景描述
+    price_shock: float        # 价格冲击幅度
+    duration_days: int        # 持续天数
+    affected_products: list   # 受影响品种
+    probability: float        # 历史概率
+
+
+STRESS_SCENARIOS = [
+    StressScenario(
+        name="CRASH_2015",
+        description="2015年股灾场景",
+        price_shock=-0.10,
+        duration_days=5,
+        affected_products=["IF", "IH", "IC"],
+        probability=0.01,
+    ),
+    StressScenario(
+        name="BLACK_IRON_RISE_2016",
+        description="2016年黑色系暴涨场景",
+        price_shock=0.06,
+        duration_days=3,
+        affected_products=["RB", "HC", "I"],
+        probability=0.02,
+    ),
+    StressScenario(
+        name="OIL_NEGATIVE_2020",
+        description="2020年原油负价场景",
+        price_shock=-0.15,
+        duration_days=1,
+        affected_products=["SC", "FU", "LU"],
+        probability=0.001,
+    ),
+    # ... 更多场景
+]
+```
+
+---
+
+## §24 实验性策略门禁
+
+### 24.1 成熟度评估系统
+
+```
+实验性策略训练成熟度评估系统
+
+核心门槛:
+┌─────────────────────────────────────────────────────────────────────┐
+│ 1. 总成熟度 ≥ 80%                                                    │
+│ 2. 任意维度 ≥ 60%                                                    │
+│ 3. 训练时间 ≥ 90天                                                   │
+│ 4. 人工审批通过                                                      │
+│ 5. BYPASS_FORBIDDEN = True (禁止绕过)                                │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 24.2 五维度评估
+
+| 维度 | 权重 | 评估指标 |
+|------|------|----------|
+| 收益稳定性 | 25% | 夏普比率、收益CV、月度胜率 |
+| 风险控制 | 25% | 最大回撤、卡玛比率、胜率、盈亏比 |
+| 市场适应性 | 20% | 状态覆盖、一致性、存活率 |
+| 训练充分度 | 20% | 训练天数、训练次数、样本多样性 |
+| 一致性 | 10% | 信号相关、滚动一致性 |
+|------|------|----------|
+
+### 24.3 成熟度等级
+
+```python
+class MaturityLevel(Enum):
+    """成熟度等级"""
+
+    EMBRYONIC = "胚胎期"    # 0-20%
+    DEVELOPING = "发育期"   # 20-40%
+    GROWING = "成长期"      # 40-60%
+    MATURING = "成熟期"     # 60-80%
+    MATURE = "完全成熟"     # 80-100%
+
+def assess_maturity(scores: dict) -> float:
+    """计算总体成熟度得分"""
+
+    weights = {
+        "收益稳定性": 0.25,
+        "风险控制": 0.25,
+        "市场适应性": 0.20,
+        "训练充分度": 0.20,
+        "一致性": 0.10,
+    }
+
+    total_score = sum(scores[dim] * weights[dim] for dim in weights)
+    return total_score   
+```
+
+---
+
+## §25 审计日志规范
+
+### 25.1 日志文件命名
+
+```
+命名格式: audit_{run_id}_{date}.jsonl
+说明:
+- run_id: 年月日+四位序号 (如202512160001)
+- date: 年月日 (如20251216)
+
+示例:
+audit_202512160001_20251216.jsonl
+```
+
+### 25.2 日志保留策略
+
+| 类型 | 保留时间 | 压缩 |
+|------|----------|------|
+| 原始日志 | 30天 | 无 |
+| 压缩日志 | 365天 | GZIP |
+| 归档日志 | 永久 | Parquet |
+|------|----------|------|
+
+### 25.3 必记录事件
+
+| 事件类型 | 触发时机 | 必填字段 |
+|----------|----------|----------|
+| `SIGNAL_GENERATED` | 信号生成 | symbol, direction, signal_source |
+| `ORDER_SUBMITTED` | 订单提交 | symbol, price, volume, order_id |
+| `ORDER_FILLED` | 订单成交 | order_id, fill_price, fill_volume |
+| `ORDER_REJECTED` | 订单拒绝 | order_id, reason |
+| `RISK_TRIGGERED` | 风控触发 | rule_id, threshold, actual |
+| `POSITION_CHANGED` | 持仓变化 | symbol, direction, volume |
+| `MARGIN_WARNING` | 保证金预警 | usage_ratio, level |
+| `LIMIT_PRICE_HIT` | 涨跌停触发 | symbol, limit_type |
+| `STRATEGY_FALLBACK` | 策略降级 | from_strategy, to_strategy |
+| `SYSTEM_ALERT` | 系统告警 | alert_type, severity |
+|----------|----------|----------|
+
+---
+
+## §26 配置管理
+
+### 26.1 配置文件结构
+
+```yaml
+# config/trading.yml
+
+environment: production  # dev | test | production
+
+exchange:
+  shfe:
+    enabled: true
+    trading_hours: [[09:00, 10:15], [10:30, 11:30], [13:30, 15:00]]
+    night_session: [21:00, 02:30]
+    dce:
+    enabled: true
+    trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+    night_session: [21:00, 01:00]
+  czce:
+    enabled: true
+    trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+    night_session: [21:00, 01:00]
+  cffex:
+      enabled: true
+      trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+      night_session: [21:00, 01:00]
+   gfex:
+      enabled: true
+      trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+      night_session: [21:00, 02:30]
+    ine:
+      enabled: true
+      trading_hours: [[09:00, 10:15], [10:30,11:30], [13:30, 15:00]]
+      night_session: [21:00, 02:30]
+risk:
+  max_drawdown_pct: 0.05
+  max_position_value: 10000000
+  margin_warning_level: 0.7
+  margin_danger_level: 0.85
+    throttle_levels:
+        normal:
+        5s_limit: 30
+        daily_limit: 15000
+        warning:
+        5s_limit: 40
+        daily_limit: 18000
+        danger:
+        5s_limit: 45
+        daily_limit: 19000
+        critical:
+        5s_limit: 48
+        daily_limit: 19500
+        exceeded:
+        5s_limit: 50
+        daily_limit: 20000
+        
+strategy:
+  calendar_arb:
+    enabled: true
+    max_position: 100
+    entry_z: 2.5
+    exit_z: 0.5
+    stop_z: 5.0
+
+compliance:
+  report_cancel_limit_5s: 50
+  high_freq_limit_daily: 20000
+  large_order_threshold: 100
+
+
+logging:  
+  level: INFO
+  audit_log_path: ./logs/audit/
+```
+
+### 26.2 环境隔离
+
+| 环境 | 配置文件 | CTP前置 | 数据库 |
+|------|----------|---------|--------|
+| dev | config.dev.yml | simnow | dev_db |
+| test | config.test.yml | simnow | test_db |
+| prod | config.prod.yml | 生产前置 | prod_db |
+|------|----------|---------|--------|
+
+---
+
+## §27 FMEA故障模式分析
+
+### 27.1 故障模式表
+
+| 故障模式 | 严重度 | 发生概率 | 检测难度 | RPN | 缓解措施 |
+|----------|--------|----------|----------|-----|----------|
+| CTP断连 | 9 | 3 | 2 | 54 | 自动重连 + 降级 |
+| 行情延迟 | 7 | 4 | 3 | 84 | 超时检测 + 降级 |
+| 策略异常 | 8 | 3 | 4 | 96 | 降级链 + 熔断 |
+| 订单拒绝 | 6 | 5 | 2 | 60 | 重试 + 告警 |
+| 保证金不足 | 9 | 2 | 2 | 36 | 实时监控 + 预警 |
+| 涨跌停封板 | 7 | 6 | 1 | 42 | 价格检查 + 撤单 |
+| 高频报撤单 | 8 | 4 | 3 | 96 | 节流器 + 告警 |
+| 系统资源耗尽 | 9 | 2 | 4 | 72 |
+| 监控 + 扩容 |
+| 数据库连接失败 | 8 | 3 | 3 | 72 | 重
+|试 + 备用连接 |
+| 日志写入失败 | 6 | 4 | 4 | 96 |
+| 本地缓存 + 告警 |
+|----------|--------|----------|----------|-----|----------|
+
+### 27.2 RPN计算
+
+```
+RPN = 严重度 × 发生概率 × 检测难度
+
+RPN等级:
+- < 50: 低风险，监控即可
+- 50-100: 中风险，需要缓解措施
+- > 100: 高风险，必须优先处理（如策略异常、高频报撤单、日志写入失败）
+```
+
+---
+
+## §28 回滚策略
+
+### 28.1 回滚触发条件
+
+| 触发条件 | 回滚范围 | 自动/手动 |
+|----------|----------|-----------|
+| CI门禁失败 | 单次提交 | 自动 |
+| 测试覆盖下降 | 单次提交 | 自动 |
+| 生产异常 | 版本回滚 | 手动 |
+| 资金异常 | 系统暂停 | 手动 |
+| 策略异常 | 策略降级 | 自动 |
+| 风控触发 | 系统熔断 | 自动 |
+
+|----------|----------|-----------|
+
+### 28.2 回滚流程
+
+```
+1. 检测到异常
+2. 触发熔断 (如需)
+3. 记录当前状态
+4. 执行回滚
+5. 验证回滚成功
+6. 恢复服务
+7. 发送告警
+8. 事后分析
+9. 优化流程
+10. 更新文档
+11. AI辅助诊断
+12. 持续改进
+13. 定期演练
+14. 多环境测试
+15. 回滚审批
+16. 版本控制
+17. 灰度发布
+18. 回滚日志
+19. 回滚通知
+20. 回滚监控
+21. 回滚报告
+22. 回滚培训
+23. 回滚演练
+24. 回滚工具
+25. 回滚策略评审
+26. 回滚风险评估
+27. 回滚最佳实践
+28. 回滚自动化
+29. 回滚文档化
+
+30. 回滚持续改进
+```
+
+---
+
+## §29 测试规范
+
+### 29.1 测试目录结构
+
+```
+tests/
+├── unit/                  # 单元测试
+│   ├── test_trading.py
+
+|   ├── test_risk.py
+│   └── ...
+├── integration/           # 集成测试
+│   ├── test_market_data.py
+|   ├── test_order_execution.py
+
+│   └── ...
+```
+
+### 29.2 测试覆盖要求
+
+| 模块 | 最低覆盖率 | 当前覆盖率 |
+|------|------------|------------|
+| src/trading/ | 100% | 100% |
+| src/risk/ | 100% | 95% |
+| src/strategy/ | 90% | 88% |
+| src/market/ | 90% | 92% |
+| src/execution/ | 90% | 87% |
+| src/compliance/ | 85% | 86% |
+| src/audit/ | 90% | 89% |
+| src/cost/ | 90% | 90% |
+| src/guardian/ | 90% | 84% |
+| src/replay/ | 90% | 87% |
+| src/portfolio/ | 85% | 88% |
+| src/monitoring/ | 85% | 86% |
+| src/experimental/ | 80% | 82% |
+| src/advanced_risk/ | 80% | 81% |
+| src/fee_calculator/ | 85% | 88% |
+
+| 总体 | 90% | 88.22% |
+
+### 29.3 场景测试命名
+
+```python
+# 测试函数命名规范
+def test_{module}_{feature}_{scenario}():
+    """
+    RULE_ID: {MODULE}.{FEATURE}.{SCENARIO}
+    军规: M{X}
+    描述: ...
+    前置条件: ...
+    操作步骤: ...
+
+    预期结果: ...
+    """
+    pass
+```
+
+---
+
+## §30 CI/CD集成
+
+### 30.1 GitHub Actions工作流
+
+```yaml
+# .github/workflows/ci.yml
+
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, feat/*]
+  pull_request:
+    branches: [main]
+
+
+
+
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ruff Check
+        run: ruff check .
+      - name: Ruff Format
+        run: ruff format --check .
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mypy
+        run: mypy .
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pytest
+        run: pytest tests/ -q --cov=src --cov-fail-under=85
+
+  policy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Policy
+        run: python scripts/validate_policy.py --all
+```
+
+### 30.2 门禁检查顺序
+
+```
+1. Ruff Check (代码风格)
+2. Ruff Format (代码格式)
+3. Mypy (类型检查)
+4. Pytest (单元测试)
+5. Coverage (覆盖率)
+6. Policy (策略验证)
+```
+
+### 30.3 本地执行命令
+
+```powershell
+# Windows PowerShell
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m ruff format --check .
+.venv/Scripts/python.exe -m mypy .
+.venv/Scripts/python.exe -m pytest tests/ -q
+.venv/Scripts/python.exe scripts/validate_policy.py --all
+```
+
+---
+
+## §31 场景矩阵总表
+
+### 31.1 场景统计
+
+| Phase | 场景数 | 状态 |
+|-------|--------|------|
+| Phase 0 基础设施 | 15 | ✅ |
+| Phase 1 行情层 | 12 | ✅ |
+| Phase 2 审计层 | 18 | ✅ |
+| Phase 3 策略降级 | 12 | ✅ |
+| Phase 4 回放验证 | 2 | ✅ |
+| Phase 5 成本层 | 8 | ✅ |
+| Phase 6 B类模型 (DL) | 27 | ⏸ |
+| Phase 6 B类模型 (RL) | 25 | ⏸ |
+| Phase 6 B类模型 (CV) | 10 | ⏸ |
+| Phase 7 中国期货特化 | 23 | ⏸ |
+| Phase 8 智能策略 | 22 | 部分✅ |
+| Phase 9 合规监控 | 16 | 部分✅ |
+| Phase 10 组合风控 | 25 | 部分✅ |
+| **总计** | **215** | - |
+
+### 31.1.1 Phase 6 场景明细
+
+| 类别 | 场景范围 | 场景数 | 军规覆盖 |
+|------|----------|--------|----------|
+| DL 深度学习 | K01-K27 | 27 | M3,M7,M11,M18,M19 |
+| RL 强化学习 | K28-K52 | 25 | M3,M6,M7,M18,M19 |
+| CV 交叉验证 | K53-K62 | 10 | M3,M7,M19 |
+| **小计** | - | **62** | - |
+
+### 31.2 军规覆盖统计
+
+| 军规 | 场景数 | 覆盖率 |
+|------|--------|--------|
+| M1 单一信号源 | 8 | 100% |
+| M3 完整审计 | 18 | 100% |
+| M4 降级兜底 | 6 | 100% |
+| M5 成本先行 | 14 | ✅ 100% |
+| M6 熔断保护 | 22 | 90% |
+| M7 回放一致 | 6 | 100% |
+| M9 错误上报 | 12 | 85% |
+| M13 涨跌停感知 | 6 | 待实现 |
+| M14 平今平昨分离 | 3 | ✅ 100% |
+| M15 夜盘跨日处理 | 5 | 待实现 |
+| M16 保证金监控 | 5 | 待实现 |
+| M17 程序化合规 | 8 | 待实现 |
+| M18 实验性门禁 | 7 | ✅ |
+
+---
+
+## §32 文件清单
+
+### 32.1 已完成文件 (71个)
+
+| 目录 | 文件数 | 行数估计 |
+|------|--------|----------|
+| src/market/ | 7 | ~1200 |
+| src/audit/ | 7 | ~900 |
+| src/cost/ | 2 | ~650 |
+| src/guardian/ | 6 | ~1000 |
+| src/execution/auto/ | 8 | ~1500 |
+| src/execution/protection/ | 4 | ~600 |
+| src/execution/pair/ | 3 | ~500 |
+| src/strategy/calendar_arb/ | 4 | ~900 |
+| src/strategy/experimental/ | 4 | ~1865 |
+| src/replay/ | 2 | ~310 |
+| src/portfolio/ | 4 | ~833 |
+| src/monitoring/ | 3 | ~579 |
+| src/risk/ | 3 | ~900 |
+| src/trading/ | 4 | ~600 |
+| scripts/ | 6 | ~900 |
+| tests/ | ~40 | ~5000 |
+
+### 32.2 待新增文件 - Phase 6 B类模型 (55个, ~12150行)
+
+#### 32.2.1 深度学习模块 (DL) - 21文件
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/strategy/dl/__init__.py` | 模块导出 | ~50 |
+| `src/strategy/dl/models/__init__.py` | 模型导出 | ~30 |
+| `src/strategy/dl/models/base.py` | DL模型基类 | ~200 |
+| `src/strategy/dl/models/lstm.py` | LSTM模型 | ~350 |
+| `src/strategy/dl/models/transformer.py` | Transformer模型 | ~450 |
+| `src/strategy/dl/models/cnn.py` | CNN模型 | ~300 |
+| `src/strategy/dl/data/__init__.py` | 数据导出 | ~20 |
+| `src/strategy/dl/data/sequence_handler.py` | 序列处理 | ~200 |
+| `src/strategy/dl/data/dataset.py` | 数据集定义 | ~250 |
+| `src/strategy/dl/data/dataloader.py` | 数据加载器 | ~150 |
+| `src/strategy/dl/factor/__init__.py` | 因子导出 | ~20 |
+| `src/strategy/dl/factor/factor_miner.py` | 因子挖掘 | ~400 |
+| `src/strategy/dl/factor/ic_calculator.py` | IC计算 | ~200 |
+| `src/strategy/dl/factor/feature_selector.py` | 特征选择 | ~250 |
+| `src/strategy/dl/predictor/__init__.py` | 预测器导出 | ~20 |
+| `src/strategy/dl/predictor/lstm_predictor.py` | LSTM预测器 | ~300 |
+| `src/strategy/dl/predictor/transformer_predictor.py` | Transformer预测器 | ~350 |
+| `src/strategy/dl/predictor/cnn_predictor.py` | CNN预测器 | ~280 |
+| `src/strategy/dl/loss/loss_functions.py` | 损失函数 | ~200 |
+| `src/strategy/dl/metrics/metrics.py` | 评估指标 | ~250 |
+| `src/strategy/dl/trainer/trainer.py` | 训练器 | ~400 |
+
+**DL小计: 21文件, ~4670行**
+
+#### 32.2.2 强化学习模块 (RL) - 15文件
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/strategy/rl/__init__.py` | 模块导出 | ~60 |
+| `src/strategy/rl/config.py` | RL配置 | ~100 |
+| `src/strategy/rl/base.py` | RL基类 | ~250 |
+| `src/strategy/rl/environment.py` | 交易环境 | ~400 |
+| `src/strategy/rl/memory.py` | 经验回放 | ~200 |
+| `src/strategy/rl/actor_critic.py` | AC网络 | ~300 |
+| `src/strategy/rl/ppo_model.py` | PPO模型 | ~350 |
+| `src/strategy/rl/dqn_model.py` | DQN模型 | ~300 |
+| `src/strategy/rl/dueling_dqn.py` | Dueling DQN | ~250 |
+| `src/strategy/rl/target_network.py` | 目标网络 | ~150 |
+| `src/strategy/rl/exploration.py` | 探索策略 | ~200 |
+| `src/strategy/rl/reward_function.py` | 奖励函数 | ~300 |
+| `src/strategy/rl/ppo_agent.py` | PPO代理 | ~450 |
+| `src/strategy/rl/actor_critic_agent.py` | AC代理 | ~400 |
+| `src/strategy/rl/dqn_agent.py` | DQN代理 | ~400 |
+
+**RL小计: 15文件, ~4110行**
+
+#### 32.2.3 交叉验证模块 (CV) - 10文件
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/strategy/cv/__init__.py` | 模块导出 | ~40 |
+| `src/strategy/cv/cv_config.py` | CV配置 | ~100 |
+| `src/strategy/cv/cv_splitter.py` | 时序划分器 | ~250 |
+| `src/strategy/cv/cv_runner.py` | CV运行器 | ~300 |
+| `src/strategy/cv/cv_evaluator.py` | CV评估器 | ~250 |
+| `src/strategy/cv/cv_reporter.py` | CV报告器 | ~200 |
+| `src/strategy/cv/cv_plotter.py` | CV可视化 | ~180 |
+| `src/strategy/cv/cv_logger.py` | CV日志 | ~120 |
+| `src/strategy/cv/cv_data_handler.py` | CV数据处理 | ~200 |
+| `src/strategy/cv/cv_utils.py` | CV工具 | ~100 |
+
+**CV小计: 10文件, ~1740行**
+
+#### 32.2.4 工具模块 - 9文件
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/strategy/utils/__init__.py` | 工具导出 | ~30 |
+| `src/strategy/utils/logger.py` | 统一日志 | ~150 |
+| `src/strategy/utils/visualizer.py` | 可视化 | ~250 |
+| `src/strategy/utils/experiment_tracker.py` | 实验跟踪 | ~200 |
+| `src/strategy/utils/utils.py` | 通用工具 | ~150 |
+| `src/strategy/common/__init__.py` | 公共导出 | ~20 |
+| `src/strategy/common/config.py` | 配置解析 | ~150 |
+| `src/strategy/common/logging.py` | 日志记录 | ~100 |
+| `src/strategy/common/utils.py` | 公共工具 | ~100 |
+
+**工具小计: 9文件, ~1150行**
+
+### 32.3 待新增文件 - 其他Phase (26个)
+
+| 文件路径 | 功能 | 预计行数 |
+|----------|------|----------|
+| `src/market/trading_calendar.py` | 夜盘交易日历 | ~250 |
+| `src/execution/protection/limit_price.py` | 涨跌停保护 | ~200 |
+| `src/execution/protection/margin_monitor.py` | 保证金监控 | ~250 |
+| `src/execution/algo/twap.py` | TWAP算法 | ~200 |
+| `src/execution/algo/vwap.py` | VWAP算法 | ~250 |
+| `src/execution/algo/iceberg.py` | 冰山单算法 | ~200 |
+| `src/execution/algo/adaptive.py` | 自适应执行 | ~300 |
+| `src/execution/impact_model.py` | 市场冲击模型 | ~200 |
+| `src/guardian/triggers_china.py` | 中国期货触发器 | ~300 |
+| `src/risk/var_enhanced.py` | 增强VaR | ~400 |
+| `src/risk/stress_test_china.py` | 中国期货压力测试 | ~350 |
+| `src/risk/attribution.py` | 风险归因 | ~300 |
+| `src/strategy/calendar_arb/delivery_aware.py` | 交割感知套利 | ~250 |
+| `src/compliance/china_futures_rules.py` | 合规规则 | ~200 |
+| `src/compliance/programmatic_trading.py` | 程序化交易合规 | ~300 |
+| `src/compliance/throttle.py` | 合规节流器 | ~250 |
+| `src/compliance/algo_registration.py` | 算法备案 | ~200 |
+| 测试文件 (Phase 6) | DL/RL/CV测试 | ~5000 |
+| 测试文件 (其他Phase) | 其他测试 | ~3000 |
+
+### 32.4 文件统计总表
+
+| 类别 | 文件数 | 行数 |
+|------|--------|------|
+| 已完成源码 | 71 | ~12237 |
+| Phase 6 新增 (DL) | 21 | ~4670 |
+| Phase 6 新增 (RL) | 15 | ~4110 |
+| Phase 6 新增 (CV) | 10 | ~1740 |
+| Phase 6 新增 (工具) | 9 | ~1150 |
+| 其他Phase新增 | 17 | ~4200 |
+| 测试文件新增 | ~30 | ~8000 |
+| **总计** | **~173** | **~36107** |
+
+---
+
+## §33 工时估算
+
+### 33.1 Phase工时
+
+| Phase | 预计工时 | 说明 |
+|-------|----------|------|
+| Phase 5 成本层 | 16h | 中国期货手续费 |
+| Phase 6 B类模型 | 80h | DL+RL模型 |
+| Phase 7 中国期货特化 | 90h | 全面特化 |
+| Phase 8 智能策略 | 40h | 执行算法 |
+| Phase 9 合规监控 | 30h | 合规模块 |
+| Phase 10 组合风控 | 40h | VaR增强 |
+| **总计** | **296h** | - |
+
+### 33.2 按模块工时
+
+| 模块 | 新文件 | 测试 | 文档 | 合计 |
+|------|--------|------|------|------|
+| 交易所配置 | 8h | 4h | 2h | 14h |
+| 手续费计算 | 8h | 4h | 2h | 14h |
+| 涨跌停保护 | 6h | 3h | 1h | 10h |
+| 保证金监控 | 8h | 4h | 2h | 14h |
+| 执行算法 | 20h | 10h | 4h | 34h |
+| 合规节流 | 8h | 4h | 2h | 14h |
+| VaR增强 | 16h | 8h | 4h | 28h |
+| 压力测试 | 12h | 6h | 2h | 20h |
+| DL模型 | 40h | 20h | 8h | 68h |
+| RL模型 | 40h | 20h | 8h | 68h |
+
+---
+
+## §34 验收标准
+
+### 34.1 功能验收
+
+- [ ] 所有165条场景测试通过
+- [ ] 军规M1-M20全部有测试覆盖
+- [ ] 六大交易所配置正确
+- [ ] 夜盘交易日历正确
+- [ ] 涨跌停价格检查生效
+- [ ] 保证金监控预警正常
+- [ ] 程序化合规检查通过
+- [ ] VaR计算结果准确
+
+### 34.2 性能验收
+
+| 指标 | 要求 | 测试方法 |
+|------|------|----------|
+| 订单延迟 | < 10ms | 压测 |
+| 信号生成 | < 1ms | 压测 |
+| VaR计算 | < 100ms | 单测 |
+| 行情处理 | 10000 tick/s | 压测 |
+
+### 34.3 质量验收
+
+| 指标 | 要求 |
+|------|------|
+| 测试覆盖率 | ≥ 85% |
+| Ruff检查 | 0 errors |
+| Mypy检查 | 0 errors |
+| 文档完整性 | 100% |
+
+---
+
+## §35 附录
+
+### 35.1 术语表
+
+| 术语 | 英文 | 解释 |
+|------|------|------|
+| 涨停板 | Limit Up | 价格上涨到最高限制 |
+| 跌停板 | Limit Down | 价格下跌到最低限制 |
+| 平今仓 | Close Today | 当日开仓当日平仓 |
+| 平昨仓 | Close Yesterday | 平掉前一日持仓 |
+| 夜盘 | Night Session | 21:00后的交易时段 |
+| 保证金 | Margin | 开仓所需资金比例 |
+| 强平 | Forced Liquidation | 保证金不足时强制平仓 |
+| VaR | Value at Risk | 在险价值 |
+| ES/CVaR | Expected Shortfall | 期望损失/条件VaR |
+| EVT | Extreme Value Theory | 极值理论 |
+| GPD | Generalized Pareto Distribution | 广义帕累托分布 |
+
+### 35.2 参考资料
+
+1. 《期货市场程序化交易管理规定（试行）》- 中国证监会 (2025)
+2. 《程序化交易管理实施细则》- 沪深北交易所 (2025)
+3. 各交易所交易规则及风控制度
+4. CTP API技术文档
+5. 风险管理理论与实践
+
+### 35.3 文档版本历史
+
+| 版本 | 日期 | 作者 | 变更说明 |
+|------|------|------|----------|
+| v1.0 | 2025-12-14 | CLAUDE上校 | 初始版本 |
+| v2.0 | 2025-12-15 | CLAUDE上校 | 添加Phase 3-4 |
+| v3.0 | 2025-12-16 | CLAUDE上校 | 添加中国期货特化 |
+| v4.0 | 2025-12-16 | CLAUDE上校 | 军规级最高指示文件 |
+| v4.1 | 2025-12-17 | CLAUDE上校 | Phase 5成本层验收完成，更新状态 |
+| **v4.2** | **2025-12-17** | **CLAUDE上校** | **Phase 6 B类模型完整规划：DL(21文件/27场景)、RL(15文件/25场景)、CV(10文件/10场景)，总计55文件、62场景、~12150行代码** |
+
+---
+
+**文档结束**
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│                    V4PRO 军规级中国期货交易系统                      │
+│                                                                     │
+│                                             │
+│                                                                     │
+│                                                               │
+│                                                                     │
+│                                               │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```

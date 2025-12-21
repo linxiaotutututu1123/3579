@@ -1,0 +1,171 @@
+"""Tick数据模型单元测试"""
+
+import pytest
+from decimal import Decimal
+from datetime import datetime, timedelta
+
+from src.models.tick_data import TickData, TickDataQuality
+
+
+class TestTickData:
+    """TickData模型测试类"""
+
+    @pytest.fixture
+    def valid_tick_data(self):
+        """有效的Tick数据fixture"""
+        now = datetime.now()
+        return {
+            "symbol": "rb2401",
+            "exchange": "SHFE",
+            "datetime": now,
+            "local_datetime": now,
+            "last_price": Decimal("3000.0"),
+            "volume": 1000,
+            "turnover": Decimal("3000000.0"),
+            "open_interest": 5000,
+            "bid_price_1": Decimal("2999.0"),
+            "ask_price_1": Decimal("3001.0"),
+            "bid_volume_1": 10,
+            "ask_volume_1": 15,
+        }
+
+    def test_create_tick_data_success(self, valid_tick_data):
+        """测试成功创建TickData对象"""
+        tick = TickData(**valid_tick_data)
+
+        assert tick.symbol == "rb2401"
+        assert tick.exchange == "SHFE"
+        assert tick.last_price == Decimal("3000.0")
+        assert tick.volume == 1000
+        assert tick.is_valid is True
+
+    def test_create_from_raw_data(self, valid_tick_data):
+        """测试从原始数据创建TickData"""
+        tick = TickData.from_raw_data(valid_tick_data, source="test")
+
+        assert tick.symbol == "rb2401"
+        assert tick.source == "test"
+
+    def test_invalid_price_negative(self, valid_tick_data):
+        """测试负价格验证"""
+        valid_tick_data["last_price"] = Decimal("-100")
+
+        with pytest.raises(ValueError) as exc_info:
+            TickData(**valid_tick_data)
+
+        assert "正数" in str(exc_info.value)
+
+    def test_invalid_price_zero(self, valid_tick_data):
+        """测试零价格验证"""
+        valid_tick_data["last_price"] = Decimal("0")
+
+        with pytest.raises(ValueError) as exc_info:
+            TickData(**valid_tick_data)
+
+        assert "正数" in str(exc_info.value)
+
+    def test_invalid_volume_negative(self, valid_tick_data):
+        """测试负成交量验证"""
+        valid_tick_data["volume"] = -100
+
+        with pytest.raises(ValueError) as exc_info:
+            TickData(**valid_tick_data)
+
+        assert "负数" in str(exc_info.value)
+
+    def test_invalid_datetime_old(self, valid_tick_data):
+        """测试过早的时间戳"""
+        valid_tick_data["datetime"] = datetime(1999, 1, 1)
+
+        with pytest.raises(ValueError) as exc_info:
+            TickData(**valid_tick_data)
+
+        assert "2000-2100" in str(exc_info.value)
+
+    def test_to_dict(self, valid_tick_data):
+        """测试转换为字典"""
+        tick = TickData(**valid_tick_data)
+        data = tick.to_dict()
+
+        assert isinstance(data, dict)
+        assert data["symbol"] == "rb2401"
+        assert "last_price" in data
+
+    def test_is_stale_false(self, valid_tick_data):
+        """测试数据未过期"""
+        tick = TickData(**valid_tick_data)
+
+        assert tick.is_stale(tolerance_seconds=30) is False
+
+    def test_is_stale_true(self, valid_tick_data):
+        """测试数据已过期"""
+        valid_tick_data["datetime"] = datetime.now() - timedelta(minutes=5)
+        tick = TickData(**valid_tick_data)
+
+        assert tick.is_stale(tolerance_seconds=30) is True
+
+    def test_is_stale_invalid_tolerance(self, valid_tick_data):
+        """测试无效的容忍时间"""
+        tick = TickData(**valid_tick_data)
+
+        with pytest.raises(ValueError):
+            tick.is_stale(tolerance_seconds=-1)
+
+    def test_repr(self, valid_tick_data):
+        """测试字符串表示"""
+        tick = TickData(**valid_tick_data)
+        repr_str = repr(tick)
+
+        assert "TickData" in repr_str
+        assert "rb2401" in repr_str
+        assert "3000" in repr_str
+
+    def test_data_quality(self, valid_tick_data):
+        """测试数据质量字段"""
+        valid_tick_data["quality"] = TickDataQuality.EXCELLENT
+        tick = TickData(**valid_tick_data)
+
+        assert tick.quality == TickDataQuality.EXCELLENT
+
+    def test_from_raw_data_missing_field(self):
+        """测试缺少必要字段"""
+        incomplete_data = {
+            "symbol": "rb2401",
+            "exchange": "SHFE",
+            # 缺少 datetime 和 last_price
+        }
+
+        with pytest.raises(ValueError) as exc_info:
+            TickData.from_raw_data(incomplete_data)
+
+        assert "缺少必要字段" in str(exc_info.value)
+
+    def test_from_raw_data_invalid_type(self):
+        """测试无效的数据类型"""
+        with pytest.raises(TypeError) as exc_info:
+            TickData.from_raw_data("not a dict")
+
+        assert "字典类型" in str(exc_info.value)
+
+    def test_model_dump_json(self, valid_tick_data):
+        """测试JSON序列化"""
+        tick = TickData(**valid_tick_data)
+        json_str = tick.model_dump_json()
+
+        assert isinstance(json_str, str)
+        assert "rb2401" in json_str
+
+
+class TestTickDataQuality:
+    """TickDataQuality枚举测试"""
+
+    def test_quality_values(self):
+        """测试质量等级值"""
+        assert TickDataQuality.EXCELLENT.value == "excellent"
+        assert TickDataQuality.GOOD.value == "good"
+        assert TickDataQuality.FAIR.value == "fair"
+        assert TickDataQuality.POOR.value == "poor"
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

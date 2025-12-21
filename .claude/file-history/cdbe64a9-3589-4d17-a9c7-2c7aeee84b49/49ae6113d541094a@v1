@@ -1,0 +1,51 @@
+@echo off
+chcp 65001 >nul
+echo =====================
+echo    TREA AI助手启动器
+echo =====================
+echo.
+echo [1] 运行钻石评估系统
+echo [2] 使用Claude分析代码
+echo [3] 打开TREA编辑器
+echo [4] 创建新项目
+echo [5] 查看使用说明
+echo.
+set /p choice="请选择 (1-5): "
+
+if "%choice%"=="1" goto run_diamond
+if "%choice%"=="2" goto analyze_code
+if "%choice%"=="3" goto open_trea
+if "%choice%"=="4" goto new_project
+if "%choice%"=="5" goto show_help
+
+:run_diamond
+echo.
+echo 正在启动钻石评估系统...
+start cmd /k "python \"Desktop\火山方舟大模型体验中心-火山引擎_files\QL钻石光学能量化系统_终极修复版-完美运行版.py\""
+exit
+
+:analyze_code
+echo.
+set /p filepath="请输入要分析的文件路径: "
+echo 正在使用Claude分析...
+start cmd /k "chcp 65001 && \"%USERPROFILE%\.trae-cn\extensions\anthropic.claude-code-2.0.61-win32-x64\resources\native-binary\claude.exe\" -p \"请分析这个文件的质量和改进建议: %filepath%\""
+exit
+
+:open_trea
+echo.
+echo 正在打开TREA...
+code .
+exit
+
+:new_project
+echo.
+set /p projname="请输入项目名称: "
+echo 正在创建项目...
+start cmd /k "python automation-scripts.py setup --name \"%projname%\""
+exit
+
+:show_help
+echo.
+echo 打开使用说明...
+notepad "TREA使用说明.txt"
+exit

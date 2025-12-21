@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-12-16T01:35:52.541974+00:00",
+  "has_violations": true,
+  "violation_count": 3,
+  "violations": [
+    {
+      "code": "POLICY.TYPE_PATH_MISMATCH",
+      "message": "type=replay requires report_path in artifacts/replay/, got: artifacts\\sim\\report.json",
+      "file": "C:\\Users\\1\\2468\\3579\\artifacts\\sim\\report.json",
+      "evidence": {
+        "type": "replay",
+        "expected": "artifacts/replay/",
+        "actual": "artifacts\\sim\\report.json"
+      }
+    },
+    {
+      "code": "POLICY.TYPE_PATH_MISMATCH",
+      "message": "type=replay requires events_jsonl in artifacts/replay/, got: artifacts\\sim\\events.jsonl",
+      "file": "C:\\Users\\1\\2468\\3579\\artifacts\\sim\\report.json",
+      "evidence": {
+        "type": "replay",
+        "expected": "artifacts/replay/",
+        "actual": "artifacts\\sim\\events.jsonl"
+      }
+    },
+    {
+      "code": "POLICY.SCENARIO.EMPTY",
+      "message": "type=replay requires total_ticks >= 1, got: 0",
+      "file": "C:\\Users\\1\\2468\\3579\\artifacts\\sim\\report.json",
+      "evidence": {
+        "type": "replay",
+        "threshold": 1,
+        "actual": 0
+      }
+    }
+  ]
+}

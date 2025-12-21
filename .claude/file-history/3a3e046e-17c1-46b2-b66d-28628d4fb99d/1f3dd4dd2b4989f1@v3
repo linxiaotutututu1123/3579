@@ -1,0 +1,475 @@
+"""网关工厂测试模块
+
+测试GatewayFactory类的功能，包括：
+1. 创建不同类型网关的能力
+2. 配置验证和错误处理
+3. 动态注册新网关类型
+4. 辅助方法测试
+"""
+
+import pytest
+from typing import Dict, List, Any
+
+from src.market_gateway.factory import GatewayFactory
+from src.market_gateway.base import MarketGateway, GatewayStatus
+from src.market_gateway.ctp_gateway import CtpMarketGateway
+from src.market_gateway.exceptions import ConfigError
+
+# 测试常量定义
+# RISK: 测试配置应保持最小化且具有代表性，避免包含真实凭据
+VALID_CTP_CONFIG = {
+    "name": "TestCTPGateway",
+    "type": "ctp",
+    "enabled": True,
+    "ctp": {
+        "front_addr": "tcp://180.168.146.187:10131",
+        "broker_id": "9999",
+        "user_id": "test_user",
+        "password": "test_password",
+        "connect_timeout": 10,
+        "heartbeat_interval": 30
+    },
+    "max_reconnect_attempts": 3,
+    "max_backoff_seconds": 60,
+    "initial_backoff_seconds": 1
+}
+
+# 测试用符号常量
+TEST_SYMBOLS = ["rb2401", "cu2401"]  # 测试用期货合约代码
+MOCK_ATTRIBUTE_VALUE = "mock_value"  # 模拟网关属性值
+ANOTHER_MOCK_VALUE = "another_value"  # 另一个模拟网关属性值
+
+
+class MockGateway(MarketGateway):
+    """用于测试的模拟网关类
+    
+    模拟真实的网关行为以便进行单元测试，避免依赖外部系统。
+    """
+
+    def __init__(self, config: Dict[str, Any]):
+        """初始化模拟网关
+        
+        Args:
+            config: 网关配置字典
+            
+        RISK: 测试数据真实性 - 模拟数据可能无法完全代表真实系统行为
+        缓解措施: 在集成测试中使用真实系统进行验证
+        """
+        # 调用父类初始化以确保基础功能正常 # REVIEW: 保持继承链完整性
+        # 为什么调用super().__init__: 确保基础功能正常初始化，保持继承链完整性
+        super().__init__(config)
+        self.mock_attribute = MOCK_ATTRIBUTE_VALUE
+
+    async def connect(self) -> bool:
+        """模拟连接操作
+        
+        Returns:
+            bool: 连接是否成功
+        """
+        # 模拟连接成功的状态变化 # REVIEW: 提供可预测的行为用于测试
+        self.status = GatewayStatus.CONNECTED
+        return True
+
+    async def disconnect(self) -> None:
+        """模拟断开连接操作"""
+        # 模拟断开连接的状态变化 # REVIEW: 提供可预测的行为用于测试
+        self.status = GatewayStatus.DISCONNECTED
+
+    async def subscribe(self, symbols: List[str]) -> Dict[str, bool]:
+        """模拟订阅操作
+        
+        Args:
+            symbols: 要订阅的符号列表
+            
+        Returns:
+            Dict[str, bool]: 订阅结果映射
+        """
+        result = {}
+        # 模拟订阅过程 # REVIEW: 提供可预测的行为用于测试
+        for symbol in symbols:
+            self.subscribed_symbols.add(symbol)
+            result[symbol] = True
+        return result
+
+    async def unsubscribe(self, symbols: List[str]) -> Dict[str, bool]:
+        """模拟取消订阅操作
+        
+        Args:
+            symbols: 要取消订阅的符号列表
+            
+        Returns:
+            Dict[str, bool]: 取消订阅结果映射
+        """
+        result = {}
+        # 模拟取消订阅过程 # REVIEW: 提供可预测的行为用于测试
+        for symbol in symbols:
+            self.subscribed_symbols.discard(symbol)
+            result[symbol] = True
+        return result
+
+
+class TestGatewayFactory:
+    """网关工厂测试类"""
+
+    @pytest.fixture(autouse=True)
+    def cleanup_registered_types(self):
+        """每个测试后清理注册的测试类型
+        
+        确保测试之间的隔离性，防止状态污染。
+        
+        RISK: 测试隔离性 - 如果不清理由测试注册的类型，可能导致测试间状态污染
+        缓解措施: 使用autouse=True自动执行清理，确保每个测试都在干净环境中运行
+        """
+        yield
+        # 清理测试中注册的类型 # REVIEW: 保持测试环境清洁
+        # 为什么需要清理：确保测试之间相互独立，避免状态污染影响测试结果
+        GatewayFactory.unregister_gateway_type("mock")
+        GatewayFactory.unregister_gateway_type("test")
+
+    def test_create_ctp_gateway_success(self):
+        """测试成功创建CTP网关
+
+        测试目的：验证工厂能够正确创建CTP网关实例
+        
+        Arrange: 准备有效的CTP配置
+        Act: 调用工厂创建网关
+        Assert: 验证返回的网关实例类型和属性
+        """
+        # Act - 执行创建操作
+        gateway = GatewayFactory.create_gateway(VALID_CTP_CONFIG)
+
+        # Assert - 验证结果
+        assert gateway is not None, "网关实例不应为None"
+        assert isinstance(gateway, CtpMarketGateway), "应创建CTP网关实例"
+        assert isinstance(gateway, MarketGateway), "应继承自基础网关类"
+        assert gateway.gateway_config.name == "TestCTPGateway", "网关名称应匹配配置"
+
+    def test_create_gateway_missing_type_field(self):
+        """测试创建网关时缺少type字段
+
+        测试目的：验证工厂在缺少必需字段时能正确抛出异常
+        
+        Arrange: 准备缺少type字段的配置
+        Act: 调用工厂创建网关
+        Assert: 验证抛出ValueError异常
+        
+        RISK: 错误信息一致性 - 错误信息必须保持一致以便于调试和日志分析
+        缓解措施: 在断言中检查关键错误信息片段，确保错误信息符合预期格式
+        """
+        # Arrange - 准备无效配置
+        # 为什么移除type字段：模拟用户配置错误的典型场景
+        config_without_type = {
+            "name": "InvalidGateway",
+            "enabled": True,
+            "ctp": {
+                "front_addr": "tcp://180.168.146.187:10131",
+                "broker_id": "9999",
+                "user_id": "test_user",
+                "password": "test_password"
+            }
+        }
+
+        # Act & Assert - 验证异常
+        # 为什么使用pytest.raises：捕获预期的异常以验证错误处理逻辑
+        with pytest.raises(ValueError) as exc_info:
+            GatewayFactory.create_gateway(config_without_type)
+
+        # 验证错误消息内容 # REVIEW: 确保错误信息具有描述性
+        # 为什么检查特定文本：确保错误信息包含关键诊断信息，便于问题定位
+        assert "must include 'type' field" in str(exc_info.value)
+
+    def test_create_gateway_unsupported_type(self):
+        """测试创建不支持的网关类型
+
+        测试目的：验证工厂在遇到不支持的类型时能正确处理
+        
+        Arrange: 准备不支持的网关类型配置
+        Act: 调用工厂创建网关
+        Assert: 验证抛出ValueError异常并包含支持的类型列表
+        
+        RISK: 错误信息完整性 - 错误信息必须包含足够的诊断信息帮助用户识别问题
+        缓解措施: 验证错误信息包含不支持的类型名称和支持的类型列表
+        """
+        # Arrange - 准备不支持的类型配置
+        # 为什么使用不支持的类型：模拟用户输入错误类型名称的典型场景
+        unsupported_config = {
+            **VALID_CTP_CONFIG,
+            "type": "unsupported_type"
+        }
+
+        # Act & Assert - 验证异常
+        # 为什么捕获ValueError：工厂在遇到不支持类型时应该抛出ValueError异常
+        with pytest.raises(ValueError) as exc_info:
+            GatewayFactory.create_gateway(unsupported_config)
+
+        # 验证错误消息内容 # REVIEW: 确保错误信息具有描述性且包含有用信息
+        # 为什么检查多个信息片段：确保错误信息足够详细，包含诊断所需的关键信息
+        error_msg = str(exc_info.value)
+        assert "Unsupported gateway type" in error_msg
+        assert "unsupported_type" in error_msg
+        assert "Supported types" in error_msg
+
+    def test_create_gateway_invalid_config(self):
+        """测试创建网关时传入无效配置
+
+        测试目的：验证工厂在配置无效时能正确处理
+        
+        Arrange: 准备无效的CTP配置（无效的front_addr格式）
+        Act: 调用工厂创建网关
+        Assert: 验证抛出ConfigError异常
+        
+        RISK: 配置验证完整性 - 必须确保所有配置字段都经过适当验证
+        缓解措施: 使用具体的无效配置测试各种验证场景
+        """
+        # Arrange - 准备无效配置
+        # 为什么使用无效地址格式：模拟用户输入格式错误的典型场景
+        invalid_config = {
+            **VALID_CTP_CONFIG,
+            "ctp": {
+                "front_addr": "invalid_address",  # 无效地址格式
+                "broker_id": "9999",
+                "user_id": "test_user",
+                "password": "test_password"
+            }
+        }
+
+        # Act & Assert - 验证异常
+        # 为什么期望ConfigError：当配置验证失败时，工厂应该抛出ConfigError异常
+        with pytest.raises(ConfigError):
+            GatewayFactory.create_gateway(invalid_config)
+
+    def test_register_new_gateway_type(self):
+        """测试注册新的网关类型
+
+        测试目的：验证工厂支持动态注册新的网关类型
+        
+        Arrange: 创建模拟网关类
+        Act: 注册新类型并尝试创建实例
+        Assert: 验证新类型能被正确创建
+        
+        RISK: 类型注册一致性 - 注册的类型必须能正确创建实例
+        缓解措施: 验证创建的实例类型和属性都符合预期
+        """
+        # Act - 注册新类型并创建实例
+        # 为什么注册"mock"类型：测试动态注册功能，验证工厂的扩展性
+        GatewayFactory.register_gateway_type("mock", MockGateway)
+
+        # 为什么使用mock类型配置：测试新注册类型的创建功能
+        config = {
+            **VALID_CTP_CONFIG,
+            "name": "MockGateway",
+            "type": "mock"
+        }
+
+        gateway = GatewayFactory.create_gateway(config)
+
+        # Assert - 验证结果
+        # 为什么检查实例不为None：确保创建操作成功返回了实例
+        assert gateway is not None, "网关实例不应为None"
+        # 为什么检查实例类型：确保创建的是正确的网关类型
+        assert isinstance(gateway, MockGateway), "应创建模拟网关实例"
+        # 为什么检查属性存在：确保实例具有预期的属性
+        assert hasattr(gateway, 'mock_attribute'), "应具有模拟属性"
+        # 为什么检查属性值：确保实例正确初始化了属性值
+        assert gateway.mock_attribute == MOCK_ATTRIBUTE_VALUE, "模拟属性值应匹配"
+
+    def test_register_invalid_gateway_class(self):
+        """测试注册无效的网关类
+
+        测试目的：验证工厂在注册无效类时能正确抛出异常
+        
+        Arrange: 准备一个非MarketGateway子类
+        Act: 尝试注册
+        Assert: 验证抛出TypeError
+        
+        RISK: 类型安全 - 必须确保只能注册MarketGateway的子类
+        缓解措施: 验证注册非子类时抛出适当的TypeError异常
+        """
+
+        class NotAGateway:
+            """非网关类，用于测试错误处理"""
+            pass
+
+        # Act & Assert - 验证异常
+        # 为什么期望TypeError：工厂应该拒绝注册非MarketGateway子类
+        with pytest.raises(TypeError) as exc_info:
+            GatewayFactory.register_gateway_type("invalid", NotAGateway)
+
+        # 为什么检查错误信息：确保错误信息包含关键诊断信息
+        assert "must be a subclass of MarketGateway" in str(exc_info.value)
+
+    def test_register_empty_gateway_type(self):
+        """测试注册空的网关类型名称
+
+        Act: 尝试注册空字符串类型
+        Assert: 验证抛出ValueError
+        """
+        with pytest.raises(ValueError) as exc_info:
+            GatewayFactory.register_gateway_type("", MockGateway)
+
+        assert "cannot be empty" in str(exc_info.value)
+
+    def test_create_gateway_case_insensitive_type(self):
+        """测试网关类型大小写不敏感
+
+        Arrange: 使用大写的网关类型
+        Act: 尝试创建网关
+        Assert: 验证能成功创建
+        
+        RISK: 用户体验 - 大小写敏感可能导致用户困惑和配置错误
+        缓解措施: 实现大小写不敏感的类型处理，提高用户友好性
+        """
+        # Arrange - 使用各种大小写组合
+        # 为什么测试多种大小写组合：验证工厂对用户输入的容错性
+        configs = [
+            {**VALID_CTP_CONFIG, "type": "CTP"},
+            {**VALID_CTP_CONFIG, "type": "Ctp"},
+            {**VALID_CTP_CONFIG, "type": "cTp"},
+        ]
+
+        # Act & Assert
+        # 为什么遍历所有配置：验证所有大小写变体都能正确处理
+        for config in configs:
+            gateway = GatewayFactory.create_gateway(config)
+            # 为什么检查实例不为None：确保创建操作成功
+            assert gateway is not None
+            # 为什么检查实例类型：确保创建的是正确的网关类型
+            assert isinstance(gateway, CtpMarketGateway)
+
+    def test_get_supported_types(self):
+        """测试获取支持的网关类型列表"""
+        # Act
+        supported_types = GatewayFactory.get_supported_types()
+
+        # Assert
+        assert isinstance(supported_types, list)
+        assert "ctp" in supported_types
+
+    def test_is_type_supported(self):
+        """测试检查网关类型是否支持"""
+        # Assert
+        assert GatewayFactory.is_type_supported("ctp") is True
+        assert GatewayFactory.is_type_supported("CTP") is True  # 大小写不敏感
+        assert GatewayFactory.is_type_supported("nonexistent") is False
+
+    def test_get_gateway_class(self):
+        """测试获取网关类"""
+        # Act
+        ctp_class = GatewayFactory.get_gateway_class("ctp")
+        none_class = GatewayFactory.get_gateway_class("nonexistent")
+
+        # Assert
+        assert ctp_class is CtpMarketGateway
+        assert none_class is None
+
+    def test_unregister_gateway_type(self):
+        """测试取消注册网关类型"""
+        # Arrange
+        GatewayFactory.register_gateway_type("test", MockGateway)
+        assert GatewayFactory.is_type_supported("test")
+
+        # Act
+        result = GatewayFactory.unregister_gateway_type("test")
+
+        # Assert
+        assert result is True
+        assert GatewayFactory.is_type_supported("test") is False
+
+    def test_unregister_nonexistent_type(self):
+        """测试取消注册不存在的类型"""
+        # Act
+        result = GatewayFactory.unregister_gateway_type("nonexistent")
+
+        # Assert
+        assert result is False
+
+    def test_register_overwrites_existing_type(self):
+        """测试注册已存在的类型会覆盖"""
+        # Arrange
+        GatewayFactory.register_gateway_type("mock", MockGateway)
+
+        class AnotherMockGateway(MockGateway):
+            def __init__(self, config: Dict[str, Any]):
+                super().__init__(config)
+                self.mock_attribute = "another_value"
+
+        # Act
+        GatewayFactory.register_gateway_type("mock", AnotherMockGateway)
+
+        # Assert
+        gateway_class = GatewayFactory.get_gateway_class("mock")
+        assert gateway_class is AnotherMockGateway
+
+
+class TestGatewayFactoryAsync:
+    """网关工厂异步功能测试"""
+
+    @pytest.fixture(autouse=True)
+    def cleanup_registered_types(self):
+        """每个测试后清理注册的测试类型"""
+        yield
+        GatewayFactory.unregister_gateway_type("mock")
+
+    @pytest.mark.asyncio
+    async def test_created_gateway_can_connect(self):
+        """测试创建的网关可以正常连接
+        
+        RISK: 异步操作一致性 - 异步操作的结果必须与同步操作保持一致
+        缓解措施: 验证异步连接操作的返回值和状态变化符合预期
+        """
+        # Arrange
+        # 为什么注册mock类型：测试创建的网关实例的异步功能
+        GatewayFactory.register_gateway_type("mock", MockGateway)
+        # 为什么使用mock类型配置：验证新创建网关的基本功能
+        config = {
+            **VALID_CTP_CONFIG,
+            "type": "mock"
+        }
+
+        # Act
+        # 为什么创建网关实例：测试工厂创建的实例是否具备基本功能
+        gateway = GatewayFactory.create_gateway(config)
+        # 为什么await connect()：测试异步连接功能
+        result = await gateway.connect()
+
+        # Assert
+        # 为什么检查返回值：验证连接操作的成功状态
+        assert result is True
+        # 为什么检查状态：验证连接操作正确更新了网关状态
+        assert gateway.status == GatewayStatus.CONNECTED
+
+    @pytest.mark.asyncio
+    async def test_created_gateway_can_subscribe(self):
+        """测试创建的网关可以正常订阅
+        
+        RISK: 订阅一致性 - 订阅操作必须正确更新内部状态并返回准确结果
+        缓解措施: 验证订阅结果和内部状态的一致性
+        """
+        # Arrange
+        # 为什么注册mock类型：测试创建的网关实例的订阅功能
+        GatewayFactory.register_gateway_type("mock", MockGateway)
+        # 为什么使用mock类型配置：验证新创建网关的订阅功能
+        config = {
+            **VALID_CTP_CONFIG,
+            "type": "mock"
+        }
+        # 为什么使用测试符号：验证订阅功能对不同符号的处理能力
+        symbols = ["rb2401", "cu2401"]
+
+        # Act
+        # 为什么创建网关实例：测试工厂创建的实例是否具备订阅功能
+        gateway = GatewayFactory.create_gateway(config)
+        # 为什么先连接：某些网关要求先建立连接再进行订阅操作
+        await gateway.connect()
+        # 为什么await subscribe()：测试异步订阅功能
+        result = await gateway.subscribe(symbols)
+
+        # Assert
+        # 为什么检查所有结果为True：验证所有符号都成功订阅
+        assert all(result.values())
+        # 为什么检查内部状态：验证订阅操作正确更新了内部状态
+        assert all(s in gateway.subscribed_symbols for s in symbols)
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

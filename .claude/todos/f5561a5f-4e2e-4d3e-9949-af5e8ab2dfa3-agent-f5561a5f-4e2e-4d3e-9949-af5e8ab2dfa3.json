@@ -1,0 +1,37 @@
+[
+  {
+    "content": "检查docs文件夹完整性，确认6个V4PRO文件",
+    "status": "completed",
+    "activeForm": "检查docs文件夹完整性"
+  },
+  {
+    "content": "分析src目录结构(133个源文件)",
+    "status": "in_progress",
+    "activeForm": "分析src目录结构"
+  },
+  {
+    "content": "分析tests目录(99个测试文件)",
+    "status": "pending",
+    "activeForm": "分析tests目录"
+  },
+  {
+    "content": "运行门禁检查(Ruff/Mypy/Pytest)",
+    "status": "pending",
+    "activeForm": "运行门禁检查"
+  },
+  {
+    "content": "验证场景覆盖率(165场景)",
+    "status": "pending",
+    "activeForm": "验证场景覆盖率"
+  },
+  {
+    "content": "检查军规M1-M20合规性",
+    "status": "pending",
+    "activeForm": "检查军规合规性"
+  },
+  {
+    "content": "生成军规级审计报告",
+    "status": "pending",
+    "activeForm": "生成审计报告"
+  }
+]

@@ -1,0 +1,116 @@
+# =============================================================================
+# V3PRO+ 策略枚举清单 (Strategy Registry)
+# =============================================================================
+# 军规级要求：
+# - 此文件是"单一真相"，所有策略必须在此注册
+# - sim/replay 必须遍历跑一遍，缺一个 = POLICY_VIOLATION(12)
+# - 必须与 src/strategy/factory.py 的 key 完全对齐
+# =============================================================================
+
+schema_version: 1
+generated_at: "2025-12-15"
+
+# 策略枚举
+strategies:
+  # -------------------------------------------------------------------------
+  # 核心策略（已实现）
+  # -------------------------------------------------------------------------
+  simple_ai:
+    name: "SimpleAI"
+    class: "SimpleAIStrategy"
+    module: "src.strategy.simple_ai"
+    description: "简单 AI 策略，基于基础信号"
+    tier: "baseline"
+    v3pro_status: "active"
+    degrade_fallback: null  # 无 fallback，自身就是最底层
+
+  linear_ai:
+    name: "LinearAI"
+    class: "LinearAIStrategy"
+    module: "src.strategy.linear_ai"
+    description: "线性 AI 策略，基于多因子线性组合"
+    tier: "baseline"
+    v3pro_status: "active"
+    degrade_fallback: "simple_ai"
+
+  ensemble_moe:
+    name: "EnsembleMoE"
+    class: "EnsembleMoEStrategy"
+    module: "src.strategy.ensemble_moe"
+    description: "混合专家策略，动态权重分配"
+    tier: "advanced"
+    v3pro_status: "active"
+    degrade_fallback: "linear_ai"
+
+  dl_torch:
+    name: "DLTorchPolicy"
+    class: "DlTorchPolicyStrategy"
+    module: "src.strategy.dl_torch_policy"
+    description: "深度学习策略，PyTorch 推理"
+    tier: "advanced"
+    v3pro_status: "active"
+    degrade_fallback: "linear_ai"
+
+  top_tier:
+    name: "TopTierTrendRiskParity"
+    class: "TopTierTrendRiskParityStrategy"
+    module: "src.strategy.top_tier_trend_risk_parity"
+    description: "顶级趋势风险平价策略"
+    tier: "premium"
+    v3pro_status: "active"
+    degrade_fallback: "ensemble_moe"
+
+  # -------------------------------------------------------------------------
+  # V3PRO+ 新增策略（待实现）
+  # -------------------------------------------------------------------------
+  calendar_arb:
+    name: "CalendarArbitrage"
+    class: "CalendarArbStrategy"
+    module: "src.strategy.calendar_arb"
+    description: "跨期套利策略（A2+Kalman+C1）"
+    tier: "premium"
+    v3pro_status: "planned"  # 待实现
+    degrade_fallback: "top_tier"
+    notes:
+      - "依赖 market/ 合约化行情"
+      - "依赖 execution/pair/ 双腿原子执行"
+      - "Phase D 完成后才可实现"
+
+# =============================================================================
+# 策略层级定义
+# =============================================================================
+tiers:
+  baseline:
+    description: "基线策略，用于 degrade 兜底"
+    requirements:
+      - "BASELINE.STABLE.UNDER_STALE_INPUT"
+      - "必须在任何输入下都能产出合理 target"
+    strategies: ["simple_ai", "linear_ai"]
+
+  advanced:
+    description: "进阶策略，有复杂模型依赖"
+    requirements:
+      - "必须有 fallback 机制"
+      - "推理失败时自动降级"
+    strategies: ["ensemble_moe", "dl_torch"]
+
+  premium:
+    description: "顶级策略，完整成本/风控/执行闭环"
+    requirements:
+      - "COST.GATE 必过"
+      - "TURNOVER.LIMIT 必过"
+      - "完整审计链路"
+    strategies: ["top_tier", "calendar_arb"]
+
+# =============================================================================
+# 验收要求
+# =============================================================================
+validation:
+  # 每次 sim/replay 必须遍历所有 active 策略
+  required_coverage: "all_active"
+  
+  # 缺失策略 = POLICY_VIOLATION(12)
+  missing_strategy_exit_code: 12
+  
+  # 策略与 factory.py 一致性检查
+  factory_alignment_check: true

@@ -1,0 +1,236 @@
+     1→"""CTP broker implementation with lazy import.
+     2→
+     3→This module provides a CTP (China Trading Platform) broker implementation.
+     4→CTP SDK is imported lazily to allow CI environments without the SDK installed.
+     5→"""
+     6→
+     7→from __future__ import annotations
+     8→
+     9→import logging
+    10→import os
+    11→from dataclasses import dataclass
+    12→from typing import TYPE_CHECKING, Any
+    13→
+    14→from src.brokers.ctp.mapping import offset_to_ctp_offset_flag, side_to_ctp_direction
+    15→from src.execution.broker import Broker, OrderAck, OrderRejected
+    16→from src.execution.order_types import OrderIntent
+    17→from src.trading.controls import TradeMode
+    18→
+    19→
+    20→if TYPE_CHECKING:
+    21→    pass
+    22→
+    23→logger = logging.getLogger(__name__)
+    24→
+    25→
+    26→class CtpConfigError(Exception):
+    27→    """Raised when CTP configuration is invalid or missing."""
+    28→
+    29→
+    30→class CtpNotAvailableError(Exception):
+    31→    """Raised when CTP SDK is not available."""
+    32→
+    33→
+    34→class CtpConnectionError(Exception):
+    35→    """Raised when CTP connection fails."""
+    36→
+    37→
+    38→@dataclass
+    39→class CtpConfig:
+    40→    """CTP connection configuration."""
+    41→
+    42→    front_addr: str  # e.g. "tcp://180.168.146.187:10130"
+    43→    broker_id: str
+    44→    user_id: str
+    45→    password: str
+    46→    app_id: str = ""
+    47→    auth_code: str = ""
+    48→    instrument_ids: tuple[str, ...] = ()
+    49→
+    50→
+    51→_REQUIRED_CTP_ENV_VARS = (
+    52→    "CTP_FRONT_ADDR",
+    53→    "CTP_BROKER_ID",
+    54→    "CTP_USER_ID",
+    55→    "CTP_PASSWORD",
+    56→)
+    57→
+    58→_OPTIONAL_CTP_ENV_VARS = (
+    59→    "CTP_APP_ID",
+    60→    "CTP_AUTH_CODE",
+    61→)
+    62→
+    63→
+    64→def validate_ctp_env(trade_mode: TradeMode) -> CtpConfig | None:
+    65→    """
+    66→    Validate CTP environment variables and return config.
+    67→
+    68→    Args:
+    69→        trade_mode: Current trade mode (PAPER or LIVE)
+    70→
+    71→    Returns:
+    72→        CtpConfig if LIVE mode and all required vars present, None if PAPER mode
+    73→
+    74→    Raises:
+    75→        CtpConfigError: If LIVE mode and any required variable is missing
+    76→    """
+    77→    if trade_mode == TradeMode.PAPER:
+    78→        # PAPER mode does not require CTP configuration
+    79→        return None
+    80→
+    81→    # LIVE mode requires all mandatory CTP environment variables
+    82→    missing = [k for k in _REQUIRED_CTP_ENV_VARS if not os.environ.get(k)]
+    83→    if missing:
+    84→        joined = ", ".join(missing)
+    85→        raise CtpConfigError(
+    86→            f"Missing required CTP environment variables for LIVE mode: {joined}. "
+    87→            "Set them before running in LIVE mode."
+    88→        )
+    89→
+    90→    return CtpConfig(
+    91→        front_addr=os.environ["CTP_FRONT_ADDR"],
+    92→        broker_id=os.environ["CTP_BROKER_ID"],
+    93→        user_id=os.environ["CTP_USER_ID"],
+    94→        password=os.environ["CTP_PASSWORD"],
+    95→        app_id=os.environ.get("CTP_APP_ID", ""),
+    96→        auth_code=os.environ.get("CTP_AUTH_CODE", ""),
+    97→    )
+    98→
+    99→
+   100→def _lazy_import_ctp() -> Any:
+   101→    """Lazy import CTP SDK. Returns None if not available."""
+   102→    try:
+   103→        import ctp
+   104→
+   105→        return ctp
+   106→    except ImportError:
+   107→        return None
+   108→
+   109→
+   110→class CtpBroker(Broker):
+   111→    """CTP broker implementation with lazy SDK import."""
+   112→
+   113→    def __init__(
+   114→        self, config: CtpConfig, trade_mode: TradeMode = TradeMode.PAPER
+   115→    ) -> None:
+   116→        """
+   117→        Initialize CTP broker.
+   118→
+   119→        Args:
+   120→            config: CTP connection configuration
+   121→            trade_mode: Trading mode (PAPER allows mock, LIVE requires SDK)
+   122→
+   123→        Raises:
+   124→            CtpNotAvailableError: If LIVE mode and CTP SDK is not installed
+   125→        """
+   126→        self._config = config
+   127→        self._trade_mode = trade_mode
+   128→        self._ctp = _lazy_import_ctp()
+   129→        self._connected = False
+   130→        self._order_ref = 0
+   131→
+   132→        if self._ctp is None:
+   133→            if trade_mode == TradeMode.LIVE:
+   134→                raise CtpNotAvailableError(
+   135→                    "CTP SDK not installed but LIVE mode requires it. "
+   136→                    "Install CTP SDK or use PAPER mode."
+   137→                )
+   138→            logger.warning("CTP SDK not available - running in PAPER mock mode")
+   139→
+   140→    @property
+   141→    def is_sdk_available(self) -> bool:
+   142→        """Check if CTP SDK is available."""
+   143→        return self._ctp is not None
+   144→
+   145→    @property
+   146→    def is_connected(self) -> bool:
+   147→        """Check if connected to CTP."""
+   148→        return self._connected
+   149→
+   150→    def connect(self) -> None:
+   151→        """
+   152→        Connect to CTP front.
+   153→
+   154→        Raises:
+   155→            CtpNotAvailableError: If SDK not available
+   156→            CtpConnectionError: If connection fails
+   157→        """
+   158→        if self._ctp is None:
+   159→            raise CtpNotAvailableError("CTP SDK not installed")
+   160→
+   161→        try:
+   162→            # Real CTP connection would happen here
+   163→            # For now, just mark as connected
+   164→            logger.info("Connecting to CTP: %s", self._config.front_addr)
+   165→            self._connected = True
+   166→        except Exception as e:
+   167→            raise CtpConnectionError(f"Failed to connect: {e}") from e
+   168→
+   169→    def disconnect(self) -> None:
+   170→        """Disconnect from CTP."""
+   171→        if self._connected:
+   172→            logger.info("Disconnecting from CTP")
+   173→            self._connected = False
+   174→
+   175→    def place_order(self, intent: OrderIntent) -> OrderAck:
+   176→        """
+   177→        Place an order via CTP.
+   178→
+   179→        Args:
+   180→            intent: Order intent to place
+   181→
+   182→        Returns:
+   183→            OrderAck with order ID
+   184→
+   185→        Raises:
+   186→            OrderRejected: If order is rejected
+   187→            CtpNotAvailableError: If LIVE mode and SDK not available
+   188→        """
+   189→        # Convert to CTP protocol values using F18 mapping
+   190→        ctp_direction = side_to_ctp_direction(intent.side)
+   191→        ctp_offset_flag = offset_to_ctp_offset_flag(intent.offset)
+   192→
+   193→        if self._ctp is None:
+   194→            if self._trade_mode == TradeMode.LIVE:
+   195→                # LIVE mode without SDK is a hard error
+   196→                raise CtpNotAvailableError(
+   197→                    "Cannot place order: CTP SDK not available in LIVE mode"
+   198→                )
+   199→            # PAPER mock mode - generate fake order ID
+   200→            self._order_ref += 1
+   201→            order_id = f"MOCK_{self._order_ref:06d}"
+   202→            logger.info(
+   203→                "Mock order placed: %s for %s (dir=%s, offset=%s)",
+   204→                order_id,
+   205→                intent,
+   206→                ctp_direction,
+   207→                ctp_offset_flag,
+   208→            )
+   209→            return OrderAck(order_id=order_id)
+   210→
+   211→        if not self._connected:
+   212→            raise OrderRejected("Not connected to CTP")
+   213→
+   214→        try:
+   215→            # Real CTP order submission would happen here
+   216→            # ctp_direction and ctp_offset_flag would be passed to CTP API
+   217→            self._order_ref += 1
+   218→            order_id = f"CTP_{self._order_ref:06d}"
+   219→            logger.info(
+   220→                "CTP order placed: %s for %s (dir=%s, offset=%s)",
+   221→                order_id,
+   222→                intent,
+   223→                ctp_direction,
+   224→                ctp_offset_flag,
+   225→            )
+   226→            return OrderAck(order_id=order_id)
+   227→        except Exception as e:
+   228→            raise OrderRejected(f"CTP order failed: {e}") from e
+   229→
+   230→    def __repr__(self) -> str:
+   231→        return f"CtpBroker(broker_id={self._config.broker_id}, connected={self._connected})"
+   232→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

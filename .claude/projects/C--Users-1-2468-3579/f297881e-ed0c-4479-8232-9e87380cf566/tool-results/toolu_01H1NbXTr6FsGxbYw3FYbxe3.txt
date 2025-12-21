@@ -1,0 +1,261 @@
+     1→"""
+     2→CostEstimator 测试.
+     3→
+     4→V2 Scenarios:
+     5→- COST.MODEL.FEE_ESTIMATE: 手续费估计
+     6→- COST.MODEL.SLIPPAGE_ESTIMATE: 滑点估计
+     7→- COST.MODEL.IMPACT_ESTIMATE: 市场冲击估计
+     8→- COST.GATE.EDGE_CHECK: edge gate 检查
+     9→"""
+    10→
+    11→from src.cost.estimator import CostBreakdown, CostEstimator
+    12→
+    13→
+    14→class TestCostEstimator:
+    15→    """CostEstimator 测试类."""
+    16→
+    17→    def test_cost_model_fee_estimate_basic(self) -> None:
+    18→        """COST.MODEL.FEE_ESTIMATE: 基本手续费估计."""
+    19→        estimator = CostEstimator()
+    20→
+    21→        # 名义金额 100000，默认费率 0.0001
+    22→        fee = estimator.fee_estimate("AO2501", notional=100000.0)
+    23→
+    24→        # 100000 * 0.0001 = 10
+    25→        assert fee == 10.0
+    26→
+    27→    def test_cost_model_fee_estimate_custom_rate(self) -> None:
+    28→        """COST.MODEL.FEE_ESTIMATE: 自定义费率."""
+    29→        estimator = CostEstimator(fee_rates={"AO": 0.0002})
+    30→
+    31→        fee = estimator.fee_estimate("AO2501", notional=100000.0)
+    32→
+    33→        # 100000 * 0.0002 = 20
+    34→        assert fee == 20.0
+    35→
+    36→    def test_cost_model_fee_estimate_close_today(self) -> None:
+    37→        """COST.MODEL.FEE_ESTIMATE: 平今加收."""
+    38→        estimator = CostEstimator()
+    39→
+    40→        fee_normal = estimator.fee_estimate("AO2501", notional=100000.0)
+    41→        fee_close_today = estimator.fee_estimate("AO2501", notional=100000.0, is_close_today=True)
+    42→
+    43→        # 平今加收 3 倍
+    44→        assert fee_close_today == fee_normal * CostEstimator.CLOSE_TODAY_MULTIPLIER
+    45→
+    46→    def test_cost_model_fee_estimate_set_rate(self) -> None:
+    47→        """COST.MODEL.FEE_ESTIMATE: 动态设置费率."""
+    48→        estimator = CostEstimator()
+    49→
+    50→        estimator.set_fee_rate("SA", 0.0003)
+    51→        fee = estimator.fee_estimate("SA2501", notional=100000.0)
+    52→
+    53→        # 100000 * 0.0003 = 30 (浮点精度)
+    54→        assert abs(fee - 30.0) < 1e-9
+    55→
+    56→    def test_cost_model_fee_estimate_get_rate(self) -> None:
+    57→        """COST.MODEL.FEE_ESTIMATE: 获取费率."""
+    58→        estimator = CostEstimator(fee_rates={"AO": 0.0002})
+    59→
+    60→        assert estimator.get_fee_rate("AO") == 0.0002
+    61→        assert estimator.get_fee_rate("UNKNOWN") == CostEstimator.DEFAULT_FEE_RATE
+    62→
+    63→    def test_cost_model_slippage_estimate_basic(self) -> None:
+    64→        """COST.MODEL.SLIPPAGE_ESTIMATE: 基本滑点估计."""
+    65→        estimator = CostEstimator()
+    66→
+    67→        # qty=10, depth=100
+    68→        slippage = estimator.slippage_estimate("AO2501", qty=10, depth=100)
+    69→
+    70→        # 滑点 = 0.5 * (1 + 10/100) * 1.0 * 10 * 10 = 0.5 * 1.1 * 100 = 55
+    71→        expected = CostEstimator.SLIPPAGE_BASE_TICKS * (1.0 + 10 / 100) * 1.0 * 10 * 10
+    72→        assert slippage == expected
+    73→
+    74→    def test_cost_model_slippage_estimate_zero_depth(self) -> None:
+    75→        """COST.MODEL.SLIPPAGE_ESTIMATE: 深度为零时使用保守估计."""
+    76→        estimator = CostEstimator()
+    77→
+    78→        # depth=0 时默认为 1
+    79→        slippage = estimator.slippage_estimate("AO2501", qty=10, depth=0)
+    80→
+    81→        # 滑点 = 0.5 * (1 + 10/1) * 1.0 * 10 * 10 = 0.5 * 11 * 100 = 550
+    82→        expected = CostEstimator.SLIPPAGE_BASE_TICKS * (1.0 + 10 / 1) * 1.0 * 10 * 10
+    83→        assert slippage == expected
+    84→
+    85→    def test_cost_model_slippage_estimate_large_qty(self) -> None:
+    86→        """COST.MODEL.SLIPPAGE_ESTIMATE: 大单量滑点更大."""
+    87→        estimator = CostEstimator()
+    88→
+    89→        small_qty = estimator.slippage_estimate("AO2501", qty=10, depth=100)
+    90→        large_qty = estimator.slippage_estimate("AO2501", qty=50, depth=100)
+    91→
+    92→        assert large_qty > small_qty
+    93→
+    94→    def test_cost_model_impact_estimate_basic(self) -> None:
+    95→        """COST.MODEL.IMPACT_ESTIMATE: 基本市场冲击估计."""
+    96→        estimator = CostEstimator()
+    97→
+    98→        # qty=100, adv=10000
+    99→        impact = estimator.impact_estimate("AO2501", qty=100, adv=10000.0)
+   100→
+   101→        # participation = 100/10000 = 0.01
+   102→        # impact_ticks = 0.1 * sqrt(0.01) * 100 = 0.1 * 0.1 * 100 = 1
+   103→        # impact = 1 * 1.0 * 10 * 100 = 1000
+   104→        assert impact > 0
+   105→
+   106→    def test_cost_model_impact_estimate_zero_adv(self) -> None:
+   107→        """COST.MODEL.IMPACT_ESTIMATE: ADV为零时使用保守估计."""
+   108→        estimator = CostEstimator()
+   109→
+   110→        # adv=0 时默认为 1000
+   111→        impact = estimator.impact_estimate("AO2501", qty=100, adv=0)
+   112→
+   113→        assert impact > 0
+   114→
+   115→    def test_cost_model_impact_estimate_small_qty(self) -> None:
+   116→        """COST.MODEL.IMPACT_ESTIMATE: 小单量冲击小."""
+   117→        estimator = CostEstimator()
+   118→
+   119→        small_impact = estimator.impact_estimate("AO2501", qty=10, adv=10000.0)
+   120→        large_impact = estimator.impact_estimate("AO2501", qty=100, adv=10000.0)
+   121→
+   122→        assert small_impact < large_impact
+   123→
+   124→    def test_cost_gate_edge_check_pass(self) -> None:
+   125→        """COST.GATE.EDGE_CHECK: edge 大于成本时通过."""
+   126→        estimator = CostEstimator()
+   127→
+   128→        # signal_edge > total_cost
+   129→        passed = estimator.edge_gate(signal_edge=100.0, total_cost=50.0)
+   130→
+   131→        assert passed is True
+   132→
+   133→    def test_cost_gate_edge_check_fail(self) -> None:
+   134→        """COST.GATE.EDGE_CHECK: edge 小于成本时不通过."""
+   135→        estimator = CostEstimator()
+   136→
+   137→        # signal_edge < total_cost
+   138→        passed = estimator.edge_gate(signal_edge=30.0, total_cost=50.0)
+   139→
+   140→        assert passed is False
+   141→
+   142→    def test_cost_gate_edge_check_equal(self) -> None:
+   143→        """COST.GATE.EDGE_CHECK: edge 等于成本时不通过."""
+   144→        estimator = CostEstimator()
+   145→
+   146→        # signal_edge == total_cost
+   147→        passed = estimator.edge_gate(signal_edge=50.0, total_cost=50.0)
+   148→
+   149→        assert passed is False
+   150→
+   151→    def test_cost_gate_edge_check_with_breakdown(self) -> None:
+   152→        """COST.GATE.EDGE_CHECK: 带分解的 edge gate 检查."""
+   153→        estimator = CostEstimator()
+   154→
+   155→        cost = CostBreakdown(fee=10.0, slippage=20.0, impact=20.0, total=50.0)
+   156→
+   157→        passed, net_edge = estimator.edge_gate_with_breakdown(signal_edge=100.0, cost=cost)
+   158→
+   159→        assert passed is True
+   160→        assert net_edge == 50.0
+   161→
+   162→    def test_cost_gate_edge_check_with_breakdown_fail(self) -> None:
+   163→        """COST.GATE.EDGE_CHECK: 带分解的 edge gate 检查失败."""
+   164→        estimator = CostEstimator()
+   165→
+   166→        cost = CostBreakdown(fee=10.0, slippage=20.0, impact=20.0, total=50.0)
+   167→
+   168→        passed, net_edge = estimator.edge_gate_with_breakdown(signal_edge=30.0, cost=cost)
+   169→
+   170→        assert passed is False
+   171→        assert net_edge == -20.0
+   172→
+   173→    def test_total_cost_breakdown(self) -> None:
+   174→        """测试总成本分解."""
+   175→        estimator = CostEstimator()
+   176→
+   177→        cost = estimator.total_cost(
+   178→            symbol="AO2501",
+   179→            qty=10,
+   180→            notional=100000.0,
+   181→            depth=100,
+   182→            adv=10000.0,
+   183→        )
+   184→
+   185→        assert isinstance(cost, CostBreakdown)
+   186→        assert cost.fee > 0
+   187→        assert cost.slippage > 0
+   188→        assert cost.impact > 0
+   189→        assert cost.total == cost.fee + cost.slippage + cost.impact
+   190→
+   191→    def test_total_cost_close_today(self) -> None:
+   192→        """测试平今总成本."""
+   193→        estimator = CostEstimator()
+   194→
+   195→        cost_normal = estimator.total_cost(
+   196→            symbol="AO2501",
+   197→            qty=10,
+   198→            notional=100000.0,
+   199→            depth=100,
+   200→            adv=10000.0,
+   201→            is_close_today=False,
+   202→        )
+   203→
+   204→        cost_close_today = estimator.total_cost(
+   205→            symbol="AO2501",
+   206→            qty=10,
+   207→            notional=100000.0,
+   208→            depth=100,
+   209→            adv=10000.0,
+   210→            is_close_today=True,
+   211→        )
+   212→
+   213→        # 平今手续费更高
+   214→        assert cost_close_today.fee > cost_normal.fee
+   215→        # 滑点和冲击相同
+   216→        assert cost_close_today.slippage == cost_normal.slippage
+   217→        assert cost_close_today.impact == cost_normal.impact
+   218→
+   219→    def test_cost_breakdown_per_unit(self) -> None:
+   220→        """测试成本分解的 per_unit 属性."""
+   221→        cost = CostBreakdown(fee=10.0, slippage=20.0, impact=30.0, total=60.0)
+   222→
+   223→        assert cost.per_unit == 60.0
+   224→
+   225→    def test_extract_product_from_symbol(self) -> None:
+   226→        """测试从合约代码提取品种."""
+   227→        estimator = CostEstimator()
+   228→
+   229→        # 通过设置费率间接验证品种提取
+   230→        estimator.set_fee_rate("AO", 0.0002)
+   231→        fee = estimator.fee_estimate("AO2501", notional=100000.0)
+   232→
+   233→        # 如果品种提取正确，应该使用 AO 的费率
+   234→        assert fee == 100000.0 * 0.0002
+   235→
+   236→    def test_extract_product_mixed_symbols(self) -> None:
+   237→        """测试不同格式的合约代码."""
+   238→        estimator = CostEstimator(fee_rates={"SA": 0.0003, "rb": 0.0002})
+   239→
+   240→        fee_sa = estimator.fee_estimate("SA2501", notional=100000.0)
+   241→        fee_rb = estimator.fee_estimate("rb2505", notional=100000.0)
+   242→
+   243→        assert fee_sa == 100000.0 * 0.0003
+   244→        assert fee_rb == 100000.0 * 0.0002
+   245→
+   246→    def test_default_tick_size_and_multiplier(self) -> None:
+   247→        """测试默认 tick_size 和 multiplier."""
+   248→        estimator = CostEstimator()
+   249→
+   250→        # 没有 instrument_cache 时使用默认值
+   251→        # 默认 tick_size=1.0, multiplier=10
+   252→        slippage = estimator.slippage_estimate("AO2501", qty=10, depth=100)
+   253→
+   254→        # 滑点 = 0.5 * (1 + 0.1) * 1.0 * 10 * 10 = 55
+   255→        expected = 0.5 * 1.1 * 1.0 * 10 * 10
+   256→        assert slippage == expected
+   257→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

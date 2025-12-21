@@ -1,0 +1,7 @@
+C:\Users\1\2468\3579\scripts\sim_gate.py
+C:\Users\1\2468\3579\scripts\replay_tick.py
+C:\Users\1\2468\3579\scripts\V4PRO-coverage_gate.py
+C:\Users\1\2468\3579\scripts\claude_auto_loop.py
+C:\Users\1\2468\3579\scripts\validate_policy.py
+C:\Users\1\2468\3579\scripts\export_context.py
+C:\Users\1\2468\3579\scripts\validate_scenarios.py

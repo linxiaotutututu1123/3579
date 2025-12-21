@@ -1,0 +1,204 @@
+[project]
+name = "cn-futures-auto-trader"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+# =============================================================================
+# Ruff - 军规级静态分析配置
+# =============================================================================
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# 军规级规则集：严格覆盖主要错误类型
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear (严格)
+    "UP",     # pyupgrade
+    "SIM",    # flake8-simplify
+    "C4",     # flake8-comprehensions (推荐列表推导式)
+    "DTZ",    # flake8-datetimez (时区安全)
+    "T10",    # flake8-debugger (禁止 debugger)
+    "ICN",    # flake8-import-conventions
+    "PIE",    # flake8-pie (杂项改进)
+    "PT",     # flake8-pytest-style (测试规范)
+    "RSE",    # flake8-raise (异常规范)
+    "RET",    # flake8-return (返回值规范)
+    "SLF",    # flake8-self (私有成员访问)
+    "ARG",    # flake8-unused-arguments (未使用参数)
+    "PGH",    # pygrep-hooks
+    "PL",     # pylint 选择性规则
+    "TRY",    # tryceratops (异常处理规范)
+    "FLY",    # flynt (f-string 推荐)
+    "PERF",   # perflint (性能)
+    "RUF",    # ruff 专有规则
+]
+
+ignore = [
+    # 允许的例外（必须有理由）
+    "PLR0913",  # 允许函数参数超过 5 个（某些 API 需要）
+    "PLR0911",  # 允许多个 return 语句（复杂逻辑需要）
+    "PLR0912",  # 允许多个分支（复杂逻辑需要）
+    "PLR2004",  # 允许魔法数字（配置常量）
+    "TRY003",   # 允许长异常消息
+    "TRY004",   # 允许 RuntimeError 代替 TypeError
+    "TRY300",   # 允许 try 内 return
+    "TRY301",   # 允许 try 块内 raise（认证逻辑需要）
+    "ARG001",   # 允许未使用参数（接口预留）
+    "ARG002",   # 允许未使用的方法参数（接口兼容）
+    "B008",     # 允许函数默认参数使用函数调用（FastAPI 依赖）
+    "RUF002",   # 允许中文全角字符在 docstring 中
+    "RUF003",   # 允许中文全角字符在注释中
+    "RUF034",   # 允许冗余条件（可读性）
+    "RUF046",   # 允许 int(round(...))（明确意图）
+    "RET504",   # 允许 return 前赋值（调试友好）
+    "PLW0603",  # 允许 global 语句（状态管理需要）
+    "PLW1510",  # 允许 subprocess.run 不带 check
+    "PLC0415",  # 允许函数内 import（延迟加载）
+    "SIM102",   # 允许嵌套 if（可读性）
+    "PERF401",  # 允许循环 append（可读性）
+]
+
+# 各模块单独配置
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "S101",     # 测试允许 assert
+    "SLF001",   # 测试允许访问私有成员
+    "PT011",    # 测试允许宽泛的 pytest.raises
+    "PT018",    # 测试允许复合断言
+    "RUF043",   # 测试允许非原始正则
+    "RUF059",   # 测试允许未使用的解包变量
+    "PLR0124",  # 测试允许 NaN 检查 (qty == qty)
+    "DTZ001",   # 测试允许无时区的datetime（中国期货市场使用本地时间）
+    "DTZ005",   # 测试允许datetime.now()不带tz参数
+    "DTZ011",   # 测试允许date.today()（中国期货市场使用本地日期）
+]
+"scripts/*" = [
+    "T201",     # 脚本允许 print
+]
+
+[tool.ruff.lint.pylint]
+max-statements = 80  # 默认50，军规级验证函数需要更多语句
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+force-single-line = false
+lines-after-imports = 2
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
+
+# =============================================================================
+# MyPy - 军规级类型检查配置
+# =============================================================================
+[tool.mypy]
+python_version = "3.11"
+pretty = true
+
+# 严格模式基础配置
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+strict_equality = true
+
+# 军规级增强配置
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unreachable = true
+disallow_any_generics = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_reexport = true
+strict_concatenate = true
+
+# 排除目录
+exclude = [
+    "^dist/",
+    "^build/",
+    "^\\.venv/",
+    "^artifacts/",
+    "^tests/",
+]
+
+# 核心模块使用最严格模式
+[[tool.mypy.overrides]]
+module = [
+    "src.trading.*",
+    "src.execution.*",
+    "src.risk.*",
+    "src.market.*",
+]
+strict = true
+disallow_any_unimported = true
+
+# 测试模块略微宽松
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_decorators = false
+warn_unreachable = false
+ignore_errors = true
+
+# 外部依赖类型桩（CTP SDK 可选依赖）
+[[tool.mypy.overrides]]
+module = [
+    "ctp",
+    "ctp.*",
+    "thostmduserapi.*",
+    "thosttraderapi.*",
+]
+ignore_missing_imports = true
+
+# =============================================================================
+# Pytest 配置
+# =============================================================================
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "-q",
+    "--strict-markers",
+    "--strict-config",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "replay: marks tests as replay/sim tests",
+]
+
+# =============================================================================
+# Coverage 配置
+# =============================================================================
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    # 入口脚本（CLI glue，非核心逻辑）
+    "src/app/live_entry.py",
+    "src/app/paper_entry.py",
+]
+# 军规级：核心域必须 100% 覆盖
+# - src/trading/**（包括 ci_gate.py, sim_gate.py）
+# - src/execution/**
+# - src/risk/**
+# - src/market/**
+# 不允许排除核心模块！测试必须补齐
+
+[tool.coverage.report]
+# 核心域覆盖率阈值
+fail_under = 85
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "@abstractmethod",
+]

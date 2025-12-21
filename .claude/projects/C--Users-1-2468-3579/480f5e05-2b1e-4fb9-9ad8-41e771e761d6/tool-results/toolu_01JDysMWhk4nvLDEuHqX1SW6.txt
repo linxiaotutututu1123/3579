@@ -1,0 +1,162 @@
+     1→from __future__ import annotations
+     2→
+     3→import time
+     4→import uuid
+     5→from collections.abc import Callable, Mapping, Sequence
+     6→from dataclasses import dataclass
+     7→from typing import TYPE_CHECKING
+     8→
+     9→from src.config import AppSettings, load_settings
+    10→from src.execution.broker import Broker
+    11→from src.execution.broker_factory import broker_factory as default_broker_factory
+    12→from src.execution.flatten_executor import FlattenExecutor
+    13→from src.execution.flatten_plan import BookTop, PositionToClose
+    14→from src.orchestrator import handle_risk_update
+    15→from src.risk.manager import RiskManager
+    16→from src.risk.state import AccountSnapshot, RiskConfig
+    17→from src.trading.controls import TradeControls, TradeMode
+    18→from src.trading.orchestrator import handle_trading_tick
+    19→
+    20→
+    21→if TYPE_CHECKING:
+    22→    from src.strategy.base import Strategy
+    23→    from src.strategy.types import Bar1m
+    24→
+    25→
+    26→@dataclass(frozen=True)
+    27→class Components:
+    28→    settings: AppSettings
+    29→    risk: RiskManager
+    30→    flatten: FlattenExecutor
+    31→
+    32→
+    33→@dataclass(frozen=True)
+    34→class LiveTickData:
+    35→    snap: AccountSnapshot
+    36→    positions: Sequence[PositionToClose]
+    37→    books: Mapping[str, BookTop]
+    38→    bars_1m: Mapping[str, Sequence[Bar1m]]
+    39→    now_ts: float
+    40→
+    41→
+    42→def init_components(broker: Broker, risk_cfg: RiskConfig | None = None) -> Components:
+    43→    """
+    44→    App composition root.
+    45→    - Loads settings/env
+    46→    - Wires RiskManager + Executor
+    47→    - Returns components (no side effects like network calls)
+    48→    """
+    49→    settings = load_settings()
+    50→
+    51→    cfg = risk_cfg or RiskConfig()
+    52→
+    53→    # callbacks are stubs; later wire to Broker/OMS cancel/flatten
+    54→    def cancel_all() -> None:
+    55→        # placeholder: integrate with OMS later
+    56→        return
+    57→
+    58→    def force_flatten_all() -> None:
+    59→        # placeholder: integrate with flatten runner later
+    60→        return
+    61→
+    62→    risk = RiskManager(
+    63→        cfg, cancel_all_cb=cancel_all, force_flatten_all_cb=force_flatten_all
+    64→    )
+    65→    flatten = FlattenExecutor(broker)
+    66→
+    67→    return Components(settings=settings, risk=risk, flatten=flatten)
+    68→
+    69→
+    70→def run_f21(
+    71→    *,
+    72→    broker_factory: Callable[[AppSettings], Broker] | None = None,
+    73→    strategy_factory: Callable[[AppSettings], Strategy],
+    74→    fetch_tick: Callable[[], LiveTickData],
+    75→    now_cb: Callable[[], float] = time.time,
+    76→    risk_cfg: RiskConfig | None = None,
+    77→    run_forever: bool = True,
+    78→) -> None:
+    79→    """
+    80→    Skeleton for live runner (F21).
+    81→
+    82→    Intended flow (per taskbook F21):
+    83→    1) load settings/env (including TRADE_MODE, strategy selection)
+    84→    2) build broker/executor/strategy/risk (PAPER->Noop, LIVE->Ctp via broker_factory)
+    85→    3) per tick fetch AccountSnapshot/positions/books/bars_1m via fetch_tick()
+    86→    4) call handle_risk_update(...) then handle_trading_tick(...) in order
+    87→    5) log events (stdout or artifacts/log)
+    88→
+    89→    This skeleton wires dependency acquisition and guards; the main loop
+    90→    and orchestration are left for F21 implementation. handle_risk_update
+    91→    行为必须保持不变（仅在 orchestrator 内部调用）。
+    92→    """
+    93→
+    94→    settings = load_settings()
+    95→
+    96→    # Use default broker_factory from F20 if not provided
+    97→    _broker_factory = broker_factory or default_broker_factory
+    98→    live_broker = _broker_factory(settings)
+    99→    components = init_components(broker=live_broker, risk_cfg=risk_cfg)
+   100→    strategy = strategy_factory(settings)
+   101→
+   102→    def _run_once() -> None:
+   103→        tick = fetch_tick()
+   104→
+   105→        # Day-start baseline: first tick (or when e0 missing) sets baseline.
+   106→        if components.risk.state.e0 is None:
+   107→            cid = uuid.uuid4().hex
+   108→            components.risk.on_day_start_0900(tick.snap, correlation_id=cid)
+   109→
+   110→        risk_result = handle_risk_update(
+   111→            risk=components.risk,
+   112→            executor=components.flatten,
+   113→            snap=tick.snap,
+   114→            positions=tick.positions,
+   115→            books=tick.books,
+   116→            now_cb=lambda: tick.now_ts,
+   117→        )
+   118→
+   119→        # Prepare trading inputs
+   120→        prices: dict[str, float] = {
+   121→            sym: (book.best_bid + book.best_ask) / 2.0
+   122→            for sym, book in tick.books.items()
+   123→        }
+   124→        current_net_qty: dict[str, int] = {
+   125→            pos.symbol: pos.net_qty for pos in tick.positions
+   126→        }
+   127→
+   128→        requested_mode = (
+   129→            settings.trade_mode.upper()
+   130→            if isinstance(settings.trade_mode, str)
+   131→            else str(settings.trade_mode)
+   132→        )
+   133→        effective_mode = (
+   134→            TradeMode.LIVE
+   135→            if requested_mode == TradeMode.LIVE.value
+   136→            else TradeMode.PAPER
+   137→        )
+   138→        controls = TradeControls(mode=effective_mode)
+   139→
+   140→        handle_trading_tick(
+   141→            strategy=strategy,
+   142→            risk=components.risk,
+   143→            executor=components.flatten,
+   144→            controls=controls,
+   145→            snap=tick.snap,
+   146→            prices=prices,
+   147→            bars_1m=tick.bars_1m,
+   148→            current_net_qty=current_net_qty,
+   149→            correlation_id=risk_result.correlation_id,
+   150→            now_cb=lambda: tick.now_ts,
+   151→        )
+   152→
+   153→    if run_forever:
+   154→        while True:
+   155→            _run_once()
+   156→    else:
+   157→        _run_once()
+   158→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

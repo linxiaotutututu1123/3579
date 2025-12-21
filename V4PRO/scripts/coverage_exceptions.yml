@@ -1,0 +1,130 @@
+# 覆盖率例外配置 (Coverage Exceptions)
+# =============================================================================
+# 本文件定义了不纳入 100% 覆盖率要求的代码路径
+# 每条豁免必须有明确的原因（reason）
+#
+# 覆盖率策略：
+#   - 核心域 (src/trading, src/execution, src/risk, src/market): 必须 100%
+#   - 非核心 (scripts, docs, CLI glue): 可豁免，但必须记录原因
+#
+# 格式：
+#   - path: 相对路径或 glob 模式
+#   - reason: 豁免原因（必填）
+#   - category: 分类 (cli_glue | platform_only | external_dep | cannot_test)
+# =============================================================================
+
+schema_version: 1
+
+# 全局覆盖率阈值（核心域）
+thresholds:
+  # 核心域必须 100%
+  core:
+    paths:
+      - "src/trading/**"
+      - "src/execution/**"
+      - "src/risk/**"
+      - "src/market/**"
+      - "src/portfolio/**"
+    min_coverage: 100
+    enforce: true
+  
+  # 辅助模块允许 85%
+  auxiliary:
+    paths:
+      - "src/strategy/**"
+      - "src/replay/**"
+      - "src/alerts/**"
+    min_coverage: 85
+    enforce: true
+  
+  # 非核心允许豁免
+  non_core:
+    paths:
+      - "scripts/**"
+      - "src/app/**"
+    min_coverage: 50
+    enforce: false
+
+# 具体豁免条目
+exceptions:
+  # ==========================================================================
+  # CLI / 入口脚本 (平台差异、交互式代码)
+  # ==========================================================================
+  - path: "scripts/*.py"
+    reason: "CLI 脚本，包含平台相关的交互逻辑"
+    category: cli_glue
+    
+  - path: "src/main.py"
+    reason: "__main__ 入口点，argparse 交互不适合单元测试"
+    category: cli_glue
+    lines:
+      - "if __name__ == '__main__'"
+      
+  - path: "src/trading/replay.py"
+    reason: "replay 入口模块，包含 argparse 和 sys.exit"
+    category: cli_glue
+    lines:
+      - "if __name__ == '__main__'"
+      
+  - path: "src/trading/sim.py"
+    reason: "sim 入口模块，包含 argparse 和 sys.exit"
+    category: cli_glue
+    lines:
+      - "if __name__ == '__main__'"
+
+  # ==========================================================================
+  # 平台相关代码 (Windows/Linux 差异)
+  # ==========================================================================
+  - path: "src/config.py"
+    reason: "平台相关的路径处理和环境变量"
+    category: platform_only
+    lines:
+      - "if sys.platform == 'win32'"
+      - "if os.name == 'nt'"
+      
+  # ==========================================================================
+  # 外部依赖相关 (CTP Broker, 网络调用)
+  # ==========================================================================
+  - path: "src/trading/ctp_broker.py"
+    reason: "CTP SDK 回调需要真实交易所连接"
+    category: external_dep
+    lines:
+      - "OnRtn*"
+      - "OnRsp*"
+      - "OnFront*"
+      
+  - path: "src/alerts/dingtalk.py"
+    reason: "钉钉 Webhook 需要网络连接"
+    category: external_dep
+    lines:
+      - "requests.post"
+      - "def send_*"
+
+  # ==========================================================================
+  # 不可确定性测试 (时间相关、随机、并发)
+  # ==========================================================================
+  - path: "src/execution/throttle.py"
+    reason: "涉及真实时间的节流逻辑"
+    category: cannot_test
+    lines:
+      - "time.sleep"
+      - "asyncio.sleep"
+
+# =============================================================================
+# CI 输出格式（用于审计）
+# =============================================================================
+# 运行 coverage 时会输出此格式：
+#
+# Coverage Exceptions Applied:
+# +--------------------------+----------------+----------------------------------+
+# | Path                     | Category       | Reason                           |
+# +--------------------------+----------------+----------------------------------+
+# | scripts/*.py             | cli_glue       | CLI 脚本，包含平台相关交互逻辑   |
+# | src/main.py              | cli_glue       | __main__ 入口点                  |
+# | ...                      | ...            | ...                              |
+# +--------------------------+----------------+----------------------------------+
+#
+# Core Domain Coverage: 100% ✓
+# Auxiliary Coverage: 92% ✓
+# Overall Coverage: 87%
+# =============================================================================

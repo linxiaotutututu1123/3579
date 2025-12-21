@@ -1,0 +1,248 @@
+"""事件系统单元测试"""
+
+import pytest
+from datetime import datetime
+
+from src.market_gateway.events import (
+    EventType,
+    AlertLevel,
+    BaseEvent,
+    ConnectionEvent,
+    SubscriptionEvent,
+    TickDataEvent,
+    KLineDataEvent,
+    AlertEvent,
+    ErrorEvent,
+    HeartbeatEvent
+)
+
+
+class TestEventType:
+    """EventType枚举测试"""
+
+    def test_connection_events(self):
+        """测试连接事件类型"""
+        assert EventType.CONNECTED.value == "connected"
+        assert EventType.DISCONNECTED.value == "disconnected"
+        assert EventType.RECONNECTING.value == "reconnecting"
+
+    def test_subscription_events(self):
+        """测试订阅事件类型"""
+        assert EventType.SUBSCRIBED.value == "subscribed"
+        assert EventType.UNSUBSCRIBED.value == "unsubscribed"
+
+    def test_data_events(self):
+        """测试数据事件类型"""
+        assert EventType.TICK_DATA.value == "tick_data"
+        assert EventType.KLINE_DATA.value == "kline_data"
+
+
+class TestAlertLevel:
+    """AlertLevel枚举测试"""
+
+    def test_alert_levels(self):
+        """测试告警级别"""
+        assert AlertLevel.DEBUG.value == "debug"
+        assert AlertLevel.INFO.value == "info"
+        assert AlertLevel.WARNING.value == "warning"
+        assert AlertLevel.ERROR.value == "error"
+        assert AlertLevel.CRITICAL.value == "critical"
+
+
+class TestBaseEvent:
+    """BaseEvent测试"""
+
+    def test_create_base_event(self):
+        """测试创建基础事件"""
+        event = BaseEvent(
+            event_type=EventType.CONNECTED,
+            source="test_gateway"
+        )
+
+        assert event.event_type == EventType.CONNECTED
+        assert event.source == "test_gateway"
+        assert isinstance(event.timestamp, datetime)
+
+    def test_to_dict(self):
+        """测试转换为字典"""
+        event = BaseEvent(
+            event_type=EventType.CONNECTED,
+            source="test"
+        )
+
+        data = event.to_dict()
+
+        assert isinstance(data, dict)
+        assert data["event_type"] == "connected"
+        assert data["source"] == "test"
+
+    def test_to_json(self):
+        """测试转换为JSON"""
+        event = BaseEvent(
+            event_type=EventType.CONNECTED,
+            source="test"
+        )
+
+        json_str = event.to_json()
+
+        assert isinstance(json_str, str)
+        assert "connected" in json_str
+
+    def test_repr(self):
+        """测试字符串表示"""
+        event = BaseEvent(
+            event_type=EventType.CONNECTED,
+            source="test"
+        )
+
+        repr_str = repr(event)
+
+        assert "BaseEvent" in repr_str
+        assert "connected" in repr_str
+
+
+class TestConnectionEvent:
+    """ConnectionEvent测试"""
+
+    def test_create_connection_event(self):
+        """测试创建连接事件"""
+        event = ConnectionEvent(
+            event_type=EventType.CONNECTED,
+            source="gateway",
+            reason="Initial connection",
+            remote_addr="tcp://127.0.0.1:10131"
+        )
+
+        assert event.reason == "Initial connection"
+        assert event.remote_addr == "tcp://127.0.0.1:10131"
+        assert event.retry_count == 0
+
+
+class TestSubscriptionEvent:
+    """SubscriptionEvent测试"""
+
+    def test_create_subscription_event(self):
+        """测试创建订阅事件"""
+        event = SubscriptionEvent(
+            event_type=EventType.SUBSCRIBED,
+            source="gateway",
+            symbols=["rb2401", "cu2401"],
+            success_symbols=["rb2401", "cu2401"]
+        )
+
+        assert len(event.symbols) == 2
+        assert event.is_success is True
+
+    def test_partial_success(self):
+        """测试部分成功"""
+        event = SubscriptionEvent(
+            event_type=EventType.SUBSCRIBED,
+            source="gateway",
+            symbols=["rb2401", "cu2401"],
+            success_symbols=["rb2401"],
+            failed_symbols=["cu2401"]
+        )
+
+        assert event.partial_success is True
+        assert event.is_success is False
+
+
+class TestTickDataEvent:
+    """TickDataEvent测试"""
+
+    def test_create_tick_event(self):
+        """测试创建Tick数据事件"""
+        event = TickDataEvent(
+            event_type=EventType.TICK_DATA,
+            source="gateway",
+            symbol="rb2401",
+            tick_data={"last_price": 3000}
+        )
+
+        assert event.symbol == "rb2401"
+        assert event.tick_data["last_price"] == 3000
+
+
+class TestKLineDataEvent:
+    """KLineDataEvent测试"""
+
+    def test_create_kline_event(self):
+        """测试创建K线数据事件"""
+        event = KLineDataEvent(
+            event_type=EventType.KLINE_DATA,
+            source="gateway",
+            symbol="rb2401",
+            period=1,
+            kline_data={"open": 3000, "close": 3005},
+            is_closed=True
+        )
+
+        assert event.symbol == "rb2401"
+        assert event.period == 1
+        assert event.is_closed is True
+
+
+class TestAlertEvent:
+    """AlertEvent测试"""
+
+    def test_create_alert_event(self):
+        """测试创建告警事件"""
+        event = AlertEvent(
+            event_type=EventType.ALERT,
+            source="gateway",
+            level=AlertLevel.WARNING,
+            message="Connection unstable"
+        )
+
+        assert event.level == AlertLevel.WARNING
+        assert event.message == "Connection unstable"
+        assert event.is_critical is False
+
+    def test_critical_alert(self):
+        """测试严重告警"""
+        event = AlertEvent(
+            event_type=EventType.ALERT,
+            source="gateway",
+            level=AlertLevel.CRITICAL,
+            message="System failure"
+        )
+
+        assert event.is_critical is True
+
+
+class TestErrorEvent:
+    """ErrorEvent测试"""
+
+    def test_create_error_event(self):
+        """测试创建错误事件"""
+        event = ErrorEvent(
+            event_type=EventType.ERROR,
+            source="gateway",
+            error_code=1001,
+            error_message="Connection failed",
+            error_type="ConnectionError"
+        )
+
+        assert event.error_code == 1001
+        assert event.error_message == "Connection failed"
+        assert event.error_type == "ConnectionError"
+
+
+class TestHeartbeatEvent:
+    """HeartbeatEvent测试"""
+
+    def test_create_heartbeat_event(self):
+        """测试创建心跳事件"""
+        event = HeartbeatEvent(
+            event_type=EventType.HEARTBEAT,
+            source="gateway",
+            sequence=100,
+            latency_ms=5.2
+        )
+
+        assert event.sequence == 100
+        assert event.latency_ms == 5.2
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

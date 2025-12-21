@@ -1,0 +1,84 @@
+   510→        self._notify_risk(result)
+   511→        return result
+   512→
+   513→    def calculate_var(
+   514→        self,
+   515→        returns: list[float],
+   516→        method: VaRMethod = VaRMethod.HISTORICAL,
+   517→        confidence: float | None = None,
+   518→        **kwargs: Any,
+   519→    ) -> DynamicVaRResult:
+   520→        """统一VaR计算接口.
+   521→
+   522→        参数:
+   523→            returns: 收益率序列
+   524→            method: 计算方法
+   525→            confidence: 置信水平
+   526→            **kwargs: 方法特定参数
+   527→
+   528→        返回:
+   529→            动态VaR结果
+   530→        """
+   531→        confidence = confidence or self._default_confidence
+   532→
+   533→        if method == VaRMethod.HISTORICAL:
+   534→            self._calculation_count += 1
+   535→            result = self._base_calculator.historical_var(returns, confidence)
+   536→            return self._wrap_result(result, method)
+   537→        if method == VaRMethod.PARAMETRIC:
+   538→            self._calculation_count += 1
+   539→            result = self._base_calculator.parametric_var(returns, confidence)
+   540→            return self._wrap_result(result, method)
+   541→        if method == VaRMethod.MONTE_CARLO:
+   542→            self._calculation_count += 1
+   543→            result = self._base_calculator.monte_carlo_var(
+   544→                returns, confidence, kwargs.get("simulations", 10000)
+   545→            )
+   546→            return self._wrap_result(result, method)
+   547→        if method == VaRMethod.EVT_GPD:
+   548→            return self.evt_var(returns, confidence, kwargs.get("threshold_pct", 0.90))
+   549→        if method == VaRMethod.SEMIPARAMETRIC:
+   550→            return self.semiparametric_var(returns, confidence, kwargs.get("bandwidth"))
+   551→        if method == VaRMethod.LIMIT_ADJUSTED:
+   552→            return self.limit_adjusted_var(
+   553→                returns, kwargs.get("limit_pct", 0.10), confidence
+   554→            )
+   555→        if method == VaRMethod.LIQUIDITY_ADJUSTED:
+   556→            return self.liquidity_adjusted_var(
+   557→                returns,
+   558→                kwargs.get("position_value", 0),
+   559→                kwargs.get("liquidity", LiquidityMetrics()),
+   560→                confidence,
+   561→            )
+   562→        # 默认历史VaR
+   563→        self._calculation_count += 1
+   564→        result = self._base_calculator.historical_var(returns, confidence)
+   565→        return self._wrap_result(result, VaRMethod.HISTORICAL)
+   566→
+   567→    def _estimate_gpd_params(
+   568→        self, exceedances: list[float], threshold: float
+   569→    ) -> GPDParameters:
+   570→        """估计GPD参数 (矩估计法).
+   571→
+   572→        参数:
+   573→            exceedances: 超阈值样本
+   574→            threshold: 阈值
+   575→
+   576→        返回:
+   577→            GPD参数
+   578→        """
+   579→        n = len(exceedances)
+   580→        if n < 2:
+   581→            return GPDParameters(xi=0, beta=1, threshold=threshold, exceedances=n)
+   582→
+   583→        # 矩估计
+   584→        mean_exc = sum(exceedances) / n
+   585→        var_exc = (
+   586→            sum((e - mean_exc) ** 2 for e in exceedances) / (n - 1) if n > 1 else 0
+   587→        )
+   588→
+   589→        if mean_exc <= 0:
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

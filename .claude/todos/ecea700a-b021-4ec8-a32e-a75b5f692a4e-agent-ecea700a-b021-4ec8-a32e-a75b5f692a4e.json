@@ -1,0 +1,37 @@
+[
+  {
+    "content": "探索项目结构和 docs 文件夹",
+    "status": "completed",
+    "activeForm": "探索项目结构和 docs 文件夹"
+  },
+  {
+    "content": "设计全系统架构 (基于 docs)",
+    "status": "completed",
+    "activeForm": "设计全系统架构"
+  },
+  {
+    "content": "执行安全分析 src/ 目录",
+    "status": "in_progress",
+    "activeForm": "执行安全分析"
+  },
+  {
+    "content": "制定测试方案",
+    "status": "pending",
+    "activeForm": "制定测试方案"
+  },
+  {
+    "content": "整理仓库结构 (高内聚低耦合)",
+    "status": "pending",
+    "activeForm": "整理仓库结构"
+  },
+  {
+    "content": "更新 docs 文件夹文档",
+    "status": "pending",
+    "activeForm": "更新文档"
+  },
+  {
+    "content": "重构新成员入门指南.md",
+    "status": "pending",
+    "activeForm": "重构入门指南"
+  }
+]

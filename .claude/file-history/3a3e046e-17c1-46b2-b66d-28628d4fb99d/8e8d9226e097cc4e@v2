@@ -1,0 +1,139 @@
+"""
+行情网关抽象基类和核心接口
+"""
+
+from abc import ABC, abstractmethod
+from typing import Dict, List, Any, Callable, Awaitable
+from enum import Enum
+from dataclasses import dataclass
+import asyncio
+
+class GatewayStatus(Enum):
+    """网关状态枚举"""
+    DISCONNECTED = "disconnected"
+    CONNECTING = "connecting"
+    CONNECTED = "connected"
+    RECONNECTING = "reconnecting"
+    ERROR = "error"
+
+@dataclass
+class ConnectionInfo:
+    """连接信息数据类"""
+    host: str
+    port: int
+    username: str
+    password: str
+    extra_params: Dict[str, Any]
+
+class MarketGateway(ABC):
+    """行情网关抽象基类，为将来扩展IB等其他接口预留"""
+    
+    def __init__(self, config: Dict[str, Any]):
+        """初始化网关
+
+        Args:
+            config: 网关配置字典
+        """
+        self.config = config
+        self.status = GatewayStatus.DISCONNECTED
+        self.subscribed_symbols: set = set()
+        self.event_handlers: Dict[str, List[Callable[[Any], Awaitable[None]]]] = {}
+        self._lock = asyncio.Lock()
+    
+    @abstractmethod
+    async def connect(self) -> bool:
+        """连接到交易所接口
+        
+        Returns:
+            bool: 连接是否成功
+            
+        Raises:
+            ConnectionError: 连接失败
+            TimeoutError: 连接超时
+            ConfigError: 配置错误
+        """
+        pass
+    
+    @abstractmethod
+    async def disconnect(self) -> None:
+        """断开与交易所接口的连接
+        
+        Raises:
+            ConnectionError: 断开连接失败
+        """
+        pass
+    
+    @abstractmethod
+    async def subscribe(self, symbols: List[str]) -> Dict[str, bool]:
+        """订阅合约行情
+        
+        Args:
+            symbols: 合约代码列表
+            
+        Returns:
+            Dict[str, bool]: 合约代码到订阅结果的映射
+            
+        Raises:
+            SubscriptionError: 订阅失败
+            ValueError: 参数错误
+        """
+        pass
+    
+    @abstractmethod
+    async def unsubscribe(self, symbols: List[str]) -> Dict[str, bool]:
+        """取消订阅合约行情
+        
+        Args:
+            symbols: 合约代码列表
+            
+        Returns:
+            Dict[str, bool]: 合约代码到取消订阅结果的映射
+            
+        Raises:
+            SubscriptionError: 取消订阅失败
+            ValueError: 参数错误
+        """
+        pass
+    
+    def get_status(self) -> GatewayStatus:
+        """获取网关当前状态
+        
+        Returns:
+            GatewayStatus: 当前网关状态
+        """
+        return self.status
+    
+    def get_subscribed_symbols(self) -> List[str]:
+        """获取已订阅的合约列表
+        
+        Returns:
+            List[str]: 已订阅的合约代码列表
+        """
+        return list(self.subscribed_symbols)
+    
+    def on_event(self, event_type: str, handler: Callable[[Any], Awaitable[None]]) -> None:
+        """注册事件处理器
+        
+        Args:
+            event_type: 事件类型
+            handler: 事件处理器函数
+        """
+        if event_type not in self.event_handlers:
+            self.event_handlers[event_type] = []
+        self.event_handlers[event_type].append(handler)
+    
+    async def emit_event(self, event_type: str, data: Any) -> None:
+        """触发事件，并行执行所有处理器
+
+        Args:
+            event_type: 事件类型
+            data: 事件数据
+        """
+        if event_type in self.event_handlers:
+            # 使用 gather 并行执行所有事件处理器，提高性能
+            await asyncio.gather(
+                *[handler(data) for handler in self.event_handlers[event_type]],
+                return_exceptions=True
+            )
+
+__all__ = ['MarketGateway', 'GatewayStatus', 'ConnectionInfo']

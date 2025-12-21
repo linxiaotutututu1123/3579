@@ -1,0 +1,67 @@
+[
+  {
+    "content": "检查Phase 0文件清单完整性 (8个文件)",
+    "status": "completed",
+    "activeForm": "检查Phase 0文件清单完整性"
+  },
+  {
+    "content": "运行Ruff Check检查 (INFRA.CI.LINT_PASS) - 发现4个TRY301错误",
+    "status": "in_progress",
+    "activeForm": "运行Ruff Check检查"
+  },
+  {
+    "content": "运行Ruff Format检查",
+    "status": "completed",
+    "activeForm": "运行Ruff Format检查"
+  },
+  {
+    "content": "运行Mypy类型检查 (INFRA.CI.TYPE_PASS)",
+    "status": "pending",
+    "activeForm": "运行Mypy类型检查"
+  },
+  {
+    "content": "运行Pytest测试 (INFRA.CI.TEST_PASS)",
+    "status": "pending",
+    "activeForm": "运行Pytest测试"
+  },
+  {
+    "content": "检查测试覆盖率 (INFRA.CI.COVERAGE_MIN ≥80%)",
+    "status": "pending",
+    "activeForm": "检查测试覆盖率"
+  },
+  {
+    "content": "运行策略验证 (validate_policy.py)",
+    "status": "pending",
+    "activeForm": "运行策略验证"
+  },
+  {
+    "content": "检查Phase 0场景覆盖 (15个场景)",
+    "status": "pending",
+    "activeForm": "检查Phase 0场景覆盖"
+  },
+  {
+    "content": "检查CI门禁文件 (ci_gate.py)",
+    "status": "pending",
+    "activeForm": "检查CI门禁文件"
+  },
+  {
+    "content": "检查仿真门禁文件 (sim_gate.py)",
+    "status": "pending",
+    "activeForm": "检查仿真门禁文件"
+  },
+  {
+    "content": "检查CTP接口配置 (ctp/api.py, ctp/config.py)",
+    "status": "pending",
+    "activeForm": "检查CTP接口配置"
+  },
+  {
+    "content": "检查应用配置 (app/config.py, app/logger.py)",
+    "status": "pending",
+    "activeForm": "检查应用配置"
+  },
+  {
+    "content": "生成Phase 0军规级检查报告",
+    "status": "pending",
+    "activeForm": "生成Phase 0军规级检查报告"
+  }
+]

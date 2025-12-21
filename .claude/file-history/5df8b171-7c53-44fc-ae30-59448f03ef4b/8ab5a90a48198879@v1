@@ -1,0 +1,79 @@
+# Makefile — one-command quality gates for FULL AUTOPILOT
+SHELL := /bin/bash
+PY := python3.12
+VENV := .venv
+BIN := $(VENV)/bin
+
+PIP := $(BIN)/pip
+PYTEST := $(BIN)/pytest
+MYPY := $(BIN)/mypy
+BANDIT := $(BIN)/bandit
+RUFF := $(BIN)/ruff
+
+.DEFAULT_GOAL := help
+
+.PHONY: help
+help:
+	@echo "Targets:"
+	@echo "  make venv        - Create .venv"
+	@echo "  make install     - Install runtime deps (requirements.txt)"
+	@echo "  make dev         - Install dev deps (requirements-dev.txt, optional)"
+	@echo "  make test        - Run pytest"
+	@echo "  make typecheck   - Run mypy --strict (if installed)"
+	@echo "  make lint        - Run ruff (if installed)"
+	@echo "  make security    - Run bandit (if installed)"
+	@echo "  make check       - Run full quality gates"
+	@echo "  make clean       - Remove .venv and caches"
+
+.PHONY: venv
+venv:
+	@$(PY) -m venv $(VENV)
+	@$(PIP) install -U pip wheel setuptools
+
+.PHONY: install
+install: venv
+	@$(PIP) install -r requirements.txt
+
+.PHONY: dev
+dev: install
+	@if [ -f requirements-dev.txt ]; then \
+		$(PIP) install -r requirements-dev.txt; \
+	else \
+		echo "requirements-dev.txt not found - skipping dev deps"; \
+	fi
+
+.PHONY: test
+test: dev
+	@$(PYTEST) -q
+
+.PHONY: typecheck
+typecheck: dev
+	@if [ -x "$(MYPY)" ]; then \
+		$(MYPY) --strict .; \
+	else \
+		echo "mypy not installed - add it to requirements-dev.txt to enable typecheck"; \
+	fi
+
+.PHONY: lint
+lint: dev
+	@if [ -x "$(RUFF)" ]; then \
+		$(RUFF) check .; \
+	else \
+		echo "ruff not installed - add it to requirements-dev.txt to enable lint"; \
+	fi
+
+.PHONY: security
+security: dev
+	@if [ -x "$(BANDIT)" ]; then \
+		$(BANDIT) -r . -x "$(VENV)"; \
+	else \
+		echo "bandit not installed - add it to requirements-dev.txt to enable security scan"; \
+	fi
+
+.PHONY: check
+check: lint typecheck test security
+	@echo "All checks completed."
+
+.PHONY: clean
+clean:
+	@rm -rf $(VENV) .pytest_cache .mypy_cache .ruff_cache **/__pycache__

@@ -1,0 +1,108 @@
+TREA增强功能使用说明
+====================
+
+一、最简单的使用方法：
+--------------------
+
+1. 直接在命令行运行：
+
+【创建新项目】
+python automation-scripts.py setup --name "项目名称"
+
+【分析代码】
+python automation-scripts.py analyze --path "文件路径"
+
+【批量处理】
+python automation-scripts.py batch --path "目录路径" --operation analyze
+
+二、在TREA中使用：
+----------------
+
+1. 打开TREA编辑器
+
+2. 按 Ctrl+Shift+P 打开命令面板
+
+3. 输入 "Run Task" 并选择任务：
+   - "运行钻石评估系统"
+   - "Claude代码分析"
+   - "格式化Python代码"
+   - "加载TREA增强功能"
+
+4. 使用快捷键：
+   - Ctrl+Shift+I: 调用Claude
+   - Ctrl+/: 内联聊天
+   - Ctrl+Shift+D: 运行钻石系统
+
+三、直接使用TREA中的AI：
+---------------------
+
+1. Claude:
+   右键代码 -> "Ask Claude"
+   或使用 Ctrl+I
+
+2. ChatGPT:
+   在侧边栏点击ChatGPT图标
+
+四、快速启动命令：
+-----------------
+
+【运行钻石评估系统】
+python "Desktop\火山方舟大模型体验中心-火山引擎_files\QL钻石光学能量化系统_终极修复版-完美运行版.py"
+
+【使用Claude分析】
+".trae-cn\extensions\anthropic.claude-code-2.0.61-win32-x64\resources\native-binary\claude.exe" -p "你的问题"
+
+五、常见问题：
+-------------
+
+1. 如果命令行显示中文乱码：
+   先运行：chcp 65001
+
+2. 如果python命令找不到：
+   使用：py automation-scripts.py
+
+3. 如果权限不够：
+   右键命令行 -> "以管理员身份运行"
+
+4. 想要在任何目录使用：
+   把文件路径添加到系统PATH环境变量
+
+六、推荐工作流程：
+-----------------
+
+1. 打开项目文件夹
+2. 运行: code .
+3. 使用TREA编辑代码
+4. 需要AI帮助时：
+   - 选中代码
+   - 按Ctrl+I
+   - 输入问题
+5. 保存时自动格式化（已配置）
+
+七、示例场景：
+-------------
+
+【场景1：分析钻石系统代码】
+1. 打开命令行
+2. 粘贴并运行：
+python automation-scripts.py analyze --path "Desktop\火山方舟大模型体验中心-火山引擎_files\QL钻石光学能量化系统_终极修复版-完美运行版.py"
+
+【场景2：创建新的Python项目】
+1. 打开命令行
+2. 运行：
+python automation-scripts.py setup --name "新项目" --type python
+3. 项目会自动在TREA中打开
+
+【场景3：批量格式化代码】
+1. 打开命令行
+2. 运行：
+python automation-scripts.py batch --path "src" --operation format
+
+八、联系方式：
+-----------
+如果遇到问题，可以：
+1. 查看生成的日志文件：automation.log
+2. 检查Python是否正确安装
+3. 确保TREA路径正确
+
+记住：最简单的开始方式是在TREA中直接使用Ctrl+I调用AI助手！

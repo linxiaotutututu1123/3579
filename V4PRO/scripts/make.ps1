@@ -1,0 +1,355 @@
+<#
+.SYNOPSIS
+    3579 Trading System - PowerShell Task Runner
+    Windows 上的 Makefile 等效脚本
+
+.DESCRIPTION
+    用法: .\scripts\make.ps1 <target>
+    
+    与 Makefile 完全一致，确保 CI 和本地行为相同
+
+.EXAMPLE
+    .\scripts\make.ps1 ci        # 运行完整 CI 检查
+    .\scripts\make.ps1 format    # 格式化代码
+    .\scripts\make.ps1 test      # 运行测试
+#>
+
+param(
+    [Parameter(Position=0)]
+    [ValidateSet(
+        "help", "install", "install-dev",
+        "format", "format-check", "lint", "lint-fix", "type", "test", "test-fast",
+        "check", "ci", "ci-json",
+        "replay", "replay-json", "sim", "sim-json",
+        "context", "context-dev", "context-debug",
+        "build", "build-paper", "build-live",
+        "clean"
+    )]
+    [string]$Target = "help"
+)
+
+$ErrorActionPreference = "Stop"
+
+# =============================================================================
+# Targets 定义（单一数据源，help 自动生成，避免文档漂移）
+# =============================================================================
+$TARGETS = [ordered]@{
+    # 质量门
+    "format"       = "Format code (ruff format)"
+    "format-check" = "Check format without modifying"
+    "lint"         = "Lint code (ruff check)"
+    "lint-fix"     = "Lint with auto-fix"
+    "type"         = "Type check (mypy)"
+    "test"         = "Run tests (pytest, 85% coverage gate)"
+    "test-fast"    = "Run tests (fast, no coverage)"
+    "check"        = "Run all checks without modifying files"
+    "ci"           = "Full CI pipeline (format-check + lint + type + test)"
+    "ci-json"      = "CI pipeline with JSON report (for Claude loop)"
+    # 回放/仿真
+    "replay"       = "Run replay validation"
+    "replay-json"  = "Replay with JSON report (for Claude loop)"
+    "sim"          = "Run simulation"
+    "sim-json"     = "Simulation with JSON report (for Claude loop)"
+    # 上下文导出
+    "context"      = "Export lite context"
+    "context-dev"  = "Export dev context"
+    "context-debug"= "Export debug context"
+    # 构建
+    "build"        = "Build both exe files"
+    "build-paper"  = "Build 3579-paper.exe"
+    "build-live"   = "Build 3579-live.exe"
+    # 工具
+    "install"      = "Install dependencies"
+    "install-dev"  = "Install dev dependencies"
+    "clean"        = "Clean build artifacts"
+    "help"         = "Show this help message"
+}
+
+# =============================================================================
+# 配置：明确使用 venv 中的 Python，不依赖系统 PATH
+# 支持环境变量覆盖：$env:PY=python .\scripts\make.ps1 ci
+# =============================================================================
+$_PY_DEFAULT = Join-Path $PSScriptRoot "../.venv/Scripts/python.exe"
+$_PIP_DEFAULT = Join-Path $PSScriptRoot "../.venv/Scripts/pip.exe"
+
+# 支持外部覆盖（与 Makefile 的 PY ?= 对齐）
+if ($env:PY) {
+    $PYTHON = $env:PY
+} else {
+    $PYTHON = $_PY_DEFAULT
+}
+
+if ($env:PIP) {
+    $PIP = $env:PIP
+} else {
+    $PIP = $_PIP_DEFAULT
+}
+
+$COV_THRESHOLD = 85
+
+# 验证 Python 存在（友好错误提示）
+function Assert-VenvExists {
+    if (-not (Test-Path $PYTHON)) {
+        Write-Host "ERROR: Python not found at $PYTHON" -ForegroundColor Red
+        Write-Host "Run: python -m venv .venv" -ForegroundColor Yellow
+        Write-Host "Or override: `$env:PY='python' .\scripts\make.ps1 ci" -ForegroundColor Yellow
+        exit 1
+    }
+}
+
+# =============================================================================
+# 函数
+# =============================================================================
+
+function Show-Help {
+    Write-Host "3579 Trading System - PowerShell Task Runner" -ForegroundColor Cyan
+    Write-Host "=============================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Usage: .\scripts\make.ps1 <target>"
+    Write-Host ""
+    Write-Host "Available Targets:" -ForegroundColor Yellow
+    
+    # 分组显示
+    $groups = [ordered]@{
+        "Quality Gates" = @("format", "format-check", "lint", "lint-fix", "type", "test", "test-fast", "check", "ci", "ci-json")
+        "Replay/Sim" = @("replay", "replay-json", "sim", "sim-json")
+        "Context Export" = @("context", "context-dev", "context-debug")
+        "Build" = @("build", "build-paper", "build-live")
+        "Utility" = @("install", "install-dev", "clean", "help")
+    }
+    
+    foreach ($group in $groups.GetEnumerator()) {
+        Write-Host ""
+        Write-Host "  $($group.Key):" -ForegroundColor Green
+        foreach ($target in $group.Value) {
+            if ($TARGETS.Contains($target)) {
+                $desc = $TARGETS[$target]
+                Write-Host ("    {0,-14} - {1}" -f $target, $desc)
+            }
+        }
+    }
+    
+    Write-Host ""
+    Write-Host "Python: $PYTHON" -ForegroundColor Gray
+    Write-Host "Override: `$env:PY='python' .\scripts\make.ps1 ci" -ForegroundColor Gray
+}
+
+function Invoke-Install {
+    Assert-VenvExists
+    Write-Host "Installing base dependencies..." -ForegroundColor Cyan
+    & $PIP install -r requirements.txt
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-InstallDev {
+    Invoke-Install
+    Write-Host "Installing dev dependencies..." -ForegroundColor Cyan
+    & $PIP install -r requirements-dev.txt
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-Format {
+    Assert-VenvExists
+    Write-Host "Formatting code..." -ForegroundColor Cyan
+    & $PYTHON -m ruff format .
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-FormatCheck {
+    Assert-VenvExists
+    Write-Host "Checking format..." -ForegroundColor Cyan
+    & $PYTHON -m ruff format --check .
+    if ($LASTEXITCODE -ne 0) { exit 2 }
+}
+
+function Invoke-Lint {
+    Assert-VenvExists
+    Write-Host "Linting..." -ForegroundColor Cyan
+    & $PYTHON -m ruff check .
+    if ($LASTEXITCODE -ne 0) { exit 2 }
+}
+
+function Invoke-LintFix {
+    Write-Host "Linting with auto-fix..." -ForegroundColor Cyan
+    & $PYTHON -m ruff check --fix .
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-Type {
+    Assert-VenvExists
+    Write-Host "Type checking..." -ForegroundColor Cyan
+    & $PYTHON -m mypy .
+    if ($LASTEXITCODE -ne 0) { exit 3 }
+}
+
+function Invoke-Test {
+    Assert-VenvExists
+    Write-Host "Running tests (coverage threshold: $COV_THRESHOLD%)..." -ForegroundColor Cyan
+    & $PYTHON -m pytest -q --cov=src --cov-report=term-missing:skip-covered --cov-fail-under=$COV_THRESHOLD
+    if ($LASTEXITCODE -ne 0) { exit 4 }
+}
+
+function Invoke-TestFast {
+    Write-Host "Running tests (fast, no coverage)..." -ForegroundColor Cyan
+    & $PYTHON -m pytest -q -x
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-Check {
+    Invoke-FormatCheck
+    Invoke-Lint
+    Invoke-Type
+    Invoke-Test
+}
+
+function Invoke-CI {
+    Write-Host "=============================================="
+    Write-Host "Running CI Gate..."
+    Write-Host "Python: $PYTHON"
+    Write-Host "=============================================="
+    Invoke-Check
+    Write-Host ""
+    Write-Host "=============================================="
+    Write-Host "CI Gate PASSED" -ForegroundColor Green
+    Write-Host "=============================================="
+}
+
+function Invoke-CIJson {
+    Assert-VenvExists
+    Write-Host "Running CI with JSON report..." -ForegroundColor Cyan
+    New-Item -ItemType Directory -Force -Path artifacts\check | Out-Null
+    & $PYTHON -c @"
+from src.trading.ci_gate import run_ci_with_json_report
+import sys
+report = run_ci_with_json_report(
+    python_exe=r'$PYTHON',
+    output_path='artifacts/check/report.json',
+    cov_threshold=$COV_THRESHOLD
+)
+print(f'CI Report: {report.overall} (exit_code={report.exit_code})')
+sys.exit(report.exit_code)
+"@
+    $code = $LASTEXITCODE
+    if ($code -ne 0) {
+        Write-Host "CI JSON report saved to artifacts\check\report.json" -ForegroundColor Yellow
+        exit $code
+    }
+    Write-Host "CI JSON report saved to artifacts\check\report.json" -ForegroundColor Green
+}
+
+function Invoke-Replay {
+    Assert-VenvExists
+    Write-Host "Running replay validation (CHECK_MODE enabled)..." -ForegroundColor Cyan
+    & $PYTHON -m src.trading.replay --python $PYTHON
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-ReplayJson {
+    Assert-VenvExists
+    Write-Host "Running replay with JSON report (CHECK_MODE enabled)..." -ForegroundColor Cyan
+    & $PYTHON -m src.trading.replay --python $PYTHON --output artifacts/replay/report.json
+    $code = $LASTEXITCODE
+    if ($code -ne 0) {
+        Write-Host "Replay JSON report saved to artifacts\sim\report.json" -ForegroundColor Yellow
+        exit $code
+    }
+    Write-Host "Replay JSON report saved to artifacts\sim\report.json" -ForegroundColor Green
+}
+
+function Invoke-Sim {
+    Assert-VenvExists
+    Write-Host "Running simulation (CHECK_MODE enabled)..." -ForegroundColor Cyan
+    & $PYTHON -m src.trading.sim --python $PYTHON
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-SimJson {
+    Assert-VenvExists
+    Write-Host "Running simulation with JSON report (CHECK_MODE enabled)..." -ForegroundColor Cyan
+    & $PYTHON -m src.trading.sim --python $PYTHON --output artifacts/sim/report.json
+    $code = $LASTEXITCODE
+    if ($code -ne 0) {
+        Write-Host "Sim JSON report saved to artifacts\sim\report.json" -ForegroundColor Yellow
+        exit $code
+    }
+    Write-Host "Sim JSON report saved to artifacts\sim\report.json" -ForegroundColor Green
+}
+
+function Invoke-Context {
+    param([string]$Level = "lite")
+    Write-Host "Exporting context (level: $Level)..." -ForegroundColor Cyan
+    New-Item -ItemType Directory -Force -Path artifacts\context | Out-Null
+    & $PYTHON scripts/export_context.py --out artifacts/context/context.md --level $Level
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-BuildPaper {
+    Write-Host "Building 3579-paper.exe..." -ForegroundColor Cyan
+    & $PYTHON -m PyInstaller 3579-paper.spec --noconfirm
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-BuildLive {
+    Write-Host "Building 3579-live.exe..." -ForegroundColor Cyan
+    & $PYTHON -m PyInstaller 3579-live.spec --noconfirm
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+function Invoke-Build {
+    Invoke-BuildPaper
+    Invoke-BuildLive
+}
+
+function Invoke-Clean {
+    Write-Host "Cleaning build artifacts..." -ForegroundColor Cyan
+    $dirs = @("build", "dist", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache")
+    foreach ($dir in $dirs) {
+        if (Test-Path $dir) {
+            Remove-Item -Recurse -Force $dir -ErrorAction SilentlyContinue
+            Write-Host "  Removed: $dir"
+        }
+    }
+    if (Test-Path ".coverage") {
+        Remove-Item -Force ".coverage" -ErrorAction SilentlyContinue
+        Write-Host "  Removed: .coverage"
+    }
+}
+
+# =============================================================================
+# 主入口
+# =============================================================================
+
+# 切换到项目根目录（脚本所在目录的父目录）
+Push-Location (Join-Path $PSScriptRoot "..")
+
+try {
+    switch ($Target) {
+        "help"          { Show-Help }
+        "install"       { Invoke-Install }
+        "install-dev"   { Invoke-InstallDev }
+        "format"        { Invoke-Format }
+        "format-check"  { Invoke-FormatCheck }
+        "lint"          { Invoke-Lint }
+        "lint-fix"      { Invoke-LintFix }
+        "type"          { Invoke-Type }
+        "test"          { Invoke-Test }
+        "test-fast"     { Invoke-TestFast }
+        "check"         { Invoke-Check }
+        "ci"            { Invoke-CI }
+        "ci-json"       { Invoke-CIJson }
+        "replay"        { Invoke-Replay }
+        "replay-json"   { Invoke-ReplayJson }
+        "sim"           { Invoke-Sim }
+        "sim-json"      { Invoke-SimJson }
+        "context"       { Invoke-Context -Level "lite" }
+        "context-dev"   { Invoke-Context -Level "dev" }
+        "context-debug" { Invoke-Context -Level "debug" }
+        "build"         { Invoke-Build }
+        "build-paper"   { Invoke-BuildPaper }
+        "build-live"    { Invoke-BuildLive }
+        "clean"         { Invoke-Clean }
+        default         { Show-Help }
+    }
+} finally {
+    Pop-Location
+}

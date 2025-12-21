@@ -1,0 +1,23 @@
+﻿{
+    "results":  {
+                    "ci":  {
+                               "exit_code":  0,
+                               "status":  "PASS"
+                           },
+                    "round":  1,
+                    "sim":  {
+                                "status":  "SKIP"
+                            },
+                    "replay":  {
+                                   "exit_code":  0,
+                                   "status":  "PASS"
+                               }
+                },
+    "timestamp":  "2025-12-15T10:09:34.4175226+08:00",
+    "run_id":  "d4cebfaa-7c67-48af-865c-045844c21ff0",
+    "schema_version":  3,
+    "exec_id":  "ace2268751b4a7d28be40552969dad4f87411f13-20251215100934",
+    "mode":  "full",
+    "context_manifest_sha":  "9fb1d157189889f50bdc5072e38da2b355bcda192bc16007c0b20d6541fa3378",
+    "round":  1
+}

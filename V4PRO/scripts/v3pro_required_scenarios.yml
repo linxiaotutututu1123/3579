@@ -1,0 +1,871 @@
+# =============================================================================
+# V3PRO+ 军规级验收场景矩阵 (Required Scenarios Matrix)
+# =============================================================================
+# 架构：双轨并行验收
+#   A-Platform（平台化升级）：全策略共同军规，一次做全员受益
+#   B-Models（策略公式升级）：逐策略迭代，独立 rule_id 和 scenarios
+#
+# 军规级要求：
+#   - 每个 scenario 必须有对应测试
+#   - 缺失任何一个 = POLICY_VIOLATION(12)
+#   - validate_policy.py 强制校验
+#   - 必须与 v3pro_strategies.yml 完全对齐
+#
+# 策略清单（来自 v3pro_strategies.yml）：
+#   - simple_ai (baseline)
+#   - linear_ai (baseline)
+#   - ensemble_moe (advanced)
+#   - dl_torch (advanced)
+#   - top_tier (premium)
+#   - calendar_arb (premium, planned)
+#
+# Rule ID 命名规范：{DOMAIN}.{CATEGORY}.{NAME}（三级结构）
+# =============================================================================
+
+schema_version: 3
+spec_source: "V2_SPEC_EXPANDED_NOT_RUSHING_LAUNCH_Version2.md"
+generated_at: "2025-12-15"
+
+# =============================================================================
+# A-Platform（平台化升级）—— 全策略必过
+# =============================================================================
+# 分两类：
+#   universal: 每个策略实例都要验证
+#   capability: 平台能力存在性（独立验证，不绑定具体策略）
+# =============================================================================
+
+platform_required:
+
+  # ===========================================================================
+  # universal: 每个策略都要跑一遍的通用规则
+  # ===========================================================================
+  universal:
+
+    # -------------------------------------------------------------------------
+    # A.1 Strategy Protocol（策略协议层）
+    # -------------------------------------------------------------------------
+    STRAT.PROTOCOL.BASE_INTERFACE:
+      description: "所有策略必须继承 Strategy 基类"
+      component: "strategy.base"
+      category: unit
+      test_pattern: "test_strategy_*protocol*"
+      assertions:
+        - "isinstance(strategy, Strategy)"
+        - "hasattr(strategy, 'on_tick')"
+
+    STRAT.PROTOCOL.ON_TICK_SIGNATURE:
+      description: "on_tick(state: MarketState) -> TargetPortfolio"
+      component: "strategy.base"
+      category: unit
+      test_pattern: "test_strategy_*signature*"
+      assertions:
+        - "方法签名符合协议"
+        - "返回值类型正确"
+
+    STRAT.PROTOCOL.FACTORY_REGISTERED:
+      description: "策略必须在 factory.py 注册"
+      component: "strategy.factory"
+      category: unit
+      test_pattern: "test_factory_*"
+      assertions:
+        - "factory.build_strategy() 可构建"
+        - "strategy_name 与 v3pro_strategies.yml 对齐"
+
+    # -------------------------------------------------------------------------
+    # A.2 TargetPortfolio/DecisionEvent 标准化
+    # -------------------------------------------------------------------------
+    STRAT.OUTPUT.TARGET_PORTFOLIO_VALID:
+      description: "输出 TargetPortfolio 必须包含 target_net_qty"
+      component: "strategy.types"
+      category: unit
+      test_pattern: "test_*target_portfolio*"
+      assertions:
+        - "hasattr(target, 'target_net_qty')"
+        - "target_net_qty 是 dict[str, int]"
+
+    STRAT.AUDIT.DECISION_EVENT_PRESENT:
+      description: "每次 on_tick 必须产生 DecisionEvent"
+      component: "audit.decision_log"
+      category: integration
+      test_pattern: "test_*decision_event*"
+      assertions:
+        - "DecisionEvent 写入 audit JSONL"
+        - "事件包含必备字段"
+
+    STRAT.AUDIT.DECISION_HAS_RUN_ID:
+      description: "DecisionEvent 必须包含 run_id"
+      component: "audit.decision_log"
+      category: unit
+      test_pattern: "test_*decision*run_id*"
+      assertions:
+        - "event.run_id is not None"
+        - "run_id 是有效 UUID"
+
+    STRAT.AUDIT.DECISION_HAS_EXEC_ID:
+      description: "DecisionEvent 必须包含 exec_id"
+      component: "audit.decision_log"
+      category: unit
+      test_pattern: "test_*decision*exec_id*"
+      assertions:
+        - "event.exec_id is not None"
+        - "exec_id 格式符合规范"
+
+    STRAT.AUDIT.DECISION_HAS_STRATEGY_ID:
+      description: "DecisionEvent 必须包含 strategy_id"
+      component: "audit.decision_log"
+      category: unit
+      test_pattern: "test_*decision*strategy_id*"
+      assertions:
+        - "event.strategy_id matches strategy name"
+        - "strategy_id 在 v3pro_strategies.yml 中"
+
+    STRAT.AUDIT.DECISION_HAS_VERSION:
+      description: "DecisionEvent 必须包含 strategy version"
+      component: "audit.decision_log"
+      category: unit
+      test_pattern: "test_*decision*version*"
+      assertions:
+        - "event.version is not None"
+        - "version 格式 semver 或 hash"
+
+    STRAT.AUDIT.DECISION_HAS_FEATURE_HASH:
+      description: "DecisionEvent 必须包含 feature_hash（输入特征哈希）"
+      component: "audit.decision_log"
+      category: unit
+      test_pattern: "test_*decision*feature_hash*"
+      assertions:
+        - "event.feature_hash is not None"
+        - "相同输入产生相同 hash"
+
+    # -------------------------------------------------------------------------
+    # A.3 Guardian 模式硬约束
+    # -------------------------------------------------------------------------
+    STRAT.DEGRADE.REDUCE_ONLY_NO_OPEN:
+      description: "REDUCE_ONLY 模式下策略不允许开新仓"
+      component: "guardian.monitor"
+      category: scenario
+      test_pattern: "test_*reduce_only*"
+      assertions:
+        - "guardian.mode == REDUCE_ONLY → target 只能减仓"
+        - "开仓意图被拒绝"
+
+    STRAT.DEGRADE.HALTED_OUTPUT_ZERO:
+      description: "HALTED 模式下策略必须输出零目标"
+      component: "guardian.monitor"
+      category: scenario
+      test_pattern: "test_*halted*"
+      assertions:
+        - "guardian.mode == HALTED → target_net_qty = 0"
+        - "所有品种目标为零"
+
+    STRAT.DEGRADE.MODE_TRANSITION_AUDIT:
+      description: "模式切换必须写入审计"
+      component: "audit.guardian_log"
+      category: integration
+      test_pattern: "test_*guardian*audit*"
+      assertions:
+        - "GuardianEvent 写入 audit"
+        - "包含 from_mode, to_mode, trigger"
+
+    # -------------------------------------------------------------------------
+    # A.4 Fallback 框架
+    # -------------------------------------------------------------------------
+    STRAT.FALLBACK.ON_EXCEPTION:
+      description: "策略异常时自动降级到 fallback 策略"
+      component: "strategy.fallback"
+      category: scenario
+      test_pattern: "test_*fallback*exception*"
+      assertions:
+        - "except → fallback_strategy.on_tick()"
+        - "异常记入 audit"
+
+    STRAT.FALLBACK.ON_TIMEOUT:
+      description: "策略超时时自动降级到 fallback 策略"
+      component: "strategy.fallback"
+      category: scenario
+      test_pattern: "test_*fallback*timeout*"
+      assertions:
+        - "timeout → fallback_strategy.on_tick()"
+        - "超时阈值可配置"
+
+    STRAT.FALLBACK.CHAIN_DEFINED:
+      description: "每个策略必须定义 fallback 链"
+      component: "strategy.factory"
+      category: unit
+      test_pattern: "test_*fallback*chain*"
+      assertions:
+        - "strategy.degrade_fallback in v3pro_strategies.yml"
+        - "fallback 链无循环"
+
+    # -------------------------------------------------------------------------
+    # A.6 Replay Determinism
+    # -------------------------------------------------------------------------
+    STRAT.REPLAY.DETERMINISM:
+      description: "相同 inputs 产生相同 DecisionEvent 序列"
+      component: "replay.verifier"
+      category: integration
+      test_pattern: "test_*replay*determinism*"
+      assertions:
+        - "replay(inputs) == replay(inputs)"
+        - "输出序列完全一致"
+
+    STRAT.REPLAY.SEED_CONTROLLED:
+      description: "所有随机性必须受 seed 控制"
+      component: "strategy.base"
+      category: unit
+      test_pattern: "test_*replay*seed*"
+      assertions:
+        - "random.seed() 在入口设置"
+        - "torch.manual_seed() 在入口设置（如适用）"
+
+    STRAT.REPLAY.INPUT_HASH_MATCH:
+      description: "回放输入哈希必须与原始一致"
+      component: "replay.verifier"
+      category: integration
+      test_pattern: "test_*replay*input_hash*"
+      assertions:
+        - "hash(replay_inputs) == hash(original_inputs)"
+        - "输入完整性校验"
+
+    # -------------------------------------------------------------------------
+    # A.7 输入健康检查
+    # -------------------------------------------------------------------------
+    STRAT.INPUT.STALE_DETECTION:
+      description: "策略必须检测输入 stale 状态"
+      component: "strategy.base"
+      category: unit
+      test_pattern: "test_*input*stale*"
+      assertions:
+        - "state.is_stale → 处理逻辑"
+        - "stale 时不开新仓或降级"
+
+    STRAT.INPUT.OUTLIER_HANDLING:
+      description: "策略必须处理异常价格输入"
+      component: "strategy.base"
+      category: unit
+      test_pattern: "test_*input*outlier*"
+      assertions:
+        - "price outlier → 拒绝或调整"
+        - "异常价格不影响信号"
+
+    STRAT.INPUT.MISSING_DATA_SAFE:
+      description: "策略必须安全处理缺失数据"
+      component: "strategy.base"
+      category: unit
+      test_pattern: "test_*input*missing*"
+      assertions:
+        - "missing bars → fallback 或 skip"
+        - "不抛未处理异常"
+
+  # ===========================================================================
+  # capability: 平台能力存在性（独立验证，不绑定具体策略）
+  # ===========================================================================
+  capability:
+
+    # -------------------------------------------------------------------------
+    # A.5 成本模型统一库（全策略复用）
+    # -------------------------------------------------------------------------
+    COST.FEE.ESTIMATE:
+      description: "手续费正确估计"
+      component: "cost.estimator"
+      category: unit
+      test_pattern: "test_cost*fee*"
+      assertions:
+        - "fee = notional * fee_rate * 2 (双边)"
+        - "fee_rate 从合约信息读取"
+        - "平今优惠正确处理"
+
+    COST.SLIPPAGE.ESTIMATE:
+      description: "滑点正确估计"
+      component: "cost.estimator"
+      category: unit
+      test_pattern: "test_cost*slippage*"
+      assertions:
+        - "slippage = f(order_size, depth)"
+        - "大单滑点更高"
+        - "流动性差时滑点估计保守"
+
+    COST.IMPACT.ESTIMATE:
+      description: "市场冲击正确估计"
+      component: "cost.estimator"
+      category: unit
+      test_pattern: "test_cost*impact*"
+      assertions:
+        - "impact = order_size / ADV * impact_factor"
+        - "冲击估计有保守因子"
+
+    COST.EDGE.GATE:
+      description: "统一 edge gate 检查"
+      component: "cost.estimator"
+      category: unit
+      test_pattern: "test_cost*edge*gate*"
+      assertions:
+        - "total_cost = fee + slippage + impact + safety_margin"
+        - "edge < total_cost → 拒绝交易"
+
+    # -------------------------------------------------------------------------
+    # A.8 执行保护层（protection/）—— 全策略复用
+    # -------------------------------------------------------------------------
+    PROT.LIQUIDITY.HARD_STALE:
+      description: "行情过期保护"
+      component: "execution.protection.liquidity"
+      category: unit
+      test_pattern: "test_*prot*stale*"
+      assertions:
+        - "quote_age > HARD_STALE_MS → 禁止开仓"
+        - "stale 恢复 → 解除禁止"
+
+    PROT.LIQUIDITY.DEPTH_GATE:
+      description: "盘口深度保护"
+      component: "execution.protection.liquidity"
+      category: unit
+      test_pattern: "test_*prot*depth*"
+      assertions:
+        - "depth < MIN_DEPTH → 拒绝交易"
+        - "depth 使用 bid1_vol + ask1_vol"
+
+    PROT.LIQUIDITY.SPREAD_GATE:
+      description: "价差保护"
+      component: "execution.protection.liquidity"
+      category: unit
+      test_pattern: "test_*prot*spread*"
+      assertions:
+        - "spread > MAX_SPREAD_BP → 拒绝交易"
+        - "spread = (ask - bid) / mid * 10000"
+
+    PROT.FATFINGER.MAX_QTY:
+      description: "防乌龙指 - 最大手数"
+      component: "execution.protection.fat_finger"
+      category: unit
+      test_pattern: "test_*fatfinger*qty*"
+      assertions:
+        - "qty > MAX_ORDER_QTY → 拒绝"
+        - "阈值可配置"
+
+    PROT.FATFINGER.PRICE_DEVIATION:
+      description: "防乌龙指 - 价格偏离"
+      component: "execution.protection.fat_finger"
+      category: unit
+      test_pattern: "test_*fatfinger*price*"
+      assertions:
+        - "abs(price - mid) / mid > MAX_DEVIATION → 拒绝"
+        - "涨跌停边界检查"
+
+    PROT.THROTTLE.RATE_LIMIT:
+      description: "频率限制"
+      component: "execution.protection.throttle"
+      category: unit
+      test_pattern: "test_*throttle*"
+      assertions:
+        - "orders_per_minute > MAX → 拒绝"
+        - "最小调仓间隔"
+
+    # -------------------------------------------------------------------------
+    # A.9 PairExecutor（execution/pair/）—— 套利执行基础设施
+    # -------------------------------------------------------------------------
+    PAIR.EXEC.SERIAL:
+      description: "PairExecutor 严格串行执行（先 L1 后 L2）"
+      component: "execution.pair.pair_executor"
+      category: integration
+      test_pattern: "test_pair_executor*serial*"
+      assertions:
+        - "L1 完成（FILLED 或 ERROR）后才发 L2"
+        - "L1 部分成交 → L2 数量跟随调整"
+        - "L1 超时撤单 → 不发 L2"
+
+    PAIR.EXEC.NAKED_WINDOW:
+      description: "裸腿窗口不超过 NAKED_LEG_MAX_MS"
+      component: "execution.pair.pair_executor"
+      category: unit
+      test_pattern: "test_pair_executor*naked*window*"
+      assertions:
+        - "NAKED_LEG_MAX_MS 超时 → 紧急平仓 L1"
+        - "裸腿期间 spread 恶化超阈值 → 紧急平仓"
+        - "裸腿期间禁止新套利"
+
+    PAIR.EXEC.MAKER_FIRST:
+      description: "Maker-first → Taker escalation"
+      component: "execution.pair.pair_executor"
+      category: unit
+      test_pattern: "test_pair_executor*maker*first*"
+      assertions:
+        - "L1 先挂 maker 价格"
+        - "超时未成交 → escalate to taker"
+        - "escalation 次数受 MAX_REPRICE 限制"
+
+    PAIR.EXEC.LEG_MISMATCH:
+      description: "腿不平衡检测与恢复"
+      component: "execution.pair.pair_executor"
+      category: scenario
+      test_pattern: "test_pair_executor*leg*mismatch*"
+      assertions:
+        - "abs(L1_filled - L2_filled) > 0 → leg_mismatch_event"
+        - "mismatch 触发 reduce-only 模式"
+        - "mismatch 记入 audit log"
+
+    # -------------------------------------------------------------------------
+    # A.10 审计层（audit/）—— 全策略复用
+    # -------------------------------------------------------------------------
+    AUDIT.JSONL.FORMAT:
+      description: "事件 JSONL 格式正确"
+      component: "audit.writer"
+      category: unit
+      test_pattern: "test_*audit*jsonl*"
+      assertions:
+        - "每行可独立解析"
+        - "UTF-8 编码"
+
+    AUDIT.EVENT.COMPLETE:
+      description: "事件字段完整"
+      component: "audit.writer"
+      category: unit
+      test_pattern: "test_*audit*complete*"
+      assertions:
+        - "包含 ts, run_id, exec_id, event_type"
+        - "包含 component, symbol"
+
+    AUDIT.REPLAY_HASH.MATCH:
+      description: "重放验证哈希一致"
+      component: "audit.replay_verifier"
+      category: integration
+      test_pattern: "test_*audit*replay*hash*"
+      assertions:
+        - "每个 replay session 生成 state_hash"
+        - "state_hash = hash(position_state, pnl, order_history)"
+        - "重放应产生相同 hash"
+
+    AUDIT.PNL.ATTRIBUTION:
+      description: "盈亏归因"
+      component: "audit.pnl_attribution"
+      category: unit
+      test_pattern: "test_*audit*pnl*"
+      assertions:
+        - "pnl 分解为: edge_pnl + slippage_cost + fee_cost"
+        - "每日 pnl 聚合报告"
+
+
+# =============================================================================
+# B-Models（策略公式升级）—— 按策略类型
+# =============================================================================
+# 每个策略独有的 scenarios，逐策略迭代
+# =============================================================================
+
+strategy_specific_required:
+
+  # ---------------------------------------------------------------------------
+  # B.1 simple_ai (baseline)
+  # ---------------------------------------------------------------------------
+  simple_ai:
+    SIMPLE.OUTPUT.BOUNDED:
+      description: "信号输出有界"
+      component: "strategy.simple_ai"
+      category: unit
+      test_pattern: "test_simple_*bounded*"
+      assertions:
+        - "signal in [-1, 1]"
+        - "不产生 NaN/Inf"
+
+    SIMPLE.INPUT.NEVER_CRASH:
+      description: "任何输入都不崩溃"
+      component: "strategy.simple_ai"
+      category: scenario
+      test_pattern: "test_simple_*never_crash*"
+      assertions:
+        - "no exception for any input"
+        - "包括 None, 空数据, 异常值"
+
+    BASELINE.STABLE.STALE_INPUT:
+      description: "stale 输入下输出稳定（作为最后兜底）"
+      component: "strategy.simple_ai"
+      category: scenario
+      test_pattern: "test_simple_*stale*stable*"
+      assertions:
+        - "stale_input → 保持前值或零"
+        - "不产生激进调仓"
+
+  # ---------------------------------------------------------------------------
+  # B.2 linear_ai (baseline)
+  # ---------------------------------------------------------------------------
+  linear_ai:
+    LINEAR.FACTOR.WEIGHT_STABLE:
+      description: "因子权重稳定"
+      component: "strategy.linear_ai"
+      category: unit
+      test_pattern: "test_linear_*weight*stable*"
+      assertions:
+        - "weights 不随 tick 剧烈变化"
+        - "权重变化率受限"
+
+    LINEAR.FACTOR.EXPOSURE_LIMIT:
+      description: "单因子暴露受限"
+      component: "strategy.linear_ai"
+      category: unit
+      test_pattern: "test_linear_*exposure*"
+      assertions:
+        - "abs(factor_exposure) < MAX_EXPOSURE"
+        - "因子贡献可追溯"
+
+    BASELINE.STABLE.STALE_INPUT:
+      description: "stale 输入下输出稳定"
+      component: "strategy.linear_ai"
+      category: scenario
+      test_pattern: "test_linear_*stale*stable*"
+      assertions:
+        - "stale_input → 保持前值或零"
+        - "作为 advanced 策略的 fallback"
+
+  # ---------------------------------------------------------------------------
+  # B.3 ensemble_moe (advanced)
+  # ---------------------------------------------------------------------------
+  ensemble_moe:
+    MOE.OUTPUT.SMOOTHING:
+      description: "专家输出平滑，避免跳变"
+      component: "strategy.ensemble_moe"
+      category: unit
+      test_pattern: "test_moe_*smoothing*"
+      assertions:
+        - "output = EMA(raw_output) 或类似平滑"
+        - "跳变幅度受限"
+
+    MOE.EXPERT.CONFLICT_CONTROL:
+      description: "专家冲突抑制，矛盾信号减权"
+      component: "strategy.ensemble_moe"
+      category: unit
+      test_pattern: "test_moe_*conflict*"
+      assertions:
+        - "conflict_score > threshold → reduce weight"
+        - "专家方向相反时降低置信度"
+
+    MOE.GATING.WEIGHT_VALID:
+      description: "门控权重有效（和为1）"
+      component: "strategy.ensemble_moe"
+      category: unit
+      test_pattern: "test_moe_*gating*"
+      assertions:
+        - "sum(gating_weights) ≈ 1.0"
+        - "权重非负"
+
+    MOE.EXPERT.VERSION_AUDIT:
+      description: "各专家版本写入审计"
+      component: "strategy.ensemble_moe"
+      category: unit
+      test_pattern: "test_moe_*version*audit*"
+      assertions:
+        - "expert_versions in DecisionEvent"
+        - "可追溯每个专家贡献"
+
+    MOE.REGIME.DETECTION:
+      description: "市场状态检测正确"
+      component: "strategy.ensemble_moe"
+      category: unit
+      test_pattern: "test_moe_*regime*"
+      assertions:
+        - "regime in [trending, ranging, volatile]"
+        - "状态切换有滞后/冷却"
+
+  # ---------------------------------------------------------------------------
+  # B.4 dl_torch (advanced)
+  # ---------------------------------------------------------------------------
+  dl_torch:
+    DL.INFERENCE.FAIL_FALLBACK:
+      description: "推理失败时自动降级"
+      component: "strategy.dl_torch_policy"
+      category: scenario
+      test_pattern: "test_dl_*fail*fallback*"
+      assertions:
+        - "except → fallback_strategy.on_tick()"
+        - "推理异常记入 audit"
+
+    DL.MODEL.VERSION_AUDIT:
+      description: "模型版本写入审计"
+      component: "strategy.dl_torch_policy"
+      category: unit
+      test_pattern: "test_dl_*model*version*"
+      assertions:
+        - "model_version in DecisionEvent"
+        - "包含 model_hash 或 checkpoint_id"
+
+    DL.SEED.DETERMINISTIC:
+      description: "推理 seed 确定性"
+      component: "strategy.dl_torch_policy"
+      category: unit
+      test_pattern: "test_dl_*seed*"
+      assertions:
+        - "torch.manual_seed() 设置"
+        - "相同输入相同输出"
+
+    DL.INPUT.NORMALIZE:
+      description: "输入标准化正确"
+      component: "strategy.dl_torch_policy"
+      category: unit
+      test_pattern: "test_dl_*normalize*"
+      assertions:
+        - "mean ≈ 0, std ≈ 1（或符合训练分布）"
+        - "标准化参数固定"
+
+    DL.OUTPUT.CLAMP:
+      description: "输出裁剪到合理范围"
+      component: "strategy.dl_torch_policy"
+      category: unit
+      test_pattern: "test_dl_*clamp*"
+      assertions:
+        - "output in [-MAX, MAX]"
+        - "不产生极端仓位"
+
+    DL.MEMORY.CLEANUP:
+      description: "推理后显存释放"
+      component: "strategy.dl_torch_policy"
+      category: unit
+      test_pattern: "test_dl_*memory*"
+      assertions:
+        - "torch.cuda.empty_cache() 或 CPU"
+        - "无显存泄漏"
+
+  # ---------------------------------------------------------------------------
+  # B.5 top_tier (premium)
+  # ---------------------------------------------------------------------------
+  top_tier:
+    TOPTIER.COST.GATE:
+      description: "调仓前必须通过成本门槛检查"
+      component: "strategy.top_tier_trend_risk_parity"
+      category: unit
+      test_pattern: "test_toptier_*cost*gate*"
+      assertions:
+        - "expected_edge > total_cost → allow"
+        - "调用统一成本库"
+
+    TOPTIER.TURNOVER.LIMIT:
+      description: "换手率受限，防止过度交易"
+      component: "strategy.top_tier_trend_risk_parity"
+      category: unit
+      test_pattern: "test_toptier_*turnover*"
+      assertions:
+        - "turnover < MAX_TURNOVER_DAILY"
+        - "换手率超限时抑制调仓"
+
+    TOPTIER.JITTER.SUPPRESSION:
+      description: "信号抖动抑制，小变化不调仓"
+      component: "strategy.top_tier_trend_risk_parity"
+      category: unit
+      test_pattern: "test_toptier_*jitter*"
+      assertions:
+        - "abs(delta) < JITTER_THRESHOLD → hold"
+        - "避免频繁小额调仓"
+
+    TOPTIER.RISK.PARITY_VALID:
+      description: "风险平价权重计算正确"
+      component: "strategy.top_tier_trend_risk_parity"
+      category: unit
+      test_pattern: "test_toptier_*risk_parity*"
+      assertions:
+        - "sum(weights) ≈ 1.0"
+        - "波动率反比例配权"
+
+    TOPTIER.TREND.SIGNAL_AUDIT:
+      description: "趋势信号写入审计"
+      component: "strategy.top_tier_trend_risk_parity"
+      category: unit
+      test_pattern: "test_toptier_*trend*audit*"
+      assertions:
+        - "trend_score in DecisionEvent"
+        - "趋势强度可追溯"
+
+  # ---------------------------------------------------------------------------
+  # B.6 calendar_arb (premium) —— 策略信号层
+  # ---------------------------------------------------------------------------
+  calendar_arb:
+    ARB.LEGS.FIXED_NEAR_FAR:
+      description: "近月/远月腿固定配对"
+      component: "strategy.calendar_arb"
+      category: unit
+      test_pattern: "test_arb_*legs*fixed*"
+      assertions:
+        - "near = dominant_contract"
+        - "far = subdominant_contract"
+        - "腿配对不随 tick 变化"
+
+    ARB.KALMAN.BETA_ESTIMATE:
+      description: "Kalman 滤波正确估计 beta"
+      component: "strategy.calendar_arb.kalman_beta"
+      category: unit
+      test_pattern: "test_kalman_beta*estimate*"
+      assertions:
+        - "beta 初始化为历史 OLS"
+        - "每 tick 更新 Kalman state"
+        - "beta 平滑窗口 = KALMAN_SMOOTH_WINDOW"
+
+    ARB.KALMAN.RESIDUAL_ZSCORE:
+      description: "残差 z-score 正确计算"
+      component: "strategy.calendar_arb.kalman_beta"
+      category: unit
+      test_pattern: "test_kalman*zscore*"
+      assertions:
+        - "z = (spread - spread_mean) / spread_std"
+        - "spread_std 使用 EMA 或 rolling"
+        - "|z| > ZSCORE_THRESHOLD → 信号"
+
+    ARB.KALMAN.BETA_BOUND:
+      description: "beta 有效性边界检查"
+      component: "strategy.calendar_arb.kalman_beta"
+      category: unit
+      test_pattern: "test_kalman*beta*bound*"
+      assertions:
+        - "BETA_MIN <= beta <= BETA_MAX"
+        - "beta 超边界 → 使用边界值 + warning"
+        - "beta variance 过大 → 降低信号置信度"
+
+    ARB.SIGNAL.HALF_LIFE_GATE:
+      description: "半衰期过长不交易"
+      component: "strategy.calendar_arb"
+      category: unit
+      test_pattern: "test_arb_*halflife*"
+      assertions:
+        - "half_life > MAX_HALF_LIFE → no trade"
+        - "半衰期计算正确"
+
+    ARB.SIGNAL.STOP_Z_BREAKER:
+      description: "z-score 超限止损熔断"
+      component: "strategy.calendar_arb"
+      category: scenario
+      test_pattern: "test_arb_*stop_z*"
+      assertions:
+        - "abs(z) > STOP_Z → close + cooldown"
+        - "止损后冷却期内禁开仓"
+
+    ARB.SIGNAL.EXPIRY_GATE:
+      description: "临近到期禁止开仓"
+      component: "strategy.calendar_arb"
+      category: unit
+      test_pattern: "test_arb_*expiry*"
+      assertions:
+        - "days_to_expiry < N → reduce-only"
+        - "仅允许平仓"
+
+    ARB.SIGNAL.CORRELATION_BREAK:
+      description: "相关性崩溃暂停策略"
+      component: "strategy.calendar_arb"
+      category: scenario
+      test_pattern: "test_arb_*correlation*"
+      assertions:
+        - "rolling_corr < CORR_THRESHOLD → 暂停策略"
+        - "相关性恢复 → 自动恢复"
+        - "相关性崩溃记入 audit"
+
+    ARB.COST.ENTRY_GATE:
+      description: "套利入场成本门槛"
+      component: "strategy.calendar_arb"
+      category: unit
+      test_pattern: "test_arb_*cost*entry*"
+      assertions:
+        - "expected_pnl > 2 * round_trip_cost"
+        - "调用统一成本库"
+
+
+# =============================================================================
+# 验收执行规范
+# =============================================================================
+execution:
+
+  # ---------------------------------------------------------------------------
+  # 执行顺序（Phase 顺序，阻塞依赖）
+  # ---------------------------------------------------------------------------
+  phase_order:
+    - phase: "A.1-A.4"
+      name: "Strategy Protocol + Audit + Guardian + Fallback"
+      scope: "platform_required.universal"
+      blocking: true
+
+    - phase: "A.5"
+      name: "成本模型统一库"
+      scope: "platform_required.capability.COST.*"
+      blocking: true
+
+    - phase: "A.6-A.7"
+      name: "Replay Determinism + 输入健康"
+      scope: "platform_required.universal.STRAT.REPLAY.* + STRAT.INPUT.*"
+      blocking: true
+
+    - phase: "A.8"
+      name: "执行保护层"
+      scope: "platform_required.capability.PROT.*"
+      blocking: true
+
+    - phase: "A.9"
+      name: "PairExecutor"
+      scope: "platform_required.capability.PAIR.*"
+      blocking: false
+      notes: "仅 calendar_arb 使用"
+
+    - phase: "A.10"
+      name: "审计层"
+      scope: "platform_required.capability.AUDIT.*"
+      blocking: true
+
+    - phase: "B.1-B.5"
+      name: "已有策略升级"
+      scope: "strategy_specific_required.{simple_ai,linear_ai,ensemble_moe,dl_torch,top_tier}"
+      blocking: false
+      parallel: true
+
+    - phase: "B.6"
+      name: "Calendar Arb 实现"
+      scope: "strategy_specific_required.calendar_arb"
+      blocking: false
+      depends_on:
+        - "A.5 成本模型"
+        - "A.9 PairExecutor"
+        - "Phase C（市场侧连续性）"
+
+  # ---------------------------------------------------------------------------
+  # 验收命令
+  # ---------------------------------------------------------------------------
+  commands:
+    full: "python scripts/validate_policy.py --profile v3pro --check all"
+    platform_universal: "python scripts/validate_policy.py --profile v3pro --check platform.universal"
+    platform_capability: "python scripts/validate_policy.py --profile v3pro --check platform.capability"
+    strategy: "python scripts/validate_policy.py --profile v3pro --check strategy --name {strategy_name}"
+
+  # ---------------------------------------------------------------------------
+  # 失败处理
+  # ---------------------------------------------------------------------------
+  failure_handling:
+    platform_universal_failure: "POLICY_VIOLATION(12)"
+    platform_capability_failure: "CAPABILITY_MISSING(13)"
+    strategy_specific_failure: "STRATEGY_DEGRADED"
+    missing_scenario: "POLICY_VIOLATION(12)"
+
+
+# =============================================================================
+# 覆盖率要求
+# =============================================================================
+coverage:
+  core_modules:
+    - "src/strategy/**"
+    - "src/execution/**"
+    - "src/audit/**"
+    - "src/guardian/**"
+  core_threshold: 90
+
+  strategy_modules:
+    - "src/strategy/calendar_arb.py"
+  strategy_threshold: 100
+
+  overall_threshold: 85
+
+
+# =============================================================================
+# 统计信息
+# =============================================================================
+stats:
+  platform_universal_count: 22
+  platform_capability_count: 16
+  platform_total: 38  # ~30 (A-Platform)
+  strategy_specific:
+    simple_ai: 3
+    linear_ai: 3
+    ensemble_moe: 5
+    dl_torch: 6
+    top_tier: 5
+    calendar_arb: 9  # 原 ARB.* 迁移后
+  strategy_total: 31
+  total_count: 69  # ~60（含平台+策略）

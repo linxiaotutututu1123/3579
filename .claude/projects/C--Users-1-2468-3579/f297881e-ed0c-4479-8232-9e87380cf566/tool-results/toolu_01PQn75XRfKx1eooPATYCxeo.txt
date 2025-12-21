@@ -1,0 +1,332 @@
+     1→"""
+     2→CostEstimator - 成本估计器
+     3→
+     4→V3PRO+ Platform Component - Phase 1
+     5→V2 SPEC: 第 6 章 成本模型
+     6→V2 Scenarios:
+     7→- COST.MODEL.FEE_ESTIMATE: 手续费估计
+     8→- COST.MODEL.SLIPPAGE_ESTIMATE: 滑点估计
+     9→- COST.MODEL.IMPACT_ESTIMATE: 市场冲击估计
+    10→- COST.GATE.EDGE_CHECK: edge gate 检查
+    11→
+    12→军规级要求:
+    13→- 精确的手续费计算（按比例/按手）
+    14→- 滑点估计基于订单簿深度
+    15→- 市场冲击基于成交量占比
+    16→- edge gate: signal_edge > total_cost 才交易
+    17→"""
+    18→
+    19→from __future__ import annotations
+    20→
+    21→from dataclasses import dataclass
+    22→from typing import TYPE_CHECKING
+    23→
+    24→
+    25→if TYPE_CHECKING:
+    26→    from src.market.instrument_cache import InstrumentCache
+    27→
+    28→
+    29→@dataclass
+    30→class CostBreakdown:
+    31→    """成本分解.
+    32→
+    33→    Attributes:
+    34→        fee: 手续费
+    35→        slippage: 滑点成本
+    36→        impact: 市场冲击成本
+    37→        total: 总成本
+    38→    """
+    39→
+    40→    fee: float
+    41→    slippage: float
+    42→    impact: float
+    43→    total: float
+    44→
+    45→    @property
+    46→    def per_unit(self) -> float:
+    47→        """每单位成本（用于与 edge 比较）."""
+    48→        return self.total
+    49→
+    50→
+    51→class CostEstimator:
+    52→    """成本估计器.
+    53→
+    54→    V2 Scenarios:
+    55→    - COST.MODEL.FEE_ESTIMATE: 手续费估计
+    56→    - COST.MODEL.SLIPPAGE_ESTIMATE: 滑点估计
+    57→    - COST.MODEL.IMPACT_ESTIMATE: 市场冲击估计
+    58→    - COST.GATE.EDGE_CHECK: edge gate 检查
+    59→
+    60→    基于合约信息和市场状态计算交易成本。
+    61→    """
+    62→
+    63→    # 默认手续费率（万分之一）
+    64→    DEFAULT_FEE_RATE: float = 0.0001
+    65→    # 平今加收倍数
+    66→    CLOSE_TODAY_MULTIPLIER: float = 3.0
+    67→    # 滑点基准（tick 数）
+    68→    SLIPPAGE_BASE_TICKS: float = 0.5
+    69→    # 冲击系数（sqrt(qty/adv)）
+    70→    IMPACT_COEFFICIENT: float = 0.1
+    71→
+    72→    def __init__(
+    73→        self,
+    74→        instrument_cache: InstrumentCache | None = None,
+    75→        fee_rates: dict[str, float] | None = None,
+    76→    ) -> None:
+    77→        """初始化估计器.
+    78→
+    79→        Args:
+    80→            instrument_cache: 合约缓存（可选，用于获取 tick_size/multiplier）
+    81→            fee_rates: 品种手续费率映射 {product: rate}（可选）
+    82→        """
+    83→        self._instrument_cache = instrument_cache
+    84→        self._fee_rates = fee_rates or {}
+    85→
+    86→    def fee_estimate(
+    87→        self,
+    88→        symbol: str,
+    89→        notional: float,
+    90→        is_close_today: bool = False,
+    91→    ) -> float:
+    92→        """估计手续费.
+    93→
+    94→        V2 Scenario: COST.MODEL.FEE_ESTIMATE
+    95→
+    96→        Args:
+    97→            symbol: 合约代码
+    98→            notional: 名义金额（price * qty * multiplier）
+    99→            is_close_today: 是否平今仓
+   100→
+   101→        Returns:
+   102→            估计的手续费
+   103→        """
+   104→        # 获取品种手续费率
+   105→        product = self._extract_product(symbol)
+   106→        rate = self._fee_rates.get(product, self.DEFAULT_FEE_RATE)
+   107→
+   108→        fee = notional * rate
+   109→
+   110→        # 平今加收
+   111→        if is_close_today:
+   112→            fee *= self.CLOSE_TODAY_MULTIPLIER
+   113→
+   114→        return fee
+   115→
+   116→    def slippage_estimate(
+   117→        self,
+   118→        symbol: str,
+   119→        qty: int,
+   120→        depth: int,
+   121→    ) -> float:
+   122→        """估计滑点.
+   123→
+   124→        V2 Scenario: COST.MODEL.SLIPPAGE_ESTIMATE
+   125→
+   126→        基于订单簿深度估计滑点。深度越浅，滑点越大。
+   127→
+   128→        Args:
+   129→            symbol: 合约代码
+   130→            qty: 委托数量
+   131→            depth: 订单簿深度（单边总挂单量）
+   132→
+   133→        Returns:
+   134→            估计的滑点成本（以价值计）
+   135→        """
+   136→        if depth <= 0:
+   137→            # 无深度数据，使用保守估计
+   138→            depth = 1
+   139→
+   140→        # 获取合约信息
+   141→        tick_size = self._get_tick_size(symbol)
+   142→        multiplier = self._get_multiplier(symbol)
+   143→
+   144→        # 滑点 = 基准 ticks * (1 + qty/depth) * tick_size * multiplier * qty
+   145→        slippage_ticks = self.SLIPPAGE_BASE_TICKS * (1.0 + qty / depth)
+   146→        slippage = slippage_ticks * tick_size * multiplier * qty
+   147→
+   148→        return slippage
+   149→
+   150→    def impact_estimate(
+   151→        self,
+   152→        symbol: str,
+   153→        qty: int,
+   154→        adv: float,
+   155→    ) -> float:
+   156→        """估计市场冲击.
+   157→
+   158→        V2 Scenario: COST.MODEL.IMPACT_ESTIMATE
+   159→
+   160→        基于成交量占比估计市场冲击。使用 sqrt(qty/adv) 模型。
+   161→
+   162→        Args:
+   163→            symbol: 合约代码
+   164→            qty: 委托数量
+   165→            adv: 日均成交量（Average Daily Volume）
+   166→
+   167→        Returns:
+   168→            估计的市场冲击成本（以价值计）
+   169→        """
+   170→        if adv <= 0:
+   171→            # 无 ADV 数据，使用保守估计
+   172→            adv = 1000.0
+   173→
+   174→        # 获取合约信息
+   175→        tick_size = self._get_tick_size(symbol)
+   176→        multiplier = self._get_multiplier(symbol)
+   177→
+   178→        # 冲击 = coefficient * sqrt(qty/adv) * tick_size * multiplier * qty
+   179→        participation = qty / adv
+   180→        impact_ticks = self.IMPACT_COEFFICIENT * (participation**0.5) * 100  # 放大为 tick 数
+   181→        impact: float = impact_ticks * tick_size * multiplier * qty
+   182→
+   183→        return impact
+   184→
+   185→    def total_cost(
+   186→        self,
+   187→        symbol: str,
+   188→        qty: int,
+   189→        notional: float,
+   190→        depth: int,
+   191→        adv: float,
+   192→        is_close_today: bool = False,
+   193→    ) -> CostBreakdown:
+   194→        """计算总成本.
+   195→
+   196→        Args:
+   197→            symbol: 合约代码
+   198→            qty: 委托数量
+   199→            notional: 名义金额
+   200→            depth: 订单簿深度
+   201→            adv: 日均成交量
+   202→            is_close_today: 是否平今仓
+   203→
+   204→        Returns:
+   205→            成本分解
+   206→        """
+   207→        fee = self.fee_estimate(symbol, notional, is_close_today)
+   208→        slippage = self.slippage_estimate(symbol, qty, depth)
+   209→        impact = self.impact_estimate(symbol, qty, adv)
+   210→
+   211→        return CostBreakdown(
+   212→            fee=fee,
+   213→            slippage=slippage,
+   214→            impact=impact,
+   215→            total=fee + slippage + impact,
+   216→        )
+   217→
+   218→    def edge_gate(
+   219→        self,
+   220→        signal_edge: float,
+   221→        total_cost: float,
+   222→    ) -> bool:
+   223→        """检查是否通过 edge gate.
+   224→
+   225→        V2 Scenario: COST.GATE.EDGE_CHECK
+   226→
+   227→        只有当信号 edge 大于总成本时才允许交易。
+   228→
+   229→        Args:
+   230→            signal_edge: 信号预期收益（edge）
+   231→            total_cost: 总成本
+   232→
+   233→        Returns:
+   234→            True 表示通过 gate，允许交易
+   235→        """
+   236→        return signal_edge > total_cost
+   237→
+   238→    def edge_gate_with_breakdown(
+   239→        self,
+   240→        signal_edge: float,
+   241→        cost: CostBreakdown,
+   242→    ) -> tuple[bool, float]:
+   243→        """带分解的 edge gate 检查.
+   244→
+   245→        Args:
+   246→            signal_edge: 信号预期收益
+   247→            cost: 成本分解
+   248→
+   249→        Returns:
+   250→            (是否通过, 净 edge)
+   251→        """
+   252→        net_edge = signal_edge - cost.total
+   253→        passed = net_edge > 0
+   254→        return passed, net_edge
+   255→
+   256→    def _extract_product(self, symbol: str) -> str:
+   257→        """从合约代码提取品种.
+   258→
+   259→        Args:
+   260→            symbol: 合约代码（如 AO2501）
+   261→
+   262→        Returns:
+   263→            品种代码（如 AO）
+   264→        """
+   265→        if self._instrument_cache:
+   266→            info = self._instrument_cache.get(symbol)
+   267→            if info:
+   268→                return info.product
+   269→
+   270→        # 回退：提取字母部分
+   271→        product = ""
+   272→        for char in symbol:
+   273→            if char.isalpha():
+   274→                product += char
+   275→            else:
+   276→                break
+   277→        return product or symbol
+   278→
+   279→    def _get_tick_size(self, symbol: str) -> float:
+   280→        """获取合约最小变动价位.
+   281→
+   282→        Args:
+   283→            symbol: 合约代码
+   284→
+   285→        Returns:
+   286→            tick_size，默认 1.0
+   287→        """
+   288→        if self._instrument_cache:
+   289→            info = self._instrument_cache.get(symbol)
+   290→            if info:
+   291→                return info.tick_size
+   292→        return 1.0
+   293→
+   294→    def _get_multiplier(self, symbol: str) -> int:
+   295→        """获取合约乘数.
+   296→
+   297→        Args:
+   298→            symbol: 合约代码
+   299→
+   300→        Returns:
+   301→            multiplier，默认 10
+   302→        """
+   303→        if self._instrument_cache:
+   304→            info = self._instrument_cache.get(symbol)
+   305→            if info:
+   306→                return info.multiplier
+   307→        return 10
+   308→
+   309→    def set_fee_rate(self, product: str, rate: float) -> None:
+   310→        """设置品种手续费率.
+   311→
+   312→        Args:
+   313→            product: 品种代码
+   314→            rate: 手续费率（如 0.0001 表示万分之一）
+   315→        """
+   316→        self._fee_rates[product] = rate
+   317→
+   318→    def get_fee_rate(self, product: str) -> float:
+   319→        """获取品种手续费率.
+   320→
+   321→        Args:
+   322→            product: 品种代码
+   323→
+   324→        Returns:
+   325→            手续费率
+   326→        """
+   327→        return self._fee_rates.get(product, self.DEFAULT_FEE_RATE)
+   328→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

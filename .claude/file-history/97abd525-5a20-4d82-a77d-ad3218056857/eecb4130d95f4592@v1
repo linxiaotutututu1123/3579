@@ -1,0 +1,91 @@
+"""
+market_gateway/ctp_gateway.py
+CTP 行情网关实现。
+
+提供 CTP 行情接入能力，支持：
+- 连接/断开管理
+- 指数退避重连
+- Tick/Level2 数据订阅
+- 数据校验与转换
+- 自动生成 K 线
+
+# RISK: CTP SDK 回调在单独线程，需要线程安全
+# 缓解措施: 使用 asyncio.run_coroutine_threadsafe 桥接
+
+Author: AI Quant Team
+Version: 1.0.0
+"""
+
+from __future__ import annotations
+
+import asyncio
+import fnmatch
+import logging
+from collections import deque
+from datetime import datetime, timezone
+from decimal import Decimal
+from typing import Any, Final, Callable
+import threading
+
+from .base import AbstractGateway, GatewayState
+from .config import GatewayConfig
+from .models import TickData, DepthData, BarData, BarPeriod, PriceLevel, DataStatus
+from .exceptions import (
+    ConnectionException,
+    AuthenticationException,
+    ConnectionTimeoutException,
+    ReconnectExhaustedException,
+    SubscriptionException,
+    SubscriptionLimitExceededException,
+    SymbolNotFoundException,
+    InvalidTickDataException,
+    ErrorCode,
+)
+
+__all__: list[str] = ["CtpMarketGateway"]
+
+
+# WHY: 中国期货交易所代码映射
+EXCHANGE_MAP: Final[dict[str, str]] = {
+    "CFFEX": "CFFEX",  # 中金所
+    "SHFE": "SHFE",    # 上期所
+    "DCE": "DCE",      # 大商所
+    "CZCE": "CZCE",    # 郑商所
+    "INE": "INE",      # 上期能源
+    "GFEX": "GFEX",    # 广期所
+}
+
+
+class CtpMarketGateway(AbstractGateway):
+    """
+    CTP 行情网关实现。
+
+    支持功能：
+    - CTP/SimNow 行情连接
+    - Tick + Level2 数据订阅
+    - 自动生成 1m/5m K 线
+    - 指数退避无限重连
+    - 数据校验与脏数据记录
+
+    # REVIEW: 如果重连 10 次失败如何告警？
+    # 答：通过 _alert_callback 发送钉钉告警，见 _on_reconnect_failed()
+
+    # REVIEW: 行情乱序如何处理？
+    # 答：使用 _last_tick_time 记录，丢弃时间戳早于上一条的数据
+
+    # REVIEW: 内存中缓存多少 Tick 数据？OOM 防护？
+    # 答：使用 deque(maxlen=N) 环形缓存，默认 30 秒数据，约 150000 条
+
+    Example:
+        >>> config = GatewayConfig(...)
+        >>> gateway = CtpMarketGateway(config)
+        >>> await gateway.connect()
+        >>> await gateway.subscribe(["IF*", "IC2401"])
+        >>> async for tick in gateway.tick_stream():
+        ...     print(tick)
+    """
+
+    # WHY: 类常量便于测试时修改
+    _TICK_CACHE_SIZE: Final[int] = 150000  # 约 30 秒 @ 5000 ticks/s
+    _LOGIN_TIMEOUT: Final[float] = 10.0
+    _SUBSCRIBE_BATCH_SIZE: Final[int] = 100  # CTP 单次订阅上限

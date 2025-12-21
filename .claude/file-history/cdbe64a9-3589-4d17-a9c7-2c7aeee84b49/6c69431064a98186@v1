@@ -1,0 +1,145 @@
+@echo off
+:: ==================== TREA 快速命令脚本 ====================
+:: 在Windows命令行中快速执行常用操作
+
+setlocal enabledelayedexpansion
+
+:menu
+cls
+echo ===================================
+echo       TREA 快速命令菜单
+echo ===================================
+echo.
+echo [1] 创建新项目
+echo [2] 分析代码文件
+echo [3] 批量处理文件
+echo [4] 创建项目备份
+echo [5] 运行钻石评估系统
+echo [6] 使用Claude分析
+echo [7] 打开TREA设置
+echo [8] 查看系统信息
+echo [9] 清理临时文件
+echo [0] 退出
+echo.
+set /p choice="请选择操作 (0-9): "
+
+if "%choice%"=="1" goto create_project
+if "%choice%"=="2" goto analyze_code
+if "%choice%"=="3" goto batch_process
+if "%choice%"=="4" goto create_backup
+if "%choice%"=="5" goto run_diamond
+if "%choice%"=="6" goto claude_analyze
+if "%choice%"=="7" goto open_settings
+if "%choice%"=="8" goto system_info
+if "%choice%"=="9" goto clean_temp
+if "%choice%"=="0" exit /b
+goto menu
+
+:create_project
+echo.
+set /p project_name="请输入项目名称: "
+set /p project_type="请输入项目类型 (python/javascript/web/data-science) [默认: python]: "
+if "!project_type!"=="" set project_type=python
+echo.
+echo 正在创建项目...
+python automation-scripts.py setup --name "!project_name!" --type "!project_type!"
+pause
+goto menu
+
+:analyze_code
+echo.
+set /p file_path="请输入要分析的文件路径: "
+echo.
+echo 正在分析代码...
+python automation-scripts.py analyze --path "!file_path!"
+pause
+goto menu
+
+:batch_process
+echo.
+set /p dir_path="请输入要处理的目录路径: "
+echo.
+echo 选择操作类型:
+echo [1] 格式化代码
+echo [2] 代码检查
+echo [3] AI分析
+set /p op_choice="请选择 (1-3): "
+if "!op_choice!"=="1" set operation=format
+if "!op_choice!"=="2" set operation=lint
+if "!op_choice!"=="3" set operation=analyze
+echo.
+echo 正在批量处理...
+python automation-scripts.py batch --path "!dir_path!" --operation "!operation!"
+pause
+goto menu
+
+:create_backup
+echo.
+set /p source_path="请输入要备份的路径: "
+echo.
+echo 正在创建备份...
+python automation-scripts.py backup --path "!source_path!"
+pause
+goto menu
+
+:run_diamond
+echo.
+echo 正在启动钻石评估系统...
+python "Desktop\火山方舟大模型体验中心-火山引擎_files\QL钻石光学能量化系统_终极修复版-完美运行版.py"
+pause
+goto menu
+
+:claude_analyze
+echo.
+set /p file_path="请输入要分析的文件路径: "
+echo.
+echo 正在使用Claude分析...
+"%USERPROFILE%\.trae-cn\extensions\anthropic.claude-code-2.0.61-win32-x64\resources\native-binary\claude.exe" -p "请分析这个文件的代码质量、性能和改进建议: !file_path!"
+pause
+goto menu
+
+:open_settings
+echo.
+echo 正在打开TREA设置...
+code "%USERPROFILE%\.vscode\settings.json"
+pause
+goto menu
+
+:system_info
+echo.
+echo ===================================
+echo         系统信息
+echo ===================================
+echo.
+echo TREA路径: %USERPROFILE%\.trae-cn
+echo.
+echo 已安装的扩展:
+code --list-extensions
+echo.
+echo Python版本:
+python --version
+echo.
+echo Node.js版本:
+node --version 2>nul || echo Node.js未安装
+echo.
+echo Git版本:
+git --version 2>nul || echo Git未安装
+echo.
+pause
+goto menu
+
+:clean_temp
+echo.
+echo 正在清理临时文件...
+echo.
+echo 清理Python缓存...
+for /d /r . %%d in (__pycache__) do @if exist "%%d" rd /s /q "%%d"
+del /s /q *.pyc 2>nul
+del /s /q *.pyo 2>nul
+echo.
+echo 清理日志文件...
+del /s /q *.log 2>nul
+echo.
+echo 清理完成！
+pause
+goto menu

@@ -1,0 +1,878 @@
+2025-12-16T14:41:25.657Z [DEBUG] Getting matching hook commands for SessionEnd with query: clear
+2025-12-16T14:41:25.657Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:41:25.657Z [DEBUG] Matched 0 unique hooks for query "clear" (0 before deduplication)
+2025-12-16T14:41:25.657Z [DEBUG] Cleared all session hooks for session a2f79d69-1255-44cd-9317-0ffc422a6eb5
+2025-12-16T14:41:25.658Z [DEBUG] Getting matching hook commands for SessionStart with query: clear
+2025-12-16T14:41:25.658Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:41:25.658Z [DEBUG] Matched 0 unique hooks for query "clear" (0 before deduplication)
+2025-12-16T14:41:25.664Z [DEBUG] FileHistory: Added snapshot for 656b7bfc-6031-4e82-aff7-a206c5499429, tracking 0 files
+2025-12-16T14:41:25.676Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-16T14:41:32.174Z [ERROR] Error: Error: 1P event logging: 7 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:41:32.174Z [ERROR] Error: Error: {"stack":"Error: Failed to export 7 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 7 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:41:43.563Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:41:43.563Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:41:43.563Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:41:43.563Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:41:43.575Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2025-12-16T14:41:43.575Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:41:43.575Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T14:41:43.576Z [DEBUG] FileHistory: Making snapshot for message 27715b23-20b6-463f-b7cf-69004be979c6
+2025-12-16T14:41:43.576Z [DEBUG] FileHistory: Added snapshot for 27715b23-20b6-463f-b7cf-69004be979c6, tracking 0 files
+2025-12-16T14:41:46.513Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:41:46.753Z [ERROR] SyntaxError: SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at JSON.parse (<anonymous>)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:75:715
+    at B (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:8:6526)
+    at gVB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:947:2817)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:41:49.162Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:41:50.184Z [ERROR] Error: Error: 1P event logging: 16 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:41:50.184Z [ERROR] Error: Error: {"stack":"Error: Failed to export 16 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 16 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:41:51.086Z [ERROR] Error streaming, falling back to non-streaming mode: Unable to parse tool parameter JSON from model. Please retry your request or adjust your prompt. Error: SyntaxError: Unexpected non-whitespace character after JSON at position 81 (line 1 column 82). JSON: {"file_path": "C:\\Users\\1\\2468\\3579\\V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md"}{"pattern":
+2025-12-16T14:41:56.227Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:41:56.227Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:01.182Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-16T14:42:01.182Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-16T14:42:01.183Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2025-12-16T14:42:01.183Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:01.183Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:42:01.193Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2025-12-16T14:42:01.193Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:01.193Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:42:02.544Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2025-12-16T14:42:02.544Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:02.544Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:42:02.558Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2025-12-16T14:42:02.558Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:02.558Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:42:02.570Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:42:02.570Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:42:02.570Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:42:02.570Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:42:06.746Z [ERROR] Error: Error: 1P event logging: 18 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:06.746Z [ERROR] Error: Error: {"stack":"Error: Failed to export 18 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 18 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:13.146Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:42:13.666Z [ERROR] Error streaming, falling back to non-streaming mode: Unable to parse tool parameter JSON from model. Please retry your request or adjust your prompt. Error: SyntaxError: Unexpected non-whitespace character after JSON at position 87 (line 1 column 88). JSON: {"file_path": "C:\\Users\\1\\2468\\3579\\docs\\V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md"}{"file
+2025-12-16T14:42:20.754Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:20.755Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:21.228Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:42:21.236Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:42:21.237Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:42:21.237Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:42:21.237Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:21.237Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:42:21.241Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:42:21.241Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:21.241Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:42:21.241Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:42:21.241Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:21.241Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:42:22.829Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:42:22.829Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:22.829Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:42:24.855Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at B9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:459:10901)
+    at q_.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:796:2195)
+    at q_.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:796:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:3938
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:2262
+    at async uR6 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:16946)
+    at async TVB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:2195)
+    at async ZEB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:957:11922)
+    at async Object.call (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:966:996)
+2025-12-16T14:42:24.861Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:42:24.862Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:24.862Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:42:25.448Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at B9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:459:10901)
+    at q_.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:796:2195)
+    at q_.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:796:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:3938
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:2262
+    at async uR6 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:16946)
+    at async TVB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:2195)
+    at async ZEB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:957:11922)
+    at async Object.call (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:966:996)
+2025-12-16T14:42:25.455Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:42:25.455Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:42:25.455Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:42:25.465Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:42:25.465Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:42:25.465Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:42:25.465Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:42:27.845Z [ERROR] Error: Error: 1P event logging: 23 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:27.845Z [ERROR] Error: Error: {"stack":"Error: Failed to export 23 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 23 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:38.899Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:42:39.859Z [ERROR] Error streaming, falling back to non-streaming mode: Unable to parse tool parameter JSON from model. Please retry your request or adjust your prompt. Error: SyntaxError: Unexpected non-whitespace character after JSON at position 32 (line 1 column 33). JSON: {"pattern": "src/market/**/*.py"}{"pa
+2025-12-16T14:42:45.372Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:45.372Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:42:48.423Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-16T14:43:19.100Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-16T14:43:19.106Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2025-12-16T14:43:19.106Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:19.106Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2025-12-16T14:43:19.122Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json.tmp.564.1765896199122
+2025-12-16T14:43:19.124Z [DEBUG] Temp file written successfully, size: 728 bytes
+2025-12-16T14:43:19.124Z [DEBUG] Renaming C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json.tmp.564.1765896199122 to C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json
+2025-12-16T14:43:19.124Z [DEBUG] File C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json written atomically
+2025-12-16T14:43:19.124Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json.tmp.564.1765896199124
+2025-12-16T14:43:19.126Z [DEBUG] Temp file written successfully, size: 906 bytes
+2025-12-16T14:43:19.126Z [DEBUG] Renaming C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json.tmp.564.1765896199124 to C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json
+2025-12-16T14:43:19.126Z [DEBUG] File C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json written atomically
+2025-12-16T14:43:19.134Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2025-12-16T14:43:19.134Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:19.134Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2025-12-16T14:43:19.143Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:43:19.143Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:43:19.143Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:43:19.143Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:43:25.076Z [ERROR] Error: Error: 1P event logging: 15 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:43:25.076Z [ERROR] Error: Error: {"stack":"Error: Failed to export 15 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 15 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:43:37.955Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:43:40.333Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-16T14:43:40.333Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-16T14:43:40.333Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-16T14:43:40.334Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-16T14:43:40.334Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-16T14:43:40.334Z [DEBUG] executePreToolHooks called for tool: Glob
+2025-12-16T14:43:40.340Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2025-12-16T14:43:40.340Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:40.340Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:40.340Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2025-12-16T14:43:40.340Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:40.340Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:40.340Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2025-12-16T14:43:40.340Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:40.340Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:40.340Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2025-12-16T14:43:40.340Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:40.340Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:40.340Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2025-12-16T14:43:40.340Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:40.340Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:40.340Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2025-12-16T14:43:40.340Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:40.340Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:43.513Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2025-12-16T14:43:43.513Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:43.513Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:43.521Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2025-12-16T14:43:43.521Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:43.521Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:43.545Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2025-12-16T14:43:43.545Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:43.545Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:43.545Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2025-12-16T14:43:43.545Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:43.545Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:43.545Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2025-12-16T14:43:43.545Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:43.545Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:43.552Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2025-12-16T14:43:43.552Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:43:43.552Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2025-12-16T14:43:43.567Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:43:43.567Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:43:43.567Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:43:43.567Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:43:46.027Z [ERROR] Error: Error: 1P event logging: 34 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:43:46.027Z [ERROR] Error: Error: {"stack":"Error: Failed to export 34 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 34 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:43:57.866Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:44:00.556Z [DEBUG] Metrics opt-out check failed: No API key available
+2025-12-16T14:44:00.556Z [DEBUG] Metrics check failed, defaulting to disabled
+2025-12-16T14:44:00.556Z [DEBUG] Metrics export disabled by organization setting
+2025-12-16T14:44:01.585Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:44:01.586Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:44:01.586Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:44:01.586Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:44:01.590Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:44:01.590Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:01.590Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:01.590Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:44:01.590Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:01.590Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:01.590Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:44:01.590Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:01.590Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:01.590Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:44:01.590Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:01.590Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:03.735Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:44:03.735Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:03.735Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:03.735Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:44:03.735Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:03.735Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:03.735Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:44:03.735Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:03.735Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:03.735Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:44:03.735Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:03.735Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:03.746Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:44:03.746Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:44:03.746Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:44:03.746Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:44:09.101Z [ERROR] Error: Error: 1P event logging: 28 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:44:09.101Z [ERROR] Error: Error: {"stack":"Error: Failed to export 28 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 28 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:44:16.042Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:44:22.259Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-16T14:44:22.266Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2025-12-16T14:44:22.266Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:22.266Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2025-12-16T14:44:22.285Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json.tmp.564.1765896262285
+2025-12-16T14:44:22.285Z [DEBUG] Preserving file permissions: 100666
+2025-12-16T14:44:22.288Z [DEBUG] Temp file written successfully, size: 728 bytes
+2025-12-16T14:44:22.289Z [DEBUG] Applied original permissions to temp file
+2025-12-16T14:44:22.289Z [DEBUG] Renaming C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json.tmp.564.1765896262285 to C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json
+2025-12-16T14:44:22.289Z [DEBUG] File C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json written atomically
+2025-12-16T14:44:22.289Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json.tmp.564.1765896262289
+2025-12-16T14:44:22.289Z [DEBUG] Preserving file permissions: 100666
+2025-12-16T14:44:22.291Z [DEBUG] Temp file written successfully, size: 920 bytes
+2025-12-16T14:44:22.291Z [DEBUG] Applied original permissions to temp file
+2025-12-16T14:44:22.291Z [DEBUG] Renaming C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json.tmp.564.1765896262289 to C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json
+2025-12-16T14:44:22.291Z [DEBUG] File C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json written atomically
+2025-12-16T14:44:22.302Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2025-12-16T14:44:22.302Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:22.302Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2025-12-16T14:44:22.312Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:44:22.312Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:44:22.312Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:44:22.312Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:44:29.139Z [ERROR] Error: Error: 1P event logging: 14 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:44:29.139Z [ERROR] Error: Error: {"stack":"Error: Failed to export 14 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 14 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:44:38.460Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:44:38.528Z [ERROR] Error streaming, falling back to non-streaming mode: Unable to parse tool parameter JSON from model. Please retry your request or adjust your prompt. Error: SyntaxError: Unexpected non-whitespace character after JSON at position 69 (line 1 column 70). JSON: {"file_path": "C:\\Users\\1\\2468\\3579\\src\\market\\bar_builder.py"}{"file_path
+2025-12-16T14:44:43.703Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:44:43.703Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:44:53.701Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:44:53.701Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:44:53.702Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:44:53.702Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:44:53.706Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:44:53.706Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:53.707Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:53.707Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:44:53.707Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:53.707Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:53.707Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:44:53.707Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:53.707Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:53.707Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:44:53.707Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:53.707Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:55.786Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:44:55.786Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:55.786Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:55.786Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:44:55.786Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:55.786Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:55.786Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:44:55.786Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:55.786Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:55.786Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:44:55.786Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:44:55.786Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:44:55.803Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:44:55.803Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:44:55.803Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:44:55.803Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:44:59.234Z [ERROR] Error: Error: 1P event logging: 26 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:44:59.234Z [ERROR] Error: Error: {"stack":"Error: Failed to export 26 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 26 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:45:10.767Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:45:12.095Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-16T14:45:12.104Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2025-12-16T14:45:12.104Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:45:12.104Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-16T14:45:12.135Z [DEBUG] tree-sitter: loaded from disk
+2025-12-16T14:45:12.390Z [DEBUG] Session environment not yet supported on Windows
+2025-12-16T14:45:13.293Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2025-12-16T14:45:13.293Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:45:13.293Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-16T14:45:13.304Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:45:13.304Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:45:13.304Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:45:13.304Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:45:16.074Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:45:20.296Z [ERROR] Error: Error: 1P event logging: 20 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:45:20.296Z [ERROR] Error: Error: {"stack":"Error: Failed to export 20 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 20 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:45:27.056Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:45:27.056Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:45:31.885Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:45:32.121Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2025-12-16T14:45:32.121Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:45:32.121Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T14:45:38.671Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:45:38.671Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:46:27.135Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:46:27.135Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:46:27.135Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:46:27.135Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:46:27.147Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2025-12-16T14:46:27.147Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:46:27.147Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T14:46:27.148Z [DEBUG] FileHistory: Making snapshot for message 15522a48-ad97-4c7a-bf97-3ab062e53064
+2025-12-16T14:46:27.148Z [DEBUG] FileHistory: Added snapshot for 15522a48-ad97-4c7a-bf97-3ab062e53064, tracking 0 files
+2025-12-16T14:46:30.695Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:46:36.100Z [ERROR] Error: Error: 1P event logging: 16 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:46:36.101Z [ERROR] Error: Error: {"stack":"Error: Failed to export 16 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 16 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:46:50.366Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:46:56.738Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-16T14:46:56.745Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2025-12-16T14:46:56.745Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:46:56.745Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2025-12-16T14:46:56.758Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json.tmp.564.1765896416758
+2025-12-16T14:46:56.758Z [DEBUG] Preserving file permissions: 100666
+2025-12-16T14:46:56.760Z [DEBUG] Temp file written successfully, size: 728 bytes
+2025-12-16T14:46:56.760Z [DEBUG] Applied original permissions to temp file
+2025-12-16T14:46:56.760Z [DEBUG] Renaming C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json.tmp.564.1765896416758 to C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json
+2025-12-16T14:46:56.760Z [DEBUG] File C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json written atomically
+2025-12-16T14:46:56.760Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json.tmp.564.1765896416760
+2025-12-16T14:46:56.760Z [DEBUG] Preserving file permissions: 100666
+2025-12-16T14:46:56.762Z [DEBUG] Temp file written successfully, size: 914 bytes
+2025-12-16T14:46:56.762Z [DEBUG] Applied original permissions to temp file
+2025-12-16T14:46:56.762Z [DEBUG] Renaming C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json.tmp.564.1765896416760 to C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json
+2025-12-16T14:46:56.762Z [DEBUG] File C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json written atomically
+2025-12-16T14:46:56.770Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2025-12-16T14:46:56.770Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:46:56.770Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2025-12-16T14:46:56.778Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:46:56.778Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:46:56.778Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:46:56.778Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:47:02.497Z [ERROR] Error: Error: 1P event logging: 14 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:47:02.497Z [ERROR] Error: Error: {"stack":"Error: Failed to export 14 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 14 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:47:17.054Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:47:19.412Z [DEBUG] executePreToolHooks called for tool: Read
+2025-12-16T14:47:19.418Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2025-12-16T14:47:19.418Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:47:19.418Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:47:24.854Z [ERROR] Error: Error: 1P event logging: 4 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:47:24.854Z [ERROR] Error: Error: {"stack":"Error: Failed to export 4 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 4 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:47:25.211Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at B9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:459:10901)
+    at q_.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:796:2195)
+    at q_.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:796:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:3938
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:2262
+    at async uR6 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:16946)
+    at async TVB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:946:2195)
+    at async ZEB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:957:11922)
+    at async Object.call (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:966:996)
+2025-12-16T14:47:25.219Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2025-12-16T14:47:25.219Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:47:25.219Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2025-12-16T14:47:25.229Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:47:25.229Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:47:25.229Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:47:25.229Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:47:33.176Z [ERROR] Error: Error: 1P event logging: 10 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:47:33.176Z [ERROR] Error: Error: {"stack":"Error: Failed to export 10 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 10 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:47:48.012Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:47:51.274Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2025-12-16T14:47:51.281Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2025-12-16T14:47:51.281Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:47:51.281Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2025-12-16T14:47:51.300Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json.tmp.564.1765896471300
+2025-12-16T14:47:51.300Z [DEBUG] Preserving file permissions: 100666
+2025-12-16T14:47:51.304Z [DEBUG] Temp file written successfully, size: 728 bytes
+2025-12-16T14:47:51.304Z [DEBUG] Applied original permissions to temp file
+2025-12-16T14:47:51.304Z [DEBUG] Renaming C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json.tmp.564.1765896471300 to C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json
+2025-12-16T14:47:51.305Z [DEBUG] File C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a2f79d69-1255-44cd-9317-0ffc422a6eb5.json written atomically
+2025-12-16T14:47:51.305Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json.tmp.564.1765896471305
+2025-12-16T14:47:51.305Z [DEBUG] Preserving file permissions: 100666
+2025-12-16T14:47:51.307Z [DEBUG] Temp file written successfully, size: 914 bytes
+2025-12-16T14:47:51.307Z [DEBUG] Applied original permissions to temp file
+2025-12-16T14:47:51.307Z [DEBUG] Renaming C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json.tmp.564.1765896471305 to C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json
+2025-12-16T14:47:51.307Z [DEBUG] File C:\Users\1\.claude\todos\a3e59d92-de47-4b41-8faa-2acdce8ff827-agent-a3e59d92-de47-4b41-8faa-2acdce8ff827.json written atomically
+2025-12-16T14:47:51.316Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2025-12-16T14:47:51.316Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:47:51.316Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2025-12-16T14:47:51.324Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T14:47:51.324Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T14:47:51.324Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T14:47:51.324Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T14:47:57.132Z [ERROR] Error: Error: 1P event logging: 12 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:47:57.132Z [ERROR] Error: Error: {"stack":"Error: Failed to export 12 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 12 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:48:05.832Z [DEBUG] Stream started - received first chunk
+2025-12-16T14:48:06.050Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2025-12-16T14:48:06.050Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:48:06.050Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T14:48:11.535Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:48:11.535Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:49:00.571Z [DEBUG] Metrics opt-out check failed: No API key available
+2025-12-16T14:49:00.571Z [DEBUG] Metrics check failed, defaulting to disabled
+2025-12-16T14:49:00.571Z [DEBUG] Metrics export disabled by organization setting
+2025-12-16T14:49:06.070Z [DEBUG] Getting matching hook commands for Notification with query: idle_prompt
+2025-12-16T14:49:06.070Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T14:49:06.070Z [DEBUG] Matched 0 unique hooks for query "idle_prompt" (0 before deduplication)
+2025-12-16T14:49:11.215Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T14:49:11.215Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:05:53.465Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T15:05:53.465Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T15:05:53.465Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T15:05:53.465Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T15:05:53.481Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2025-12-16T15:05:53.481Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:05:53.481Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T15:05:53.486Z [DEBUG] FileHistory: Making snapshot for message ab300dca-8fe4-410a-8898-3fc321586a7b
+2025-12-16T15:05:53.487Z [DEBUG] FileHistory: Added snapshot for ab300dca-8fe4-410a-8898-3fc321586a7b, tracking 0 files
+2025-12-16T15:05:56.907Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:05:58.942Z [ERROR] Error: Error: 1P event logging: 15 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:05:58.942Z [ERROR] Error: Error: {"stack":"Error: Failed to export 15 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 15 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:04.918Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:04.918Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:16.352Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:06:17.791Z [ERROR] Error streaming, falling back to non-streaming mode: Unable to parse tool parameter JSON from model. Please retry your request or adjust your prompt. Error: SyntaxError: Unexpected non-whitespace character after JSON at position 161 (line 1 column 162). JSON: {"description": "运行全部CI门禁检查", "command": "cd C:/Users/1/2468/3579 && C:/Users/1/2468/3579/.venv/Scripts/python.exe -m ruff check . 2>&1 | head -20", "timeout": 60000}{"de
+2025-12-16T15:06:24.271Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:24.271Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:38.575Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-16T15:06:38.576Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2025-12-16T15:06:38.576Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:06:38.576Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-16T15:06:38.826Z [DEBUG] Session environment not yet supported on Windows
+2025-12-16T15:06:39.328Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2025-12-16T15:06:39.328Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:06:39.328Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-16T15:06:39.334Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-16T15:06:39.342Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2025-12-16T15:06:39.342Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:06:39.342Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-16T15:06:39.612Z [DEBUG] Session environment not yet supported on Windows
+2025-12-16T15:06:40.281Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2025-12-16T15:06:40.281Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:06:40.281Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-16T15:06:40.287Z [DEBUG] executePreToolHooks called for tool: Bash
+2025-12-16T15:06:40.295Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2025-12-16T15:06:40.295Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:06:40.295Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-16T15:06:40.551Z [DEBUG] Session environment not yet supported on Windows
+2025-12-16T15:06:42.178Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:06:43.316Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:06:47.948Z [ERROR] Error: Error: 1P event logging: 29 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:47.948Z [ERROR] Error: Error: {"stack":"Error: Failed to export 29 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 29 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:53.839Z [ERROR] Error: Error: 1P event logging: 22 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:53.839Z [ERROR] Error: Error: {"stack":"Error: Failed to export 22 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 22 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:59.258Z [ERROR] Error: Error: 1P event logging: 12 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:06:59.258Z [ERROR] Error: Error: {"stack":"Error: Failed to export 12 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 12 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:07:06.557Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2025-12-16T15:07:06.557Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:07:06.557Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2025-12-16T15:07:06.570Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T15:07:06.570Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T15:07:06.570Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T15:07:06.570Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T15:07:06.789Z [ERROR] Error: Error: 1P event logging: 10 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:07:06.789Z [ERROR] Error: Error: {"stack":"Error: Failed to export 10 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 10 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:07:09.467Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:07:12.559Z [ERROR] Error: Error: 1P event logging: 23 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:07:12.559Z [ERROR] Error: Error: {"stack":"Error: Failed to export 23 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 23 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:07:21.780Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:07:24.263Z [ERROR] Error streaming, falling back to non-streaming mode: Unable to parse tool parameter JSON from model. Please retry your request or adjust your prompt. Error: SyntaxError: Unexpected non-whitespace character after JSON at position 174 (line 1 column 175). JSON: {"description": "运行全部测试获取覆盖率", "command": "cd C:/Users/1/2468/3579 && C:/Users/1/2468/3579/.venv/Scripts/python.exe -m pytest tests/ -q --tb=no 2>&1 | tail -5", "timeout": 180000}{"descripti
+2025-12-16T15:07:30.994Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:07:30.994Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:07:57.844Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2025-12-16T15:07:57.844Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:07:57.844Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T15:08:03.282Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:08:03.282Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:08:20.324Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T15:08:20.324Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T15:08:20.324Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T15:08:20.324Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T15:08:20.336Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2025-12-16T15:08:20.336Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:08:20.336Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T15:08:20.338Z [DEBUG] FileHistory: Making snapshot for message a9456ab5-b2fd-4933-8ddd-e37a9193d48e
+2025-12-16T15:08:20.339Z [DEBUG] FileHistory: Added snapshot for a9456ab5-b2fd-4933-8ddd-e37a9193d48e, tracking 0 files
+2025-12-16T15:08:23.713Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:08:26.066Z [ERROR] Error: Error: 1P event logging: 15 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:08:26.066Z [ERROR] Error: Error: {"stack":"Error: Failed to export 15 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 15 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:08:31.430Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:08:31.430Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:08:39.219Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:08:45.536Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2025-12-16T15:08:45.536Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:08:45.536Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T15:08:51.217Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:08:51.217Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:09:00.629Z [DEBUG] Metrics opt-out check failed: No API key available
+2025-12-16T15:09:00.629Z [DEBUG] Metrics check failed, defaulting to disabled
+2025-12-16T15:09:00.629Z [DEBUG] Metrics export disabled by organization setting
+2025-12-16T15:09:16.204Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2025-12-16T15:09:16.204Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2025-12-16T15:09:16.204Z [DEBUG] Hooks: Found 0 total hooks in registry
+2025-12-16T15:09:16.204Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2025-12-16T15:09:16.214Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2025-12-16T15:09:16.214Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:09:16.214Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T15:09:16.215Z [DEBUG] FileHistory: Making snapshot for message 94501cfb-d8f4-46a0-8ea9-9306f60f753a
+2025-12-16T15:09:16.215Z [DEBUG] FileHistory: Added snapshot for 94501cfb-d8f4-46a0-8ea9-9306f60f753a, tracking 0 files
+2025-12-16T15:09:19.281Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:09:22.652Z [ERROR] Error: Error: 1P event logging: 14 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:09:22.653Z [ERROR] Error: Error: {"stack":"Error: Failed to export 14 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 14 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:09:28.116Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:09:28.116Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:09:30.299Z [DEBUG] Stream started - received first chunk
+2025-12-16T15:10:05.350Z [DEBUG] Language not supported while highlighting code, falling back to markdown:
+2025-12-16T15:10:05.351Z [DEBUG] Language not supported while highlighting code, falling back to markdown:
+2025-12-16T15:10:05.351Z [DEBUG] Language not supported while highlighting code, falling back to markdown:
+2025-12-16T15:10:05.399Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2025-12-16T15:10:05.399Z [DEBUG] Found 0 hook matchers in settings
+2025-12-16T15:10:05.399Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-16T15:10:10.799Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at ZS1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90957)
+    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90056)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-16T15:10:10.799Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at ZS1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:201:90146)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at v10.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1569:35484)
+    at fj1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:33347)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:64695
+    at wj3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:65241)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:193:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)

@@ -1,0 +1,47 @@
+@echo off
+echo ========================================
+echo           最简单的AI使用方法
+echo ========================================
+echo.
+echo 选择操作：
+echo.
+echo [1] 打开VS Code/TREA编辑器
+echo [2] 直接运行钻石评估系统
+echo [3] 使用命令行Claude
+echo.
+set /p choice=请选择 (1-3):
+
+if "%choice%"=="1" goto open_editor
+if "%choice%"=="2" goto run_diamond
+if "%choice%"=="3" goto run_claude
+
+:open_editor
+echo.
+echo 正在打开编辑器...
+code .
+echo.
+echo 编辑器打开后：
+echo 1. 选中任意代码
+echo 2. 按 Ctrl+I
+echo 3. 输入问题
+echo.
+pause
+exit
+
+:run_diamond
+echo.
+echo 正在运行钻石评估系统...
+python "Desktop\火山方舟大模型体验中心-火山引擎_files\QL钻石光学能量化系统_终极修复版-完美运行版.py"
+pause
+exit
+
+:run_claude
+echo.
+set /p question=请输入你想问Claude的问题：
+echo.
+echo 正在询问Claude...
+echo.
+.trae-cn/extensions/anthropic.claude-code-2.0.61-win32-x64/resources/native-binary/claude.exe -p "%question%"
+echo.
+pause
+exit

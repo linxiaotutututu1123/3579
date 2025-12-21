@@ -1,0 +1,76 @@
+"""量化系统核心模块包
+
+提供量化交易系统的核心组件，包括：
+- 数据模型（Tick数据、K线数据）
+- 行情网关（CTP等）
+- 事件系统
+- 配置管理
+"""
+
+__version__ = "0.1.0"
+__author__ = "Developer"
+
+# 数据模型
+from .models.tick_data import TickData, TickDataQuality
+from .models.kline_data import KLineData, KLinePeriod
+
+# 行情网关
+from .market_gateway.base import MarketGateway, GatewayStatus, ConnectionInfo, EventHandler
+from .market_gateway.ctp_gateway import CtpMarketGateway
+from .market_gateway.factory import GatewayFactory
+from .market_gateway.events import (
+    EventType, AlertLevel, BaseEvent, ConnectionEvent,
+    SubscriptionEvent, TickDataEvent, KLineDataEvent,
+    AlertEvent, ErrorEvent, HeartbeatEvent
+)
+from .market_gateway.exceptions import (
+    GatewayError, ConnectionError, AuthenticationError,
+    SubscriptionError, ConfigError, DataValidationError,
+    DataProcessingError, StorageError, RateLimitError
+)
+
+# 配置
+from .config.gateway_config import GatewayConfig, CtpConfig, KLineConfig
+
+__all__ = [
+    # 版本信息
+    '__version__',
+    '__author__',
+    # 数据模型
+    'TickData',
+    'TickDataQuality',
+    'KLineData',
+    'KLinePeriod',
+    # 行情网关
+    'MarketGateway',
+    'GatewayStatus',
+    'ConnectionInfo',
+    'EventHandler',
+    'CtpMarketGateway',
+    'GatewayFactory',
+    # 事件
+    'EventType',
+    'AlertLevel',
+    'BaseEvent',
+    'ConnectionEvent',
+    'SubscriptionEvent',
+    'TickDataEvent',
+    'KLineDataEvent',
+    'AlertEvent',
+    'ErrorEvent',
+    'HeartbeatEvent',
+    # 异常
+    'GatewayError',
+    'ConnectionError',
+    'AuthenticationError',
+    'SubscriptionError',
+    'ConfigError',
+    'DataValidationError',
+    'DataProcessingError',
+    'StorageError',
+    'RateLimitError',
+    # 配置
+    'GatewayConfig',
+    'CtpConfig',
+    'KLineConfig',
+]

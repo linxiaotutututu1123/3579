@@ -1,0 +1,84 @@
+   100→
+   101→#### 2.3.3 策略联邦子模块 (src/strategy/federation/)
+   102→
+   103→| 文件 | 功能描述 | 军规覆盖 | 状态 |
+   104→|------|----------|----------|------|
+   105→| `__init__.py` | 模块导出(10项) | M1,M19,M20 | ✅ V4PRO核心 |
+   106→| `central_coordinator.py` | 联邦中枢协调器 | M1,M19,M20 | ✅ V4PRO新增 |
+   107→
+   108→#### 2.3.4 B类模型 - 深度学习子模块 (src/strategy/dl/) - Phase 6 待新增
+   109→
+   110→| 文件 | 功能描述 | 军规覆盖 | 状态 |
+   111→|------|----------|----------|------|
+   112→| `__init__.py` | 模块导出 | - | ⏸ 待新增 |
+   113→| `models/__init__.py` | 模型导出 | - | ⏸ 待新增 |
+   114→| `models/base.py` | DL模型基类(审计/种子控制) | M3,M7,M18 | ⏸ 待新增 |
+   115→| `models/lstm.py` | LSTM模型结构 | M7,M18 | ⏸ 待新增 |
+   116→| `models/transformer.py` | Transformer模型(注意力+位置编码) | M7,M18 | ⏸ 待新增 |
+   117→| `models/cnn.py` | CNN模型结构 | M18 | ⏸ 待新增 |
+   118→| `data/sequence_handler.py` | 序列数据处理(长度验证) | M7 | ⏸ 待新增 |
+   119→| `data/dataset.py` | 数据集定义 | M7 | ⏸ 待新增 |
+   120→| `data/dataloader.py` | 数据加载器 | M7 | ⏸ 待新增 |
+   121→| `factor/factor_miner.py` | 因子挖掘器 | M18,M19 | ⏸ 待新增 |
+   122→| `factor/ic_calculator.py` | IC/IR计算器 | M19 | ⏸ 待新增 |
+   123→| `factor/feature_selector.py` | 特征选择器 | M18 | ⏸ 待新增 |
+   124→| `predictor/lstm_predictor.py` | LSTM预测器 | M7,M18 | ⏸ 待新增 |
+   125→| `predictor/transformer_predictor.py` | Transformer预测器 | M7,M18 | ⏸ 待新增 |
+   126→| `predictor/cnn_predictor.py` | CNN预测器 | M18 | ⏸ 待新增 |
+   127→| `loss/loss_functions.py` | 损失函数(MSE/Huber/夏普) | M18 | ⏸ 待新增 |
+   128→| `metrics/metrics.py` | 评估指标(准确率/夏普/回撤) | M18,M19 | ⏸ 待新增 |
+   129→| `optimizer/optimizer.py` | 优化器封装(Adam/SGD) | - | ⏸ 待新增 |
+   130→| `trainer/trainer.py` | 模型训练器 | M3,M18 | ⏸ 待新增 |
+   131→| `scheduler/scheduler.py` | 学习率调度器 | - | ⏸ 待新增 |
+   132→| `early_stopping/early_stopping.py` | 早停机制 | M18 | ⏸ 待新增 |
+   133→| `checkpoint/checkpoint.py` | 模型检查点管理 | M3,M11 | ⏸ 待新增 |
+   134→
+   135→**DL模块小计: 21 文件, ~4670 行**
+   136→
+   137→#### 2.3.5 B类模型 - 强化学习子模块 (src/strategy/rl/) - ✅ 已完成
+   138→
+   139→| 文件 | 功能描述 | 军规覆盖 | 状态 |
+   140→|------|----------|----------|------|
+   141→| `__init__.py` | 模块导出 | - | ✅ |
+   142→| `base.py` | RL基类(RLAgent/RLConfig/RLTransition) | M3,M7,M18 | ✅ |
+   143→| `buffer.py` | 经验回放(ReplayBuffer/PrioritizedReplayBuffer/RolloutBuffer) | M7 | ✅ |
+   144→| `env.py` | 交易环境(TradingEnv/成本模型/奖励塑造) | M5,M7,M18 | ✅ |
+   145→
+   146→**RL模块小计: 4 文件, ~750 行 ✅**
+   147→
+   148→#### 2.3.6 B类模型 - 交叉验证子模块 (src/strategy/cv/) - ✅ 已完成
+   149→
+   150→| 文件 | 功能描述 | 军规覆盖 | 状态 |
+   151→|------|----------|----------|------|
+   152→| `__init__.py` | 模块导出 | - | ✅ |
+   153→| `base.py` | CV基类(CVConfig/CVSplit/CrossValidator) | M3,M7 | ✅ |
+   154→| `walk_forward.py` | Walk-Forward CV(Expanding/Rolling/Anchored) | M7 | ✅ |
+   155→| `purged_kfold.py` | 净化K折(Purge Gap/Embargo) | M7 | ✅ |
+   156→| `metrics.py` | CV指标(Sharpe/Drawdown/VaR/CVaR/稳定性) | M19 | ✅ |
+   157→
+   158→**CV模块小计: 5 文件, ~700 行 ✅**
+   159→
+   160→#### 2.3.7 B类模型 - 工具模块 (src/strategy/utils/, common/) - Phase 6 待新增
+   161→
+   162→| 文件 | 功能描述 | 军规覆盖 | 状态 |
+   163→|------|----------|----------|------|
+   164→| `utils/__init__.py` | 工具导出 | - | ⏸ 待新增 |
+   165→| `utils/logger.py` | 统一日志记录 | M3,M9 | ⏸ 待新增 |
+   166→| `utils/visualizer.py` | 结果可视化 | - | ⏸ 待新增 |
+   167→| `utils/experiment_tracker.py` | 实验跟踪(MLflow集成) | M3 | ⏸ 待新增 |
+   168→| `utils/utils.py` | 通用工具函数 | - | ⏸ 待新增 |
+   169→| `common/__init__.py` | 公共导出 | - | ⏸ 待新增 |
+   170→| `common/config.py` | 配置解析工具 | M8 | ⏸ 待新增 |
+   171→| `common/logging.py` | 日志记录器 | M3 | ⏸ 待新增 |
+   172→| `common/utils.py` | 公共工具函数 | - | ⏸ 待新增 |
+   173→
+   174→**工具模块小计: 9 文件, ~1150 行**
+   175→
+   176→#### Phase K 文件统计汇总
+   177→
+   178→| 模块 | 文件数 | 预计行数 | 状态 |
+   179→|------|--------|----------|------|
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

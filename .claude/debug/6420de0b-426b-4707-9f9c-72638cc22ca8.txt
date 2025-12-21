@@ -1,0 +1,187 @@
+2025-12-12T04:30:03.275Z [DEBUG] Watching for changes in setting files C:\Users\1\.claude\settings.json...
+2025-12-12T04:30:03.302Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2025-12-12T04:30:03.310Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2025-12-12T04:30:03.310Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2025-12-12T04:30:03.310Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2025-12-12T04:30:03.310Z [DEBUG] [LSP SERVER MANAGER] initialize() called
+2025-12-12T04:30:03.310Z [DEBUG] [LSP SERVER MANAGER] Calling getAllLspServers()
+2025-12-12T04:30:03.322Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2025-12-12T04:30:03.332Z [DEBUG] Total LSP servers loaded: 0
+2025-12-12T04:30:03.332Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2025-12-12T04:30:03.332Z [DEBUG] LSP manager initialized with 0 servers
+2025-12-12T04:30:03.332Z [DEBUG] LSP server manager initialized successfully
+2025-12-12T04:30:03.332Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2025-12-12T04:30:03.336Z [DEBUG] Stats cache is up to date
+2025-12-12T04:30:03.339Z [DEBUG] Loading skills from directories: managed=C:\ProgramData\ClaudeCode\.claude\skills, user=C:\Users\1\.claude\skills, project=[]
+2025-12-12T04:30:03.340Z [DEBUG] >>>>> getPluginSkills CALLED <<<<<
+2025-12-12T04:30:03.347Z [DEBUG] Loaded 0 installed plugins from C:\Users\1\.claude\plugins\installed_plugins.json
+2025-12-12T04:30:03.347Z [DEBUG] Official marketplace auto-install already attempted, skipping
+2025-12-12T04:30:03.367Z [DEBUG] Creating shell snapshot for bash (C:\Program Files\Git\bin\bash.exe)
+2025-12-12T04:30:03.367Z [DEBUG] Looking for shell config file: C:\Users\1\.bashrc
+2025-12-12T04:30:03.367Z [DEBUG] Snapshots directory: C:\Users\1\.claude\shell-snapshots
+2025-12-12T04:30:03.376Z [DEBUG] Creating snapshot at: C:\Users\1\.claude\shell-snapshots\snapshot-bash-1765513803367-2qkmw1.sh
+2025-12-12T04:30:03.376Z [DEBUG] Shell binary exists: true
+2025-12-12T04:30:03.376Z [DEBUG] Execution timeout: 10000ms
+2025-12-12T04:30:03.379Z [DEBUG] Writing to temp file: C:\Users\1\.claude\todos\6420de0b-426b-4707-9f9c-72638cc22ca8-agent-6420de0b-426b-4707-9f9c-72638cc22ca8.json.tmp.12284.1765513803379
+2025-12-12T04:30:03.382Z [DEBUG] Temp file written successfully, size: 2 bytes
+2025-12-12T04:30:03.382Z [DEBUG] Renaming C:\Users\1\.claude\todos\6420de0b-426b-4707-9f9c-72638cc22ca8-agent-6420de0b-426b-4707-9f9c-72638cc22ca8.json.tmp.12284.1765513803379 to C:\Users\1\.claude\todos\6420de0b-426b-4707-9f9c-72638cc22ca8-agent-6420de0b-426b-4707-9f9c-72638cc22ca8.json
+2025-12-12T04:30:03.382Z [DEBUG] File C:\Users\1\.claude\todos\6420de0b-426b-4707-9f9c-72638cc22ca8-agent-6420de0b-426b-4707-9f9c-72638cc22ca8.json written atomically
+2025-12-12T04:30:03.384Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2025-12-12T04:30:03.384Z [DEBUG] Total plugin skills loaded: 0
+2025-12-12T04:30:03.384Z [DEBUG] Total plugin commands loaded: 0
+2025-12-12T04:30:03.384Z [DEBUG] Registered 0 hooks from 0 plugins
+2025-12-12T04:30:03.397Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, duplicates removed: 0)
+2025-12-12T04:30:03.407Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills
+2025-12-12T04:30:03.408Z [DEBUG] Total plugin agents loaded: 0
+2025-12-12T04:30:03.417Z [DEBUG] Git remote URL: https://github.com/mahseema/awesome-ai-tools.git
+2025-12-12T04:30:03.417Z [DEBUG] Parsed repository: mahseema/awesome-ai-tools from https://github.com/mahseema/awesome-ai-tools.git
+2025-12-12T04:30:03.417Z [DEBUG] Parsed repository: mahseema/awesome-ai-tools from URL: https://github.com/mahseema/awesome-ai-tools.git
+2025-12-12T04:30:03.420Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.12284.1765513803420
+2025-12-12T04:30:03.420Z [DEBUG] Preserving file permissions: 100666
+2025-12-12T04:30:03.422Z [DEBUG] Temp file written successfully, size: 50792 bytes
+2025-12-12T04:30:03.423Z [DEBUG] Applied original permissions to temp file
+2025-12-12T04:30:03.423Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.12284.1765513803420 to C:\Users\1\.claude.json
+2025-12-12T04:30:03.423Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-12T04:30:03.423Z [DEBUG] Added C:\Users\1\3\awesome-ai-tools to tracked paths for repo mahseema/awesome-ai-tools
+2025-12-12T04:30:03.423Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=C:\Users\1\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\vendor\ripgrep\x64-win32\rg.exe)
+2025-12-12T04:30:03.506Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2025-12-12T04:30:03.508Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.12284.1765513803508
+2025-12-12T04:30:03.508Z [DEBUG] Preserving file permissions: 100666
+2025-12-12T04:30:03.510Z [DEBUG] Temp file written successfully, size: 50792 bytes
+2025-12-12T04:30:03.510Z [DEBUG] Applied original permissions to temp file
+2025-12-12T04:30:03.510Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.12284.1765513803508 to C:\Users\1\.claude.json
+2025-12-12T04:30:03.510Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-12T04:30:03.517Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2025-12-12T04:30:03.517Z [DEBUG] Found 0 hook matchers in settings
+2025-12-12T04:30:03.517Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2025-12-12T04:30:03.575Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.12284.1765513803575
+2025-12-12T04:30:03.575Z [DEBUG] Preserving file permissions: 100666
+2025-12-12T04:30:03.577Z [DEBUG] Temp file written successfully, size: 50719 bytes
+2025-12-12T04:30:03.577Z [DEBUG] Applied original permissions to temp file
+2025-12-12T04:30:03.577Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.12284.1765513803575 to C:\Users\1\.claude.json
+2025-12-12T04:30:03.577Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-12T04:30:03.580Z [DEBUG] performStartupChecks called
+2025-12-12T04:30:03.580Z [DEBUG] Trust not accepted for current directory - skipping plugin installations
+2025-12-12T04:30:03.597Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2025-12-12T04:30:04.607Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1008.8ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:04.607Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2025-12-12T04:30:04.615Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2025-12-12T04:30:04.615Z [DEBUG] Found 0 hook matchers in settings
+2025-12-12T04:30:04.615Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2025-12-12T04:30:04.615Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2025-12-12T04:30:04.615Z [DEBUG] Found 0 hook matchers in settings
+2025-12-12T04:30:04.615Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2025-12-12T04:30:04.630Z [DEBUG] Skills and commands included in Skill tool:
+2025-12-12T04:30:04.630Z [DEBUG] Slash commands included in SlashCommand tool:
+2025-12-12T04:30:04.648Z [DEBUG] Shell snapshot created successfully (2310 bytes)
+2025-12-12T04:30:04.651Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.12284.1765513804651
+2025-12-12T04:30:04.651Z [DEBUG] Preserving file permissions: 100666
+2025-12-12T04:30:04.652Z [DEBUG] Temp file written successfully, size: 51310 bytes
+2025-12-12T04:30:04.652Z [DEBUG] Applied original permissions to temp file
+2025-12-12T04:30:04.652Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.12284.1765513804651 to C:\Users\1\.claude.json
+2025-12-12T04:30:04.653Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-12T04:30:05.084Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.12284.1765513805084
+2025-12-12T04:30:05.084Z [DEBUG] Preserving file permissions: 100666
+2025-12-12T04:30:05.086Z [DEBUG] Temp file written successfully, size: 51310 bytes
+2025-12-12T04:30:05.086Z [DEBUG] Applied original permissions to temp file
+2025-12-12T04:30:05.086Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.12284.1765513805084 to C:\Users\1\.claude.json
+2025-12-12T04:30:05.086Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-12T04:30:05.091Z [DEBUG] Writing to temp file: C:\Users\1\.claude.json.tmp.12284.1765513805091
+2025-12-12T04:30:05.091Z [DEBUG] Preserving file permissions: 100666
+2025-12-12T04:30:05.093Z [DEBUG] Temp file written successfully, size: 51383 bytes
+2025-12-12T04:30:05.093Z [DEBUG] Applied original permissions to temp file
+2025-12-12T04:30:05.093Z [DEBUG] Renaming C:\Users\1\.claude.json.tmp.12284.1765513805091 to C:\Users\1\.claude.json
+2025-12-12T04:30:05.093Z [DEBUG] File C:\Users\1\.claude.json written atomically
+2025-12-12T04:30:06.624Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1014.1ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:06.631Z [ERROR] Error streaming, falling back to non-streaming mode: 403 {"error":{"code":"","message":"该令牌无权访问模型 claude-haiku-4-5-20251001 (request id: 20251212123005713456054xVaZcKs6)","type":"new_api_error"}}
+2025-12-12T04:30:07.349Z [ERROR] Error in non-streaming fallback: 403 {"error":{"code":"","message":"该令牌无权访问模型 claude-haiku-4-5-20251001 (request id: 20251212123007246430196475VtxOd)","type":"new_api_error"}}
+2025-12-12T04:30:07.349Z [ERROR] Error: Error: 403 {"error":{"code":"","message":"该令牌无权访问模型 claude-haiku-4-5-20251001 (request id: 20251212123007246430196475VtxOd)","type":"new_api_error"}}
+    at Y9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:457:10448)
+    at tR.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:2195)
+    at tR.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Th2.heA.model (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4245:11207)
+    at async heA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1220:18703)
+    at async Th2 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4245:11361)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4245:3787
+    at async Fd1 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2037)
+    at async cYA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4245:3757)
+2025-12-12T04:30:07.380Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2025-12-12T04:30:07.380Z [DEBUG] Found 0 hook matchers in settings
+2025-12-12T04:30:07.380Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-12T04:30:08.634Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1008.3ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:09.650Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1013.4ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:09.663Z [DEBUG] Stream started - received first chunk
+2025-12-12T04:30:09.665Z [ERROR] Error: Error: 404 {"error":{"message":"Invalid URL (POST /v1/messages/count_tokens)","type":"invalid_request_error","param":"","code":""}}
+    at Y9.generate (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:457:10483)
+    at tR.makeStatusError (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:2195)
+    at tR.makeRequest (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:795:5419)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:3503
+    at async file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2262
+    at async Nq6 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:944:16943)
+    at async nXB (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:945:2195)
+    at async PMA (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1764:52)
+    at async BB1 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1764:261)
+2025-12-12T04:30:11.664Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1012.7ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:12.678Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1013.2ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=44544\").Pare
+2025-12-12T04:30:12.686Z [ERROR] Error: Error: 1P event logging: 32 events failed to export
+    at Vj1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:90742)
+    at Vj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:89841)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-12T04:30:12.686Z [ERROR] Error: Error: {"stack":"Error: Failed to export 32 events\n    at Vj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:89931)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 32 events","name":"Error"}
+    at je1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1558:35484)
+    at dR1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:33323)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:64671
+    at JM3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:65217)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-12T04:30:14.687Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1005.5ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:15.691Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1003.8ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=44544\").Pare
+2025-12-12T04:30:17.707Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1009.8ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:17.940Z [ERROR] Error: Error: 1P event logging: 1 events failed to export
+    at Vj1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:90742)
+    at Vj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:89841)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-12T04:30:17.940Z [ERROR] Error: Error: {"stack":"Error: Failed to export 1 events\n    at Vj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:89931)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 1 events","name":"Error"}
+    at je1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1558:35484)
+    at dR1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:33323)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:64671
+    at JM3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:65217)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-12T04:30:19.730Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1008.7ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:21.744Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1011.6ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:23.768Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1010.4ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:23.771Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2025-12-12T04:30:23.771Z [DEBUG] Found 0 hook matchers in settings
+2025-12-12T04:30:23.771Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2025-12-12T04:30:25.796Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1015.2ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:27.806Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1007.5ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:27.806Z [ERROR] AxiosError: AxiosError: timeout of 5000ms exceeded
+    at Vz.<anonymous> (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:57:10436)
+    at Vz.emit (node:events:508:28)
+    at Vz.emit (node:domain:489:12)
+    at Timeout.<anonymous> (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:56:5600)
+    at listOnTimeout (node:internal/timers:605:17)
+    at process.processTimers (node:internal/timers:541:7)
+    at qKA.request (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:59:2130)
+    at runNextTicks (node:internal/process/task_queues:64:5)
+    at process.processTimers (node:internal/timers:538:9)
+    at async xJ0 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:4593:4053)
+2025-12-12T04:30:29.828Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1015.6ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:29.831Z [ERROR] Error: Error: 1P event logging: 2 events failed to export
+    at Vj1.queueFailedEvents (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:90742)
+    at Vj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:89841)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-12T04:30:29.831Z [ERROR] Error: Error: {"stack":"Error: Failed to export 2 events\n    at Vj1.doExport (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:200:89931)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)","message":"Failed to export 2 events","name":"Error"}
+    at je1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:1558:35484)
+    at dR1.error (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:33323)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:64671
+    at JM3 (file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:191:65217)
+    at file:///C:/Users/1/AppData/Roaming/npm/node_modules/@anthropic-ai/claude-code/cli.js:192:20014
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2025-12-12T04:30:31.840Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1007.7ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:33.859Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1003.7ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:35.869Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1001.3ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare
+2025-12-12T04:30:37.898Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults (1014.5ms): powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Process -Filter \"ProcessId=69440\").Pare

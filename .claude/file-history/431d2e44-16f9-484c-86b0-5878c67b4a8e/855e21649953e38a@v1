@@ -1,0 +1,56 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  windows-check:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Create venv
+        shell: pwsh
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\python.exe -m pip install -U pip
+
+      - name: Install deps
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\pip.exe install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run quality gate
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\python.exe -m ruff format --check .
+          .\.venv\Scripts\python.exe -m ruff check .
+          .\.venv\Scripts\python.exe -m mypy .
+          .\.venv\Scripts\python.exe -m pytest -q
+
+      - name: Export context artifact (optional)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts\context | Out-Null
+          try { tree /F > artifacts\context\tree.txt } catch {}
+          try { git rev-parse HEAD > artifacts\context\git_commit.txt } catch {}
+          try { git status --porcelain=v1 > artifacts\context\git_status.txt } catch {}
+          .\.venv\Scripts\python.exe scripts\export_context.py --out artifacts\context\context.md
+
+      - name: Upload context artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: context
+          path: artifacts/context
+          if-no-files-found: ignore
