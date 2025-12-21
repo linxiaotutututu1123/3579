@@ -98,6 +98,16 @@ class ConfidenceContext:
         historical_win_rate: 策略历史胜率 (0.0-1.0)
         position_concentration: 持仓集中度 (0.0-1.0)
 
+        # 高级检查项 (v4.4增强)
+        backtest_sample_size: 回测样本数量 (>=100为充足)
+        backtest_sharpe: 回测夏普比率 (>=1.0为良好)
+        external_signal_valid: 外部信号有效性
+        external_signal_correlation: 外部信号相关性 (0.0-1.0)
+        regime_alignment: 市场体制对齐
+        current_regime: 当前市场体制 (TRENDING/RANGE/VOLATILE/UNKNOWN)
+        strategy_regime: 策略适用体制
+        cross_asset_correlation: 跨资产相关性风险 (0=低相关, 1=高相关)
+
         # 元数据
         metadata: 附加元数据
     """
