@@ -90,7 +90,6 @@ Usage:
 """
 
 from src.knowledge.base import (
-    STORAGE_TIER_THRESHOLDS,
     KnowledgeAuditRecord,
     KnowledgeEntry,
     KnowledgePriority,
@@ -98,6 +97,7 @@ from src.knowledge.base import (
     KnowledgeType,
     QueryContext,
     StorageTier,
+    STORAGE_TIER_THRESHOLDS,
     validate_knowledge_entry,
 )
 from src.knowledge.decision_log import (
@@ -126,14 +126,6 @@ from src.knowledge.pattern_store import (
     PatternStrength,
     PatternType,
 )
-from src.knowledge.precipitator import (
-    KnowledgePrecipitator,
-    KnowledgeVersion,
-    MaintenanceAction,
-    PrecipitationLevel,
-    PrecipitationRecord,
-    PrecipitationRule,
-)
 from src.knowledge.query import (
     KnowledgeQuery,
     SearchQuery,
@@ -157,6 +149,14 @@ from src.knowledge.storage import (
     TieredStorage,
     TieredStorageConfig,
     WarmStorage,
+)
+from src.knowledge.precipitator import (
+    KnowledgePrecipitator,
+    KnowledgeVersion,
+    MaintenanceAction,
+    PrecipitationLevel,
+    PrecipitationRecord,
+    PrecipitationRule,
 )
 
 

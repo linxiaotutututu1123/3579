@@ -18,7 +18,6 @@ from src.strategy.dl.factors.ic_calculator import (
     ICResult,
 )
 
-
 __all__ = [
     "FactorMetrics",
     "ICCalculator",

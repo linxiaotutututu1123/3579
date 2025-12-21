@@ -34,10 +34,9 @@ import secrets
 import time
 import uuid
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar
-
 
 if TYPE_CHECKING:
     pass
@@ -193,7 +192,7 @@ class TradingSignal:
             "priority": self.priority.value,
             "timestamp": self.timestamp,
             "timestamp_iso": datetime.fromtimestamp(
-                self.timestamp, tz=UTC
+                self.timestamp, tz=timezone.utc
             ).isoformat(),
             "expire_at": self.expire_at,
             "signature": self.signature,
@@ -204,7 +203,7 @@ class TradingSignal:
         """生成审计记录 (M3)."""
         return {
             "event_type": "SIGNAL_CREATED",
-            "event_time": datetime.now(tz=UTC).isoformat(),
+            "event_time": datetime.now(tz=timezone.utc).isoformat(),
             **self.to_dict(),
         }
 
@@ -447,7 +446,7 @@ class SignalSource:
         """生成审计记录 (M3)."""
         return {
             "event_type": "SIGNAL_SOURCE_STATUS",
-            "event_time": datetime.now(tz=UTC).isoformat(),
+            "event_time": datetime.now(tz=timezone.utc).isoformat(),
             **self.get_statistics(),
         }
 

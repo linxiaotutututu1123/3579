@@ -19,13 +19,14 @@ from typing import TYPE_CHECKING
 import numpy as np
 from numpy.typing import NDArray
 
-
 if TYPE_CHECKING:
     import torch
+    from torch.utils.data import Dataset
 
 from src.strategy.dl.data.sequence_handler import (
     SequenceConfig,
     SequenceHandler,
+    SequenceWindow,
 )
 from src.strategy.types import Bar1m
 
@@ -299,7 +300,7 @@ class TorchFinancialDataset:
         """获取数据集大小."""
         return len(self._samples)
 
-    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, idx: int) -> tuple["torch.Tensor", "torch.Tensor"]:
         """获取单个样本.
 
         Args:
@@ -320,7 +321,7 @@ def create_torch_dataloaders(
     dataset: FinancialDataset,
     batch_size: int = 32,
     num_workers: int = 0,
-) -> tuple[torch.utils.data.DataLoader, torch.utils.data.DataLoader, torch.utils.data.DataLoader]:
+) -> tuple["torch.utils.data.DataLoader", "torch.utils.data.DataLoader", "torch.utils.data.DataLoader"]:
     """创建PyTorch DataLoader.
 
     Args:

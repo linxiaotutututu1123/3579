@@ -13,11 +13,10 @@ from __future__ import annotations
 
 from src.strategy.dl.training.trainer import (
     EarlyStopping,
-    TradingModelTrainer,
     TrainerConfig,
     TrainerMetrics,
+    TradingModelTrainer,
 )
-
 
 __all__ = [
     "EarlyStopping",

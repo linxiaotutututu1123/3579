@@ -53,48 +53,47 @@ from __future__ import annotations
 import threading
 import time
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar
 
 # Re-export from signal modules
 from src.strategy.signal import (
-    # Conflict resolver module exports
-    ConflictInfo,
-    ConflictSeverity,
-    ConflictType,
-    # Registry module exports
-    RegistryEvent,
-    RegistryEventType,
-    ResolutionResult,
-    ResolutionStrategy,
-    SignalConflictResolver,
     # Source module exports
     SignalDirection,
     SignalPriority,
     SignalSource,
     SignalSourceID,
-    SignalSourceRegistry,
     SignalType,
-    # Validator module exports
-    SignalValidator,
-    SourceMetadata,
     SourceStatus,
     TradingSignal,
+    create_signal_source,
+    generate_source_id,
+    # Validator module exports
+    SignalValidator,
     ValidationErrorCode,
     ValidationResult,
     ValidationSeverity,
-    create_conflict_resolver,
-    create_signal_source,
     create_validator,
-    generate_source_id,
+    # Registry module exports
+    RegistryEvent,
+    RegistryEventType,
+    SignalSourceRegistry,
+    SourceMetadata,
     get_registry,
     get_source,
     register_source,
-    resolve_conflicts,
     unregister_source,
+    # Conflict resolver module exports
+    ConflictInfo,
+    ConflictSeverity,
+    ConflictType,
+    ResolutionResult,
+    ResolutionStrategy,
+    SignalConflictResolver,
+    create_conflict_resolver,
+    resolve_conflicts,
 )
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -103,26 +102,31 @@ if TYPE_CHECKING:
 class SingleSignalSourceError(Exception):
     """Single Signal Source exception base class."""
 
+    pass
 
 
 class SignalSourceNotFoundError(SingleSignalSourceError):
     """Signal source not found exception."""
 
+    pass
 
 
 class SignalValidationError(SingleSignalSourceError):
     """Signal validation failed exception."""
 
+    pass
 
 
 class SignalConflictError(SingleSignalSourceError):
     """Signal conflict exception."""
 
+    pass
 
 
 class DuplicateSignalSourceError(SingleSignalSourceError):
     """Duplicate signal source registration exception."""
 
+    pass
 
 
 class ManagerStatus(Enum):
@@ -168,7 +172,7 @@ class SignalProcessingResult:
             ),
             "timestamp": self.timestamp,
             "timestamp_iso": datetime.fromtimestamp(
-                self.timestamp, tz=UTC
+                self.timestamp, tz=timezone.utc
             ).isoformat(),
             "details": self.details,
         }
@@ -177,7 +181,7 @@ class SignalProcessingResult:
         """Generate audit record (M3)."""
         return {
             "event_type": "SIGNAL_PROCESSED",
-            "event_time": datetime.now(tz=UTC).isoformat(),
+            "event_time": datetime.now(tz=timezone.utc).isoformat(),
             **self.to_dict(),
         }
 
@@ -884,7 +888,7 @@ class SingleSignalSourceManager:
                 if self._signal_counter > 0
                 else 0.0
             ),
-            "check_time": datetime.now(tz=UTC).isoformat(),
+            "check_time": datetime.now(tz=timezone.utc).isoformat(),
         }
 
     def to_audit_record(self) -> dict[str, Any]:
@@ -895,7 +899,7 @@ class SingleSignalSourceManager:
         """
         return {
             "event_type": "SINGLE_SIGNAL_SOURCE_STATUS",
-            "event_time": datetime.now(tz=UTC).isoformat(),
+            "event_time": datetime.now(tz=timezone.utc).isoformat(),
             **self.get_statistics(),
         }
 

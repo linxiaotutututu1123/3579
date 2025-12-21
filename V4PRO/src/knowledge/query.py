@@ -21,17 +21,19 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any
+from typing import Any, TypeVar
 
 from src.knowledge.base import (
     KnowledgeEntry,
     KnowledgePriority,
     KnowledgeStore,
     KnowledgeType,
+    QueryContext,
 )
-from src.knowledge.decision_log import DecisionLog, DecisionType
-from src.knowledge.pattern_store import MarketRegime, PatternStore, PatternType
+from src.knowledge.decision_log import Decision, DecisionLog, DecisionType
+from src.knowledge.pattern_store import MarketRegime, Pattern, PatternStore, PatternType
 from src.knowledge.reflexion import (
+    Experience,
     ExperienceCategory,
     ExperienceType,
     ReflexionStore,

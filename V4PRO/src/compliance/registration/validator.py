@@ -39,13 +39,12 @@ V4 Scenarios:
 from __future__ import annotations
 
 import logging
+import time
 from collections import deque
-from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any
-
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -759,7 +758,7 @@ class ComplianceValidator:
                 timestamp=timestamp.isoformat(),
                 military_rule="M17",
             )
-        if cancel_ratio >= warning_threshold:
+        elif cancel_ratio >= warning_threshold:
             return ViolationDetail(
                 violation_type=ViolationType.CANCEL_RATIO_EXCEEDED,
                 violation_level=ViolationLevel.WARNING,
@@ -796,7 +795,7 @@ class ComplianceValidator:
                 timestamp=timestamp.isoformat(),
                 military_rule="M17",
             )
-        if cancel_freq >= warning_threshold:
+        elif cancel_freq >= warning_threshold:
             return ViolationDetail(
                 violation_type=ViolationType.CANCEL_FREQ_EXCEEDED,
                 violation_level=ViolationLevel.WARNING,
@@ -833,7 +832,7 @@ class ComplianceValidator:
                 timestamp=timestamp.isoformat(),
                 military_rule="M17",
             )
-        if interval_ms < warning_threshold:
+        elif interval_ms < warning_threshold:
             return ViolationDetail(
                 violation_type=ViolationType.ORDER_INTERVAL_TOO_SHORT,
                 violation_level=ViolationLevel.WARNING,
@@ -870,7 +869,7 @@ class ComplianceValidator:
                 timestamp=timestamp.isoformat(),
                 military_rule="M3",
             )
-        if delay_sec > warning_threshold:
+        elif delay_sec > warning_threshold:
             return ViolationDetail(
                 violation_type=ViolationType.AUDIT_DELAY_EXCEEDED,
                 violation_level=ViolationLevel.WARNING,

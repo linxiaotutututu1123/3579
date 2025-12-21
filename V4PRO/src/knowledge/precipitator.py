@@ -19,20 +19,23 @@ V4 SPEC: D4 知识库纳入升级计划
 
 from __future__ import annotations
 
+import hashlib
 import json
 import threading
 import time
 import uuid
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum, auto
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from src.knowledge.base import (
     KnowledgeEntry,
     KnowledgePriority,
     KnowledgeType,
     StorageTier,
+    STORAGE_TIER_THRESHOLDS,
 )
 from src.knowledge.storage import TieredStorage
 
@@ -485,11 +488,12 @@ class KnowledgePrecipitator:
         # 根据级别确定默认动作
         if level == PrecipitationLevel.CRITICAL:
             return MaintenanceAction.ARCHIVE
-        if level == PrecipitationLevel.IMPORTANT:
+        elif level == PrecipitationLevel.IMPORTANT:
             return MaintenanceAction.PROMOTE
-        if level == PrecipitationLevel.TEMPORARY:
+        elif level == PrecipitationLevel.TEMPORARY:
             return MaintenanceAction.DEMOTE
-        return MaintenanceAction.ARCHIVE
+        else:
+            return MaintenanceAction.ARCHIVE
 
     def _execute_action(
         self,

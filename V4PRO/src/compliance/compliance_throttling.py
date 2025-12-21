@@ -49,12 +49,11 @@ import logging
 import threading
 import time
 from collections import deque
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any
-
+from pathlib import Path
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -1348,9 +1347,10 @@ class AuditLogger:
 
         if event_type in trading_events:
             return LogCategory.TRADING
-        if event_type in system_events:
+        elif event_type in system_events:
             return LogCategory.SYSTEM
-        return LogCategory.AUDIT
+        else:
+            return LogCategory.AUDIT
 
 
 # ============================================================

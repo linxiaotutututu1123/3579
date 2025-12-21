@@ -29,6 +29,7 @@ from src.guardian.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerState,
     RecoveryConfig,
+    RecoveryProgress,
 )
 
 
@@ -297,14 +298,14 @@ class GradualRecoveryExecutor:
 
         if breaker_state == CircuitBreakerState.NORMAL:
             return dict(target)
-        if breaker_state in (
+        elif breaker_state in (
             CircuitBreakerState.TRIGGERED,
             CircuitBreakerState.COOLING,
             CircuitBreakerState.MANUAL_OVERRIDE,
         ):
             # 禁止新开仓，只允许减仓
             return {}
-        if breaker_state == CircuitBreakerState.RECOVERY:
+        elif breaker_state == CircuitBreakerState.RECOVERY:
             # 渐进式恢复
             return self._scaler.scale_position(target, ratio)
 

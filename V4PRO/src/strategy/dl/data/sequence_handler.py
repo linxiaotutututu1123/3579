@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Sequence as PySequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
@@ -306,20 +306,20 @@ class SequenceHandler:
         if method == NormalizationMethod.NONE:
             return window
 
-        if method == NormalizationMethod.ZSCORE:
+        elif method == NormalizationMethod.ZSCORE:
             mean = np.mean(window, axis=0, keepdims=True)
             std = np.std(window, axis=0, keepdims=True)
             std = np.where(std < 1e-8, 1.0, std)
             return (window - mean) / std
 
-        if method == NormalizationMethod.MINMAX:
+        elif method == NormalizationMethod.MINMAX:
             min_val = np.min(window, axis=0, keepdims=True)
             max_val = np.max(window, axis=0, keepdims=True)
             range_val = max_val - min_val
             range_val = np.where(range_val < 1e-8, 1.0, range_val)
             return (window - min_val) / range_val
 
-        if method == NormalizationMethod.ROBUST:
+        elif method == NormalizationMethod.ROBUST:
             median = np.median(window, axis=0, keepdims=True)
             q75 = np.percentile(window, 75, axis=0, keepdims=True)
             q25 = np.percentile(window, 25, axis=0, keepdims=True)
@@ -327,7 +327,8 @@ class SequenceHandler:
             iqr = np.where(iqr < 1e-8, 1.0, iqr)
             return (window - median) / iqr
 
-        return window
+        else:
+            return window
 
     def fit_normalizer(
         self,

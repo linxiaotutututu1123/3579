@@ -52,10 +52,10 @@ from src.compliance.registration.registry import (
     create_registration_registry,
 )
 from src.compliance.registration.reporter import (
-    RegulatoryReporter,
     ReportFormat,
     ReportRecord,
     ReportType,
+    RegulatoryReporter,
     create_regulatory_reporter,
 )
 from src.compliance.registration.validator import (
@@ -67,7 +67,6 @@ from src.compliance.registration.validator import (
     ViolationDetail,
     create_compliance_validator,
 )
-
 
 __all__ = [
     # Registry

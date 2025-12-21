@@ -424,7 +424,8 @@ class ICCalculator:
 
         if result.passes_threshold:
             return True, f"IC = {result.ic:.4f} >= {self.config.ic_threshold} (PASS)"
-        return False, f"IC = {result.ic:.4f} < {self.config.ic_threshold} (FAIL)"
+        else:
+            return False, f"IC = {result.ic:.4f} < {self.config.ic_threshold} (FAIL)"
 
     def reset(self) -> None:
         """重置计算器状态."""

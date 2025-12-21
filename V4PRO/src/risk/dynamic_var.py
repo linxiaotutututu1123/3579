@@ -871,3 +871,14 @@ def quick_limit_var(
 # ============================================================
 # 从 adaptive_var 模块重导出，保持向后兼容
 
+from src.risk.adaptive_var import (
+    AdaptiveVaRConfig,
+    AdaptiveVaRScheduler,
+    EventType,
+    MarketRegime,
+    PerformanceMetrics,
+    VaRScheduleState,
+    create_adaptive_var_scheduler,
+    get_regime_from_volatility,
+    quick_adaptive_var,
+)

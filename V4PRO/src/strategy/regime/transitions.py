@@ -40,7 +40,7 @@ from src.strategy.regime.states import (
 
 
 if TYPE_CHECKING:
-    pass
+    from collections.abc import Callable
 
 
 class AuditLogger(Protocol):
@@ -614,7 +614,7 @@ class TransitionEngine:
 
         if indicators.trend_direction > 0:
             return TrendDirection.UP
-        if indicators.trend_direction < 0:
+        elif indicators.trend_direction < 0:
             return TrendDirection.DOWN
 
         return TrendDirection.NEUTRAL

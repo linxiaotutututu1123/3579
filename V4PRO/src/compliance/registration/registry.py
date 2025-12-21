@@ -41,13 +41,11 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
-
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 

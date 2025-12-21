@@ -26,16 +26,16 @@ from __future__ import annotations
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar
-
 
 if TYPE_CHECKING:
     pass
 
 from src.strategy.signal.source import (
     SignalDirection,
+    SignalPriority,
     TradingSignal,
 )
 
@@ -100,7 +100,7 @@ class ConflictInfo:
             "symbol": self.symbol,
             "timestamp": self.timestamp,
             "timestamp_iso": datetime.fromtimestamp(
-                self.timestamp, tz=UTC
+                self.timestamp, tz=timezone.utc
             ).isoformat(),
             "details": self.details,
         }
@@ -109,7 +109,7 @@ class ConflictInfo:
         """生成审计记录 (M3)."""
         return {
             "event_type": "SIGNAL_CONFLICT_DETECTED",
-            "event_time": datetime.now(tz=UTC).isoformat(),
+            "event_time": datetime.now(tz=timezone.utc).isoformat(),
             **self.to_dict(),
         }
 
@@ -148,7 +148,7 @@ class ResolutionResult:
             "rejected_signals": list(self.rejected_signals),
             "timestamp": self.timestamp,
             "timestamp_iso": datetime.fromtimestamp(
-                self.timestamp, tz=UTC
+                self.timestamp, tz=timezone.utc
             ).isoformat(),
             "details": self.details,
         }
@@ -157,7 +157,7 @@ class ResolutionResult:
         """生成审计记录 (M3)."""
         return {
             "event_type": "SIGNAL_CONFLICT_RESOLVED",
-            "event_time": datetime.now(tz=UTC).isoformat(),
+            "event_time": datetime.now(tz=timezone.utc).isoformat(),
             **self.to_dict(),
         }
 
@@ -462,27 +462,27 @@ class SignalConflictResolver:
             # 选择优先级最高的信号
             return min(signals, key=lambda s: s.priority.value)
 
-        if strategy == ResolutionStrategy.CONFIDENCE_WEIGHTED:
+        elif strategy == ResolutionStrategy.CONFIDENCE_WEIGHTED:
             # 选择置信度最高的信号
             return max(signals, key=lambda s: s.confidence)
 
-        if strategy == ResolutionStrategy.STRENGTH_WEIGHTED:
+        elif strategy == ResolutionStrategy.STRENGTH_WEIGHTED:
             # 选择强度最高的信号
             return max(signals, key=lambda s: s.strength)
 
-        if strategy == ResolutionStrategy.NEWEST_FIRST:
+        elif strategy == ResolutionStrategy.NEWEST_FIRST:
             # 选择最新的信号
             return max(signals, key=lambda s: s.timestamp)
 
-        if strategy == ResolutionStrategy.OLDEST_FIRST:
+        elif strategy == ResolutionStrategy.OLDEST_FIRST:
             # 选择最早的信号
             return min(signals, key=lambda s: s.timestamp)
 
-        if strategy == ResolutionStrategy.REJECT_ALL:
+        elif strategy == ResolutionStrategy.REJECT_ALL:
             # 全部拒绝
             return None
 
-        if strategy == ResolutionStrategy.FLAT_ON_CONFLICT:
+        elif strategy == ResolutionStrategy.FLAT_ON_CONFLICT:
             # 创建平仓信号 (返回None让调用者处理)
             return None
 

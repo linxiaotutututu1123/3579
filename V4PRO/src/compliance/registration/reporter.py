@@ -36,18 +36,16 @@ V4 Scenarios:
 
 from __future__ import annotations
 
-import csv
 import hashlib
-import io
 import json
 import logging
-from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any
-
+from typing import Any, Callable
+import csv
+import io
 
 logger = logging.getLogger(__name__)
 
@@ -617,13 +615,14 @@ class RegulatoryReporter:
         """
         if format_type == ReportFormat.JSON:
             return self._export_json(report)
-        if format_type == ReportFormat.XML:
+        elif format_type == ReportFormat.XML:
             return self._export_xml(report)
-        if format_type == ReportFormat.CSV:
+        elif format_type == ReportFormat.CSV:
             return self._export_csv(report)
-        if format_type == ReportFormat.TEXT:
+        elif format_type == ReportFormat.TEXT:
             return self._export_text(report)
-        raise ValueError(f"不支持的导出格式: {format_type}")
+        else:
+            raise ValueError(f"不支持的导出格式: {format_type}")
 
     def get_report(self, report_id: str) -> ReportRecord | None:
         """获取报送记录.

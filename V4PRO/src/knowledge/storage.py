@@ -19,24 +19,25 @@ from __future__ import annotations
 
 import gzip
 import json
+import os
 import sqlite3
 import threading
 import time
+from abc import ABC, abstractmethod
 from collections import OrderedDict
-from collections.abc import Iterator
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, Generic, Iterator, TypeVar
 
 from src.knowledge.base import (
-    STORAGE_TIER_THRESHOLDS,
     KnowledgeAuditRecord,
     KnowledgeEntry,
     KnowledgePriority,
     KnowledgeStore,
     KnowledgeType,
     StorageTier,
+    STORAGE_TIER_THRESHOLDS,
 )
 
 
@@ -152,7 +153,8 @@ class HotStorage(KnowledgeStore[T]):
                     entry.touch()
                     self._stats["cache_hits"] += 1
                     return entry
-                del self._cache[entry_id]
+                else:
+                    del self._cache[entry_id]
             self._stats["cache_misses"] += 1
             return None
 
@@ -465,13 +467,14 @@ class WarmStorage(KnowledgeStore[T]):
         Returns:
             是否删除成功
         """
-        with self._lock, self._get_connection() as conn:
-            cursor = conn.execute(
-                "DELETE FROM knowledge_entries WHERE id = ?",
-                (entry_id,),
-            )
-            conn.commit()
-            return cursor.rowcount > 0
+        with self._lock:
+            with self._get_connection() as conn:
+                cursor = conn.execute(
+                    "DELETE FROM knowledge_entries WHERE id = ?",
+                    (entry_id,),
+                )
+                conn.commit()
+                return cursor.rowcount > 0
 
     def query(
         self,

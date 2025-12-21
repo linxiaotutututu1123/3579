@@ -28,10 +28,10 @@ import random
 import time
 import uuid
 from abc import ABC, abstractmethod
-from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any
+from typing import Any, Callable
 
 from src.execution.order_types import Offset, OrderIntent, Side
 
@@ -933,15 +933,17 @@ class BehavioralAlgorithm(SplitAlgorithmBase):
             # 激进：吃对手价
             if order.side == Side.BUY:
                 return market.ask
-            return market.bid
-        if pattern == "passive":
+            else:
+                return market.bid
+        elif pattern == "passive":
             # 被动：挂己方价
             if order.side == Side.BUY:
                 return market.bid
-            return market.ask
-        # neutral
-        # 中性：中间价
-        return market.mid_price()
+            else:
+                return market.ask
+        else:  # neutral
+            # 中性：中间价
+            return market.mid_price()
 
 
 # ============================================================================
@@ -1464,7 +1466,7 @@ class AsyncOrderExecutor:
                     latency_ms=latency_ms,
                 )
 
-            except Exception:
+            except Exception as e:
                 latency_ms = (time.time() - start_time) * 1000
                 self._splitter.update_order_status(
                     plan_id=plan_id,

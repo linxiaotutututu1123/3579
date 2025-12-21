@@ -29,10 +29,9 @@ from __future__ import annotations
 import time
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar
-
 
 if TYPE_CHECKING:
     from src.strategy.signal.source import SignalSource, TradingSignal
@@ -137,7 +136,7 @@ class ValidationResult:
             "source_id": self.source_id,
             "timestamp": self.timestamp,
             "timestamp_iso": datetime.fromtimestamp(
-                self.timestamp, tz=UTC
+                self.timestamp, tz=timezone.utc
             ).isoformat(),
             "details": self.details,
         }
@@ -146,7 +145,7 @@ class ValidationResult:
         """生成审计记录 (M3)."""
         return {
             "event_type": "SIGNAL_VALIDATION",
-            "event_time": datetime.now(tz=UTC).isoformat(),
+            "event_time": datetime.now(tz=timezone.utc).isoformat(),
             **self.to_dict(),
         }
 

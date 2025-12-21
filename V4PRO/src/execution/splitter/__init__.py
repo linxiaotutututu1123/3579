@@ -23,38 +23,37 @@ V4PRO Scenarios:
 - 执行延迟: <=100ms
 """
 
-from src.execution.splitter.behavioral_disguise import (
-    BehavioralConfig,
-    BehavioralDisguiseExecutor,
-    DisguisePattern,
-    DisguiseState,
-    NoiseType,
-)
 from src.execution.splitter.metrics import (
-    DEFAULT_TARGETS,
-    ExecutionMetrics,
+    MetricStatus,
     ExecutionTargets,
+    DEFAULT_TARGETS,
+    SlippageMetric,
     FillRateMetric,
     LatencyMetric,
+    ExecutionMetrics,
     MetricsCollector,
-    MetricStatus,
-    SlippageMetric,
+)
+from src.execution.splitter.behavioral_disguise import (
+    DisguisePattern,
+    NoiseType,
+    BehavioralConfig,
+    DisguiseState,
+    BehavioralDisguiseExecutor,
 )
 from src.execution.splitter.order_splitter import (
-    ALGORITHM_DECISION_TREE,
-    AlgorithmScore,
-    AlgorithmSelector,
-    ConfirmationCallback,
-    LiquidityLevel,
-    MarketContext,
-    OrderSizeCategory,
-    OrderSplitter,
-    SessionPhase,
     SplitAlgorithm,
-    SplitPlan,
+    OrderSizeCategory,
+    LiquidityLevel,
+    SessionPhase,
+    MarketContext,
     SplitterConfig,
+    AlgorithmScore,
+    SplitPlan,
+    ConfirmationCallback,
+    AlgorithmSelector,
+    OrderSplitter,
+    ALGORITHM_DECISION_TREE,
 )
-
 
 __all__ = [
     # metrics.py exports

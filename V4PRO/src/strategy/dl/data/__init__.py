@@ -24,7 +24,6 @@ from src.strategy.dl.data.sequence_handler import (
     SequenceWindow,
 )
 
-
 __all__ = [
     # 序列处理
     "NormalizationMethod",

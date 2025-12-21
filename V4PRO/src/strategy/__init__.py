@@ -56,39 +56,39 @@ from src.strategy.federation import (
     create_signal,
 )
 from src.strategy.signal import (
-    # 冲突解决
-    ConflictInfo,
-    ConflictSeverity,
-    ConflictType,
-    # 信号源注册表
-    RegistryEvent,
-    RegistryEventType,
-    ResolutionResult,
-    ResolutionStrategy,
-    SignalConflictResolver,
     # 信号源定义
     SignalPriority,
     SignalSource,
     SignalSourceID,
-    SignalSourceRegistry,
     SignalType,
-    # 信号验证
-    SignalValidator,
-    SourceMetadata,
     SourceStatus,
     TradingSignal,
+    create_signal_source,
+    generate_source_id,
+    # 信号验证
+    SignalValidator,
     ValidationErrorCode,
     ValidationResult,
     ValidationSeverity,
-    create_conflict_resolver,
-    create_signal_source,
     create_validator,
-    generate_source_id,
+    # 信号源注册表
+    RegistryEvent,
+    RegistryEventType,
+    SignalSourceRegistry,
+    SourceMetadata,
     get_registry,
     get_source,
     register_source,
-    resolve_conflicts,
     unregister_source,
+    # 冲突解决
+    ConflictInfo,
+    ConflictSeverity,
+    ConflictType,
+    ResolutionResult,
+    ResolutionStrategy,
+    SignalConflictResolver,
+    create_conflict_resolver,
+    resolve_conflicts,
 )
 from src.strategy.types import Bar1m, MarketState, TargetPortfolio
 

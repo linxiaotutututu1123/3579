@@ -20,7 +20,7 @@ V4PRO Scenarios:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar
@@ -32,9 +32,10 @@ from src.risk.confidence import (
     ConfidenceAssessor,
     ConfidenceCheck,
     ConfidenceContext,
+    ConfidenceLevel,
     ConfidenceResult,
+    TaskType,
 )
-
 
 if TYPE_CHECKING:
     pass
