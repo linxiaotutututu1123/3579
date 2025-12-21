@@ -27,6 +27,21 @@ from src.guardian.actions import (
     ActionType,
     GuardianActions,
 )
+from src.guardian.circuit_breaker import (
+    VALID_CIRCUIT_BREAKER_TRANSITIONS,
+    AuditRecord,
+    CircuitBreaker,
+    CircuitBreakerEvent,
+    CircuitBreakerManager,
+    CircuitBreakerMetrics,
+    CircuitBreakerState,
+    DefaultAuditLogger,
+    RecoveryConfig,
+    RecoveryProgress,
+    TriggerCheckResult,
+    TriggerThresholds,
+)
+from src.guardian.circuit_breaker import TransitionError as CircuitBreakerTransitionError
 from src.guardian.monitor import GuardianCheckResult, GuardianMonitor
 from src.guardian.recovery import ColdStartRecovery, RecoveryState, RecoveryStatus
 from src.guardian.state_machine import (
