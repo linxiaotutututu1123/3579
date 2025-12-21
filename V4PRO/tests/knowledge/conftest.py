@@ -255,3 +255,14 @@ def sample_fusion_context() -> FusionContext:
         volatility=0.02,
         session="day",
     )
+
+
+@pytest.fixture
+def precipitator(tiered_storage: TieredStorage, temp_dir: str) -> KnowledgePrecipitator:
+    """创建知识沉淀管理器实例."""
+    archive_dir = os.path.join(temp_dir, "archive")
+    return KnowledgePrecipitator(
+        storage=tiered_storage,
+        archive_dir=archive_dir,
+        auto_maintenance=False,  # 测试时禁用自动维护
+    )
