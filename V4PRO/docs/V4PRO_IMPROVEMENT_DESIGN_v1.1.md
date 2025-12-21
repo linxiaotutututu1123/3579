@@ -47,7 +47,7 @@
 ### 1.2 设计原则
 
 1. **军规优先**: 所有设计必须符合M1-M33军规
-2. **置信度驱动**: 设计方案置信度≥90%方可采纳
+2. **置信度驱动**: 设计方案置信度≥95%方可采纳
 3. **并行优化**: 优先考虑可并行实施的方案
 4. **零幻觉保障**: 所有设计必须有实证支持
 5. **增量迭代**: 支持分阶段实施
@@ -464,16 +464,24 @@ class CircuitBreakerStateMachine:
 - [ ] M1: 确认信号来源唯一
 - [ ] M6: 检查当前风控状态
 - [ ] M16: 验证保证金充足
+- [ ] M17: 检查报撤单频率
+- [ ] M13: 检查涨跌停限制
 
 🔴 订单执行前
 - [ ] M13: 检查涨跌停限制
 - [ ] M17: 检查报撤单频率
 - [ ] M6: 再次确认无熔断状态
+- [ ] M16: 最终保证金验证
+- [ ] M13: 最终价格验证
+- [ ] M1: 确认信号一致性
 
 🔴 订单执行后
 - [ ] M3: 完成审计日志记录
 - [ ] M16: 更新保证金使用率
 - [ ] M19: 记录风险归因
+- [ ] M13: 记录涨跌停事件
+- [ ] M6: 更新风控状态
+- [ ] M16: 更新保证金使用率
 
 ### 违规处理
 
@@ -484,6 +492,8 @@ class CircuitBreakerStateMachine:
 | M13违规 | 订单拒绝 | 价格修正 |
 | M16违规 | 限制新开仓 | 追加保证金 |
 | M17违规 | 暂停报撤单 | 频率恢复正常 |
+| M3违规 | 补充审计记录 | 完成日志 |
+| M19违规 | 风险评估+调整 | 风险降低 |
 
 ✅ 正确示例：信号生成 → M1验证 → M6检查 → 订单创建 → M13验证 → 执行
 ❌ 错误示例：直接执行订单，跳过军规检查
@@ -901,6 +911,44 @@ Phase 6 开发路线图:
 | 合规 | 程序化交易备案 | P1 | Phase 9 |
 | 合规 | 高频交易检测 | P1 | Phase 9 |
 | 监控 | 自动自愈机制 | P2 | Phase 9 |
+├── 策略联邦中枢 (src/strategy/federation/)
+├── 市场状态引擎 (src/strategy/regime/)
+|── 智能订单路由器 v2 (src/execution/router/)
+├── 熔断-恢复闭环 (src/guardian/auto_healing.py)
+├── 自动自愈闭环 (src/guardian/auto_healing.py)
+├── 大额订单智能拆单 (src/order_splitter.py)
+├── 知识库设计 (src/strategy/knowledge_base.py)
+├── 年化35%目标设定(src/targets.py)
+├── 0人工干预设计(src/manual_override.py)
+├── 风险归因扩展(src/attribution_extended.py)
+├── 夜盘全链路集成(src/trading_calendar.py)
+├── 六大交易所配置完善(src/exchange_config.py)
+├── 主力合约追踪(src/main_contract_tracker.py)
+├── VaR计算器优化(src/var_calculator_optimized.py)
+├── 动态VaR引擎 (src/risk/dynamic_var.py)
+├── Guardian系统升级(src/guardian/upgraded_guardian.py)
+├── 自动执行引擎优化(src/execution/auto_engine.py)
+├── 日历套利优化(src/calendar_arb.py)
+├── LSTM/DL模型优化(src/dl_model.py)
+├── 实验策略成熟度评估完善(src/experimental/maturity_evaluator.py)
+|   夜盘跳空闪电战(src/strategy/night_gap_flash.py)
+|   政策红利自动捕手(src/strategy/policy_dividend_catcher.py)
+|   微观结构高频套利(src/strategy/microstructure_hft.py)
+|   极端行情恐慌收割(src/strategy/extreme_market_harvest.py)
+|   跨交易所制度套利(src/strategy/cross_exchange_arbitrage.py)
+|   行为伪装拆单(src/order_spliter/behavioral_disguise.py)
+|   压力测试增强(src/risk/stress_test_enhanced.py)
+├── 风险归因 (SHAP)完善(src/attribution_shap.py)
+├── 保证金监控动态化(src/position_monitoring.py)
+├── 合规节流机制完善(src/compliance_throttling.py)
+├── 涨跌停处理机制完善(src/pnl_handling.py)
+├── 大额双确认机制完善(src/large_order_confirmation.py)
+├── 降级兜底机制完善(src/fallback_mechanism.py)
+├── 成本先行机制完善(src/cost_prevention.py)
+├── 审计追踪机制完善(src/audit_trail.py)
+├── 单一信号源机制完善(src/single_signal_source.py)
+├── 策略联邦与全链路集成(src/strategy/federation_and_integration.py)
+└── 全场景回放验证(src/full_scenario_replay.py)
 
 ### 8.2 补充方案
 
@@ -933,6 +981,44 @@ Phase 6 开发路线图:
 9. **夜盘跳空闪电战** - `src/strategy/night_gap/`
 10. **自动自愈机制** - `src/monitoring/self_healing/`
 ```
+├── 策略联邦中枢 (src/strategy/federation/)
+├── 市场状态引擎 (src/strategy/regime/)
+|── 智能订单路由器 v2 (src/execution/router/)
+├── 熔断-恢复闭环 (src/guardian/auto_healing.py)
+├── 自动自愈闭环 (src/guardian/auto_healing.py)
+├── 大额订单智能拆单 (src/order_splitter.py)
+├── 知识库设计 (src/strategy/knowledge_base.py)
+├── 年化35%目标设定(src/targets.py)
+├── 0人工干预设计(src/manual_override.py)
+├── 风险归因扩展(src/attribution_extended.py)
+├── 夜盘全链路集成(src/trading_calendar.py)
+├── 六大交易所配置完善(src/exchange_config.py)
+├── 主力合约追踪(src/main_contract_tracker.py)
+├── VaR计算器优化(src/var_calculator_optimized.py)
+├── 动态VaR引擎 (src/risk/dynamic_var.py)
+├── Guardian系统升级(src/guardian/upgraded_guardian.py)
+├── 自动执行引擎优化(src/execution/auto_engine.py)
+├── 日历套利优化(src/calendar_arb.py)
+├── LSTM/DL模型优化(src/dl_model.py)
+├── 实验策略成熟度评估完善(src/experimental/maturity_evaluator.py)
+|   夜盘跳空闪电战(src/strategy/night_gap_flash.py)
+|   政策红利自动捕手(src/strategy/policy_dividend_catcher.py)
+|   微观结构高频套利(src/strategy/microstructure_hft.py)
+|   极端行情恐慌收割(src/strategy/extreme_market_harvest.py)
+|   跨交易所制度套利(src/strategy/cross_exchange_arbitrage.py)
+|   行为伪装拆单(src/order_spliter/behavioral_disguise.py)
+|   压力测试增强(src/risk/stress_test_enhanced.py)
+├── 风险归因 (SHAP)完善(src/attribution_shap.py)
+├── 保证金监控动态化(src/position_monitoring.py)
+├── 合规节流机制完善(src/compliance_throttling.py)
+├── 涨跌停处理机制完善(src/pnl_handling.py)
+├── 大额双确认机制完善(src/large_order_confirmation.py)
+├── 降级兜底机制完善(src/fallback_mechanism.py)
+├── 成本先行机制完善(src/cost_prevention.py)
+├── 审计追踪机制完善(src/audit_trail.py)
+├── 单一信号源机制完善(src/single_signal_source.py)
+├── 策略联邦与全链路集成(src/strategy/federation_and_integration.py)
+└── 全场景回放验证(src/full_scenario_replay.py)
 
 ---
 
@@ -1182,6 +1268,44 @@ docs/
 | A10 | D8: VaR优化 | 自适应更新方案设计完成 | ⏸ |
 | A11 | D9: 文档结构 | 目录结构设计完成 | ⏸ |
 | A12 | D10: 术语表 | 术语表初稿完成 | ⏸ |
+├── 策略联邦中枢 (src/strategy/federation/)
+├── 市场状态引擎 (src/strategy/regime/)
+|── 智能订单路由器 v2 (src/execution/router/)
+├── 熔断-恢复闭环 (src/guardian/auto_healing.py)
+├── 自动自愈闭环 (src/guardian/auto_healing.py)
+├── 大额订单智能拆单 (src/order_splitter.py)
+├── 知识库设计 (src/strategy/knowledge_base.py)
+├── 年化35%目标设定(src/targets.py)
+├── 0人工干预设计(src/manual_override.py)
+├── 风险归因扩展(src/attribution_extended.py)
+├── 夜盘全链路集成(src/trading_calendar.py)
+├── 六大交易所配置完善(src/exchange_config.py)
+├── 主力合约追踪(src/main_contract_tracker.py)
+├── VaR计算器优化(src/var_calculator_optimized.py)
+├── 动态VaR引擎 (src/risk/dynamic_var.py)
+├── Guardian系统升级(src/guardian/upgraded_guardian.py)
+├── 自动执行引擎优化(src/execution/auto_engine.py)
+├── 日历套利优化(src/calendar_arb.py)
+├── LSTM/DL模型优化(src/dl_model.py)
+├── 实验策略成熟度评估完善(src/experimental/maturity_evaluator.py)
+|   夜盘跳空闪电战(src/strategy/night_gap_flash.py)
+|   政策红利自动捕手(src/strategy/policy_dividend_catcher.py)
+|   微观结构高频套利(src/strategy/microstructure_hft.py)
+|   极端行情恐慌收割(src/strategy/extreme_market_harvest.py)
+|   跨交易所制度套利(src/strategy/cross_exchange_arbitrage.py)
+|   行为伪装拆单(src/order_spliter/behavioral_disguise.py)
+|   压力测试增强(src/risk/stress_test_enhanced.py)
+├── 风险归因 (SHAP)完善(src/attribution_shap.py)
+├── 保证金监控动态化(src/position_monitoring.py)
+├── 合规节流机制完善(src/compliance_throttling.py)
+├── 涨跌停处理机制完善(src/pnl_handling.py)
+├── 大额双确认机制完善(src/large_order_confirmation.py)
+├── 降级兜底机制完善(src/fallback_mechanism.py)
+├── 成本先行机制完善(src/cost_prevention.py)
+├── 审计追踪机制完善(src/audit_trail.py)
+├── 单一信号源机制完善(src/single_signal_source.py)
+├── 策略联邦与全链路集成(src/strategy/federation_and_integration.py)
+└── 全场景回放验证(src/full_scenario_replay.py)
 
 #### B. 测试验收
 
@@ -1264,7 +1388,44 @@ docs/
 | ADR-003 | 熔断状态机5状态设计 | 覆盖所有恢复场景，确保可控性 |
 | ADR-004 | 知识库分层存储 | 平衡性能与成本 |
 | ADR-005 | VaR自适应更新 | 降低CPU占用同时保持精度 |
-
+├── 策略联邦中枢 (src/strategy/federation/)
+├── 市场状态引擎 (src/strategy/regime/)
+|── 智能订单路由器 v2 (src/execution/router/)
+├── 熔断-恢复闭环 (src/guardian/auto_healing.py)
+├── 自动自愈闭环 (src/guardian/auto_healing.py)
+├── 大额订单智能拆单 (src/order_splitter.py)
+├── 知识库设计 (src/strategy/knowledge_base.py)
+├── 年化35%目标设定(src/targets.py)
+├── 0人工干预设计(src/manual_override.py)
+├── 风险归因扩展(src/attribution_extended.py)
+├── 夜盘全链路集成(src/trading_calendar.py)
+├── 六大交易所配置完善(src/exchange_config.py)
+├── 主力合约追踪(src/main_contract_tracker.py)
+├── VaR计算器优化(src/var_calculator_optimized.py)
+├── 动态VaR引擎 (src/risk/dynamic_var.py)
+├── Guardian系统升级(src/guardian/upgraded_guardian.py)
+├── 自动执行引擎优化(src/execution/auto_engine.py)
+├── 日历套利优化(src/calendar_arb.py)
+├── LSTM/DL模型优化(src/dl_model.py)
+├── 实验策略成熟度评估完善(src/experimental/maturity_evaluator.py)
+|   夜盘跳空闪电战(src/strategy/night_gap_flash.py)
+|   政策红利自动捕手(src/strategy/policy_dividend_catcher.py)
+|   微观结构高频套利(src/strategy/microstructure_hft.py)
+|   极端行情恐慌收割(src/strategy/extreme_market_harvest.py)
+|   跨交易所制度套利(src/strategy/cross_exchange_arbitrage.py)
+|   行为伪装拆单(src/order_spliter/behavioral_disguise.py)
+|   压力测试增强(src/risk/stress_test_enhanced.py)
+├── 风险归因 (SHAP)完善(src/attribution_shap.py)
+├── 保证金监控动态化(src/position_monitoring.py)
+├── 合规节流机制完善(src/compliance_throttling.py)
+├── 涨跌停处理机制完善(src/pnl_handling.py)
+├── 大额双确认机制完善(src/large_order_confirmation.py)
+├── 降级兜底机制完善(src/fallback_mechanism.py)
+├── 成本先行机制完善(src/cost_prevention.py)
+├── 审计追踪机制完善(src/audit_trail.py)
+├── 单一信号源机制完善(src/single_signal_source.py)
+├── 策略联邦与全链路集成(src/strategy/federation_and_integration.py)
+└── 全场景回放验证(src/full_scenario_replay.py)
 ---
 
 **文档结束**
