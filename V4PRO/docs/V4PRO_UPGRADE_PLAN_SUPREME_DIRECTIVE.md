@@ -1884,6 +1884,11 @@ class EnhancedVaRCalculator(VaRCalculator):
 | `RISK.STRESS.SCENARIO` | 压力测试场景 | M6 |
 | `RISK.STRESS.RESULT` | 压力测试结果 | M6 |
 | `RISK.KILLSWITCH.TRIGGER` | 熔断触发 | M6 |
+| `CONFIDENCE.PRE_EXEC` | 预执行置信度检查 (v4.3) | M3, M31 |
+| `CONFIDENCE.SIGNAL` | 信号置信度评估 (v4.3) | M3, M19 |
+| `CONFIDENCE.AUDIT` | 置信度审计追踪 (v4.3) | M3 |
+| `CONFIDENCE.ADAPTIVE` | 自适应阈值调整 (v4.3) | M6, M31 |
+| `CONFIDENCE.TREND` | 置信度趋势分析 (v4.3) | M19, M31 |
 |---------|----------|------|
 
 ---
