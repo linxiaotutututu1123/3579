@@ -463,6 +463,83 @@ class ConfidenceAssessor:
 
         return checks
 
+    def _assess_extended(self, context: ConfidenceContext) -> list[ConfidenceCheck]:
+        """扩展置信度评估 (v4.3增强).
+
+        检查项:
+        1. 波动率检查 (15%) - 低波动率更安全
+        2. 流动性检查 (15%) - 高流动性更可靠
+        3. 历史胜率检查 (10%) - 高胜率策略更可信
+        4. 持仓集中度检查 (10%) - 分散持仓更稳健
+        """
+        checks: list[ConfidenceCheck] = []
+
+        # 检查1: 波动率 (低于0.3为正常)
+        volatility_ok = context.volatility <= 0.3
+        checks.append(
+            ConfidenceCheck(
+                name="volatility",
+                passed=volatility_ok,
+                weight=self.WEIGHT_VOLATILITY if volatility_ok else 0.0,
+                message=(
+                    f"✅ 波动率正常: {context.volatility:.0%}"
+                    if volatility_ok
+                    else f"⚠️ 波动率偏高: {context.volatility:.0%}"
+                ),
+                details={"value": context.volatility, "threshold": 0.3},
+            )
+        )
+
+        # 检查2: 流动性 (高于0.6为良好)
+        liquidity_ok = context.liquidity_score >= 0.6
+        checks.append(
+            ConfidenceCheck(
+                name="liquidity",
+                passed=liquidity_ok,
+                weight=self.WEIGHT_LIQUIDITY if liquidity_ok else 0.0,
+                message=(
+                    f"✅ 流动性良好: {context.liquidity_score:.0%}"
+                    if liquidity_ok
+                    else f"⚠️ 流动性不足: {context.liquidity_score:.0%}"
+                ),
+                details={"value": context.liquidity_score, "threshold": 0.6},
+            )
+        )
+
+        # 检查3: 历史胜率 (高于0.5为正向期望)
+        win_rate_ok = context.historical_win_rate >= 0.5
+        checks.append(
+            ConfidenceCheck(
+                name="win_rate",
+                passed=win_rate_ok,
+                weight=self.WEIGHT_WIN_RATE if win_rate_ok else 0.0,
+                message=(
+                    f"✅ 历史胜率: {context.historical_win_rate:.0%}"
+                    if win_rate_ok
+                    else f"⚠️ 历史胜率偏低: {context.historical_win_rate:.0%}"
+                ),
+                details={"value": context.historical_win_rate, "threshold": 0.5},
+            )
+        )
+
+        # 检查4: 持仓集中度 (低于0.5为分散)
+        concentration_ok = context.position_concentration <= 0.5
+        checks.append(
+            ConfidenceCheck(
+                name="concentration",
+                passed=concentration_ok,
+                weight=self.WEIGHT_CONCENTRATION if concentration_ok else 0.0,
+                message=(
+                    f"✅ 持仓分散: {context.position_concentration:.0%}"
+                    if concentration_ok
+                    else f"⚠️ 持仓集中: {context.position_concentration:.0%}"
+                ),
+                details={"value": context.position_concentration, "threshold": 0.5},
+            )
+        )
+
+        return checks
+
     def _assess_combined(self, context: ConfidenceContext) -> list[ConfidenceCheck]:
         """组合评估 (预执行 + 信号)."""
         pre_exec_checks = self._assess_pre_execution(context)
