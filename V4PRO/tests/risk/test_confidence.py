@@ -349,5 +349,225 @@ class TestEdgeCases:
         assert stats["high_confidence_count"] == 0
 
 
+class TestExtendedChecks:
+    """扩展检查项测试类 (v4.3增强)."""
+
+    def test_extended_context_fields(self) -> None:
+        """测试扩展上下文字段."""
+        context = ConfidenceContext(
+            task_type=TaskType.SIGNAL_GENERATION,
+            volatility=0.2,
+            liquidity_score=0.8,
+            historical_win_rate=0.6,
+            position_concentration=0.3,
+        )
+
+        assert context.volatility == 0.2
+        assert context.liquidity_score == 0.8
+        assert context.historical_win_rate == 0.6
+        assert context.position_concentration == 0.3
+
+    def test_extended_checks_all_pass(self) -> None:
+        """测试扩展检查全部通过."""
+        assessor = ConfidenceAssessor()
+        context = ConfidenceContext(
+            task_type=TaskType.RISK_ASSESSMENT,
+            duplicate_check_complete=True,
+            architecture_verified=True,
+            has_official_docs=True,
+            has_oss_reference=True,
+            root_cause_identified=True,
+            signal_strength=0.8,
+            signal_consistency=0.85,
+            risk_within_limits=True,
+            volatility=0.1,  # 低波动
+            liquidity_score=0.9,  # 高流动性
+            historical_win_rate=0.65,  # 高胜率
+            position_concentration=0.2,  # 分散
+        )
+
+        result = assessor.assess(context)
+        # 组合评估包含扩展检查
+        extended_check_names = {"volatility", "liquidity", "win_rate", "concentration"}
+        check_names = {c.name for c in result.checks}
+        assert extended_check_names.issubset(check_names)
+
+    def test_high_volatility_check(self) -> None:
+        """测试高波动率检查失败."""
+        assessor = ConfidenceAssessor()
+        context = ConfidenceContext(
+            task_type=TaskType.RISK_ASSESSMENT,
+            volatility=0.5,  # 高波动率
+        )
+
+        result = assessor.assess(context)
+        vol_check = next((c for c in result.checks if c.name == "volatility"), None)
+
+        assert vol_check is not None
+        assert vol_check.passed is False
+        assert "波动率偏高" in vol_check.message
+
+    def test_low_liquidity_check(self) -> None:
+        """测试低流动性检查失败."""
+        assessor = ConfidenceAssessor()
+        context = ConfidenceContext(
+            task_type=TaskType.RISK_ASSESSMENT,
+            liquidity_score=0.3,  # 低流动性
+        )
+
+        result = assessor.assess(context)
+        liq_check = next((c for c in result.checks if c.name == "liquidity"), None)
+
+        assert liq_check is not None
+        assert liq_check.passed is False
+        assert "流动性不足" in liq_check.message
+
+
+class TestAdaptiveThresholds:
+    """自适应阈值测试类 (v4.3增强)."""
+
+    def test_adaptive_mode_enabled(self) -> None:
+        """测试自适应模式启用."""
+        assessor = ConfidenceAssessor(adaptive_mode=True)
+        context = ConfidenceContext(
+            task_type=TaskType.STRATEGY_EXECUTION,
+            volatility=0.5,  # 高波动
+            market_condition="VOLATILE",
+        )
+
+        high_thresh, medium_thresh = assessor.get_adaptive_thresholds(context)
+
+        # 高波动市场应提高阈值
+        assert high_thresh > 0.90
+        assert medium_thresh > 0.70
+
+    def test_adaptive_mode_normal_market(self) -> None:
+        """测试正常市场自适应阈值."""
+        assessor = ConfidenceAssessor(adaptive_mode=True)
+        context = ConfidenceContext(
+            task_type=TaskType.STRATEGY_EXECUTION,
+            volatility=0.1,
+            liquidity_score=0.9,
+            market_condition="NORMAL",
+        )
+
+        high_thresh, medium_thresh = assessor.get_adaptive_thresholds(context)
+
+        # 正常市场使用默认阈值
+        assert high_thresh == 0.90
+        assert medium_thresh == 0.70
+
+    def test_adaptive_context_summary(self) -> None:
+        """测试自适应模式上下文摘要."""
+        assessor = ConfidenceAssessor(adaptive_mode=True)
+        context = ConfidenceContext(
+            task_type=TaskType.STRATEGY_EXECUTION,
+            duplicate_check_complete=True,
+            architecture_verified=True,
+            has_official_docs=True,
+            has_oss_reference=True,
+            root_cause_identified=True,
+        )
+
+        result = assessor.assess(context)
+
+        assert result.context_summary["adaptive_mode"] is True
+        assert "thresholds" in result.context_summary
+
+
+class TestTrendAnalysis:
+    """趋势分析测试类 (v4.3增强)."""
+
+    def test_insufficient_data(self) -> None:
+        """测试数据不足情况."""
+        assessor = ConfidenceAssessor()
+
+        # 只评估1次
+        context = ConfidenceContext(task_type=TaskType.STRATEGY_EXECUTION)
+        assessor.assess(context)
+
+        trend = assessor.get_trend_analysis()
+
+        assert trend["trend"] == "INSUFFICIENT_DATA"
+        assert trend["alert"] is False
+
+    def test_stable_trend(self) -> None:
+        """测试稳定趋势."""
+        assessor = ConfidenceAssessor()
+        high_context = ConfidenceContext(
+            task_type=TaskType.STRATEGY_EXECUTION,
+            duplicate_check_complete=True,
+            architecture_verified=True,
+            has_official_docs=True,
+            has_oss_reference=True,
+            root_cause_identified=True,
+        )
+
+        # 连续5次高置信度评估
+        for _ in range(5):
+            assessor.assess(high_context)
+
+        trend = assessor.get_trend_analysis()
+
+        assert trend["trend"] == "STABLE"
+        assert trend["recent_avg"] >= 0.90
+        assert trend["alert"] is False
+
+    def test_declining_trend_alert(self) -> None:
+        """测试下降趋势预警."""
+        assessor = ConfidenceAssessor()
+
+        # 模拟置信度下降
+        contexts = [
+            ConfidenceContext(
+                task_type=TaskType.STRATEGY_EXECUTION,
+                duplicate_check_complete=True,
+                architecture_verified=True,
+                has_official_docs=True,
+                has_oss_reference=True,
+                root_cause_identified=True,
+            ),
+            ConfidenceContext(
+                task_type=TaskType.STRATEGY_EXECUTION,
+                duplicate_check_complete=True,
+                architecture_verified=True,
+                has_official_docs=True,
+                has_oss_reference=False,
+                root_cause_identified=True,
+            ),
+            ConfidenceContext(
+                task_type=TaskType.STRATEGY_EXECUTION,
+                duplicate_check_complete=True,
+                architecture_verified=True,
+                has_official_docs=False,
+                has_oss_reference=False,
+                root_cause_identified=False,
+            ),
+        ]
+
+        for ctx in contexts:
+            assessor.assess(ctx)
+
+        trend = assessor.get_trend_analysis()
+
+        # 连续下降应触发预警
+        assert trend["alert"] is True
+        assert "下降" in trend["alert_message"]
+
+    def test_history_limit(self) -> None:
+        """测试历史记录限制."""
+        assessor = ConfidenceAssessor()
+        context = ConfidenceContext(task_type=TaskType.STRATEGY_EXECUTION)
+
+        # 超过最大历史记录
+        for _ in range(150):
+            assessor.assess(context)
+
+        trend = assessor.get_trend_analysis()
+
+        # 历史记录应被限制在100条
+        assert trend["history_count"] == 100
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
