@@ -471,6 +471,7 @@ If any red flags, STOP and investigate!
 | `src/portfolio/` | 多策略持仓管理、风险分析、夏普比率 | M1, M3, M19 |
 | `src/monitoring/` | 健康检查、Prometheus指标、告警 | M9, M10 |
 | `src/risk/var_calculator.py` | 历史/参数/蒙特卡洛VaR | M6, M16 |
+| `src/risk/confidence.py` | 置信度评估v4.3、自适应阈值、趋势分析 | M3, M19, M31 |
 | `src/strategy/experimental/` | 成熟度评估、训练门禁、进度监控 | M18 |
 | `src/strategy/calendar_arb/` | Kalman滤波、套利策略、降级链 | M4, M5, M7 |
 | `src/replay/` | 决策回放、哈希验证 | M7 |
