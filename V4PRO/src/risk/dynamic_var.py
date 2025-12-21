@@ -1,13 +1,14 @@
 """
-动态VaR风险引擎 (军规级 v4.2).
+动态VaR风险引擎 (军规级 v4.3).
 
 V4PRO Platform Component - Phase 10 组合风控增强
-V4 SPEC: §22 VaR风控增强
+V4 SPEC: §22 VaR风控增强, D8 动态VaR频率优化
 
 军规覆盖:
 - M6: 熔断保护 - 极端风险预警
 - M13: 涨跌停感知 - 涨跌停调整VaR
 - M16: 保证金监控 - 流动性调整VaR
+- M19: 风险归因 - 组合VaR增强
 
 功能特性:
 - EVT极值理论VaR (POT + GPD)
@@ -16,11 +17,34 @@ V4 SPEC: §22 VaR风控增强
 - 流动性调整VaR
 - 动态更新机制
 
+D8设计 - 自适应VaR配置:
+- BASE_INTERVAL_MS = 1000 (基础更新间隔)
+- calm(平静): 5000ms, parametric方法
+- normal(正常): 1000ms, historical方法
+- volatile(波动): 500ms, historical方法
+- extreme(极端): 200ms, monte_carlo方法
+
+事件触发器:
+- position_change: 持仓变化
+- price_gap_3pct: 价格跳空>3%
+- margin_warning: 保证金预警
+- limit_price_hit: 触及涨跌停
+
+性能目标:
+- CPU占用: ~10% (相比原30%)
+- 更新延迟: 200ms-5s (自适应)
+
 示例:
     >>> from src.risk.dynamic_var import DynamicVaREngine
     >>> engine = DynamicVaREngine()
     >>> result = engine.evt_var(returns, confidence=0.99)
     >>> limit_var = engine.limit_adjusted_var(returns, limit_pct=0.10)
+
+    # 自适应VaR调度器 (D8设计)
+    >>> from src.risk.dynamic_var import AdaptiveVaRScheduler, MarketRegime
+    >>> scheduler = AdaptiveVaRScheduler()
+    >>> scheduler.update_market_regime(MarketRegime.VOLATILE)
+    >>> result = scheduler.calculate_if_needed(returns)
 """
 
 from __future__ import annotations
