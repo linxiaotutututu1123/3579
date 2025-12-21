@@ -172,7 +172,7 @@ NPM 包版本：配置在 package.json（需与 VERSION 文件版本一致）
 阅读 PLANNING.md、TASK.md、KNOWLEDGE.md,V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 文档
 通过 Glob/Grep 检索现有代码，检查功能重复
 查阅官方文档（Context7 MCP）和开源实现方案（WebSearch）
-执行置信度检查（目标置信度 ≥90%）
+执行置信度检查（目标置信度 100%）
 实施阶段
 创建功能分支：git checkout -b feature/功能名称
 遵循测试驱动开发（TDD）原则，先编写测试用例
