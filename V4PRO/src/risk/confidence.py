@@ -584,6 +584,110 @@ class ConfidenceAssessor:
 
         return checks
 
+    def _assess_advanced(self, context: ConfidenceContext) -> list[ConfidenceCheck]:
+        """高级置信度评估 (v4.4增强).
+
+        检查项:
+        1. 回测数据检查 (15%) - 验证回测样本量和夏普比率
+        2. 外部信号检查 (10%) - 验证外部信号来源
+        3. 市场体制对齐检查 (10%) - 验证策略与当前市场体制匹配
+        4. 跨资产相关性检查 (10%) - 验证相关性风险可控
+        """
+        checks: list[ConfidenceCheck] = []
+
+        # 检查1: 回测数据充足性
+        backtest_ok = (
+            context.backtest_sample_size >= 100 and context.backtest_sharpe >= 1.0
+        )
+        checks.append(
+            ConfidenceCheck(
+                name="backtest_data",
+                passed=backtest_ok,
+                weight=self.WEIGHT_BACKTEST_DATA if backtest_ok else 0.0,
+                message=(
+                    f"✅ 回测数据充足: {context.backtest_sample_size}样本, "
+                    f"夏普={context.backtest_sharpe:.2f}"
+                    if backtest_ok
+                    else f"⚠️ 回测数据不足: {context.backtest_sample_size}样本, "
+                    f"夏普={context.backtest_sharpe:.2f}"
+                ),
+                details={
+                    "sample_size": context.backtest_sample_size,
+                    "sharpe": context.backtest_sharpe,
+                    "min_sample": 100,
+                    "min_sharpe": 1.0,
+                },
+            )
+        )
+
+        # 检查2: 外部信号有效性
+        external_ok = (
+            context.external_signal_valid
+            and context.external_signal_correlation >= 0.5
+        )
+        checks.append(
+            ConfidenceCheck(
+                name="external_signal",
+                passed=external_ok,
+                weight=self.WEIGHT_EXTERNAL_SIGNAL if external_ok else 0.0,
+                message=(
+                    f"✅ 外部信号有效: 相关性={context.external_signal_correlation:.0%}"
+                    if external_ok
+                    else f"⚠️ 外部信号无效或相关性低: {context.external_signal_correlation:.0%}"
+                ),
+                details={
+                    "valid": context.external_signal_valid,
+                    "correlation": context.external_signal_correlation,
+                    "threshold": 0.5,
+                },
+            )
+        )
+
+        # 检查3: 市场体制对齐
+        regime_ok = context.regime_alignment or (
+            context.current_regime != "UNKNOWN"
+            and context.current_regime == context.strategy_regime
+        )
+        checks.append(
+            ConfidenceCheck(
+                name="regime_alignment",
+                passed=regime_ok,
+                weight=self.WEIGHT_REGIME_ALIGNMENT if regime_ok else 0.0,
+                message=(
+                    f"✅ 市场体制对齐: {context.current_regime}"
+                    if regime_ok
+                    else f"⚠️ 市场体制不匹配: 当前={context.current_regime}, "
+                    f"策略适用={context.strategy_regime}"
+                ),
+                details={
+                    "current_regime": context.current_regime,
+                    "strategy_regime": context.strategy_regime,
+                    "aligned": regime_ok,
+                },
+            )
+        )
+
+        # 检查4: 跨资产相关性风险
+        correlation_ok = context.cross_asset_correlation <= 0.7
+        checks.append(
+            ConfidenceCheck(
+                name="cross_correlation",
+                passed=correlation_ok,
+                weight=self.WEIGHT_CORRELATION if correlation_ok else 0.0,
+                message=(
+                    f"✅ 相关性风险可控: {context.cross_asset_correlation:.0%}"
+                    if correlation_ok
+                    else f"⚠️ 相关性风险偏高: {context.cross_asset_correlation:.0%}"
+                ),
+                details={
+                    "correlation": context.cross_asset_correlation,
+                    "threshold": 0.7,
+                },
+            )
+        )
+
+        return checks
+
     def _assess_combined(self, context: ConfidenceContext) -> list[ConfidenceCheck]:
         """组合评估 (预执行 + 信号 + 扩展)."""
         pre_exec_checks = self._assess_pre_execution(context)
