@@ -1791,16 +1791,16 @@ DEPENDENT_TASKS = [
   ☒ D8: Implement adaptive VaR frequency optimization - src/risk/adaptive_var.py
   ☒ Implement compliance throttling mechanism (M17) - src/compliance/compliance_throttling.py
 
-    Todos
-  ☒ 第一波: P0-arbiter.py 信号仲裁器
-  ☒ 第一波: P0-allocator.py 资源分配器
-  ☐ 第一波: P1B-detector.py HFT检测器
-  ☐ 第一波: P1B-tracker.py 频率追踪器
-  ☐ 第一波: P1B-analyzer.py 模式分析器
-  ☐ 第一波: P1B-throttle.py 限速控制器
-  ☐ 第二波: P2 night_session 基础模块
-  ☐ 第二波: P2 夜盘策略实现
-  ☐ 集成验证与测试
+    Todos (2025-12-22 更新)
+  ☒ 第一波: P0-arbiter.py 信号仲裁器 (~1041行)
+  ☒ 第一波: P0-allocator.py 资源分配器 (~978行)
+  ☒ 第一波: P1B-detector.py HFT检测器 (~1170行)
+  ☒ 第一波: P1B-tracker.py 频率追踪器 (~1033行)
+  ☒ 第一波: P1B-analyzer.py 模式分析器 (~236行)
+  ☒ 第一波: P1B-throttle.py 限速控制器 (~1002行)
+  ☒ 第二波: P2 night_session 基础模块 (~292行)
+  ☒ 第二波: P2 夜盘跳空闪电战策略 (~840行)
+  ☒ 集成验证与测试 (16模块全部通过)
 
  
 **文档结束**
