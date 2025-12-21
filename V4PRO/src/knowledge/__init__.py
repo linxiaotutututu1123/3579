@@ -9,6 +9,7 @@ V4 SPEC: D4 知识库纳入升级计划
 - 模式知识库 (Patterns): 市场模式存储
 - 决策知识库 (Decisions): 决策日志存储
 - 知识融合引擎: 策略优化/风控增强/故障预防
+- 知识沉淀管理: 自动归档/版本控制/价值评估
 
 分层存储方案:
 - HOT (热数据): Redis/Memory - 最近7天
@@ -16,7 +17,7 @@ V4 SPEC: D4 知识库纳入升级计划
 - COLD (冷数据): File - 90天以上
 
 军规覆盖:
-- M33: 知识沉淀机制
+- M33: 知识沉淀机制 (核心实现)
 - M3: 审计日志完整
 - M7: 场景回放支持
 
@@ -34,6 +35,12 @@ Usage:
         HotStorage,
         WarmStorage,
         ColdStorage,
+
+        # 知识沉淀管理 (M33军规)
+        KnowledgePrecipitator,
+        KnowledgeVersion,
+        PrecipitationLevel,
+        PrecipitationRule,
 
         # 经验知识库
         ReflexionStore,
@@ -73,6 +80,13 @@ Usage:
     decisions = DecisionLog(storage)
     fusion = FusionEngine(reflexion, patterns, decisions)
     query = KnowledgeQuery(reflexion, patterns, decisions)
+
+    # 知识沉淀管理 (M33军规合规)
+    precipitator = KnowledgePrecipitator(storage)
+    # 自动维护和归档
+    precipitator.run_maintenance()
+    # 获取沉淀报告
+    report = precipitator.get_precipitation_report(days=7)
 """
 
 from src.knowledge.base import (
