@@ -491,3 +491,141 @@ Wave 2 (并行): [动态VaR, 知识库增强, 熔断恢复, 合规节流]
 | 军规合规率 | 100% | 100% | ✅ |
 | CPU占用(自适应VaR) | ~10% | ≤15% | ✅ |
 | 熔断恢复时间 | 5分钟+4步 | <10分钟 | ✅ |
+
+---
+
+## 🚀 2025-12-22 第二批实施经验总结
+
+### HFT检测模块设计模式
+
+**问题**: 需要识别高频交易行为并进行合规限速
+
+**解决方案**: 四层检测架构
+```python
+HFT_DETECTION_LAYERS = {
+    "detector": "HFTDetector - 订单流实时检测",
+    "tracker": "OrderFrequencyTracker - 频率追踪滑窗",
+    "analyzer": "HFTPatternAnalyzer - 模式识别画像",
+    "throttle": "ThrottleController - 多级限速控制",
+}
+
+THROTTLE_LEVELS = {
+    "NONE": 0,      # 正常
+    "WARNING": 1,   # 警告
+    "SLOW": 2,      # 减速
+    "CRITICAL": 3,  # 严重
+    "BLOCK": 4,     # 阻断
+}
+```
+
+**关键阈值**:
+- 订单频率: warning=200, critical=300, block=500 (笔/秒)
+- 撤单比例: warning=40%, critical=50%
+- 往返时间: <10ms 视为HFT指标
+
+### 夜盘跨日处理模式 (M15军规)
+
+**问题**: 夜盘时段跨越午夜，交易日归属复杂
+
+**解决方案**: NightSessionManager
+```python
+def get_trading_date(self, timestamp: float) -> str:
+    """M15: 夜盘交易日归属到下一个自然日"""
+    dt = datetime.fromtimestamp(timestamp)
+    hour = dt.hour
+
+    if hour >= 21:  # 21:00-23:59 属于次日
+        return (dt + timedelta(days=1)).strftime("%Y-%m-%d")
+    elif hour < 3:  # 00:00-02:30 属于当日
+        return dt.strftime("%Y-%m-%d")
+    else:
+        return dt.strftime("%Y-%m-%d")
+```
+
+**夜盘时段配置**:
+```python
+NIGHT_SESSIONS = {
+    "session_1": TimeRange(time(21, 0), time(23, 0)),  # 夜一
+    "session_2": TimeRange(time(23, 0), time(1, 0)),   # 夜二(跨午夜)
+    "session_3": TimeRange(time(1, 0), time(2, 30)),   # 夜三
+}
+```
+
+### 国际市场联动设计
+
+**问题**: 夜盘策略需要参考国际市场状态
+
+**解决方案**: InternationalMarket枚举
+```python
+class InternationalMarket(Enum):
+    """国际市场联动"""
+    COMEX = "COMEX"      # 纽约商品交易所(金银)
+    NYMEX = "NYMEX"      # 纽约商业交易所(原油)
+    LME = "LME"          # 伦敦金属交易所(铜铝锌)
+    CME = "CME"          # 芝加哥商业交易所(农产品)
+    ICE = "ICE"          # 洲际交易所(原油)
+
+# 开盘时间(北京时间)
+MARKET_HOURS = {
+    "COMEX": {"open": 6, "close": 5},   # 6:00-次日5:00
+    "LME": {"open": 9, "close": 3},     # 9:00-次日3:00
+}
+```
+
+### Python编码最佳实践 (本批次总结)
+
+**1. 使用dataclass优化数据结构**:
+```python
+@dataclass(frozen=True, slots=True)
+class PatternIndicator:
+    """不可变+内存优化"""
+    pattern: TradingPattern
+    confidence: float
+    evidence: str
+```
+
+**2. 类型提示与TYPE_CHECKING**:
+```python
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from collections.abc import Callable  # 仅类型检查时导入
+```
+
+**3. 枚举附加方法**:
+```python
+class RiskLevel(Enum):
+    LOW = "LOW"
+    CRITICAL = "CRITICAL"
+
+    @property
+    def severity(self) -> int:
+        return {"LOW": 0, "CRITICAL": 3}.get(self.value, 0)
+```
+
+### 模块导出验证流程
+
+**教训**: 导入名称与实际导出可能不匹配
+
+**验证步骤**:
+```bash
+# 1. 检查__init__.py的__all__
+grep "__all__" src/compliance/hft_detector/__init__.py
+
+# 2. 验证实际可导入
+cd V4PRO && PYTHONPATH=. python -c "from src.compliance.hft_detector import *; print(dir())"
+
+# 3. 使用ASCII安全输出避免编码问题
+PYTHONIOENCODING=utf-8 python -c "print('[OK]')"  # 而非 print('✓')
+```
+
+### 并行Agent效率提升
+
+**本批次数据**:
+- 第一批: 8模块 ~4716行 (Agent并行)
+- 第二批: 8模块 ~6592行 (Agent并行)
+- 总计: 16模块 ~11308行
+
+**效率对比**:
+- 串行开发预估: 32小时
+- 并行开发实际: ~4小时
+- 效率提升: 8x
