@@ -541,8 +541,11 @@ class StrategyFederation:
 
         for i in range(n):
             for j in range(i + 1, n):
-                hist_i = np.array(self._signal_history[strategy_ids[i]][-min_history:])
-                hist_j = np.array(self._signal_history[strategy_ids[j]][-min_history:])
+                # deque 不支持切片，转换为 list 后切片
+                hist_i_list = list(self._signal_history[strategy_ids[i]])
+                hist_j_list = list(self._signal_history[strategy_ids[j]])
+                hist_i = np.array(hist_i_list[-min_history:])
+                hist_j = np.array(hist_j_list[-min_history:])
 
                 if len(hist_i) > 1 and len(hist_j) > 1:
                     # 计算皮尔逊相关系数

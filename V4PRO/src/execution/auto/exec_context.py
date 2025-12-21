@@ -344,7 +344,9 @@ class ExecContextManager:
         Returns:
             历史上下文列表
         """
-        return self._history[-limit:]
+        # deque 不支持切片，需要转换
+        history_list = list(self._history)
+        return history_list[-limit:]
 
     def __len__(self) -> int:
         """返回活动上下文数量."""
