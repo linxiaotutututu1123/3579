@@ -24,7 +24,7 @@ QUOTE_STALE_MS: float = 3000.0
 QUOTE_HARD_STALE_MS: float = 10000.0
 
 
-@dataclass
+@dataclass(slots=True)
 class BookTop:
     """L1 盘口数据.
 
