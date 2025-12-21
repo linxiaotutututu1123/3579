@@ -245,6 +245,12 @@ class ConfidenceAssessor:
     WEIGHT_WIN_RATE: ClassVar[float] = 0.10
     WEIGHT_CONCENTRATION: ClassVar[float] = 0.10
 
+    # 高级检查项权重 (v4.4增强)
+    WEIGHT_BACKTEST_DATA: ClassVar[float] = 0.15  # 回测数据验证
+    WEIGHT_EXTERNAL_SIGNAL: ClassVar[float] = 0.10  # 外部信号相关性
+    WEIGHT_REGIME_ALIGNMENT: ClassVar[float] = 0.10  # 市场体制对齐
+    WEIGHT_CORRELATION: ClassVar[float] = 0.10  # 跨资产相关性
+
     def __init__(
         self,
         high_threshold: float = 0.90,
