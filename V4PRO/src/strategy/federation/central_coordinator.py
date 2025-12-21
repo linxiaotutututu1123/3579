@@ -93,7 +93,7 @@ class StrategySignal:
         }
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class FederationSignal:
     """联邦融合信号 (不可变) - 唯一信号出口.
 
