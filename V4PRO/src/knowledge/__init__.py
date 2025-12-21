@@ -166,6 +166,14 @@ __all__ = [
     "HotStorage",
     "WarmStorage",
     "ColdStorage",
+    # ========== precipitator.py ==========
+    # 知识沉淀管理 (M33军规)
+    "KnowledgePrecipitator",
+    "KnowledgeVersion",
+    "MaintenanceAction",
+    "PrecipitationLevel",
+    "PrecipitationRecord",
+    "PrecipitationRule",
     # ========== reflexion.py ==========
     # 反思记忆库
     "ReflexionStore",
