@@ -70,6 +70,15 @@ from src.strategy.federation.registry import (
 
 
 __all__ = [
+    # Arbiter
+    "ArbiterConfig",
+    "ArbiterDecision",
+    "ArbiterStatus",
+    "ArbitrationResult",
+    "SignalArbiter",
+    "SignalKey",
+    "create_arbiter",
+    "create_config",
     # Allocator
     "ResourceAllocator",
     "ResourcePool",
