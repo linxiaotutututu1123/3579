@@ -446,6 +446,7 @@ class AutoOrderEngine:
             error: 错误信息
         """
         self._timeout_mgr.cancel_all_for_order(local_id)
+        self._active_orders.discard(local_id)  # 从活动订单移除
 
         result = OrderResult(
             local_id=local_id,
