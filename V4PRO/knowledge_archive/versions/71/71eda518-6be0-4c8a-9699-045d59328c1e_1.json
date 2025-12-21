@@ -1,0 +1,28 @@
+{
+  "version_id": "613fda08-61cd-4c94-b584-b9ffaa2248c5",
+  "entry_id": "71eda518-6be0-4c8a-9699-045d59328c1e",
+  "version": 1,
+  "content_hash": "71e1ec59dd990e14",
+  "created_at": 1766341647.9058073,
+  "author": "tester",
+  "changes": "Test version",
+  "snapshot": {
+    "id": "71eda518-6be0-4c8a-9699-045d59328c1e",
+    "knowledge_type": "REFLEXION",
+    "priority": "HIGH",
+    "created_at": 1766341647.9058073,
+    "updated_at": 1766341647.9058073,
+    "accessed_at": 1766341647.9058073,
+    "access_count": 0,
+    "content": {
+      "test": "value"
+    },
+    "metadata": {},
+    "tags": [],
+    "version": 1,
+    "content_hash": "71e1ec59dd990e14",
+    "run_id": "",
+    "source": "test",
+    "storage_tier": "hot"
+  }
+}
