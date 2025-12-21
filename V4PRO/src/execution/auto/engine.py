@@ -114,6 +114,7 @@ class AutoOrderEngine:
         self._retry_policy = RetryPolicy(config=self._config.retry_config)
 
         self._results: dict[str, OrderResult] = {}
+        self._active_orders: set[str] = set()  # O(1) 活动订单追踪
 
     @property
     def registry(self) -> OrderContextRegistry:
