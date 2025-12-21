@@ -1807,6 +1807,7 @@ class ComplianceThrottle:
 | `src/portfolio/aggregator.py` | ~216 | 持仓聚合 | ✅ |
 | `src/portfolio/__init__.py` | ~30 | 模块导出 | ✅ |
 | `src/risk/var_calculator.py` | ~362 | VaR计算器 | ✅ |
+| `src/risk/confidence.py` | ~833 | 置信度评估 (v4.3) | ✅ |
 | `src/risk/var_enhanced.py` | ~400 | 增强VaR | ⏸ 待新增 |
 | `src/risk/attribution.py` | ~300 | 风险归因 | ⏸ 待新增 |
 |---------|------|------|------|
