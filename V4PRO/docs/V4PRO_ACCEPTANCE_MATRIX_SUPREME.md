@@ -36,7 +36,7 @@
 | A02 | `INFRA.CI.LINT_PASS` | Ruff检查通过 | M8 | test_ci_gate.py | ✅ |
 | A03 | `INFRA.CI.TYPE_PASS` | Mypy检查通过 | M8 | test_ci_gate.py | ✅ |
 | A04 | `INFRA.CI.TEST_PASS` | Pytest通过 | M8 | test_ci_gate.py | ✅ |
-| A05 | `INFRA.CI.COVERAGE_MIN` | 覆盖率≥80% | M8 | test_ci_gate.py | ✅ |
+| A05 | `INFRA.CI.COVERAGE_MIN` | 覆盖率≥95% | M8 | test_ci_gate.py | ✅ |
 
 ### A.2 仿真门禁场景
 
