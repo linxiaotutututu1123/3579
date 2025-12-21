@@ -12,6 +12,9 @@ V4 SPEC: §6 Guardian, §12 Phase 7, D2 熔断-恢复闭环
 - 触发器管理器 (TriggerManager)
 - 中国期货触发器 (LimitPrice/Margin/Delivery)
 - 熔断-恢复状态机 (CircuitBreaker) - V4 SPEC D2
+- 熔断触发器 (DailyLoss/PositionLoss/MarginUsage/ConsecutiveLoss) - V4 SPEC D2
+- 渐进式恢复执行器 (GradualRecoveryExecutor) - V4 SPEC D2
+- 熔断恢复闭环控制器 (CircuitBreakerController) - V4 SPEC D2
 
 军规覆盖:
 - M3: 审计日志完整，状态转换全记录
@@ -42,6 +45,30 @@ from src.guardian.circuit_breaker import (
     TriggerThresholds,
 )
 from src.guardian.circuit_breaker import TransitionError as CircuitBreakerTransitionError
+from src.guardian.circuit_breaker_controller import (
+    CircuitBreakerController,
+    ControllerStatus,
+    create_default_controller,
+)
+from src.guardian.circuit_breaker_triggers import (
+    CircuitBreakerRiskTrigger,
+    ConsecutiveLossTrigger,
+    DailyLossTrigger,
+    MarginUsageTrigger,
+    PositionLossTrigger,
+    RiskMetricsCollector,
+    create_circuit_breaker_triggers,
+    register_circuit_breaker_triggers,
+)
+from src.guardian.gradual_recovery import (
+    DefaultAlertSender,
+    DefaultPositionScaler,
+    GradualRecoveryExecutor,
+    RecoveryCoordinator,
+    RecoveryEvent,
+    RecoveryStage,
+)
+from src.guardian.gradual_recovery import RecoveryStatus as GradualRecoveryStatus
 from src.guardian.monitor import GuardianCheckResult, GuardianMonitor
 from src.guardian.recovery import ColdStartRecovery, RecoveryState, RecoveryStatus
 from src.guardian.state_machine import (
