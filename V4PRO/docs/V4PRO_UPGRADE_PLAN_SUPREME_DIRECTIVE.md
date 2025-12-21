@@ -31,7 +31,7 @@
 
 ## 目录
 
-- [§1 执行原则与军规 M1-M20](#1-执行原则与军规-m1-m20)
+- [§1 执行原则与军规 M1-M33](#1-执行原则与军规-m1-m33)
 - [§2 当前状态与锚点](#2-当前状态与锚点)
 - [§3 升级架构总览](#3-升级架构总览)
 - [§4 Phase依赖关系图](#4-phase依赖关系图)
@@ -71,7 +71,7 @@
 
 ---
 
-## §1 执行原则与军规 M1-M20
+## §1 执行原则与军规 M1-M33
 
 ### 1.1 最高军令
 
@@ -87,7 +87,7 @@
 
 
 
-### 1.2 军规总表 M1-M20
+### 1.2 军规总表 M1-M33
 
 | 编号 | 军规名称 | 原则描述 | 违规后果 | 检查方式 |
 |------|----------|----------|----------|----------|
@@ -111,10 +111,212 @@
 | **M18** | 实验性门禁 | 未成熟策略禁止实盘启用 | 策略失效、资金损失 | 成熟度检查 |
 | **M19** | 风险归因 | 每笔亏损必须有归因分析 | 无法改进、重复犯错 | 归因报告 |
 | **M20** | 跨所一致 | 不同交易所逻辑必须一致 | 套利失败、对冲失效 | 跨所测试 |
+| **M21** | Git Workflow | 规范化分支与提交 | 代码混乱、难以追踪 | 阅读1.2.1 |
+| **M22** | 文档齐全 | 所有公共API必须有文档 | 难以维护、使用错误 | TASK.md, KNOWLEDGE.md, PLANNING.md, 所有docs文件夹的文件 |
+| **M23** | 版本管理 | 版本号必须同步更新 | 发布混乱、依赖错误 | 版本检查 |
+| **M24** | 开发流程 | 严格遵守开发与审核流程 | 质量下降、漏洞增加 | 流程审查 |
+| **M25** | 自动回滚 | 回滚策略必须自动化实现 | 回滚失败、数据损坏 | 回滚测试 |
+| **M26** | 测试规范 | 测试用例必须遵循规范 | 质量下降、漏洞增加 | 测试审查 |
+| **M27** | CI/CD集成 | 必须有持续集成和部署管道 | 构建失败、发布延迟 | 集成测试 |
+| **M28** | 场景矩阵 | 必须有完整的场景矩阵覆盖 | 覆盖不足、质量下降 | 场景审查 |
+| **M29** | Design Principles | 设计原则必须遵守 | 设计混乱、难以维护 | 阅读1.2.2 |
+| **M30** | 代码质量 | 代码必须符合质量标准 | Bug增多、维护困难 | 代码审查  |
+| **M31** | 置信度检查 | 关键决策前必须有置信度检查 | 错误决策、资源浪费 | 阅读KNOWLEDGE.md |
+| **M32** | 自检协议 | 交付前必须执行自检协议 | 幻觉内容、质量下降 | 阅读KNOWLEDGE.md |
+| **M33** | 记录和学习| 记录所有的细节 | 每次迭代都要学习 | TASK.md, KNOWLEDGE.md, PLANNING.md, 所有docs文件夹的文件 |
 |─────|----------|----------|----------|----------|
 
+### 1.2.1 军规 M21: Git Workflow
+Branch structure:
 
+master: Production-ready code
+integration: Testing ground (not yet created)
+feature/*, fix/*, docs/*: Feature branches
+Commit messages: Use conventional commits
 
+feat: - New feature
+fix: - Bug fix
+docs: - Documentation
+refactor: - Code refactoring
+test: - Adding tests
+chore: - Maintenance
+Never commit:
+
+__pycache__/, *.pyc
+.venv/, venv/
+Personal files (TODO.txt, CRUSH.md)
+API keys, secrets
+Documentation
+Code documentation:
+
+All public functions need docstrings
+Use type hints
+Include usage examples in docstrings
+Project documentation:
+
+Update CLAUDE.md for Claude Code guidance
+Update README.md for user instructions
+Update this PLANNING.md for architecture decisions
+Update TASK.md for current work
+Update KNOWLEDGE.md for insights
+Keep docs synchronized:
+
+When code changes, update relevant docs
+When features are added, update CHANGELOG.md
+When architecture changes, update PLANNING.md
+Version Management
+Version sources of truth:
+
+Framework version: VERSION file (e.g., 4.1.9)
+Python package version: pyproject.toml (e.g., 0.4.0)
+NPM package version: package.json (should match VERSION)
+When to bump versions:
+
+Major: Breaking API changes
+Minor: New features, backward compatible
+Patch: Bug fixes
+🔄 Development Workflow
+Starting a New Feature
+Investigation Phase:
+
+Read PLANNING.md, TASK.md, KNOWLEDGE.md
+Check for duplicates (Glob/Grep existing code)
+Read official docs (Context7 MCP, WebFetch)
+Search for OSS implementations (WebSearch)
+Run confidence check (should be ≥90%)
+Implementation Phase:
+
+Create feature branch: git checkout -b feature/feature-name
+Write tests first (TDD)
+Implement feature
+Run tests: uv run pytest
+Run linter: make lint
+Format code: make format
+Validation Phase:
+
+Run self-check protocol
+Verify all tests passing
+Check all requirements met
+Confirm assumptions verified
+Provide evidence
+Documentation Phase:
+
+Update relevant documentation
+Add docstrings
+Update CHANGELOG.md
+Update TASK.md (mark complete)
+Review Phase:
+
+Create pull request
+Request review
+Address feedback
+Merge to integration (or master if no integration branch)
+Fixing a Bug
+Root Cause Analysis:
+
+Reproduce the bug
+Identify root cause (not symptoms)
+Check reflexion memory for similar patterns
+Run confidence check
+Fix Implementation:
+
+Write failing test that reproduces bug
+Implement fix
+Verify test passes
+Run full test suite
+Record in reflexion memory
+Prevention:
+
+Add regression test
+Update documentation if needed
+Share learnings in KNOWLEDGE.md
+📊 Quality Metrics
+Code Quality
+Test coverage: Aim for >80%
+Linting: Zero ruff errors
+Type checking: Use type hints, minimal mypy errors
+Documentation: All public APIs documented
+PM Agent Metrics
+Confidence check ROI: 25-250x token savings
+Self-check detection: 94% hallucination detection rate
+Parallel execution: 3.5x speedup vs sequential
+Token efficiency: 30-50% reduction with proper budgeting
+Release Criteria
+Before releasing a new version:
+
+✅ All tests passing
+✅ Documentation updated
+✅ CHANGELOG.md updated
+✅ Version numbers synced
+✅ No known critical bugs
+✅ Security audit passed (if applicable) 
+|─────|----------|----------|----------|----------|
+
+### 1.2.2 军规 M29: Design Principles
+1. Evidence-Based Development
+Never guess - always verify with official sources:
+
+Use Context7 MCP for official documentation
+Use WebFetch/WebSearch for research
+Check existing code with Glob/Grep before implementing
+Verify assumptions against test results
+Anti-pattern: Implementing based on assumptions or outdated knowledge
+
+2. Confidence-First Implementation
+Check confidence BEFORE starting work:
+
+≥90%: Proceed with implementation
+70-89%: Present alternatives, continue investigation
+<70%: STOP - ask questions, investigate more
+ROI: Spend 100-200 tokens on confidence check to save 5,000-50,000 tokens on wrong direction
+
+3. Parallel-First Execution
+Use Wave → Checkpoint → Wave pattern:
+
+Wave 1: [Read file1, Read file2, Read file3] (parallel)
+   ↓
+Checkpoint: Analyze all files together
+   ↓
+Wave 2: [Edit file1, Edit file2, Edit file3] (parallel)
+Benefit: 3.5x faster than sequential execution
+
+When to use:
+
+Independent operations (reading multiple files)
+Batch transformations (editing multiple files)
+Parallel searches (grep across different directories)
+When NOT to use:
+
+Operations with dependencies (must wait for previous result)
+Sequential analysis (need to build context step-by-step)
+4. Token Efficiency
+Allocate tokens based on task complexity:
+
+Simple (typo fix): 200 tokens
+Medium (bug fix): 1,000 tokens
+Complex (feature): 2,500 tokens
+Confidence check ROI: 25-250x token savings
+
+5. No Hallucinations
+Use SelfCheckProtocol to prevent hallucinations:
+
+The Four Questions:
+
+Are all tests passing? (show output)
+Are all requirements met? (list items)
+No assumptions without verification? (show docs)
+Is there evidence? (test results, code changes, validation)
+7 Red Flags:
+
+"Tests pass" without output
+"Everything works" without evidence
+"Implementation complete" with failing tests
+Skipping error messages
+Ignoring warnings
+Hiding failures
+"Probably works" language
+If any red flags, STOP and investigate!
+|─────|----------|----------|----------|----------|
 
 ### 1.3 军规违规处理
 
@@ -145,6 +347,23 @@
 - [ ] M17: 报撤单频率检查存在
 - [ ] M18: 实验性策略门禁检查
 - [ ] M20: 跨所逻辑一致性验证
+- [ ] M21: Git Workflow符合规范
+- [ ] M22: 文档齐全且更新
+- [ ] M24: 开发流程遵守
+- [ ] M26: 测试规范遵守
+- [ ] M27: CI/CD集成通过
+- [ ] M28: 场景矩阵覆盖完整
+- [ ] M30: 代码质量检查通过
+- [ ] M32: 自检协议执行通过
+- [ ] M33: 记录和学习完成
+- [ ] 所有军规 M1-M33 均已遵守
+- [ ] 所有单元测试通过
+- [ ] 所有集成测试通过
+- [ ] 置信度检查通过（置信度≥90%）
+- [ ] 所有需求均已满足
+- [ ] 所有假设均已验证，无未经验证的假设
+- [ ] 所有变更均经过充分测试
+- [ ] 所有变更均经过充分评审
 - [ ] 所有单元测试通过，覆盖率不低于90%
 - [ ] 所有集成测试通过，覆盖所有关键场景
 - [ ] 代码格式符合团队规范（Ruff检查通过）
@@ -181,17 +400,17 @@
 
 | Phase | 名称 | 文件数 | 场景数 | 状态 | 完成日期 |
 |-------|------|--------|--------|------|----------|
-| Phase 0 | 基础设施 | 8 | 15 | ✅ 完成 | 2025-12-14 |
-| Phase 1 | 行情层 | 7 | 12 | ✅ 完成 | 2025-12-14 |
-| Phase 2 | 审计层 | 7 | 18 | ✅ 完成 | 2025-12-15 |
-| Phase 3 | 策略降级 | 4 | 12 | ✅ 完成 | 2025-12-15 |
-| Phase 4 | 回放验证 | 2 | 2 | ✅ 完成 | 2025-12-15 |
-| Phase 5 | 成本层 | 3 | 8 | ✅ 完成 | 2025-12-17 |
-| Phase 6 | B类模型 | 6 | 22 | ⏸ 待执行 | - |
-| Phase 7 | 中国期货特化 | 10 | 35 | ⏸ 待执行 | - |
-| Phase 8 | 智能策略 | 12 | 26 | ⏸ 待执行 | - |
-| Phase 9 | 合规监控 | 6 | 16 | ⏸ 待执行 | - |
-| Phase 10 | 组合风控 | 7 | 25 | ⏸ 待执行 | - |
+| Phase 0 | 基础设施 | 未统计 | 未统计 |  未完成 |  |
+| Phase 1 | 行情层 | 未统计 | 未统计 |  未完成 |  |
+| Phase 2 | 审计层 | 未统计| 未统计 |  未完成 |  |
+| Phase 3 | 策略降级 | 未统计 | 未统计 |  未完成 |  |
+| Phase 4 | 回放验证 | 未统计 | 未统计 |  未完成 |  |
+| Phase 5 | 成本层 | 未统计 | 未统计 |  未完成 |  |
+| Phase 6 | B类模型 |未统计 | 未统计 | ⏸ 待执行 | - |
+| Phase 7 | 中国期货特化 | 未统计 | 未统计 | ⏸ 待执行 | - |
+| Phase 8 | 智能策略 | 未统计 | 未统计 | ⏸ 待执行 | - |
+| Phase 9 | 合规监控 |未统计 | 未统计 | ⏸ 待执行 | - |
+| Phase 10 | 组合风控 | 未统计 | 未统计 | ⏸ 待执行 | - |
 |-------|------|--------|--------|------|----------|
 
 ### 2.2 代码库锚点（每次提交后更新）
@@ -199,23 +418,23 @@
 ```
 当前代码库状态 (2025-12-17):
 ├── src/
-│   ├── market/           # 7 files ✅
-│   ├── audit/            # 7 files ✅
-│   ├── cost/             # 3 files ✅ (Phase 5 完成)
-│   ├── guardian/         # 6 files ✅
+│   ├── market/           # 7 files 
+│   ├── audit/            # 7 files 
+│   ├── cost/             # 3 files 
+│   ├── guardian/         # 6 files 
 │   ├── execution/
-│   │   ├── auto/         # 8 files ✅
-│   │   ├── protection/   # 4 files ✅
-│   │   └── pair/         # 3 files ✅
+│   │   ├── auto/         # 8 files 
+│   │   ├── protection/   # 4 files 
+│   │   └── pair/         # 3 files 
 │   ├── strategy/
-│   │   ├── calendar_arb/ # 4 files ✅
-│   │   └── experimental/ # 4 files ✅ (成熟度评估系统)
-│   ├── replay/           # 2 files ✅
-│   ├── portfolio/        # 4 files ✅ (P2升级)
-│   ├── monitoring/       # 3 files ✅ (P2升级)
-│   ├── risk/             # 3 files ✅
+│   │   ├── calendar_arb/ # 4 files 
+│   │   └── experimental/ # 4 files 
+│   ├── replay/           # 2 files 
+│   ├── portfolio/        # 4 files 
+│   ├── monitoring/       # 3 files 
+│   ├── risk/             # 3 files 
 │   └── trading/          # CI/SIM gates
-├── tests/                # 765 tests ✅
+├── tests/                # 765 tests 
 ├── docs/                 # 9 documents
 └── scripts/              # 6 scripts
 ```
@@ -2798,10 +3017,29 @@ jobs:
 
 | 指标 | 要求 |
 |------|------|
-| 测试覆盖率 | ≥ 85% |
+| 测试覆盖率 | ≥ 95% |
 | Ruff检查 | 0 errors |
 | Mypy检查 | 0 errors |
 | 文档完整性 | 100% |
+| 置信度 | ≥ 95% |
+| 运维支持 | 24x7小时响应 |
+| 记录完整性 | 审计日志无遗漏 |
+| 告警准确性 | ≤ 1%误报 |
+| 回滚成功率 | 100% |
+| 矩阵完整性 | 100% |
+| 军规覆盖率 | 100% |
+| 代码质量 | 0 critical issues |
+| 套利效果 | 正收益 |
+| VaR准确性 | ≤ 5%误差 |
+| 微观结构高频套利 | 收益稳定 |
+| 中观结构高频套利 | 收益稳定 |
+| 系统稳定性 | 无崩溃 |
+| 故障恢复时间 | ≤ 1分钟 |
+| 用户体验 | 易用友好 |
+| 技术债务 | 无遗留问题 |
+| 政策红利自动捕手 | 快速响应政策 |
+| 极端行情
+
 
 ---
 
