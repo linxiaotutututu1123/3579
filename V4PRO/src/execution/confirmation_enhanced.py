@@ -497,18 +497,18 @@ class ConfirmationManagerEnhanced:
             # 动态导入避免循环依赖
             from src.guardian.circuit_breaker import CircuitBreakerState
 
-            current_state = self._circuit_breaker.state
+            current_state = self._circuit_breaker.current_state
 
-            if current_state == CircuitBreakerState.TRIGGERED:
+            if current_state == CircuitBreakerState.OPEN:
                 if self._cb_config.block_on_circuit_break:
-                    return False, "熔断器已触发(TRIGGERED),阻止新确认"
-                return True, "熔断器已触发(TRIGGERED),但未配置阻止"
+                    return False, "熔断器已触发(OPEN),阻止新确认"
+                return True, "熔断器已触发(OPEN),但未配置阻止"
 
-            if current_state == CircuitBreakerState.RECOVERY:
-                return True, "熔断器恢复期(RECOVERY),允许有限确认"
+            if current_state == CircuitBreakerState.HALF_OPEN:
+                return True, "熔断器恢复期(HALF_OPEN),允许有限确认"
 
-            # NORMAL
-            return True, "熔断器正常(NORMAL)"
+            # CLOSED
+            return True, "熔断器正常(CLOSED)"
 
         except Exception as e:
             # 熔断器检查失败时不阻塞
@@ -525,7 +525,7 @@ class ConfirmationManagerEnhanced:
 
         try:
             from src.guardian.circuit_breaker import CircuitBreakerState
-            return self._circuit_breaker.state == CircuitBreakerState.RECOVERY
+            return self._circuit_breaker.current_state == CircuitBreakerState.HALF_OPEN
         except Exception:
             return False
 
@@ -726,7 +726,7 @@ class ConfirmationManagerEnhanced:
         if self._circuit_breaker is None:
             return None
         try:
-            return self._circuit_breaker.state.name
+            return self._circuit_breaker.current_state.value
         except Exception:
             return None
 
