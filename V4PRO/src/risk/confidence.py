@@ -92,6 +92,12 @@ class ConfidenceContext:
         market_condition: 市场状态
         risk_within_limits: 风险在限制内
 
+        # 扩展检查项 (v4.3增强)
+        volatility: 市场波动率 (0.0-1.0)
+        liquidity_score: 流动性评分 (0.0-1.0)
+        historical_win_rate: 策略历史胜率 (0.0-1.0)
+        position_concentration: 持仓集中度 (0.0-1.0)
+
         # 元数据
         metadata: 附加元数据
     """
@@ -113,6 +119,12 @@ class ConfidenceContext:
     signal_consistency: float = 0.0
     market_condition: str = "NORMAL"
     risk_within_limits: bool = True
+
+    # 扩展检查项 (v4.3增强)
+    volatility: float = 0.0  # 市场波动率
+    liquidity_score: float = 1.0  # 流动性评分 (默认高流动性)
+    historical_win_rate: float = 0.5  # 策略历史胜率
+    position_concentration: float = 0.0  # 持仓集中度 (0=分散, 1=集中)
 
     # 元数据
     metadata: dict[str, Any] = field(default_factory=dict)
