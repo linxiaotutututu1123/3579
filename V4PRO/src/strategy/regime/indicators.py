@@ -18,7 +18,7 @@ V4 SPEC: D7-P0 市场状态引擎
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, ClassVar
 
 import numpy as np
@@ -420,7 +420,7 @@ class RegimeIndicators:
         # 基于DI判断方向
         if plus_di > minus_di:
             return 1
-        elif minus_di > plus_di:
+        if minus_di > plus_di:
             return -1
 
         return 0

@@ -33,10 +33,10 @@ from typing import Any
 from src.risk.confidence import (
     ConfidenceAssessor,
     ConfidenceContext,
-    ConfidenceLevel,
     ConfidenceResult,
     TaskType,
 )
+
 
 logger = logging.getLogger(__name__)
 

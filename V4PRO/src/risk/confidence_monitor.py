@@ -37,6 +37,7 @@ from src.risk.confidence import (
     ConfidenceResult,
 )
 
+
 if TYPE_CHECKING:
     pass
 

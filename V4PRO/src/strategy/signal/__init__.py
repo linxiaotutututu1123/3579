@@ -52,6 +52,30 @@ V4 SPEC: M1军规 - 一个交易信号只能来自一个策略实例
 
 from __future__ import annotations
 
+# 从 conflict_resolver 模块导出
+from src.strategy.signal.conflict_resolver import (
+    ConflictInfo,
+    ConflictSeverity,
+    ConflictType,
+    ResolutionResult,
+    ResolutionStrategy,
+    SignalConflictResolver,
+    create_conflict_resolver,
+    resolve_conflicts,
+)
+
+# 从 registry 模块导出
+from src.strategy.signal.registry import (
+    RegistryEvent,
+    RegistryEventType,
+    SignalSourceRegistry,
+    SourceMetadata,
+    get_registry,
+    get_source,
+    register_source,
+    unregister_source,
+)
+
 # 从 source 模块导出
 from src.strategy.signal.source import (
     SignalDirection,
@@ -72,30 +96,6 @@ from src.strategy.signal.validator import (
     ValidationResult,
     ValidationSeverity,
     create_validator,
-)
-
-# 从 registry 模块导出
-from src.strategy.signal.registry import (
-    RegistryEvent,
-    RegistryEventType,
-    SignalSourceRegistry,
-    SourceMetadata,
-    get_registry,
-    get_source,
-    register_source,
-    unregister_source,
-)
-
-# 从 conflict_resolver 模块导出
-from src.strategy.signal.conflict_resolver import (
-    ConflictInfo,
-    ConflictSeverity,
-    ConflictType,
-    ResolutionResult,
-    ResolutionStrategy,
-    SignalConflictResolver,
-    create_conflict_resolver,
-    resolve_conflicts,
 )
 
 

@@ -274,7 +274,7 @@ class EnhancedLSTM(nn.Module):
         cls,
         path: str,
         config: LSTMConfig | None = None,
-    ) -> "EnhancedLSTM":
+    ) -> EnhancedLSTM:
         """从预训练权重加载模型.
 
         Args:

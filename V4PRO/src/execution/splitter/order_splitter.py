@@ -26,30 +26,27 @@ V4PRO Scenarios:
 from __future__ import annotations
 
 import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Awaitable
+from typing import Any
 
 from src.execution.mode2.executor_base import (
-    ExecutorBase,
-    ExecutorConfig,
-    ExecutorStatus,
     ExecutionProgress,
+    ExecutorBase,
+    ExecutorStatus,
 )
+from src.execution.mode2.executor_iceberg import IcebergConfig, IcebergExecutor
 from src.execution.mode2.executor_twap import TWAPConfig, TWAPExecutor
 from src.execution.mode2.executor_vwap import VWAPConfig, VWAPExecutor
-from src.execution.mode2.executor_iceberg import IcebergConfig, IcebergExecutor
-from src.execution.mode2.intent import OrderIntent, AlgoType
+from src.execution.mode2.intent import AlgoType, OrderIntent
 from src.execution.splitter.behavioral_disguise import (
     BehavioralConfig,
     BehavioralDisguiseExecutor,
-    DisguisePattern,
 )
 from src.execution.splitter.metrics import (
     ExecutionMetrics,
-    ExecutionTargets,
     MetricsCollector,
-    MetricStatus,
 )
 
 

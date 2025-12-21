@@ -15,33 +15,35 @@ from __future__ import annotations
 
 import asyncio
 import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Awaitable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from src.execution.confirmation import (
-    ConfirmationLevel,
-    ConfirmationResult,
-    SessionType,
-    StrategyType,
+    AlertCallback,
+    AuditCallback,
+    ConfirmationAuditEvent,
+    ConfirmationAuditEventType,
     ConfirmationConfig,
     ConfirmationContext,
     ConfirmationDecision,
-    ConfirmationAuditEvent,
-    ConfirmationAuditEventType,
-    AuditCallback,
-    AlertCallback,
-    RiskCheckCallback,
+    ConfirmationLevel,
+    ConfirmationResult,
     CostCheckCallback,
+    HardConfirmation,
     LimitCheckCallback,
+    RiskCheckCallback,
+    SessionType,
+    SoftConfirmation,
+    StrategyType,
     UserConfirmCallback,
     determine_confirmation_level,
-    SoftConfirmation,
-    HardConfirmation,
 )
 
+
 if TYPE_CHECKING:
-    from src.guardian.circuit_breaker import CircuitBreaker, CircuitBreakerState
+    from src.guardian.circuit_breaker import CircuitBreaker
 
 
 # =============================================================================
@@ -234,7 +236,7 @@ class HardConfirmationEnhanced(HardConfirmation):
                 self._emit_audit(ConfirmationAuditEvent(
                     event_type=ConfirmationAuditEventType.HARD_CONFIRM_CIRCUIT_BREAK,
                     confirmation_id=confirmation_id,
-                    reason=f"熔断器触发失败: {str(e)}",
+                    reason=f"熔断器触发失败: {e!s}",
                     metadata={"error": str(e)},
                 ))
                 return False
@@ -340,7 +342,7 @@ class HardConfirmationEnhanced(HardConfirmation):
 
             return decision
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             # 超时处理
             elapsed = time.time() - start_time
 
@@ -377,26 +379,25 @@ class HardConfirmationEnhanced(HardConfirmation):
                     elapsed_seconds=elapsed + soft_decision.elapsed_seconds,
                 )
 
-            else:
-                # 日盘触发熔断
-                reasons.append(f"硬确认超时({timeout}s),日盘触发熔断")
-                checks_failed.append("M6_CIRCUIT_BREAKER")
+            # 日盘触发熔断
+            reasons.append(f"硬确认超时({timeout}s),日盘触发熔断")
+            checks_failed.append("M6_CIRCUIT_BREAKER")
 
-                # 实际触发熔断器
-                await self._trigger_circuit_breaker(
-                    confirmation_id,
-                    context,
-                    f"硬确认超时触发熔断: 合约{context.order_intent.symbol}, 金额{context.order_value:.0f}",
-                )
+            # 实际触发熔断器
+            await self._trigger_circuit_breaker(
+                confirmation_id,
+                context,
+                f"硬确认超时触发熔断: 合约{context.order_intent.symbol}, 金额{context.order_value:.0f}",
+            )
 
-                return ConfirmationDecision(
-                    level=ConfirmationLevel.HARD_CONFIRM,
-                    result=ConfirmationResult.REJECTED,
-                    reasons=reasons,
-                    checks_passed=checks_passed,
-                    checks_failed=checks_failed,
-                    elapsed_seconds=elapsed,
-                )
+            return ConfirmationDecision(
+                level=ConfirmationLevel.HARD_CONFIRM,
+                result=ConfirmationResult.REJECTED,
+                reasons=reasons,
+                checks_passed=checks_passed,
+                checks_failed=checks_failed,
+                elapsed_seconds=elapsed,
+            )
 
 
 # =============================================================================
@@ -427,7 +428,7 @@ class ConfirmationManagerEnhanced:
         cost_check: CostCheckCallback | None = None,
         limit_check: LimitCheckCallback | None = None,
         user_confirm_callback: UserConfirmCallback | None = None,
-        circuit_breaker: "CircuitBreaker | None" = None,
+        circuit_breaker: CircuitBreaker | None = None,
         circuit_breaker_trigger_callback: CircuitBreakerTriggerCallback | None = None,
     ):
         """初始化增强版确认管理器.
@@ -503,15 +504,15 @@ class ConfirmationManagerEnhanced:
                     return False, "熔断器已触发(OPEN),阻止新确认"
                 return True, "熔断器已触发(OPEN),但未配置阻止"
 
-            elif current_state == CircuitBreakerState.HALF_OPEN:
+            if current_state == CircuitBreakerState.HALF_OPEN:
                 return True, "熔断器恢复期(HALF_OPEN),允许有限确认"
 
-            else:  # CLOSED
-                return True, "熔断器正常(CLOSED)"
+            # CLOSED
+            return True, "熔断器正常(CLOSED)"
 
         except Exception as e:
             # 熔断器检查失败时不阻塞
-            return True, f"熔断器检查异常: {str(e)}"
+            return True, f"熔断器检查异常: {e!s}"
 
     def _is_in_recovery_period(self) -> bool:
         """检查是否处于恢复期.
@@ -702,13 +703,13 @@ class ConfirmationManagerEnhanced:
 
             return decision
 
-        elif level == ConfirmationLevel.SOFT_CONFIRM:
+        if level == ConfirmationLevel.SOFT_CONFIRM:
             return await self._soft_confirmation.confirm(confirmation_id, context)
 
-        else:  # HARD_CONFIRM
-            return await self._hard_confirmation.confirm(confirmation_id, context)
+        # HARD_CONFIRM
+        return await self._hard_confirmation.confirm(confirmation_id, context)
 
-    def set_circuit_breaker(self, circuit_breaker: "CircuitBreaker") -> None:
+    def set_circuit_breaker(self, circuit_breaker: CircuitBreaker) -> None:
         """设置熔断器实例.
 
         Args:
@@ -737,7 +738,7 @@ class ConfirmationManagerEnhanced:
 
 def create_enhanced_confirmation_manager(
     config: ConfirmationConfig | None = None,
-    circuit_breaker: "CircuitBreaker | None" = None,
+    circuit_breaker: CircuitBreaker | None = None,
     enable_circuit_breaker_integration: bool = True,
     audit_callback: AuditCallback | None = None,
     alert_callback: AlertCallback | None = None,

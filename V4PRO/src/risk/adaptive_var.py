@@ -33,6 +33,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 from src.risk.dynamic_var import DynamicVaREngine, DynamicVaRResult, VaRMethod
 
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 

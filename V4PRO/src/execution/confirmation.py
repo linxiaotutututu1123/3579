@@ -21,10 +21,11 @@ from __future__ import annotations
 import asyncio
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Awaitable
+from typing import Any
 
 from src.execution.order_types import OrderIntent
 
@@ -486,7 +487,6 @@ class BaseConfirmation(ABC):
         Returns:
             确认决策结果
         """
-        pass
 
 
 class SoftConfirmation(BaseConfirmation):
@@ -587,7 +587,7 @@ class SoftConfirmation(BaseConfirmation):
                     risk_check(context),
                     timeout=timeout / 3,
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 risk_passed = True  # 超时自动通过
                 reasons.append("风控检查超时,自动通过")
 
@@ -611,7 +611,7 @@ class SoftConfirmation(BaseConfirmation):
                     cost_check(context),
                     timeout=timeout / 3,
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 cost_passed = True  # 超时自动通过
                 reasons.append("成本检查超时,自动通过")
 
@@ -635,7 +635,7 @@ class SoftConfirmation(BaseConfirmation):
                     limit_check(context),
                     timeout=timeout / 3,
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 limit_passed = True  # 超时自动通过
                 reasons.append("涨跌停检查超时,自动通过")
 
@@ -678,7 +678,7 @@ class SoftConfirmation(BaseConfirmation):
 
             return decision
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             # 整体超时 - 自动通过
             elapsed = time.time() - start_time
             reasons.append(f"软确认超时({timeout}s),自动通过")
@@ -744,7 +744,6 @@ class HardConfirmation(BaseConfirmation):
         metadata: dict[str, Any],
     ) -> None:
         """默认告警(空实现)."""
-        pass
 
     async def _default_user_confirm(
         self,
@@ -856,7 +855,7 @@ class HardConfirmation(BaseConfirmation):
 
             return decision
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             # 超时处理
             elapsed = time.time() - start_time
 
@@ -893,25 +892,24 @@ class HardConfirmation(BaseConfirmation):
                     elapsed_seconds=elapsed + soft_decision.elapsed_seconds,
                 )
 
-            else:
-                # 日盘触发熔断
-                reasons.append(f"硬确认超时({timeout}s),日盘触发熔断")
-                checks_failed.append("M6_CIRCUIT_BREAKER")
+            # 日盘触发熔断
+            reasons.append(f"硬确认超时({timeout}s),日盘触发熔断")
+            checks_failed.append("M6_CIRCUIT_BREAKER")
 
-                self._emit_audit(ConfirmationAuditEvent(
-                    event_type=ConfirmationAuditEventType.HARD_CONFIRM_CIRCUIT_BREAK,
-                    confirmation_id=confirmation_id,
-                    reason="日盘超时,触发熔断",
-                ))
+            self._emit_audit(ConfirmationAuditEvent(
+                event_type=ConfirmationAuditEventType.HARD_CONFIRM_CIRCUIT_BREAK,
+                confirmation_id=confirmation_id,
+                reason="日盘超时,触发熔断",
+            ))
 
-                return ConfirmationDecision(
-                    level=ConfirmationLevel.HARD_CONFIRM,
-                    result=ConfirmationResult.REJECTED,
-                    reasons=reasons,
-                    checks_passed=checks_passed,
-                    checks_failed=checks_failed,
-                    elapsed_seconds=elapsed,
-                )
+            return ConfirmationDecision(
+                level=ConfirmationLevel.HARD_CONFIRM,
+                result=ConfirmationResult.REJECTED,
+                reasons=reasons,
+                checks_passed=checks_passed,
+                checks_failed=checks_failed,
+                elapsed_seconds=elapsed,
+            )
 
 
 class ConfirmationManager:
@@ -1032,8 +1030,8 @@ class ConfirmationManager:
 
             return decision
 
-        elif level == ConfirmationLevel.SOFT_CONFIRM:
+        if level == ConfirmationLevel.SOFT_CONFIRM:
             return await self._soft_confirmation.confirm(confirmation_id, context)
 
-        else:  # HARD_CONFIRM
-            return await self._hard_confirmation.confirm(confirmation_id, context)
+        # HARD_CONFIRM
+        return await self._hard_confirmation.confirm(confirmation_id, context)

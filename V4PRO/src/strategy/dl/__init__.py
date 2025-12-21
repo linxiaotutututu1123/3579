@@ -68,14 +68,15 @@ from src.strategy.dl.policy import infer_score
 # 训练层
 from src.strategy.dl.training import (
     EarlyStopping,
+    TradingModelTrainer,
     TrainerConfig,
     TrainerMetrics,
-    TradingModelTrainer,
 )
 from src.strategy.dl.weights import (
     clear_model_cache,
     load_model_and_hash,
 )
+
 
 __all__ = [
     # 数据层

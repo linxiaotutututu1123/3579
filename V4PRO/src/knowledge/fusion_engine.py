@@ -20,9 +20,10 @@ from __future__ import annotations
 
 import time
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any, Callable
+from typing import Any
 
 from src.knowledge.base import (
     KnowledgeEntry,
@@ -30,10 +31,9 @@ from src.knowledge.base import (
     KnowledgeStore,
     KnowledgeType,
 )
-from src.knowledge.decision_log import Decision, DecisionLog, DecisionOutcome
-from src.knowledge.pattern_store import MarketRegime, Pattern, PatternStore
+from src.knowledge.decision_log import DecisionLog, DecisionOutcome
+from src.knowledge.pattern_store import MarketRegime, PatternStore
 from src.knowledge.reflexion import (
-    Experience,
     ExperienceCategory,
     ExperienceContext,
     ExperienceType,
@@ -874,7 +874,7 @@ class FusionEngine:
                         rec = Recommendation.create(
                             rec_type=RecommendationType.RISK_ENHANCE,
                             priority=RecommendationPriority.MEDIUM,
-                            title=f"持仓相关性提醒",
+                            title="持仓相关性提醒",
                             description=f"当前持有 {position_count} 个标的，请注意检查相关性风险",
                             action="check_correlation_risk",
                             confidence=0.7,
