@@ -840,3 +840,21 @@ def quick_limit_var(
     engine = DynamicVaREngine()
     result = engine.limit_adjusted_var(returns, limit_pct, confidence)
     return result.var
+
+
+# ============================================================
+# 自适应VaR调度器 (D8设计集成)
+# ============================================================
+# 从 adaptive_var 模块重导出，保持向后兼容
+
+from src.risk.adaptive_var import (
+    AdaptiveVaRConfig,
+    AdaptiveVaRScheduler,
+    EventType,
+    MarketRegime,
+    PerformanceMetrics,
+    VaRScheduleState,
+    create_adaptive_var_scheduler,
+    get_regime_from_volatility,
+    quick_adaptive_var,
+)
