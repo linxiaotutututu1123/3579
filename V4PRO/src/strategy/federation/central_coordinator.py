@@ -245,9 +245,13 @@ class StrategyFederation:
         # 相关性矩阵
         self._correlation_matrix = CorrelationMatrix()
 
-        # 信号历史 (用于计算相关性)
-        self._signal_history: dict[str, list[float]] = {}
+        # 信号历史 (用于计算相关性) - 使用 deque 优化
+        self._signal_history: dict[str, deque[float]] = {}
         self._history_window: int = 100
+
+        # 相关性矩阵更新节流
+        self._last_correlation_update: float = 0.0
+        self._correlation_update_interval: float = 1.0  # 最小更新间隔（秒）
 
         # 回调函数
         self._on_signal_callbacks: list[Callable[[FederationSignal], None]] = []
