@@ -1,7 +1,7 @@
 # V4PRO 风控模块 (risk/)
 
-> **版本**: v4.0.0 军规级
-> **军规覆盖**: M6, M16, M19
+> **版本**: v4.3.0 军规级
+> **军规覆盖**: M3, M6, M16, M19
 
 ---
 
@@ -12,6 +12,7 @@
 - 压力测试（中国市场特化）
 - 保证金监控（M16核心）
 - 风险归因分析
+- **置信度评估** (v4.3 新增)
 
 ---
 
@@ -24,6 +25,7 @@
 | `dynamic_var.py` | 动态VaR | M6 |
 | `stress_test_china.py` | 中国市场压力测试 | M19 |
 | `attribution.py` | 风险归因 | M19 |
+| `confidence.py` | 置信度评估 (v4.3) | M3,M19 |
 | `state.py` | 风控状态管理 | M6 |
 | `events.py` | 风控事件 | M6 |
 
@@ -142,6 +144,82 @@ print(f"市场风险: {contrib.market}")
 print(f"行业风险: {contrib.sector}")
 print(f"特质风险: {contrib.idiosyncratic}")
 ```
+
+---
+
+## 置信度评估 (v4.3 新增)
+
+**集成 superclaude ConfidenceChecker 与 V4PRO 信号置信度系统**
+
+### 预执行置信度检查
+```python
+from src.risk import assess_pre_execution, ConfidenceLevel
+
+# 预执行检查 (防止错误方向执行)
+result = assess_pre_execution(
+    "implement_feature",
+    duplicate_check=True,
+    architecture_verified=True,
+    has_docs=True,
+    has_oss=True,
+    root_cause=True,
+)
+
+if result.level == ConfidenceLevel.HIGH:
+    # ≥90% 置信度 - 可直接执行
+    execute_task()
+elif result.level == ConfidenceLevel.MEDIUM:
+    # 70-89% - 需要确认
+    request_confirmation()
+else:
+    # <70% - 停止并调查
+    stop_and_investigate()
+```
+
+### 信号置信度评估
+```python
+from src.risk import assess_signal
+
+# 交易信号置信度评估
+result = assess_signal(
+    "rb2501",
+    "kalman_arb",
+    strength=0.8,
+    consistency=0.85,
+    market_condition="NORMAL",
+    risk_ok=True,
+)
+
+print(f"置信度: {result.score:.0%}")  # → 100%
+print(f"等级: {result.level.value}")  # → HIGH
+```
+
+### 置信度阈值
+
+| 等级 | 阈值 | 操作 |
+|------|------|------|
+| HIGH | ≥90% | 可直接执行 |
+| MEDIUM | 70-89% | 需要确认/替代方案 |
+| LOW | <70% | 停止并调查 |
+
+### 评估标准
+
+**预执行模式** (superclaude):
+| 检查项 | 权重 |
+|--------|------|
+| 无重复实现 | 25% |
+| 架构合规 | 25% |
+| 官方文档验证 | 20% |
+| OSS参考实现 | 15% |
+| 根因识别 | 15% |
+
+**信号模式** (V4PRO):
+| 检查项 | 权重 |
+|--------|------|
+| 信号强度 (≥0.5) | 30% |
+| 信号一致性 (≥0.6) | 25% |
+| 市场状态 | 25% |
+| 风险限制 | 20% |
 
 ---
 
