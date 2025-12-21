@@ -268,6 +268,9 @@ class FusionEngine:
             self._rule_risk_enhancement,
             self._rule_fault_prevention,
             self._rule_pattern_signal,
+            self._rule_market_regime_adaptation,
+            self._rule_position_sizing,
+            self._rule_correlation_warning,
         ])
 
     def register_rule(
