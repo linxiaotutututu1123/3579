@@ -1047,6 +1047,13 @@ class HFTDetector:
                 "3) 关注后续交易行为"
             )
 
+        if level == ThrottleLevel.SLOW:
+            return (
+                "建议: 1) 降低交易频率至200笔/秒以下; "
+                "2) 减少撤单操作; "
+                "3) 优化策略逻辑"
+            )
+
         if level == ThrottleLevel.CRITICAL:
             return (
                 "建议: 1) 立即降低交易频率至200笔/秒以下; "
