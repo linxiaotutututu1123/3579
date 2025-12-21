@@ -111,6 +111,18 @@
   - 亏损订单自动归因
   - 审计日志记录
 
+### 3.4 置信度评估模块 (v4.3 新增)
+- **位置**: `src/risk/confidence.py`
+- **军规覆盖**: M3 (完整审计), M19 (风险归因)
+- **已实现**:
+  - `ConfidenceAssessor` - 统一置信度评估器
+  - `ConfidenceContext` - 评估上下文数据
+  - `ConfidenceResult` - 评估结果 (不可变)
+  - 预执行模式 (5项检查: 无重复/架构合规/官方文档/OSS参考/根因识别)
+  - 信号模式 (4项检查: 信号强度/一致性/市场状态/风险限制)
+  - 便捷函数: `assess_pre_execution()`, `assess_signal()`
+- **集成**: 与 superclaude ConfidenceChecker 模式统一
+
 ---
 
 ## 四、待实施模块
