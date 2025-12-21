@@ -416,26 +416,26 @@ If any red flags, STOP and investigate!
 ### 2.2 代码库锚点（每次提交后更新）
 
 ```
-当前代码库状态 (2025-12-17):
+当前代码库状态 (2025-12-21):
 ├── src/
-│   ├── market/           # 7 files 
-│   ├── audit/            # 7 files 
-│   ├── cost/             # 3 files 
-│   ├── guardian/         # 6 files 
+│   ├── market/           # 7 files
+│   ├── audit/            # 7 files
+│   ├── cost/             # 3 files
+│   ├── guardian/         # 6 files
 │   ├── execution/
-│   │   ├── auto/         # 8 files 
-│   │   ├── protection/   # 4 files 
-│   │   └── pair/         # 3 files 
+│   │   ├── auto/         # 8 files
+│   │   ├── protection/   # 4 files
+│   │   └── pair/         # 3 files
 │   ├── strategy/
-│   │   ├── calendar_arb/ # 4 files 
-│   │   └── experimental/ # 4 files 
-│   ├── replay/           # 2 files 
-│   ├── portfolio/        # 4 files 
-│   ├── monitoring/       # 3 files 
-│   ├── risk/             # 3 files 
+│   │   ├── calendar_arb/ # 4 files
+│   │   └── experimental/ # 4 files
+│   ├── replay/           # 2 files
+│   ├── portfolio/        # 4 files
+│   ├── monitoring/       # 3 files
+│   ├── risk/             # 9 files (含 confidence.py v4.3)
 │   └── trading/          # CI/SIM gates
-├── tests/                # 765 tests 
-├── docs/                 # 9 documents
+├── tests/                # 826+ tests
+├── docs/                 # 10 documents
 └── scripts/              # 6 scripts
 ```
 
