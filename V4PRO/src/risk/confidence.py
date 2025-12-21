@@ -541,20 +541,25 @@ class ConfidenceAssessor:
         return checks
 
     def _assess_combined(self, context: ConfidenceContext) -> list[ConfidenceCheck]:
-        """组合评估 (预执行 + 信号)."""
+        """组合评估 (预执行 + 信号 + 扩展)."""
         pre_exec_checks = self._assess_pre_execution(context)
         signal_checks = self._assess_signal(context)
+        extended_checks = self._assess_extended(context)
 
-        # 调整权重 (各占50%)
+        # 调整权重 (预执行40% + 信号40% + 扩展20%)
         for check in pre_exec_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.5
+            check_dict["weight"] *= 0.4
 
         for check in signal_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.5
+            check_dict["weight"] *= 0.4
 
-        return pre_exec_checks + signal_checks
+        for check in extended_checks:
+            check_dict = check.to_dict()
+            check_dict["weight"] *= 0.2
+
+        return pre_exec_checks + signal_checks + extended_checks
 
     def _get_recommendation(
         self, level: ConfidenceLevel, checks: list[ConfidenceCheck]
