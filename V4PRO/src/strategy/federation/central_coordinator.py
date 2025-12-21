@@ -638,11 +638,14 @@ class StrategyFederation:
         """重置联邦状态."""
         self._signal_count = 0
         self._conflict_count = 0
+        self._last_correlation_update = 0.0
         for member in self._members.values():
             member.signal_count = 0
             member.hit_count = 0
             member.last_signal = None
-        self._signal_history = {sid: [] for sid in self._members}
+        self._signal_history = {
+            sid: deque(maxlen=self._history_window) for sid in self._members
+        }
         self._correlation_matrix = CorrelationMatrix()
 
 
