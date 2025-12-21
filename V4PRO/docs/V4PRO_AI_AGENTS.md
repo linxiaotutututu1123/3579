@@ -989,6 +989,354 @@ logging:
   format: "json"
   output: "logs/agents/"
 ```
+
+---
+
+## §9 下一阶段实施指南 (P0/P1/P2)
+
+> **更新日期**: 2025-12-22
+> **实施模式**: Agent协作 + 并行开发
+
+### 9.1 P0: 策略联邦中枢 (Strategy Federation Hub)
+
+#### 负责Agent
+- **主导**: 量化架构师Agent (QuantArchitectAgent)
+- **协作**: 策略研发工程师Agent, 风控系统工程师Agent
+
+#### 模块规格
+
+```yaml
+模块名称: StrategyFederationHub
+文件路径: src/strategy/federation/
+关联Phase: Phase 8
+军规合规: M1, M3, M6
+
+核心功能:
+  - 多策略协调与优先级管理
+  - 信号冲突检测与解决
+  - 策略资源动态分配
+  - 策略健康状态监控
+```
+
+#### 设计架构
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    策略联邦中枢架构                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
+│  │ 策略注册器  │    │ 信号仲裁器  │    │ 资源分配器  │         │
+│  │ (Registry)  │    │ (Arbiter)   │    │ (Allocator) │         │
+│  └──────┬──────┘    └──────┬──────┘    └──────┬──────┘         │
+│         │                  │                  │                 │
+│         └──────────────────┼──────────────────┘                 │
+│                            ▼                                    │
+│                  ┌─────────────────┐                            │
+│                  │  联邦协调器     │                            │
+│                  │ (Coordinator)   │                            │
+│                  └────────┬────────┘                            │
+│                           │                                     │
+│         ┌─────────────────┼─────────────────┐                   │
+│         ▼                 ▼                 ▼                   │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
+│  │ 策略A实例   │  │ 策略B实例   │  │ 策略C实例   │             │
+│  └─────────────┘  └─────────────┘  └─────────────┘             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 核心类设计
+
+```python
+class StrategyFederationHub:
+    """策略联邦中枢 - 多策略协调管理"""
+
+    def __init__(self):
+        self.registry = StrategyRegistry()      # 策略注册器
+        self.arbiter = SignalArbiter()          # 信号仲裁器
+        self.allocator = ResourceAllocator()    # 资源分配器
+        self.coordinator = FederationCoordinator()  # 联邦协调器
+
+    # 核心方法
+    def register_strategy(self, strategy: Strategy) -> str: ...
+    def unregister_strategy(self, strategy_id: str) -> bool: ...
+    def resolve_conflict(self, signals: List[Signal]) -> Signal: ...
+    def allocate_resources(self, strategy_id: str, request: ResourceRequest) -> Allocation: ...
+    def get_federation_status(self) -> FederationStatus: ...
+
+    # 军规合规
+    # M1: 确保每个信号源唯一
+    # M3: 所有操作记录审计日志
+    # M6: 异常时触发熔断保护
+```
+
+#### 文件清单
+
+| 文件 | 功能 | 预计行数 |
+|------|------|----------|
+| `__init__.py` | 模块导出 | 20 |
+| `hub.py` | 联邦中枢主类 | 300 |
+| `registry.py` | 策略注册器 | 150 |
+| `arbiter.py` | 信号仲裁器 | 200 |
+| `allocator.py` | 资源分配器 | 180 |
+| `coordinator.py` | 联邦协调器 | 250 |
+| `models.py` | 数据模型定义 | 100 |
+| **总计** | - | **~1200** |
+
+#### 测试要求
+
+```python
+# tests/test_strategy_federation.py
+TEST_SCENARIOS = [
+    "策略注册与注销",
+    "多策略信号冲突解决",
+    "资源竞争与分配",
+    "策略优先级调整",
+    "异常策略隔离",
+    "联邦状态监控",
+    "M1军规合规验证",
+    "M3审计日志完整性",
+    "M6熔断联动测试",
+]
+```
+
+---
+
+### 9.2 P1: 程序化交易备案 (Compliance Registration)
+
+#### 负责Agent
+- **主导**: 合规系统工程师Agent (ComplianceEngineerAgent)
+- **协作**: 量化架构师Agent
+
+#### 模块规格
+
+```yaml
+模块名称: ComplianceRegistration
+文件路径: src/compliance/registration/
+关联Phase: Phase 9
+军规合规: M17, M3
+
+核心功能:
+  - 程序化交易账户备案
+  - 策略变更报备
+  - 监管接口对接
+  - 合规状态追踪
+```
+
+#### 监管要求对照
+
+| 监管条款 | 实现功能 | 检查方式 |
+|----------|----------|----------|
+| 账户实名备案 | 账户注册验证 | 身份核验 |
+| 策略报备 | 策略变更上报 | 变更日志 |
+| 交易限额 | 限额监控告警 | 实时检查 |
+| 异常报告 | 异常自动上报 | 事件触发 |
+
+#### 核心类设计
+
+```python
+class ComplianceRegistration:
+    """程序化交易备案管理"""
+
+    REGISTRATION_STATUS = ["PENDING", "APPROVED", "REJECTED", "SUSPENDED"]
+
+    def __init__(self, regulatory_api: RegulatoryAPI):
+        self.api = regulatory_api
+        self.registry = RegistrationRegistry()
+        self.reporter = ChangeReporter()
+
+    # 核心方法
+    def register_account(self, account: TradingAccount) -> RegistrationResult: ...
+    def report_strategy_change(self, change: StrategyChange) -> ReportResult: ...
+    def check_compliance_status(self, account_id: str) -> ComplianceStatus: ...
+    def submit_periodic_report(self, report: PeriodicReport) -> SubmissionResult: ...
+```
+
+#### 文件清单
+
+| 文件 | 功能 | 预计行数 |
+|------|------|----------|
+| `__init__.py` | 模块导出 | 15 |
+| `registration.py` | 备案主类 | 250 |
+| `reporter.py` | 变更上报器 | 180 |
+| `validator.py` | 合规验证器 | 150 |
+| `models.py` | 数据模型 | 80 |
+| **总计** | - | **~675** |
+
+---
+
+### 9.3 P1: 高频交易检测 (HFT Detection)
+
+#### 负责Agent
+- **主导**: 合规系统工程师Agent (ComplianceEngineerAgent)
+- **协作**: 风控系统工程师Agent
+
+#### 模块规格
+
+```yaml
+模块名称: HFTDetector
+文件路径: src/compliance/hft_detector/
+关联Phase: Phase 9
+军规合规: M17
+
+核心功能:
+  - 高频交易模式识别
+  - 报撤单频率监控
+  - HFT行为预警
+  - 自动限速机制
+```
+
+#### 检测阈值配置
+
+```python
+HFT_THRESHOLDS = {
+    "order_frequency": {
+        "warning": 200,      # 200单/秒 预警
+        "critical": 300,     # 300单/秒 触发
+        "block": 500,        # 500单/秒 阻断
+    },
+    "cancel_ratio": {
+        "warning": 0.4,      # 40% 撤单比
+        "critical": 0.5,     # 50% 触发
+    },
+    "round_trip_time": {
+        "hft_indicator": 10, # <10ms 视为HFT
+    },
+}
+```
+
+#### 核心类设计
+
+```python
+class HFTDetector:
+    """高频交易检测器"""
+
+    def __init__(self, thresholds: HFTThresholds = None):
+        self.thresholds = thresholds or HFT_THRESHOLDS
+        self.order_tracker = OrderFrequencyTracker()
+        self.pattern_analyzer = HFTPatternAnalyzer()
+
+    # 核心方法
+    def detect_hft_pattern(self, order_flow: OrderFlow) -> HFTDetectionResult: ...
+    def get_order_frequency(self, account_id: str, window_sec: int = 1) -> int: ...
+    def get_cancel_ratio(self, account_id: str, window_sec: int = 60) -> float: ...
+    def is_hft_account(self, account_id: str) -> bool: ...
+    def apply_throttle(self, account_id: str, level: ThrottleLevel) -> None: ...
+```
+
+#### 文件清单
+
+| 文件 | 功能 | 预计行数 |
+|------|------|----------|
+| `__init__.py` | 模块导出 | 15 |
+| `detector.py` | HFT检测主类 | 280 |
+| `tracker.py` | 频率追踪器 | 200 |
+| `analyzer.py` | 模式分析器 | 220 |
+| `throttle.py` | 限速控制器 | 150 |
+| **总计** | - | **~865** |
+
+---
+
+### 9.4 P2: 夜盘策略开发 (Night Session Strategies)
+
+#### 负责Agent
+- **主导**: 策略研发工程师Agent (StrategyEngineerAgent)
+- **协作**: ML/DL工程师Agent, 风控系统工程师Agent
+
+#### 模块规格
+
+```yaml
+模块名称: NightSessionStrategies
+文件路径: src/strategy/night_session/
+关联Phase: Phase 7
+军规合规: M1, M6, M15
+
+核心功能:
+  - 夜盘跳空闪电战
+  - 跨时段套利
+  - 夜盘风控适配
+  - 国际市场联动
+```
+
+#### 夜盘时段定义
+
+```python
+NIGHT_SESSIONS = {
+    "session_1": {"start": "21:00", "end": "23:00"},  # 第一节
+    "session_2": {"start": "23:00", "end": "01:00"},  # 第二节
+    "session_3": {"start": "01:00", "end": "02:30"},  # 第三节
+}
+
+NIGHT_SESSION_RULES = {
+    "confirmation_level": "SOFT_CONFIRM",  # 夜盘提升确认级别
+    "position_limit_pct": 0.5,             # 仓位限制50%
+    "stop_loss_tighter": 1.5,              # 止损收紧1.5倍
+}
+```
+
+#### 策略清单
+
+| 策略 | 文件 | 功能 | 军规 |
+|------|------|------|------|
+| 夜盘跳空闪电战 | `night_gap_flash.py` | 捕捉开盘跳空 | M1, M15 |
+| 国际联动套利 | `international_linkage.py` | 跨市场套利 | M1 |
+| 夜盘趋势跟踪 | `night_trend_follower.py` | 趋势策略 | M1, M6 |
+
+---
+
+### 9.5 实施优先级矩阵
+
+```
+                    高重要度
+                       │
+    P1:程序化备案       │     P0:策略联邦中枢
+    P1:HFT检测          │
+                       │
+ 低紧急度 ─────────────┼───────────── 高紧急度
+                       │
+    P2:夜盘策略         │
+                       │
+                       │
+                    低重要度
+```
+
+### 9.6 Agent协作时序
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ P0: 策略联邦中枢 实施时序                                         │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  量化架构师        策略研发工程师      风控系统工程师              │
+│      │                  │                  │                     │
+│      │ 1.架构设计       │                  │                     │
+│      ├─────────────────→                   │                     │
+│      │                  │                  │                     │
+│      │ 2.策略注册器     │                  │                     │
+│      │←─────────────────┤                  │                     │
+│      │                  │                  │                     │
+│      │                  │ 3.风控集成       │                     │
+│      │                  ├─────────────────→│                     │
+│      │                  │                  │                     │
+│      │ 4.集成验证       │                  │                     │
+│      ├─────────────────────────────────────→                     │
+│      │                  │                  │                     │
+│      ▼                  ▼                  ▼                     │
+│  [联邦中枢完成]     [策略适配完成]    [风控对接完成]              │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### 9.7 验收检查清单
+
+| 优先级 | 模块 | 测试覆盖 | 军规合规 | 文档完成 |
+|--------|------|----------|----------|----------|
+| P0 | 策略联邦中枢 | ≥95% | M1,M3,M6 | API+架构 |
+| P1 | 程序化交易备案 | ≥95% | M17,M3 | 监管接口 |
+| P1 | 高频交易检测 | ≥95% | M17 | 阈值配置 |
+| P2 | 夜盘策略 | ≥90% | M1,M6,M15 | 策略说明 |
+
 ---
   Todos (2025-12-22 更新)
   ☒ Analyze codebase gaps against D7 42-module list
