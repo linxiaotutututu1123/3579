@@ -147,6 +147,7 @@ class AutoOrderEngine:
 
         # 注册订单
         self._registry.register(ctx)
+        self._active_orders.add(local_id)  # 追踪活动订单
 
         # 创建状态机
         fsm = OrderFSM(
