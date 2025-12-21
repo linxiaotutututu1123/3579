@@ -55,6 +55,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Callable
 
+# 导入现有的 ThrottleLevel 枚举
+from src.compliance.hft_detector.throttle import ThrottleLevel
+
 logger = logging.getLogger(__name__)
 
 
@@ -88,21 +91,12 @@ MAX_RECORDS = 100000
 # 枚举定义
 # ============================================================
 
-
-class ThrottleLevel(Enum):
-    """限速级别枚举.
-
-    分级限速机制:
-    - NONE: 无限速，正常交易
-    - WARNING: 预警级别，记录日志但允许交易
-    - CRITICAL: 严重级别，增加延迟限制
-    - BLOCK: 阻断级别，拒绝新订单
-    """
-
-    NONE = "NONE"           # 无限速
-    WARNING = "WARNING"     # 预警 - 接近阈值
-    CRITICAL = "CRITICAL"   # 严重 - 超过阈值
-    BLOCK = "BLOCK"         # 阻断 - 严重超限
+# 注意: ThrottleLevel 从 throttle 模块导入，包含以下级别:
+# - NONE: 无限速，正常交易
+# - WARNING: 预警级别，记录日志但允许交易
+# - SLOW: 减速级别，间隔100ms
+# - CRITICAL: 严重级别，间隔500ms
+# - BLOCK: 阻断级别，拒绝新订单
 
 
 class HFTIndicatorType(Enum):
