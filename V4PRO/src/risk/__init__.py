@@ -39,6 +39,36 @@ from src.risk.confidence import (
     assess_signal,
     format_confidence_report,
 )
+from src.risk.confidence_api import (
+    ConfidenceAPI,
+    ConfidenceAPIRequest,
+    ConfidenceAPIResponse,
+    StatisticsResponse,
+    TrendResponse,
+    assess_from_json,
+    create_api,
+    quick_assess,
+)
+from src.risk.confidence_ml import (
+    ConfidenceMLP,
+    ConfidenceMLPredictor,
+    FeatureConfig,
+    MLEnhancedAssessor,
+    TrainingConfig,
+    TrainingResult,
+    create_ml_enhanced_assessor,
+    create_ml_predictor,
+    extract_features,
+    get_feature_dim,
+    quick_ml_predict,
+)
+from src.risk.confidence_monitor import (
+    AlertRecord,
+    ConfidenceMonitor,
+    ConfidenceMonitorConfig,
+    create_confidence_monitor,
+    quick_monitor_check,
+)
 from src.risk.dynamic_var import (
     # 动态VaR引擎核心
     DynamicVaREngine,
