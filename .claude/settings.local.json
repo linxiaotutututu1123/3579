@@ -60,7 +60,8 @@
       "Bash(uv run python:*)",
       "Bash(uv venv)",
       "Bash(.venv/Scripts/python:*)",
-      "Bash(.venv/Scripts/pip install:*)"
+      "Bash(.venv/Scripts/pip install:*)",
+      "Bash(\"C:/Users/1/2468/3579/V4PRO/.venv/Scripts/pip.exe\" install:*)"
     ]
   }
 }
