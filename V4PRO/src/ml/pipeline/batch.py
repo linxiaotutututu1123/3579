@@ -894,42 +894,7 @@ class BatchPipeline(DataPipeline):
 # ============================================================
 
 
-def create_batch_pipeline(
-    batch_size: int = BatchPipeline.DEFAULT_BATCH_SIZE,
-    enable_audit: bool = True,
-    enable_knowledge: bool = True,
-    random_seed: int | None = None,
-) -> BatchPipeline:
-    """创建批量管道.
-
-    参数:
-        batch_size: 批量大小
-        enable_audit: 是否启用审计日志 (M3)
-        enable_knowledge: 是否启用知识沉淀 (M33)
-        random_seed: 随机种子 (M7)，如果提供则启用确定性处理
-
-    返回:
-        BatchPipeline实例
-
-    示例:
-        >>> pipeline = create_batch_pipeline(batch_size=5000, random_seed=42)
-        >>> results = pipeline.process_batch(data)
-    """
-    config = PipelineConfig(
-        mode=PipelineMode.BATCH,
-        batch_size=batch_size,
-        buffer_size=max(batch_size * 2, BatchPipeline.DEFAULT_BATCH_SIZE * 2),
-        enable_audit=enable_audit,
-        enable_knowledge=enable_knowledge,
-        enable_deterministic=random_seed is not None,
-    )
-
-    pipeline = BatchPipeline(config)
-
-    if random_seed is not None:
-        pipeline.set_random_state(random_seed)
-
-    return pipeline
+def create_batch_pipeline(    config_or_batch_size: PipelineConfig | int = BatchPipeline.DEFAULT_BATCH_SIZE,    enable_audit: bool = True,    enable_knowledge: bool = True,    random_seed: int | None = None,) -> BatchPipeline:    """创建批量管道.    参数:        config_or_batch_size: PipelineConfig对象或批量大小(int)            - 如果传入PipelineConfig对象，直接使用该配置            - 如果传入int，作为batch_size创建默认配置        enable_audit: 是否启用审计日志 (M3)，仅当config_or_batch_size为int时生效        enable_knowledge: 是否启用知识沉淀 (M33)，仅当config_or_batch_size为int时生效        random_seed: 随机种子 (M7)，如果提供则启用确定性处理    返回:        BatchPipeline实例    示例:        >>> # 方式1: 使用简单参数        >>> pipeline = create_batch_pipeline(batch_size=5000, random_seed=42)        >>> results = pipeline.process_batch(data)        >>> # 方式2: 使用PipelineConfig对象        >>> config = PipelineConfig(mode=PipelineMode.BATCH, sources=[DataSource.MARKET])        >>> pipeline = create_batch_pipeline(config)    """    from src.ml.pipeline.base import DataSource    # 支持传入PipelineConfig对象或batch_size整数    if isinstance(config_or_batch_size, PipelineConfig):        config = config_or_batch_size    else:        batch_size = config_or_batch_size        config = PipelineConfig(            mode=PipelineMode.BATCH,            sources=[DataSource.MARKET],            batch_size=batch_size,            buffer_size=max(batch_size * 2, BatchPipeline.DEFAULT_BATCH_SIZE * 2),            enable_audit=enable_audit,            enable_knowledge=enable_knowledge,            enable_deterministic=random_seed is not None,        )    pipeline = BatchPipeline(config)    if random_seed is not None:        pipeline.set_random_state(random_seed)    return pipeline
 
 
 def process_in_batches(
