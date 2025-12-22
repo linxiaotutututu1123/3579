@@ -919,12 +919,12 @@ class CostValidator:
                     )
                     self._reject_count += 1
                 elif ratio_pct < self._thresholds.critical_ratio:
-                    alert_level = max(alert_level, CostAlertLevel.CRITICAL)
+                    alert_level = _max_alert_level(alert_level, CostAlertLevel.CRITICAL)
                     messages.append(
                         f"RR ratio {rr_ratio:.2f} approaching min threshold"
                     )
                 else:
-                    alert_level = max(alert_level, CostAlertLevel.WARNING)
+                    alert_level = _max_alert_level(alert_level, CostAlertLevel.WARNING)
                     messages.append(f"RR ratio {rr_ratio:.2f} slightly below optimal")
 
         if not messages:
