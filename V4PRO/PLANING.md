@@ -125,11 +125,11 @@ V4PRO是一个中国期货量化交易系统，核心目标：
 | 策略联邦中枢 | ✅ 完成 | StrategyFederationHub |
 | 信号仲裁器 | ✅ 完成 | SignalArbiter (~1041行) |
 | 资源分配器 | ✅ 完成 | ResourceAllocator (~978行) |
+| 降级兜底机制 | ✅ 完成 | FallbackManager + FallbackExecutor (M4) |
+| 成本先行机制 | ✅ 完成 | CostFirstCalculator (M5, 26测试通过) |
+| 审计追踪机制 | ✅ 完成 | AuditTracker (M3, SHA256防篡改) |
 | 智能路由v2 | ⏸ 待开发 | - |
 | 行为伪装拆单 | ⏸ 待开发 | - |
-| 降级兜底机制 | ⏸ 待开发 | M4 |
-| 成本先行机制 | ⏸ 待开发 | M5 |
-| 审计追踪机制 | ⏸ 待开发 | M3 |
 | 0人工干预设计 | ⏸ 待开发 | - |
 | 执行引擎优化 | ⏸ 待开发 | - |
 
