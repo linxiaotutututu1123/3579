@@ -242,12 +242,22 @@ addopts = [
     "--log-datefmt=%Y-%m-%d %H:%M:%S",
     "--log-file-mode=a",
     "--log-file=logs/test.log",
-    "PLC",
-    "PLR",PLR",
-    "PLR",PLR",
-    "PLW",
-    "PLR",
-    "T20",
+    "--log-file-level=DEBUG",
+    "--log-file-dateformat=%Y-%m-%d %H:%M:%S",
+    "--log-file-mode=w",
+    "--log-file=logs/debug.log",
+    "--log-file=logs/info.log",
+    "--log-file-level=INFO",
+    "--log-file=logs/warning.log",
+    "--log-file-level=WARN",
+    "--log-file=logs/error.log",
+    "--log-file-level=ERROR",
+    "--log-file=logs/critical.log",
+    "--log-file-level=CRTICAL",
+]
+minversion = 7.0
+doctest_optionflags =
+["IGNORE_EXCEPTION_DETAIL",]
 ]
 filterwarnings = [
     "error::DeprecationWarning",
