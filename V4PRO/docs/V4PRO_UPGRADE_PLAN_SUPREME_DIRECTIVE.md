@@ -87,7 +87,8 @@
 
 
 
-### 1.2 军规总表 M1-M33
+所有的的步骤都要满足以下所有的军规：必须遵守军规 M1-M33。（每一个代码都要满足M1到M33的要求）
+1.2 军规总表 M1-M33
 
 | 编号 | 军规名称 | 原则描述 | 违规后果 | 检查方式 |
 |------|----------|----------|----------|----------|
@@ -124,6 +125,7 @@
 | **M31** | 置信度检查 | 关键决策前必须有置信度检查 | 错误决策、资源浪费 | 阅读KNOWLEDGE.md |
 | **M32** | 自检协议 | 交付前必须执行自检协议 | 幻觉内容、质量下降 | 阅读KNOWLEDGE.md |
 | **M33** | 记录和学习| 记录所有的细节 | 每次迭代都要学习 | TASK.md, KNOWLEDGE.md, PLANNING.md, 所有docs文件夹的文件 |
+
 |─────|----------|----------|----------|----------|
 
 ### 1.2.1 军规 M21: Git Workflow
@@ -391,6 +393,44 @@ If any red flags, STOP and investigate!
 - [ ] 确保变更符合国家总统和最高指挥部的期望
 - [ ] 确保变更符合国家最高指示文件 V4PRO_UPGRADE_PLAN_SUPREME_DIRECTIVE.md 的要求
 - [ ] 确保变更符合国家最高指示文件的最终目的：打造捞金能力和风控能力，全自动能力最强的期货量化交易系统，为国家金融市场贡献力量！
+所有的的步骤都要满足以下所有的军规：必须遵守军规 M1-M33。（每一个代码都要满足M1到M33的要求）
+1.2 军规总表 M1-M33
+
+| 编号 | 军规名称 | 原则描述 | 违规后果 | 检查方式 |
+|------|----------|----------|----------|----------|
+| **M1** | 单一信号源 | 一个交易信号只能来自一个策略实例 | 订单冲突、重复下单 | 代码审查 + 单测 |
+| **M2** | 幂等执行 | 相同信号重复执行结果一致 | 重复下单、资金损失 | 回放测试 |
+| **M3** | 完整审计 | 所有决策必须有审计日志 | 无法追溯、监管风险 | 日志检查 |
+| **M4** | 降级兜底 | 策略异常必须有降级路径 | 系统瘫痪、无法交易 | 异常注入测试 |
+| **M5** | 成本先行 | 信号边际收益必须大于成本 | 亏损交易、无效下单 | 成本门禁 |
+| **M6** | 熔断保护 | 触发风控阈值必须立即停止 | 巨额亏损、穿仓 | 风控测试 |
+| **M7** | 回放一致 | 相同输入必须产生相同输出 | 无法验证、策略失效 | 回放测试 |
+| **M8** | 配置隔离 | 不同环境配置严格隔离 | 误操作、资金损失 | 配置审查 |
+| **M9** | 错误上报 | 所有异常必须上报监控系统 | 故障隐藏、延误处理 | 告警测试 |
+| **M10** | 资源限制 | CPU/内存/网络必须有上限 | 系统崩溃、影响其他服务 | 压测 |
+| **M11** | 版本兼容 | 新版本必须兼容旧数据格式 | 数据丢失、回滚困难 | 兼容性测试 |
+| **M12** | 双重确认 | 大额订单需人工或二次确认 | 误操作、巨额损失 | 流程审查 |
+| **M13** | 涨跌停感知 | 订单价格必须检查涨跌停板 | 废单、无效挂单 | 行情检查 |
+| **M14** | 平今平昨分离 | 平仓时必须区分平今/平昨 | 手续费计算错误 | 持仓检查 |
+| **M15** | 夜盘跨日处理 | 夜盘交易日归属必须正确 | 结算错误、持仓混乱 | 日历检查 |
+| **M16** | 保证金实时监控 | 保证金使用率必须实时计算 | 强平风险、穿仓 | 风控检查 |
+| **M17** | 程序化合规 | 报撤单频率必须在监管阈值内 | 监管处罚、限制交易 | 合规检查 |
+| **M18** | 实验性门禁 | 未成熟策略禁止实盘启用 | 策略失效、资金损失 | 成熟度检查 |
+| **M19** | 风险归因 | 每笔亏损必须有归因分析 | 无法改进、重复犯错 | 归因报告 |
+| **M20** | 跨所一致 | 不同交易所逻辑必须一致 | 套利失败、对冲失效 | 跨所测试 |
+| **M21** | Git Workflow | 规范化分支与提交 | 代码混乱、难以追踪 | 阅读1.2.1 |
+| **M22** | 文档齐全 | 所有公共API必须有文档 | 难以维护、使用错误 | TASK.md, KNOWLEDGE.md, PLANNING.md, 所有docs文件夹的文件 |
+| **M23** | 版本管理 | 版本号必须同步更新 | 发布混乱、依赖错误 | 版本检查 |
+| **M24** | 开发流程 | 严格遵守开发与审核流程 | 质量下降、漏洞增加 | 流程审查 |
+| **M25** | 自动回滚 | 回滚策略必须自动化实现 | 回滚失败、数据损坏 | 回滚测试 |
+| **M26** | 测试规范 | 测试用例必须遵循规范 | 质量下降、漏洞增加 | 测试审查 |
+| **M27** | CI/CD集成 | 必须有持续集成和部署管道 | 构建失败、发布延迟 | 集成测试 |
+| **M28** | 场景矩阵 | 必须有完整的场景矩阵覆盖 | 覆盖不足、质量下降 | 场景审查 |
+| **M29** | Design Principles | 设计原则必须遵守 | 设计混乱、难以维护 | 阅读1.2.2 |
+| **M30** | 代码质量 | 代码必须符合质量标准 | Bug增多、维护困难 | 代码审查  |
+| **M31** | 置信度检查 | 关键决策前必须有置信度检查 | 错误决策、资源浪费 | 阅读KNOWLEDGE.md |
+| **M32** | 自检协议 | 交付前必须执行自检协议 | 幻觉内容、质量下降 | 阅读KNOWLEDGE.md |
+| **M33** | 记录和学习| 记录所有的细节 | 每次迭代都要学习 | TASK.md, KNOWLEDGE.md, PLANNING.md, 所有docs文件夹的文件 |
 
 ---
 
@@ -1131,51 +1171,51 @@ src/strategy/
 
 #### 11.2.1 深度学习模块 (DL)
 
-| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+| 文件路径 | 预计行数 | 功能描述 | 状态 |
 |----------|----------|----------|----------|------|
-| `dl/__init__.py` | ~50 | 模块导出 | - | ⏸ 待新增 |
-| `dl/models/base.py` | ~200 | DL模型基类（审计、种子控制） | M3,M7,M18 | ⏸ 待新增 |
-| `dl/models/lstm.py` | ~350 | LSTM模型结构 | M7,M18 | ⏸ 待新增 |
-| `dl/models/transformer.py` | ~450 | Transformer模型（注意力+位置编码） | M7,M18 | ⏸ 待新增 |
-| `dl/models/cnn.py` | ~300 | CNN模型结构 | M18 | ⏸ 待新增 |
-| `dl/data/sequence_handler.py` | ~200 | 序列数据处理（长度验证） | M7 | ⏸ 待新增 |
-| `dl/data/dataset.py` | ~250 | 数据集定义 | M7 | ⏸ 待新增 |
-| `dl/data/dataloader.py` | ~150 | 数据加载器 | M7 | ⏸ 待新增 |
-| `dl/factor/factor_miner.py` | ~400 | 因子挖掘器 | M18,M19 | ⏸ 待新增 |
-| `dl/factor/ic_calculator.py` | ~200 | IC/IR计算器 | M19 | ⏸ 待新增 |
-| `dl/factor/feature_selector.py` | ~250 | 特征选择器 | M18 | ⏸ 待新增 |
-| `dl/predictor/lstm_predictor.py` | ~300 | LSTM预测器 | M7,M18 | ⏸ 待新增 |
-| `dl/predictor/transformer_predictor.py` | ~350 | Transformer预测器 | M7,M18 | ⏸ 待新增 |
-| `dl/predictor/cnn_predictor.py` | ~280 | CNN预测器 | M18 | ⏸ 待新增 |
-| `dl/loss/loss_functions.py` | ~200 | 损失函数（MSE/Huber/夏普） | M18 | ⏸ 待新增 |
-| `dl/metrics/metrics.py` | ~250 | 评估指标（准确率/夏普/回撤） | M18,M19 | ⏸ 待新增 |
-| `dl/optimizer/optimizer.py` | ~150 | 优化器封装（Adam/SGD） | - | ⏸ 待新增 |
-| `dl/trainer/trainer.py` | ~400 | 模型训练器 | M3,M18 | ⏸ 待新增 |
-| `dl/scheduler/scheduler.py` | ~150 | 学习率调度器 | - | ⏸ 待新增 |
-| `dl/early_stopping/early_stopping.py` | ~120 | 早停机制 | M18 | ⏸ 待新增 |
-| `dl/checkpoint/checkpoint.py` | ~200 | 模型检查点管理 | M3,M11 | ⏸ 待新增 |
-
+| `dl/__init__.py` | ~50 | 模块导出 | ⏸ 待新增 |
+| `dl/models/base.py` | ~200 | DL模型基类（审计、种子控制） | ⏸ 待新增 |
+| `dl/models/lstm.py` | ~350 | LSTM模型结构 | ⏸ 待新增 |
+| `dl/models/transformer.py` | ~450 | Transformer模型（注意力+位置编码） | ⏸ 待新增 |
+| `dl/models/cnn.py` | ~300 | CNN模型结构 | ⏸ 待新增 |
+| `dl/data/sequence_handler.py` | ~200 | 序列数据处理（长度验证） | ⏸ 待新增 |
+| `dl/data/dataset.py` | ~250 | 数据集定义 | ⏸ 待新增 |
+| `dl/data/dataloader.py` | ~150 | 数据加载器 | ⏸ 待新增 |
+| `dl/factor/factor_miner.py` | ~400 | 因子挖掘器 | ⏸ 待新增 |
+| `dl/factor/ic_calculator.py` | ~200 | IC/IR计算器 | ⏸ 待新增 |
+| `dl/factor/feature_selector.py` | ~250 | 特征选择器 | ⏸ 待新增 |
+| `dl/predictor/lstm_predictor.py` | ~300 | LSTM预测器 | ⏸ 待新增 |
+| `dl/predictor/transformer_predictor.py` | ~350 | Transformer预测器 | ⏸ 待新增 |
+| `dl/predictor/cnn_predictor.py` | ~280 | CNN预测器 | ⏸ 待新增 |
+| `dl/loss/loss_functions.py` | ~200 | 损失函数（MSE/Huber/夏普） | ⏸ 待新增 |
+| `dl/metrics/metrics.py` | ~250 | 评估指标（准确率/夏普/回撤） | ⏸ 待新增 |
+| `dl/optimizer/optimizer.py` | ~150 | 优化器封装（Adam/SGD） | ⏸ 待新增 |
+| `dl/trainer/trainer.py` | ~400 | 模型训练器 | ⏸ 待新增 |
+| `dl/scheduler/scheduler.py` | ~150 | 学习率调度器 | ⏸ 待新增 |
+| `dl/early_stopping/early_stopping.py` | ~120 | 早停机制 | ⏸ 待新增 |
+| `dl/checkpoint/checkpoint.py` | ~200 | 模型检查点管理 | ⏸ 待新增 |
+|----------|----------|----------|----------|------|
 **DL模块小计: 21 文件, ~5150 行**
 
 #### 11.2.2 强化学习模块 (RL)
 
-| 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
+| 文件路径 | 预计行数 | 功能描述  | 状态 |
 |----------|----------|----------|----------|------|
-| `rl/__init__.py` | ~60 | 模块导出 | - | ⏸ 待新增 |
-| `rl/config.py` | ~100 | RL配置参数 | M8 | ⏸ 待新增 |
-| `rl/base.py` | ~250 | RL基类（审计、种子、门禁） | M3,M7,M18 | ⏸ 待新增 |
-| `rl/environment.py` | ~400 | 交易环境（状态/动作/奖励） | M7,M18 | ⏸ 待新增 |
-| `rl/memory.py` | ~200 | 经验回放内存 | M7 | ⏸ 待新增 |
-| `rl/actor_critic.py` | ~300 | Actor-Critic网络结构 | M18 | ⏸ 待新增 |
-| `rl/ppo_model.py` | ~350 | PPO模型结构 | M18 | ⏸ 待新增 |
-| `rl/dqn_model.py` | ~300 | DQN模型结构 | M18 | ⏸ 待新增 |
-| `rl/dueling_dqn.py` | ~250 | Dueling DQN模型 | M18 | ⏸ 待新增 |
-| `rl/target_network.py` | ~150 | 目标网络更新 | M7 | ⏸ 待新增 |
-| `rl/exploration.py` | ~200 | 探索策略（ε-greedy/UCB） | M7,M18 | ⏸ 待新增 |
-| `rl/reward_function.py` | ~300 | 奖励函数设计 | M18,M19 | ⏸ 待新增 |
-| `rl/ppo_agent.py` | ~450 | PPO强化学习代理 | M3,M7,M18 | ⏸ 待新增 |
-| `rl/actor_critic_agent.py` | ~400 | Actor-Critic代理 | M3,M7,M18 | ⏸ 待新增 |
-| `rl/dqn_agent.py` | ~400 | DQN强化学习代理 | M3,M7,M18 | ⏸ 待新增 |
+| `rl/__init__.py` | ~60 | 模块导出 ⏸ 待新增 |
+| `rl/config.py` | ~100 | RL配置参数 | ⏸ 待新增 |
+| `rl/base.py` | ~250 | RL基类（审计、种子、门禁） | ⏸ 待新增 |
+| `rl/environment.py` | ~400 | 交易环境（状态/动作/奖励） | ⏸ 待新增 |
+| `rl/memory.py` | ~200 | 经验回放内存 | ⏸ 待新增 |
+| `rl/actor_critic.py` | ~300 | Actor-Critic网络结构 | ⏸ 待新增 |
+| `rl/ppo_model.py` | ~350 | PPO模型结构 ⏸ 待新增 |
+| `rl/dqn_model.py` | ~300 | DQN模型结构 | ⏸ 待新增 |
+| `rl/dueling_dqn.py` | ~250 | Dueling DQN模型 | ⏸ 待新增 |
+| `rl/target_network.py` | ~150 | 目标网络更新 | ⏸ 待新增 |
+| `rl/exploration.py` | ~200 | 探索策略（ε-greedy/UCB）| ⏸ 待新增 |
+| `rl/reward_function.py` | ~300 | 奖励函数设计  | ⏸ 待新增 |
+| `rl/ppo_agent.py` | ~450 | PPO强化学习代理  | ⏸ 待新增 |
+| `rl/actor_critic_agent.py` | ~400 | Actor-Critic代理  | ⏸ 待新增 |
+| `rl/dqn_agent.py` | ~400 | DQN强化学习代理  | ⏸ 待新增 |
 
 **RL模块小计: 15 文件, ~4110 行**
 
@@ -1200,15 +1240,15 @@ src/strategy/
 
 | 文件路径 | 预计行数 | 功能描述 | 军规覆盖 | 状态 |
 |----------|----------|----------|----------|------|
-| `utils/__init__.py` | ~30 | 模块导出 | - | ⏸ 待新增 |
-| `utils/logger.py` | ~150 | 统一日志记录 | M3,M9 | ⏸ 待新增 |
-| `utils/visualizer.py` | ~250 | 结果可视化 | - | ⏸ 待新增 |
+| `utils/__init__.py` | ~30 | 模块导出 | 0| ⏸ 待新增 |
+| `utils/logger.py` | ~150 | 统一日志记录 | 0| ⏸ 待新增 |
+| `utils/visualizer.py` | ~250 | 结果可视化 | 0| ⏸ 待新增 |
 | `utils/experiment_tracker.py` | ~200 | 实验跟踪（MLflow集成） | M3 | ⏸ 待新增 |
-| `utils/utils.py` | ~150 | 常用工具函数 | - | ⏸ 待新增 |
-| `common/__init__.py` | ~20 | 模块导出 | - | ⏸ 待新增 |
-| `common/config.py` | ~150 | 配置解析工具 | M8 | ⏸ 待新增 |
-| `common/logging.py` | ~100 | 日志记录器 | M3 | ⏸ 待新增 |
-| `common/utils.py` | ~100 | 常用工具函数 | - | ⏸ 待新增 |
+| `utils/utils.py` | ~150 | 常用工具函数 | 0| ⏸ 待新增 |
+| `common/__init__.py` | ~20 | 模块导出 | 0 | ⏸ 待新增 |
+| `common/config.py` | ~150 | 配置解析工具 | 0 | ⏸ 待新增 |
+| `common/logging.py` | ~100 | 日志记录器 |0 | ⏸ 待新增 |
+| `common/utils.py` | ~100 | 常用工具函数 | 0 | ⏸ 待新增 |
 
 **工具模块小计: 9 文件, ~1150 行**
 
@@ -1366,33 +1406,33 @@ class TimeSeriesCVSplitter:
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K01 | `DL.BASE.DETERMINISTIC` | DL模型确定性验证 | M7 | test_dl_base.py | ⏸ |
-| K02 | `DL.BASE.AUDIT_LOG` | DL模型审计日志 | M3 | test_dl_base.py | ⏸ |
-| K03 | `DL.BASE.MATURITY_GATE` | DL模型成熟度门禁 | M18 | test_dl_base.py | ⏸ |
-| K04 | `DL.LSTM.PREDICT` | LSTM预测输出正确 | M18 | test_lstm.py | ⏸ |
-| K05 | `DL.LSTM.SEQUENCE_LENGTH` | LSTM序列长度验证 | M7 | test_lstm.py | ⏸ |
-| K06 | `DL.LSTM.HIDDEN_STATE` | LSTM隐藏状态正确 | M7 | test_lstm.py | ⏸ |
-| K07 | `DL.TRANSFORMER.ATTENTION` | Transformer注意力计算 | M18 | test_transformer.py | ⏸ |
-| K08 | `DL.TRANSFORMER.POSITION_ENCODING` | Transformer位置编码 | M7 | test_transformer.py | ⏸ |
-| K09 | `DL.TRANSFORMER.MASK` | Transformer掩码正确 | M7 | test_transformer.py | ⏸ |
-| K10 | `DL.CNN.CONV_OUTPUT` | CNN卷积输出正确 | M18 | test_cnn.py | ⏸ |
-| K11 | `DL.DATA.SEQUENCE_VALID` | 序列数据验证 | M7 | test_data.py | ⏸ |
-| K12 | `DL.DATA.BATCH_LOAD` | 批次数据加载正确 | M7 | test_data.py | ⏸ |
-| K13 | `DL.FACTOR.MINE` | 因子挖掘正确 | M18 | test_factor.py | ⏸ |
-| K14 | `DL.FACTOR.IC_CALCULATE` | IC计算正确 | M19 | test_factor.py | ⏸ |
-| K15 | `DL.FACTOR.IR_CALCULATE` | IR计算正确 | M19 | test_factor.py | ⏸ |
-| K16 | `DL.FACTOR.FEATURE_SELECT` | 特征选择正确 | M18 | test_factor.py | ⏸ |
-| K17 | `DL.PREDICTOR.LSTM_OUTPUT` | LSTM预测器输出 | M18 | test_predictor.py | ⏸ |
-| K18 | `DL.PREDICTOR.TRANSFORMER_OUTPUT` | Transformer预测器输出 | M18 | test_predictor.py | ⏸ |
+| K01 | `DL.BASE.DETERMINISTIC` | DL模型确定性验证 | 0 | test_dl_base.py | ⏸ |
+| K02 | `DL.BASE.AUDIT_LOG` | DL模型审计日志 | 0| test_dl_base.py | ⏸ |
+| K03 | `DL.BASE.MATURITY_GATE` | DL模型成熟度门禁 | 0 | test_dl_base.py | ⏸ |
+| K04 | `DL.LSTM.PREDICT` | LSTM预测输出正确 | 0 | test_lstm.py | ⏸ |
+| K05 | `DL.LSTM.SEQUENCE_LENGTH` | LSTM序列长度验证 | 0 | test_lstm.py | ⏸ |
+| K06 | `DL.LSTM.HIDDEN_STATE` | LSTM隐藏状态正确 | 0 | test_lstm.py | ⏸ |
+| K07 | `DL.TRANSFORMER.ATTENTION` | Transformer注意力计算 | 0 | test_transformer.py | ⏸ |
+| K08 | `DL.TRANSFORMER.POSITION_ENCODING` | Transformer位置编码 | 0| test_transformer.py | ⏸ |
+| K09 | `DL.TRANSFORMER.MASK` | Transformer掩码正确 | 0 | test_transformer.py | ⏸ |
+| K10 | `DL.CNN.CONV_OUTPUT` | CNN卷积输出正确 | 0 | test_cnn.py | ⏸ |
+| K11 | `DL.DATA.SEQUENCE_VALID` | 序列数据验证 | 0 | test_data.py | ⏸ |
+| K12 | `DL.DATA.BATCH_LOAD` | 批次数据加载正确 | 0 | test_data.py | ⏸ |
+| K13 | `DL.FACTOR.MINE` | 因子挖掘正确 | 0| test_factor.py | ⏸ |
+| K14 | `DL.FACTOR.IC_CALCULATE` | IC计算正确 | 0 | test_factor.py | ⏸ |
+| K15 | `DL.FACTOR.IR_CALCULATE` | IR计算正确 | 0 | test_factor.py | ⏸ |
+| K16 | `DL.FACTOR.FEATURE_SELECT` | 特征选择正确 | 0 | test_factor.py | ⏸ |
+| K17 | `DL.PREDICTOR.LSTM_OUTPUT` | LSTM预测器输出 | 0 | test_predictor.py | ⏸ |
+| K18 | `DL.PREDICTOR.TRANSFORMER_OUTPUT` | Transformer预测器输出 | 0 | test_predictor.py | ⏸ |
 | K19 | `DL.LOSS.MSE` | MSE损失计算正确 | - | test_loss.py | ⏸ |
-| K20 | `DL.LOSS.SHARPE` | 夏普损失计算正确 | M18 | test_loss.py | ⏸ |
-| K21 | `DL.METRICS.ACCURACY` | 准确率计算正确 | M19 | test_metrics.py | ⏸ |
-| K22 | `DL.METRICS.SHARPE` | 夏普比率计算正确 | M19 | test_metrics.py | ⏸ |
-| K23 | `DL.TRAINER.EPOCH` | 训练轮次执行正确 | M18 | test_trainer.py | ⏸ |
-| K24 | `DL.TRAINER.AUDIT_LOG` | 训练审计日志 | M3 | test_trainer.py | ⏸ |
-| K25 | `DL.EARLY_STOP.TRIGGER` | 早停触发正确 | M18 | test_early_stopping.py | ⏸ |
-| K26 | `DL.CHECKPOINT.SAVE` | 检查点保存正确 | M3,M11 | test_checkpoint.py | ⏸ |
-| K27 | `DL.CHECKPOINT.LOAD` | 检查点加载正确 | M11 | test_checkpoint.py | ⏸ |
+| K20 | `DL.LOSS.SHARPE` | 夏普损失计算正确 |0 | test_loss.py | ⏸ |
+| K21 | `DL.METRICS.ACCURACY` | 准确率计算正确 | 0 | test_metrics.py | ⏸ |
+| K22 | `DL.METRICS.SHARPE` | 夏普比率计算正确 | 0| test_metrics.py | ⏸ |
+| K23 | `DL.TRAINER.EPOCH` | 训练轮次执行正确 | 0 | test_trainer.py | ⏸ |
+| K24 | `DL.TRAINER.AUDIT_LOG` | 训练审计日志 | 0 | test_trainer.py | ⏸ |
+| K25 | `DL.EARLY_STOP.TRIGGER` | 早停触发正确 | 0 | test_early_stopping.py | ⏸ |
+| K26 | `DL.CHECKPOINT.SAVE` | 检查点保存正确 | 0 | test_checkpoint.py | ⏸ |
+| K27 | `DL.CHECKPOINT.LOAD` | 检查点加载正确 | 0 | test_checkpoint.py | ⏸ |
 
 **DL场景小计: 27 场景**
 
@@ -1400,31 +1440,31 @@ class TimeSeriesCVSplitter:
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K28 | `RL.BASE.DETERMINISTIC` | RL代理确定性验证 | M7 | test_rl_base.py | ⏸ |
-| K29 | `RL.BASE.AUDIT_LOG` | RL代理审计日志 | M3 | test_rl_base.py | ⏸ |
-| K30 | `RL.BASE.MATURITY_GATE` | RL代理成熟度门禁 | M18 | test_rl_base.py | ⏸ |
-| K31 | `RL.ENV.STATE_SPACE` | 环境状态空间正确 | M7 | test_environment.py | ⏸ |
-| K32 | `RL.ENV.ACTION_SPACE` | 环境动作空间正确 | M7 | test_environment.py | ⏸ |
-| K33 | `RL.ENV.REWARD_CALC` | 环境奖励计算正确 | M18 | test_environment.py | ⏸ |
-| K34 | `RL.ENV.STEP` | 环境步进正确 | M7 | test_environment.py | ⏸ |
-| K35 | `RL.MEMORY.STORE` | 经验存储正确 | M7 | test_memory.py | ⏸ |
-| K36 | `RL.MEMORY.SAMPLE` | 经验采样正确 | M7 | test_memory.py | ⏸ |
-| K37 | `RL.PPO.ACTION` | PPO动作选择正确 | M18 | test_ppo.py | ⏸ |
-| K38 | `RL.PPO.REWARD` | PPO奖励计算正确 | M18 | test_ppo.py | ⏸ |
-| K39 | `RL.PPO.CLIP_RATIO` | PPO裁剪比率正确 | M18 | test_ppo.py | ⏸ |
-| K40 | `RL.PPO.UPDATE` | PPO更新正确 | M18 | test_ppo.py | ⏸ |
-| K41 | `RL.DQN.QVALUE` | DQN Q值计算正确 | M18 | test_dqn.py | ⏸ |
-| K42 | `RL.DQN.EPSILON_DECAY` | DQN ε衰减正确 | M18 | test_dqn.py | ⏸ |
-| K43 | `RL.DQN.TARGET_UPDATE` | DQN目标网络更新 | M7 | test_dqn.py | ⏸ |
-| K44 | `RL.DQN.REPLAY` | DQN经验回放正确 | M7 | test_dqn.py | ⏸ |
-| K45 | `RL.DUELING.ADVANTAGE` | Dueling DQN优势函数 | M18 | test_dueling_dqn.py | ⏸ |
-| K46 | `RL.AC.ACTOR_OUTPUT` | Actor网络输出正确 | M18 | test_actor_critic.py | ⏸ |
-| K47 | `RL.AC.CRITIC_OUTPUT` | Critic网络输出正确 | M18 | test_actor_critic.py | ⏸ |
-| K48 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数正确 | M18 | test_reward.py | ⏸ |
-| K49 | `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励正确 | M18,M19 | test_reward.py | ⏸ |
-| K50 | `RL.REWARD.DRAWDOWN_PENALTY` | 回撤惩罚正确 | M6 | test_reward.py | ⏸ |
-| K51 | `RL.EXPLORATION.EPSILON` | ε-greedy探索正确 | M7 | test_exploration.py | ⏸ |
-| K52 | `RL.EXPLORATION.UCB` | UCB探索正确 | M7 | test_exploration.py | ⏸ |
+| K28 | `RL.BASE.DETERMINISTIC` | RL代理确定性验证 |0 | test_rl_base.py | ⏸ |
+| K29 | `RL.BASE.AUDIT_LOG` | RL代理审计日志 | 0| test_rl_base.py | ⏸ |
+| K30 | `RL.BASE.MATURITY_GATE` | RL代理成熟度门禁 | 0 | test_rl_base.py | ⏸ |
+| K31 | `RL.ENV.STATE_SPACE` | 环境状态空间正确 | 0 | test_environment.py | ⏸ |
+| K32 | `RL.ENV.ACTION_SPACE` | 环境动作空间正确 | 0 | test_environment.py | ⏸ |
+| K33 | `RL.ENV.REWARD_CALC` | 环境奖励计算正确 | 0 | test_environment.py | ⏸ |
+| K34 | `RL.ENV.STEP` | 环境步进正确 | 0 | test_environment.py | ⏸ |
+| K35 | `RL.MEMORY.STORE` | 经验存储正确 | 0 | test_memory.py | ⏸ |
+| K36 | `RL.MEMORY.SAMPLE` | 经验采样正确 | 0 | test_memory.py | ⏸ |
+| K37 | `RL.PPO.ACTION` | PPO动作选择正确 | 0 | test_ppo.py | ⏸ |
+| K38 | `RL.PPO.REWARD` | PPO奖励计算正确 | 0 | test_ppo.py | ⏸ |
+| K39 | `RL.PPO.CLIP_RATIO` | PPO裁剪比率正确 | 0 | test_ppo.py | ⏸ |
+| K40 | `RL.PPO.UPDATE` | PPO更新正确 | 0 | test_ppo.py | ⏸ |
+| K41 | `RL.DQN.QVALUE` | DQN Q值计算正确 | 0 | test_dqn.py | ⏸ |
+| K42 | `RL.DQN.EPSILON_DECAY` | DQN ε衰减正确 | 0 | test_dqn.py | ⏸ |
+| K43 | `RL.DQN.TARGET_UPDATE` | DQN目标网络更新 | 0 | test_dqn.py | ⏸ |
+| K44 | `RL.DQN.REPLAY` | DQN经验回放正确 | 0 | test_dqn.py | ⏸ |
+| K45 | `RL.DUELING.ADVANTAGE` | Dueling DQN优势函数 | 0 | test_dueling_dqn.py | ⏸ |
+| K46 | `RL.AC.ACTOR_OUTPUT` | Actor网络输出正确 | 0 | test_actor_critic.py | ⏸ |
+| K47 | `RL.AC.CRITIC_OUTPUT` | Critic网络输出正确 | 0 | test_actor_critic.py | ⏸ |
+| K48 | `RL.REWARD.SHARPE_BASED` | 夏普奖励函数正确 | 0 | test_reward.py | ⏸ |
+| K49 | `RL.REWARD.RISK_ADJUSTED` | 风险调整奖励正确 | 0 | test_reward.py | ⏸ |
+| K50 | `RL.REWARD.DRAWDOWN_PENALTY` | 回撤惩罚正确 | 0 | test_reward.py | ⏸ |
+| K51 | `RL.EXPLORATION.EPSILON` | ε-greedy探索正确 | 0 | test_exploration.py | ⏸ |
+| K52 | `RL.EXPLORATION.UCB` | UCB探索正确 | 0 | test_exploration.py | ⏸ |
 
 **RL场景小计: 25 场景**
 
@@ -1432,17 +1472,16 @@ class TimeSeriesCVSplitter:
 
 | 序号 | Rule ID | 场景描述 | 军规 | 测试文件 | 状态 |
 |------|---------|----------|------|----------|------|
-| K53 | `CV.SPLIT.TIMESERIES` | 时序划分正确 | M7 | test_cv_splitter.py | ⏸ |
-| K54 | `CV.SPLIT.NO_LEAKAGE` | 无数据泄露 | M7 | test_cv_splitter.py | ⏸ |
-| K55 | `CV.SPLIT.GAP` | 间隔设置正确 | M7 | test_cv_splitter.py | ⏸ |
-| K56 | `CV.RUN.FOLD_EXECUTE` | 折叠执行正确 | M7 | test_cv_runner.py | ⏸ |
-| K57 | `CV.RUN.DETERMINISTIC` | 运行确定性 | M7 | test_cv_runner.py | ⏸ |
-| K58 | `CV.EVAL.METRICS` | 评估指标正确 | M19 | test_cv_evaluator.py | ⏸ |
-| K59 | `CV.EVAL.AGGREGATE` | 聚合结果正确 | M19 | test_cv_evaluator.py | ⏸ |
-| K60 | `CV.REPORT.GENERATE` | 报告生成正确 | M3 | test_cv_reporter.py | ⏸ |
-| K61 | `CV.LOG.RECORD` | 日志记录正确 | M3 | test_cv_logger.py | ⏸ |
-| K62 | `CV.DATA.HANDLE` | 数据处理正确 | M7 | test_cv_data.py | ⏸ |
-
+| K53 | `CV.SPLIT.TIMESERIES` | 时序划分正确 | 0 | test_cv_splitter.py | ⏸ |
+| K54 | `CV.SPLIT.NO_LEAKAGE` | 无数据泄露 | 0 | test_cv_splitter.py | ⏸ |
+| K55 | `CV.SPLIT.GAP` | 间隔设置正确 | 0 | test_cv_splitter.py | ⏸ |
+| K56 | `CV.RUN.FOLD_EXECUTE` | 折叠执行正确 | 0 | test_cv_runner.py | ⏸ |
+| K57 | `CV.RUN.DETERMINISTIC` | 运行确定性 | 0 | test_cv_runner.py | ⏸ |
+| K58 | `CV.EVAL.METRICS` | 评估指标正确 | 0 | test_cv_evaluator.py | ⏸ |
+| K59 | `CV.EVAL.AGGREGATE` | 聚合结果正确 | 0 | test_cv_evaluator.py | ⏸ |
+| K60 | `CV.REPORT.GENERATE` | 报告生成正确 | 0 | test_cv_reporter.py | ⏸ |
+| K61 | `CV.LOG.RECORD` | 日志记录正确 | 0 | test_cv_logger.py | ⏸ |
+| K62 | `CV.DATA.HANDLE` | 数据处理正确 | 0 | test_cv_data.py | ⏸ |
 **CV场景小计: 10 场景**
 
 #### 11.5.4 Phase 6 场景统计
@@ -1567,12 +1606,12 @@ EXCHANGE_CONFIG = {
 
 | Rule ID | 场景描述 | 军规 |
 |---------|----------|------|
-| `CHINA.EXCHANGE.CONFIG_LOAD` | 交易所配置加载 | M20 |
-| `CHINA.EXCHANGE.PRODUCT_MAP` | 品种映射正确 | M20 |
-| `CHINA.CALENDAR.NIGHT_SESSION` | 夜盘时段正确 | M15 |
-| `CHINA.CALENDAR.TRADING_DAY` | 交易日计算正确 | M15 |
-| `CHINA.CALENDAR.HOLIDAY` | 节假日处理正确 | M15 |
-| `CHINA.FEE.BY_VOLUME_CALC` | 按手收费计算 | M5 |
+| `CHINA.EXCHANGE.CONFIG_LOAD` | 交易所配置加载 | 0 |
+| `CHINA.EXCHANGE.PRODUCT_MAP` | 品种映射正确 | 0 |
+| `CHINA.CALENDAR.NIGHT_SESSION` | 夜盘时段正确 | 0 |
+| `CHINA.CALENDAR.TRADING_DAY` | 交易日计算正确 | 0 |
+| `CHINA.CALENDAR.HOLIDAY` | 节假日处理正确 | 0 |
+| `CHINA.FEE.BY_VOLUME_CALC` | 按手收费计算 | 0 |
 | `CHINA.FEE.BY_VALUE_CALC` | 按金额收费计算 | M5 |
 | `CHINA.FEE.CLOSE_TODAY_CALC` | 平今手续费计算 | M14 |
 | `CHINA.LIMIT.PRICE_CHECK` | 涨跌停价格检查 | M13 |
