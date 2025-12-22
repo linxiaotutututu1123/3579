@@ -63,7 +63,8 @@
       "Bash(.venv/Scripts/pip install:*)",
       "Bash(\"C:/Users/1/2468/3579/V4PRO/.venv/Scripts/pip.exe\" install:*)",
       "Bash(PYTHONPATH=. \"C:/Users/1/2468/3579/V4PRO/.venv/Scripts/python.exe\":*)",
-      "Bash(uv run ruff check:*)"
+      "Bash(uv run ruff check:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }
