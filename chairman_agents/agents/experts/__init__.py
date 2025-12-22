@@ -156,4 +156,26 @@ __all__ = [
     "CodeReview",
     # 智能体
     "CodeReviewerAgent",
+    # =========================================================================
+    # FrontendEngineer 相关
+    # =========================================================================
+    # 枚举
+    "FrontendFramework",
+    "ComponentType",
+    "StyleApproach",
+    # 数据类
+    "ComponentSpec",
+    "ComponentDesign",
+    "UIReviewComment",
+    "PerformanceMetrics",
+    "Optimization",
+    "DesignTokens",
+    # 策略类
+    "FrameworkStrategy",
+    "ReactStrategy",
+    "VueStrategy",
+    "SvelteStrategy",
+    "FrameworkStrategyFactory",
+    # 智能体
+    "FrontendEngineerAgent",
 ]
