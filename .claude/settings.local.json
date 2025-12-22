@@ -53,7 +53,8 @@
       "Bash(mkdir:*)",
       "Bash(python:*)",
       "Skill(sc:workflow)",
-      "Bash(uv run pytest:*)"
+      "Bash(uv run pytest:*)",
+      "Bash(uv pip install:*)"
     ]
   }
 }
