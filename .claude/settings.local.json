@@ -52,7 +52,8 @@
       "Skill(sc:site-packages:superclaude:agents:quality-engineer)",
       "Bash(mkdir:*)",
       "Bash(python:*)",
-      "Skill(sc:workflow)"
+      "Skill(sc:workflow)",
+      "Bash(uv run pytest:*)"
     ]
   }
 }
