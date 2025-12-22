@@ -1,4 +1,4 @@
-"""置信度ML预测模块 (军规级 v4.4).
+"""置信度ML预测模块 (军规级 v4.5).
 
 V4PRO Platform Component - 置信度ML预测系统
 军规覆盖: M3(完整审计), M19(风险归因), M24(模型可解释性)
@@ -97,6 +97,140 @@ class ConfidenceMLP(nn.Module):
         return result
 
 
+class ConfidenceTransformer(nn.Module):
+    """置信度预测 Transformer 模型 (v4.5).
+
+    架构:
+    - 输入: feature_dim (上下文特征, 默认25维)
+    - 嵌入层: Linear(feature_dim, hidden_dim)
+    - Transformer编码器: num_layers层, num_heads注意力头
+    - 输出层: Linear(hidden_dim, 16) + ReLU + Linear(16, 1) + Sigmoid
+
+    M24合规: 模型可解释性
+    - 注意力权重可用于解释特征重要性
+    - 嵌入层可视化支持特征归因分析
+    """
+
+    def __init__(
+        self,
+        feature_dim: int = 25,  # 从20增至25 (v4.5)
+        hidden_dim: int = 64,
+        num_heads: int = 4,
+        num_layers: int = 2,
+        dropout: float = 0.1,
+    ) -> None:
+        """初始化Transformer模型.
+
+        参数:
+            feature_dim: 输入特征维度 (默认25, v4.5扩展)
+            hidden_dim: 隐藏层维度
+            num_heads: 注意力头数量
+            num_layers: Transformer编码器层数
+            dropout: Dropout比例
+        """
+        super().__init__()
+        self.feature_dim = feature_dim
+        self.hidden_dim = hidden_dim
+        self.num_heads = num_heads
+        self.num_layers = num_layers
+
+        # 嵌入层: 将特征映射到隐藏维度
+        self.embedding = nn.Linear(feature_dim, hidden_dim)
+
+        # Transformer编码器
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=hidden_dim,
+            nhead=num_heads,
+            dropout=dropout,
+            batch_first=True,
+        )
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers)
+
+        # 输出层: 生成置信度分数
+        self.output = nn.Sequential(
+            nn.Linear(hidden_dim, 16),
+            nn.ReLU(),
+            nn.Linear(16, 1),
+            nn.Sigmoid(),  # 输出在[0, 1]范围
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """前向传播.
+
+        参数:
+            x: 输入特征张量, 形状 (batch_size, feature_dim)
+
+        返回:
+            预测置信度分数, 形状 (batch_size, 1)
+        """
+        # 添加序列维度: (batch, features) -> (batch, 1, features)
+        if x.dim() == 2:
+            x = x.unsqueeze(1)
+
+        # 嵌入: (batch, 1, features) -> (batch, 1, hidden_dim)
+        embedded = self.embedding(x)
+
+        # Transformer编码: (batch, 1, hidden_dim) -> (batch, 1, hidden_dim)
+        transformed = self.transformer(embedded)
+
+        # 取序列的第一个位置输出: (batch, 1, hidden_dim) -> (batch, hidden_dim)
+        pooled = transformed[:, 0, :]
+
+        # 输出层: (batch, hidden_dim) -> (batch, 1)
+        result: torch.Tensor = self.output(pooled)
+        return result
+
+    def get_attention_weights(self, x: torch.Tensor) -> list[torch.Tensor]:
+        """获取注意力权重 (M24可解释性支持).
+
+        参数:
+            x: 输入特征张量
+
+        返回:
+            各层注意力权重列表
+        """
+        # 此方法为M24模型可解释性提供支持
+        # 实际实现需要注册forward hook获取注意力权重
+        # 这里返回空列表作为接口占位
+        return []
+
+
+# =============================================================================
+# 模型版本管理
+# =============================================================================
+
+MODEL_VERSION = "v4.5"
+"""当前模型版本."""
+
+MODEL_REGISTRY: dict[str, type[nn.Module]] = {
+    "v4.4": ConfidenceMLP,
+    "v4.5": ConfidenceTransformer,
+}
+"""模型版本注册表, 支持模型版本切换与回滚."""
+
+
+def get_model_class(version: str | None = None) -> type[nn.Module]:
+    """根据版本获取模型类.
+
+    参数:
+        version: 模型版本 (默认使用当前版本)
+
+    返回:
+        模型类
+
+    异常:
+        ValueError: 版本不存在
+    """
+    if version is None:
+        version = MODEL_VERSION
+
+    if version not in MODEL_REGISTRY:
+        available = ", ".join(MODEL_REGISTRY.keys())
+        raise ValueError(f"未知模型版本: {version}, 可用版本: {available}")
+
+    return MODEL_REGISTRY[version]
+
+
 # =============================================================================
 # 特征提取
 # =============================================================================
@@ -111,6 +245,7 @@ class FeatureConfig:
         include_signal: 是否包含信号特征
         include_extended: 是否包含扩展特征
         include_advanced: 是否包含高级特征
+        include_v45: 是否包含v4.5新增特征 (5维)
         normalize: 是否归一化特征
     """
 
@@ -118,6 +253,7 @@ class FeatureConfig:
     include_signal: bool = True
     include_extended: bool = True
     include_advanced: bool = True
+    include_v45: bool = True  # v4.5新增: 5个智能体优化特征
     normalize: bool = True
 
 
@@ -182,6 +318,16 @@ def extract_features(
             _encode_regime(context.current_regime),
         ])
 
+    # v4.5新增特征 (5维) - 智能体优化指标
+    if config.include_v45:
+        features.extend([
+            _compute_parallel_mode_score(context),
+            _compute_token_efficiency(context),
+            _compute_tool_optimization(context),
+            _compute_mcp_integration(context),
+            _encode_task_complexity(context),
+        ])
+
     tensor = torch.tensor(features, dtype=torch.float32)
 
     # 归一化
@@ -216,6 +362,167 @@ def _encode_regime(regime: str) -> float:
     return encoding.get(regime, 0.5)
 
 
+# =============================================================================
+# v4.5 新增特征计算函数
+# =============================================================================
+
+
+def _compute_parallel_mode_score(context: ConfidenceContext) -> float:
+    """计算并行模式分数 (v4.5).
+
+    评估任务是否适合并行执行, 基于:
+    - 任务独立性
+    - 资源冲突风险
+    - 批量操作潜力
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        并行模式分数 [0, 1]
+    """
+    # 基于任务类型和上下文计算并行适配度
+    base_score = 0.5
+
+    # 高信号一致性表明任务可独立执行
+    if context.signal_consistency > 0.8:
+        base_score += 0.2
+
+    # 低波动性环境更适合并行执行
+    if context.volatility < 0.3:
+        base_score += 0.15
+
+    # 已验证架构的任务更适合并行化
+    if context.architecture_verified:
+        base_score += 0.15
+
+    return min(1.0, max(0.0, base_score))
+
+
+def _compute_token_efficiency(context: ConfidenceContext) -> float:
+    """计算令牌效率分数 (v4.5).
+
+    评估任务的令牌使用效率, 基于:
+    - 预执行检查完成度 (减少无效令牌消耗)
+    - 文档准备情况
+    - 任务复杂度
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        令牌效率分数 [0, 1]
+    """
+    # 预执行检查完成度对令牌效率影响最大
+    pre_exec_checks = [
+        context.duplicate_check_complete,
+        context.architecture_verified,
+        context.has_official_docs,
+        context.has_oss_reference,
+        context.root_cause_identified,
+    ]
+    pre_exec_score = sum(1 for c in pre_exec_checks if c) / len(pre_exec_checks)
+
+    # 信号强度高意味着决策更清晰, 需要更少的探索
+    signal_bonus = context.signal_strength * 0.2
+
+    return min(1.0, pre_exec_score * 0.8 + signal_bonus)
+
+
+def _compute_tool_optimization(context: ConfidenceContext) -> float:
+    """计算工具优化分数 (v4.5).
+
+    评估任务的工具选择优化程度, 基于:
+    - 批量操作潜力
+    - 专用工具匹配度
+    - 操作复杂度
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        工具优化分数 [0, 1]
+    """
+    # 已验证架构意味着可以使用更专业的工具
+    arch_score = 0.3 if context.architecture_verified else 0.0
+
+    # 文档可用性提升工具选择准确度
+    doc_score = 0.25 if context.has_official_docs else 0.0
+    oss_score = 0.15 if context.has_oss_reference else 0.0
+
+    # 流动性分数反映操作环境的稳定性
+    liquidity_score = context.liquidity_score * 0.3
+
+    return min(1.0, arch_score + doc_score + oss_score + liquidity_score)
+
+
+def _compute_mcp_integration(context: ConfidenceContext) -> float:
+    """计算MCP集成分数 (v4.5).
+
+    评估任务对MCP服务器的集成程度, 基于:
+    - 外部信号有效性 (MCP数据源)
+    - 系统对齐度
+    - 跨资产协调能力
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        MCP集成分数 [0, 1]
+    """
+    # 外部信号有效性反映MCP数据源质量
+    external_score = 0.0
+    if context.external_signal_valid:
+        external_score = context.external_signal_correlation * 0.4
+
+    # 体制对齐反映系统协调性
+    regime_score = 0.3 if context.regime_alignment else 0.0
+
+    # 低跨资产相关性意味着更好的独立MCP协调
+    correlation_score = (1.0 - context.cross_asset_correlation) * 0.3
+
+    return min(1.0, external_score + regime_score + correlation_score)
+
+
+def _encode_task_complexity(context: ConfidenceContext) -> float:
+    """编码任务复杂度 (v4.5).
+
+    将任务复杂度编码为数值, 基于:
+    - 任务类型
+    - 市场条件
+    - 信号复杂度
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        任务复杂度编码 [0, 1], 值越高表示任务越简单
+    """
+    # 任务类型复杂度编码
+    task_type_scores = {
+        TaskType.SIMPLE_FIX: 1.0,      # 简单修复: 最低复杂度
+        TaskType.BUG_FIX: 0.8,         # Bug修复: 中低复杂度
+        TaskType.ENHANCEMENT: 0.6,     # 功能增强: 中等复杂度
+        TaskType.NEW_FEATURE: 0.4,     # 新功能: 中高复杂度
+        TaskType.REFACTORING: 0.3,     # 重构: 高复杂度
+        TaskType.ARCHITECTURE: 0.2,    # 架构变更: 最高复杂度
+    }
+    task_score = task_type_scores.get(context.task_type, 0.5)
+
+    # 市场条件调整
+    market_scores = {
+        "NORMAL": 1.0,
+        "TRENDING": 0.9,
+        "RANGE": 0.8,
+        "VOLATILE": 0.4,
+        "CRISIS": 0.2,
+    }
+    market_adjustment = market_scores.get(context.market_condition, 0.5) * 0.3
+
+    # 综合分数: 任务类型权重70%, 市场调整权重30%
+    return min(1.0, task_score * 0.7 + market_adjustment)
+
+
 def get_feature_dim(config: FeatureConfig | None = None) -> int:
     """获取特征维度.
 
@@ -223,7 +530,7 @@ def get_feature_dim(config: FeatureConfig | None = None) -> int:
         config: 特征配置
 
     返回:
-        特征维度
+        特征维度 (默认25维, v4.5)
     """
     if config is None:
         config = FeatureConfig()
@@ -237,6 +544,9 @@ def get_feature_dim(config: FeatureConfig | None = None) -> int:
         dim += 4
     if config.include_advanced:
         dim += 6
+    if config.include_v45:
+        dim += 5  # v4.5新增: parallel_mode_score, token_efficiency,
+                  #          tool_optimization, mcp_integration, task_complexity
 
     return dim
 
@@ -297,18 +607,23 @@ class TrainingResult:
 class ConfidenceMLPredictor:
     """置信度ML预测器.
 
-    使用MLP模型基于历史模式预测置信度。
+    使用ML模型基于历史模式预测置信度。
+    支持v4.4 (MLP) 和 v4.5 (Transformer) 模型版本。
 
     功能:
-    - 特征提取
+    - 特征提取 (25维, v4.5)
     - 模型训练
     - 置信度预测
     - 模型持久化
+    - 模型版本管理
 
     示例:
         >>> predictor = ConfidenceMLPredictor()
         >>> score = predictor.predict_confidence(context)
         >>> print(f"ML预测置信度: {score:.0%}")
+
+        >>> # 使用v4.4版本
+        >>> predictor_v44 = ConfidenceMLPredictor(model_version="v4.4")
     """
 
     DEFAULT_MODEL_PATH: ClassVar[str] = "models/confidence_ml.pt"
@@ -317,16 +632,23 @@ class ConfidenceMLPredictor:
         self,
         model_path: str | Path | None = None,
         feature_config: FeatureConfig | None = None,
+        model_version: str | None = None,
     ) -> None:
         """初始化预测器.
 
         参数:
             model_path: 模型文件路径 (可选，用于加载已训练模型)
             feature_config: 特征配置
+            model_version: 模型版本 (默认使用当前版本v4.5)
         """
         self._feature_config = feature_config or FeatureConfig()
         self._feature_dim = get_feature_dim(self._feature_config)
-        self._model = ConfidenceMLP(feature_dim=self._feature_dim)
+        self._model_version = model_version or MODEL_VERSION
+
+        # 根据版本创建模型
+        model_class = get_model_class(self._model_version)
+        self._model: nn.Module = model_class(feature_dim=self._feature_dim)
+
         self._is_trained = False
         self._training_history: list[TrainingResult] = []
 
@@ -339,9 +661,14 @@ class ConfidenceMLPredictor:
         return self._is_trained
 
     @property
-    def model(self) -> ConfidenceMLP:
+    def model(self) -> nn.Module:
         """获取模型."""
         return self._model
+
+    @property
+    def model_version(self) -> str:
+        """获取模型版本."""
+        return self._model_version
 
     def predict_confidence(self, context: ConfidenceContext) -> float:
         """预测置信度.
@@ -517,11 +844,12 @@ class ConfidenceMLPredictor:
         state = {
             "model_state_dict": self._model.state_dict(),
             "feature_dim": self._feature_dim,
+            "model_version": self._model_version,  # v4.5: 保存模型版本
             "is_trained": self._is_trained,
             "saved_at": datetime.now().isoformat(),  # noqa: DTZ005
         }
         torch.save(state, path)
-        logger.info("模型已保存: %s", path)
+        logger.info("模型已保存: %s (版本: %s)", path, self._model_version)
 
     def load_model(self, path: str | Path) -> None:
         """加载模型.
@@ -534,9 +862,19 @@ class ConfidenceMLPredictor:
             raise FileNotFoundError(f"模型文件不存在: {path}")
 
         state = torch.load(path, weights_only=True)
+
+        # v4.5: 检查模型版本兼容性
+        saved_version = state.get("model_version", "v4.4")
+        if saved_version != self._model_version:
+            logger.warning(
+                "模型版本不匹配: 加载版本=%s, 当前版本=%s",
+                saved_version,
+                self._model_version,
+            )
+
         self._model.load_state_dict(state["model_state_dict"])
         self._is_trained = state.get("is_trained", True)
-        logger.info("模型已加载: %s", path)
+        logger.info("模型已加载: %s (版本: %s)", path, saved_version)
 
     def get_training_history(self) -> list[TrainingResult]:
         """获取训练历史."""

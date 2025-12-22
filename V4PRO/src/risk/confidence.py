@@ -108,6 +108,20 @@ class ConfidenceContext:
         strategy_regime: 策略适用体制
         cross_asset_correlation: 跨资产相关性风险 (0=低相关, 1=高相关)
 
+        # v4.5 并行执行检查
+        parallel_execution_mode: 是否启用并行执行模式
+        independent_operations: 独立操作数量 (可并行执行的操作数)
+        has_dependencies: 是否存在依赖关系 (False=可完全并行)
+
+        # v4.5 令牌效率检查
+        estimated_tokens: 预估令牌消耗
+        task_complexity: 任务复杂度 (SIMPLE/MEDIUM/COMPLEX)
+        token_budget_ok: 令牌预算是否充足
+
+        # v4.5 工具优化检查
+        uses_optimal_tools: 是否使用最优工具组合
+        tool_selection_score: 工具选择评分 (0.0-1.0)
+
         # 元数据
         metadata: 附加元数据
     """
@@ -145,6 +159,20 @@ class ConfidenceContext:
     current_regime: str = "UNKNOWN"  # 当前市场体制 (TRENDING/RANGE/VOLATILE/UNKNOWN)
     strategy_regime: str = "UNKNOWN"  # 策略适用体制
     cross_asset_correlation: float = 0.0  # 跨资产相关性风险 (0=低相关, 1=高相关)
+
+    # v4.5 并行执行检查
+    parallel_execution_mode: bool = False  # 是否启用并行执行模式
+    independent_operations: int = 0  # 独立操作数量 (可并行执行的操作数)
+    has_dependencies: bool = True  # 是否存在依赖关系 (False=可完全并行)
+
+    # v4.5 令牌效率检查
+    estimated_tokens: int = 0  # 预估令牌消耗
+    task_complexity: str = "MEDIUM"  # 任务复杂度 (SIMPLE/MEDIUM/COMPLEX)
+    token_budget_ok: bool = True  # 令牌预算是否充足
+
+    # v4.5 工具优化检查
+    uses_optimal_tools: bool = False  # 是否使用最优工具组合
+    tool_selection_score: float = 0.0  # 工具选择评分 (0.0-1.0)
 
     # 元数据
     metadata: dict[str, Any] = field(default_factory=dict)
@@ -250,6 +278,11 @@ class ConfidenceAssessor:
     WEIGHT_EXTERNAL_SIGNAL: ClassVar[float] = 0.10  # 外部信号相关性
     WEIGHT_REGIME_ALIGNMENT: ClassVar[float] = 0.10  # 市场体制对齐
     WEIGHT_CORRELATION: ClassVar[float] = 0.10  # 跨资产相关性
+
+    # v4.5 增强检查项权重
+    WEIGHT_PARALLEL_EXECUTION: ClassVar[float] = 0.10  # 并行执行优化
+    WEIGHT_TOKEN_EFFICIENCY: ClassVar[float] = 0.10  # 令牌效率
+    WEIGHT_TOOL_OPTIMIZATION: ClassVar[float] = 0.10  # 工具选择优化
 
     def __init__(
         self,
@@ -675,9 +708,9 @@ class ConfidenceAssessor:
                 passed=correlation_ok,
                 weight=self.WEIGHT_CORRELATION if correlation_ok else 0.0,
                 message=(
-                    f"✅ 相关性风险可控: {context.cross_asset_correlation:.0%}"
+                    f"[PASS] 相关性风险可控: {context.cross_asset_correlation:.0%}"
                     if correlation_ok
-                    else f"⚠️ 相关性风险偏高: {context.cross_asset_correlation:.0%}"
+                    else f"[WARN] 相关性风险偏高: {context.cross_asset_correlation:.0%}"
                 ),
                 details={
                     "correlation": context.cross_asset_correlation,
@@ -688,38 +721,170 @@ class ConfidenceAssessor:
 
         return checks
 
+    def _assess_v45_enhanced(
+        self, context: ConfidenceContext
+    ) -> list[ConfidenceCheck]:
+        """v4.5 增强置信度评估.
+
+        军规覆盖: M3(完整审计), M19(风险归因)
+
+        检查项:
+        1. 并行执行检查 (10%) - 验证是否启用并行执行模式及独立操作数
+        2. 令牌效率检查 (10%) - 验证令牌预算是否充足
+        3. 工具优化检查 (10%) - 验证是否使用最优工具组合
+
+        参数:
+            context: 评估上下文
+
+        返回:
+            检查结果列表
+        """
+        checks: list[ConfidenceCheck] = []
+
+        # 检查1: 并行执行优化 (M19: 风险归因 - 执行效率)
+        # 条件: 启用并行模式 + 独立操作数>=2 + 无依赖关系
+        parallel_ok = (
+            context.parallel_execution_mode
+            and context.independent_operations >= 2
+            and not context.has_dependencies
+        )
+        # 部分满足条件也给予部分分数
+        parallel_score = 0.0
+        if context.parallel_execution_mode:
+            parallel_score += 0.4
+        if context.independent_operations >= 2:
+            parallel_score += 0.3
+        if not context.has_dependencies:
+            parallel_score += 0.3
+
+        checks.append(
+            ConfidenceCheck(
+                name="parallel_execution",
+                passed=parallel_ok,
+                weight=self.WEIGHT_PARALLEL_EXECUTION if parallel_ok else 0.0,
+                message=(
+                    f"[PASS] 并行执行优化: {context.independent_operations}个独立操作"
+                    if parallel_ok
+                    else f"[WARN] 并行执行未优化: 模式={context.parallel_execution_mode}, "
+                    f"独立操作={context.independent_operations}, 依赖={context.has_dependencies}"
+                ),
+                details={
+                    "parallel_mode": context.parallel_execution_mode,
+                    "independent_ops": context.independent_operations,
+                    "has_dependencies": context.has_dependencies,
+                    "partial_score": round(parallel_score, 2),
+                    "audit_tag": "M19",  # 风险归因: 执行效率影响
+                },
+            )
+        )
+
+        # 检查2: 令牌效率 (M3: 审计 - 资源消耗追踪)
+        # 根据任务复杂度判断令牌预算是否合理
+        complexity_budgets = {
+            "SIMPLE": 200,
+            "MEDIUM": 1000,
+            "COMPLEX": 2500,
+        }
+        expected_budget = complexity_budgets.get(context.task_complexity, 1000)
+
+        token_ok = context.token_budget_ok and (
+            context.estimated_tokens <= expected_budget * 1.2  # 允许20%浮动
+        )
+
+        checks.append(
+            ConfidenceCheck(
+                name="token_efficiency",
+                passed=token_ok,
+                weight=self.WEIGHT_TOKEN_EFFICIENCY if token_ok else 0.0,
+                message=(
+                    f"[PASS] 令牌效率良好: {context.estimated_tokens}/{expected_budget} "
+                    f"({context.task_complexity})"
+                    if token_ok
+                    else f"[WARN] 令牌效率待优化: {context.estimated_tokens}/{expected_budget} "
+                    f"({context.task_complexity})"
+                ),
+                details={
+                    "estimated_tokens": context.estimated_tokens,
+                    "expected_budget": expected_budget,
+                    "task_complexity": context.task_complexity,
+                    "budget_ok": context.token_budget_ok,
+                    "audit_tag": "M3",  # 审计: 资源消耗追踪
+                },
+            )
+        )
+
+        # 检查3: 工具选择优化 (M19: 风险归因 - 工具效能)
+        # 工具选择评分 >= 0.7 且使用最优工具
+        tool_ok = context.uses_optimal_tools and context.tool_selection_score >= 0.7
+
+        checks.append(
+            ConfidenceCheck(
+                name="tool_optimization",
+                passed=tool_ok,
+                weight=self.WEIGHT_TOOL_OPTIMIZATION if tool_ok else 0.0,
+                message=(
+                    f"[PASS] 工具选择优化: 评分={context.tool_selection_score:.0%}"
+                    if tool_ok
+                    else f"[WARN] 工具选择待优化: 最优工具={context.uses_optimal_tools}, "
+                    f"评分={context.tool_selection_score:.0%}"
+                ),
+                details={
+                    "uses_optimal_tools": context.uses_optimal_tools,
+                    "tool_selection_score": context.tool_selection_score,
+                    "threshold": 0.7,
+                    "audit_tag": "M19",  # 风险归因: 工具效能影响
+                },
+            )
+        )
+
+        return checks
+
     def _assess_combined(self, context: ConfidenceContext) -> list[ConfidenceCheck]:
-        """组合评估 (预执行 + 信号 + 扩展 + 高级).
+        """组合评估 (预执行 + 信号 + 扩展 + 高级 + v4.5增强).
+
+        军规覆盖: M3(完整审计), M19(风险归因)
 
         权重分配:
-        - 预执行检查: 30%
-        - 信号检查: 30%
-        - 扩展检查: 20%
-        - 高级检查: 20%
+        - 预执行检查: 25%
+        - 信号检查: 25%
+        - 扩展检查: 15%
+        - 高级检查: 15%
+        - v4.5增强检查: 20%
         """
         pre_exec_checks = self._assess_pre_execution(context)
         signal_checks = self._assess_signal(context)
         extended_checks = self._assess_extended(context)
         advanced_checks = self._assess_advanced(context)
+        v45_checks = self._assess_v45_enhanced(context)
 
-        # 调整权重 (预执行30% + 信号30% + 扩展20% + 高级20%)
+        # 调整权重 (预执行25% + 信号25% + 扩展15% + 高级15% + v4.5增强20%)
         for check in pre_exec_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.3
+            check_dict["weight"] *= 0.25
 
         for check in signal_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.3
+            check_dict["weight"] *= 0.25
 
         for check in extended_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.2
+            check_dict["weight"] *= 0.15
 
         for check in advanced_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.2
+            check_dict["weight"] *= 0.15
 
-        return pre_exec_checks + signal_checks + extended_checks + advanced_checks
+        for check in v45_checks:
+            check_dict = check.to_dict()
+            check_dict["weight"] *= 0.20
+
+        return (
+            pre_exec_checks
+            + signal_checks
+            + extended_checks
+            + advanced_checks
+            + v45_checks
+        )
 
     def _get_recommendation(
         self, level: ConfidenceLevel, checks: list[ConfidenceCheck]
