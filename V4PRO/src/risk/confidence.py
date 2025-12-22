@@ -708,13 +708,131 @@ class ConfidenceAssessor:
                 passed=correlation_ok,
                 weight=self.WEIGHT_CORRELATION if correlation_ok else 0.0,
                 message=(
-                    f"✅ 相关性风险可控: {context.cross_asset_correlation:.0%}"
+                    f"[PASS] 相关性风险可控: {context.cross_asset_correlation:.0%}"
                     if correlation_ok
-                    else f"⚠️ 相关性风险偏高: {context.cross_asset_correlation:.0%}"
+                    else f"[WARN] 相关性风险偏高: {context.cross_asset_correlation:.0%}"
                 ),
                 details={
                     "correlation": context.cross_asset_correlation,
                     "threshold": 0.7,
+                },
+            )
+        )
+
+        return checks
+
+    def _assess_v45_enhanced(
+        self, context: ConfidenceContext
+    ) -> list[ConfidenceCheck]:
+        """v4.5 增强置信度评估.
+
+        军规覆盖: M3(完整审计), M19(风险归因)
+
+        检查项:
+        1. 并行执行检查 (10%) - 验证是否启用并行执行模式及独立操作数
+        2. 令牌效率检查 (10%) - 验证令牌预算是否充足
+        3. 工具优化检查 (10%) - 验证是否使用最优工具组合
+
+        参数:
+            context: 评估上下文
+
+        返回:
+            检查结果列表
+        """
+        checks: list[ConfidenceCheck] = []
+
+        # 检查1: 并行执行优化 (M19: 风险归因 - 执行效率)
+        # 条件: 启用并行模式 + 独立操作数>=2 + 无依赖关系
+        parallel_ok = (
+            context.parallel_execution_mode
+            and context.independent_operations >= 2
+            and not context.has_dependencies
+        )
+        # 部分满足条件也给予部分分数
+        parallel_score = 0.0
+        if context.parallel_execution_mode:
+            parallel_score += 0.4
+        if context.independent_operations >= 2:
+            parallel_score += 0.3
+        if not context.has_dependencies:
+            parallel_score += 0.3
+
+        checks.append(
+            ConfidenceCheck(
+                name="parallel_execution",
+                passed=parallel_ok,
+                weight=self.WEIGHT_PARALLEL_EXECUTION if parallel_ok else 0.0,
+                message=(
+                    f"[PASS] 并行执行优化: {context.independent_operations}个独立操作"
+                    if parallel_ok
+                    else f"[WARN] 并行执行未优化: 模式={context.parallel_execution_mode}, "
+                    f"独立操作={context.independent_operations}, 依赖={context.has_dependencies}"
+                ),
+                details={
+                    "parallel_mode": context.parallel_execution_mode,
+                    "independent_ops": context.independent_operations,
+                    "has_dependencies": context.has_dependencies,
+                    "partial_score": round(parallel_score, 2),
+                    "audit_tag": "M19",  # 风险归因: 执行效率影响
+                },
+            )
+        )
+
+        # 检查2: 令牌效率 (M3: 审计 - 资源消耗追踪)
+        # 根据任务复杂度判断令牌预算是否合理
+        complexity_budgets = {
+            "SIMPLE": 200,
+            "MEDIUM": 1000,
+            "COMPLEX": 2500,
+        }
+        expected_budget = complexity_budgets.get(context.task_complexity, 1000)
+
+        token_ok = context.token_budget_ok and (
+            context.estimated_tokens <= expected_budget * 1.2  # 允许20%浮动
+        )
+
+        checks.append(
+            ConfidenceCheck(
+                name="token_efficiency",
+                passed=token_ok,
+                weight=self.WEIGHT_TOKEN_EFFICIENCY if token_ok else 0.0,
+                message=(
+                    f"[PASS] 令牌效率良好: {context.estimated_tokens}/{expected_budget} "
+                    f"({context.task_complexity})"
+                    if token_ok
+                    else f"[WARN] 令牌效率待优化: {context.estimated_tokens}/{expected_budget} "
+                    f"({context.task_complexity})"
+                ),
+                details={
+                    "estimated_tokens": context.estimated_tokens,
+                    "expected_budget": expected_budget,
+                    "task_complexity": context.task_complexity,
+                    "budget_ok": context.token_budget_ok,
+                    "audit_tag": "M3",  # 审计: 资源消耗追踪
+                },
+            )
+        )
+
+        # 检查3: 工具选择优化 (M19: 风险归因 - 工具效能)
+        # 工具选择评分 >= 0.7 且使用最优工具
+        tool_ok = context.uses_optimal_tools and context.tool_selection_score >= 0.7
+
+        checks.append(
+            ConfidenceCheck(
+                name="tool_optimization",
+                passed=tool_ok,
+                weight=self.WEIGHT_TOOL_OPTIMIZATION if tool_ok else 0.0,
+                message=(
+                    f"[PASS] 工具选择优化: 评分={context.tool_selection_score:.0%}"
+                    if tool_ok
+                    else f"[WARN] 工具选择待优化: 最优工具={context.uses_optimal_tools}, "
+                    f"评分={context.tool_selection_score:.0%}"
+                ),
+                details={
+                    "uses_optimal_tools": context.uses_optimal_tools,
+                    "tool_selection_score": context.tool_selection_score,
+                    "threshold": 0.7,
+                    "audit_tag": "M19",  # 风险归因: 工具效能影响
                 },
             )
         )
