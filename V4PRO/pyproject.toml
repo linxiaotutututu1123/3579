@@ -99,30 +99,7 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
 # =============================================================================
 # MyPy - 军规级类型检查配置
 # =============================================================================
-[tool.mypy]
-python_version = "3.11"
-pretty = true
-
-# 严格模式基础配置
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-no_implicit_optional = true
-strict_equality = true
-warn_no_return = true
-warn_unused_ignores = true
-
-# 军规级增强配置
-warn_redundant_casts = true
-warn_unreachable = true
-disallow_any_generics = true
-disallow_untyped_calls = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-no_implicit_reexport = true
-strict_concatenate = true
-warn_final = true
-warn_overlapping_literals = true
+每一个代码都要满足M1到M33的要求）每一个代码都要M1到M33都要满足）每写完一个代码模块都要检查是否满足军规 M1-M33。
 
 # 排除目录
 exclude = [

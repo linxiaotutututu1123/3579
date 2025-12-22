@@ -1637,6 +1637,7 @@ class TestPipelineIntegration:
         config = PipelineConfig(
             mode=PipelineMode.REALTIME,
             sources=[DataSource.MARKET],
+            batch_size=1,  # 必须设置batch_size<=buffer_size
             buffer_size=5,
         )
         pipeline = RealtimePipeline(config)
