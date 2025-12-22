@@ -11,6 +11,7 @@ V4 SPEC: §15 Phase 10, §22 VaR风控增强, §23 压力测试场景, §24 模�
 - 中国期货压力测试 (StressTester)
 - 风险归因引擎 (RiskAttributionEngine) [v4.1新增]
 - 置信度MCP集成 (MCPEnhancedAssessor) [v4.5新增]
+- 置信度报告生成器 (ConfidenceReportGenerator) [v4.5新增]
 
 军规覆盖:
 - M3: 完整审计 - MCP调用审计追踪
@@ -59,6 +60,7 @@ from src.risk.confidence_api import (
 from src.risk.confidence_ml import (
     ConfidenceMLP,
     ConfidenceMLPredictor,
+    ConfidenceTransformer,
     FeatureConfig,
     MLEnhancedAssessor,
     TrainingConfig,
@@ -67,7 +69,21 @@ from src.risk.confidence_ml import (
     create_ml_predictor,
     extract_features,
     get_feature_dim,
+    get_model_class,
     quick_ml_predict,
+)
+from src.risk.confidence_report import (
+    ANSIColors,
+    ConfidenceReportGenerator,
+    ReportConfig,
+    ReportFormat,
+    create_report_generator,
+    generate_json_report,
+    generate_markdown_report,
+    generate_rich_report,
+    generate_table_report,
+    print_report,
+    quick_report,
 )
 from src.risk.confidence_mcp import (
     Context7Wrapper,
