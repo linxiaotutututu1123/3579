@@ -54,7 +54,8 @@
       "Bash(python:*)",
       "Skill(sc:workflow)",
       "Bash(uv run pytest:*)",
-      "Bash(uv pip install:*)"
+      "Bash(uv pip install:*)",
+      "Bash(uv sync:*)"
     ]
   }
 }
