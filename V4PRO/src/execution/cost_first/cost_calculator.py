@@ -826,7 +826,7 @@ class CostValidator:
         )
         if fee_check:
             result, level, msg = fee_check
-            alert_level = max(alert_level, level, key=lambda x: x.value)
+            alert_level = _max_alert_level(alert_level, level)
             messages.append(msg)
             if result != CostCheckResult.PASS:
                 self._reject_count += 1
@@ -847,7 +847,7 @@ class CostValidator:
         )
         if slippage_check:
             result, level, msg = slippage_check
-            alert_level = max(alert_level, level, key=lambda x: x.value)
+            alert_level = _max_alert_level(alert_level, level)
             messages.append(msg)
             if result != CostCheckResult.PASS:
                 self._reject_count += 1
@@ -868,7 +868,7 @@ class CostValidator:
         )
         if impact_check:
             result, level, msg = impact_check
-            alert_level = max(alert_level, level, key=lambda x: x.value)
+            alert_level = _max_alert_level(alert_level, level)
             messages.append(msg)
             if result != CostCheckResult.PASS:
                 self._reject_count += 1
@@ -889,7 +889,7 @@ class CostValidator:
         )
         if total_check:
             result, level, msg = total_check
-            alert_level = max(alert_level, level, key=lambda x: x.value)
+            alert_level = _max_alert_level(alert_level, level)
             messages.append(msg)
             if result != CostCheckResult.PASS:
                 self._reject_count += 1
