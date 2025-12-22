@@ -9,6 +9,7 @@
     - FrontendEngineerAgent: 前端工程师，精通 UI 组件开发
     - FullstackEngineerAgent: 全栈工程师，精通端到端开发
     - QAEngineerAgent: QA 工程师，精通测试策略和自动化测试
+    - SecurityArchitectAgent: 安全架构师，精通应用安全和漏洞分析
 
 Example:
     >>> from chairman_agents.agents.experts import TechWriterAgent, DocStyle
@@ -26,6 +27,14 @@ Example:
     >>> from chairman_agents.agents.experts import FullstackEngineerAgent
     >>> fullstack = FullstackEngineerAgent(profile, llm_client, memory)
     >>> design = await fullstack.design_feature(spec)
+
+    >>> from chairman_agents.agents.experts import QAEngineerAgent
+    >>> qa = QAEngineerAgent(profile, llm_client)
+    >>> test_cases = await qa.generate_test_cases(feature_spec)
+
+    >>> from chairman_agents.agents.experts import SecurityArchitectAgent
+    >>> security = SecurityArchitectAgent(profile, llm_client, memory)
+    >>> report = await security.audit_code(source_code, "python")
 """
 
 from __future__ import annotations
@@ -124,6 +133,49 @@ from chairman_agents.agents.experts.fullstack_engineer import (
     IntegrationPlan,
     # 智能体
     FullstackEngineerAgent,
+)
+
+from chairman_agents.agents.experts.qa_engineer import (
+    # 枚举
+    TestSeverity,
+    TestType,
+    TestStatus,
+    CoverageType,
+    EdgeCaseCategory,
+    # 输入规格数据类
+    FeatureSpec as QAFeatureSpec,
+    FunctionSpec,
+    DataSchema,
+    TestScope,
+    # 输出数据类
+    TestCase,
+    TestSuite,
+    TestStrategy,
+    EdgeCase,
+    TestDataSet,
+    CoverageRequirement,
+    DefectReport,
+    # 智能体
+    QAEngineerAgent,
+)
+
+from chairman_agents.agents.experts.security_architect import (
+    # 枚举
+    VulnerabilitySeverity,
+    VulnerabilityType,
+    DataType,
+    # 数据类
+    Vulnerability,
+    SecurityAuditReport,
+    AuthRequirements,
+    AuthDesign,
+    EncryptionPlan,
+    Dependency,
+    DependencyAudit,
+    # 检测规则
+    OWASP_DETECTION_RULES,
+    # 智能体
+    SecurityArchitectAgent,
 )
 
 __all__ = [
@@ -227,4 +279,47 @@ __all__ = [
     "IntegrationPlan",
     # 智能体
     "FullstackEngineerAgent",
+    # =========================================================================
+    # QAEngineer 相关
+    # =========================================================================
+    # 枚举
+    "TestSeverity",
+    "TestType",
+    "TestStatus",
+    "CoverageType",
+    "EdgeCaseCategory",
+    # 输入规格数据类
+    "QAFeatureSpec",
+    "FunctionSpec",
+    "DataSchema",
+    "TestScope",
+    # 输出数据类
+    "TestCase",
+    "TestSuite",
+    "TestStrategy",
+    "EdgeCase",
+    "TestDataSet",
+    "CoverageRequirement",
+    "DefectReport",
+    # 智能体
+    "QAEngineerAgent",
+    # =========================================================================
+    # SecurityArchitect 相关
+    # =========================================================================
+    # 枚举
+    "VulnerabilitySeverity",
+    "VulnerabilityType",
+    "DataType",
+    # 数据类
+    "Vulnerability",
+    "SecurityAuditReport",
+    "AuthRequirements",
+    "AuthDesign",
+    "EncryptionPlan",
+    "Dependency",
+    "DependencyAudit",
+    # 检测规则
+    "OWASP_DETECTION_RULES",
+    # 智能体
+    "SecurityArchitectAgent",
 ]
