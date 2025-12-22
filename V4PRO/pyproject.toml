@@ -61,41 +61,37 @@ select = [
     "I",        # isort - 导入排序，保持一致性
     "N",        # pep8-naming - 命名规范
     "UP",       # pyupgrade - 使用现代Python语法
+    "TID",      # 导入整洁
+    "PL",       # Pylint子集 - 有价值的检查
+    "TRY",      # 异常处理规范
+    "B",        # flake8-bugbear - 发现常见bug
+    "PIE",      # flake8-pie - 杂项改进
+    "S",        # flake8-bandit - 安全检查，交易系统必选
+    "RET",      # flake8-return - 返回值规范
     
     # ─────────────────────────────────────────────────────────────────────
     # 质量规则（高价值）
     # ─────────────────────────────────────────────────────────────────────
-    "B",        # flake8-bugbear - 发现常见bug
-    "S",        # flake8-bandit - 安全检查，交易系统必选
     "A",        # flake8-builtins - 防止覆盖内置名称
     "C4",       # flake8-comprehensions - 推导式优化
     "DTZ",      # flake8-datetimez - 时区安全（但我们会针对性忽略）
     "T10",      # flake8-debugger - 禁止遗留debugger
     "EM",       # flake8-errmsg - 错误消息规范
-    "PIE",      # flake8-pie - 杂项改进
     "RSE",      # flake8-raise - 异常规范
-    "RET",      # flake8-return - 返回值规范
     "PTH",      # flake8-use-pathlib - 推荐使用pathlib
-    "PL",       # Pylint子集 - 有价值的检查
     "PERF",     # Perflint - 性能问题检测
     "FURB",     # refurb - 现代化建议
     "RUF",      # Ruff专有规则
-    
-    # ─────────────────────────────────────────────────────────────────────
-    # 可选规则（按需启用）
-    # ─────────────────────────────────────────────────────────────────────
-    "ASYNC",    # 异步代码检查
-    "BLE",      # 禁止盲目except
-    "ISC",      # 隐式字符串拼接检查
     "ICN",      # 导入约定
     "LOG",      # 日志规范
     "G",        # 日志格式
+    "ASYNC",    # 异步代码检查
+    "BLE",      # 禁止盲目except
+    "ISC",      # 隐式字符串拼接检查
     "PT",       # pytest风格
     "Q",        # 引号规范
-    "TID",      # 导入整洁
     "ARG",      # 未使用参数
     "PGH",      # pygrep钩子
-    "TRY",      # 异常处理规范
     "FLY",      # f-string推荐
     "NPY",      # NumPy规范
 ]
