@@ -1,7 +1,7 @@
 """
 src/market/ - 合约化行情层
 
-V4PRO Platform Component - Phase 0/7
+V4PRO Platform Component - Phase 0/7/9
 V2 SPEC: 第 4 章
 
 模块职责：
@@ -15,8 +15,9 @@ V2 SPEC: 第 4 章
 - 夜盘交易日历 (TradingCalendar) - Phase 7 新增
 - 主力合约追踪器 (MainContractTracker) - v4.1 新增
 - 配置验证加载器 (ConfigLoader) - v4.1 新增
+- 涨跌停处理器 (LimitHandler) - Phase 9 新增
 
-Required Scenarios (13+ 条):
+Required Scenarios (15+ 条):
 - INST.CACHE.LOAD
 - INST.CACHE.PERSIST
 - UNIV.DOMINANT.BASIC
@@ -33,6 +34,8 @@ Required Scenarios (13+ 条):
 - MAIN.CONTRACT.DETECT (v4.1)
 - MAIN.CONTRACT.SWITCH (v4.1)
 - CONFIG.VALIDATE.PYDANTIC (v4.1)
+- CHINA.LIMIT.STATE_DETECT (Phase 9)
+- CHINA.LIMIT.PRICE_ADJUST (Phase 9)
 """
 
 from __future__ import annotations
@@ -67,6 +70,19 @@ from src.market.exchange_config import (
     has_night_session,
 )
 from src.market.instrument_cache import InstrumentCache, InstrumentInfo
+from src.market.limit_handler import (
+    LimitHandlerConfig,
+    LimitPriceHandler,
+    LimitPriceInfo,
+    LimitState,
+    PriceValidationOutput,
+    PriceValidationResult,
+    SymbolLimitState,
+    calculate_limit_prices,
+    detect_limit_state,
+    get_default_handler,
+    validate_and_adjust_price,
+)
 from src.market.main_contract_tracker import (
     ContractMetrics,
     ContractSwitchEvent,
@@ -110,14 +126,22 @@ __all__ = [
     "ExchangeInfoModel",
     "InstrumentCache",
     "InstrumentInfo",
+    # Phase 9 新增: 涨跌停处理器
+    "LimitHandlerConfig",
+    "LimitPriceHandler",
+    "LimitPriceInfo",
+    "LimitState",
     "MainContractTracker",
     "NightSessionEnd",
     "ProductModel",
+    "PriceValidationOutput",
+    "PriceValidationResult",
     "ProductState",
     "QualityChecker",
     "QuoteCache",
     "Subscriber",
     "SwitchReason",
+    "SymbolLimitState",
     "TradingDayInfo",
     "TradingPeriod",
     "TradingSession",
@@ -125,11 +149,14 @@ __all__ = [
     "TradingSessionsModel",
     "UniverseSelector",
     "UniverseSnapshot",
+    "calculate_limit_prices",
     "create_tracker",
+    "detect_limit_state",
     "extract_product",
     "get_all_exchanges",
     "get_all_products_from_configs",
     "get_default_calendar",
+    "get_default_handler",
     "get_exchange_by_code",
     "get_exchange_config",
     "get_exchange_for_product",
@@ -145,5 +172,6 @@ __all__ = [
     "is_trading_time",
     "load_all_exchanges",
     "load_exchange_config",
+    "validate_and_adjust_price",
     "validate_exchange_config",
 ]
