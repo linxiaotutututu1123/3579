@@ -365,7 +365,28 @@ include = [
     "src/ml/**",
     "src/optim
 skip_empty = never
-include = []
+include = [
+    "src/trading/**",
+    "src/execution/**",
+    "src/risk/**",
+    "src/market/**",
+    "src/app/**",
+    "src/config/**",
+    "src/data/**",
+    "src/strategy/**",
+    "src/backtesting/**",
+    "src/common/**",
+    "src/broker/**",
+    "src/gateway/**",
+    "src/simulation/**",
+    "src/ai/**",
+    "src/analytics/**",
+    "src/visualization/**",
+    "src/ml/**",
+    "src/optimization/**",
+    "src/portfolio/**",
+    "src/performance/**",
+]
 skip_covered = never
 precision = 2
 exclude_lines = [
