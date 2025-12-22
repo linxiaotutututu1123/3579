@@ -1059,7 +1059,7 @@ match-dir = "(?!tests|scripts|\\.)[^\\.].*"
 # 🔥 Commitizen - 提交规范
 # =============================================================================
 [tool.commitizen]
-name = "cz_conventional_commits"
+name = "V4PRO cz_conventional_commits"
 version = "0.4.0"
 version_files = [
     "pyproject.toml:version",
