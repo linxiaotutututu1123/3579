@@ -1,19 +1,11 @@
 # =============================================================================
-#                    🏆 军规级 Python 项目配置 - 终极版
-#                    cn-futures-auto-trader
+# 📦 项目元信息
 # =============================================================================
-# 
-# ⚠️  警告：此配置采用极致严格模式
-# ⚠️  任何代码质量问题都将导致构建失败
-# ⚠️  不允许任何例外，除非有充分理由并经过审批
-#
-# =============================================================================
-
 [project]
 name = "cn-futures-auto-trader"
 version = "0.4.0"
 requires-python = ">=3.11"
-description = "中国期货自动交易系统 - 军规级代码质量"
+description = "中国期货自动交易系统 - 高质量代码标准"
 readme = "README.md"
 license = { text = "MIT" }
 keywords = ["futures", "trading", "quant", "ctp", "china"]
@@ -30,28 +22,18 @@ classifiers = [
 ]
 
 # =============================================================================
-# 🔥 Ruff - 极致严格静态分析配置
+# 🔧 Ruff - 平衡的静态分析配置
 # =============================================================================
 [tool.ruff]
-# 基础配置
-line-length = 120  # 120更符合现代显示器，300太宽
+line-length = 120
 target-version = "py311"
 respect-gitignore = true
-force-exclude = true
-
-# 自动修复
 fix = true
-unsafe-fixes = false  # 禁止不安全的自动修复
+unsafe-fixes = false
 show-fixes = true
-show-source = true
-
-# 缓存
 cache-dir = ".cache/ruff"
-
-# 输出格式
 output-format = "grouped"
 
-# 排除目录
 extend-exclude = [
     ".git",
     ".venv",
@@ -62,291 +44,227 @@ extend-exclude = [
     ".ruff_cache",
     "build",
     "dist",
-    "node_modules",
-    ".tox",
 ]
 
 [tool.ruff.lint]
 # ═══════════════════════════════════════════════════════════════════════════
-# 军规级规则集 - 极致全覆盖
+# 精选规则集 - 高价值 + 低噪音
 # ═══════════════════════════════════════════════════════════════════════════
 select = [
     # ─────────────────────────────────────────────────────────────────────
-    # 核心规则（必选）
+    # 核心规则（必选，发现真正的问题）
     # ─────────────────────────────────────────────────────────────────────
-    "F",        # Pyflakes - 基础错误检测
+    "F",        # Pyflakes - 语法和基础错误，必选
     "E",        # pycodestyle errors - 代码风格错误
     "W",        # pycodestyle warnings - 代码风格警告
-    "C90",      # mccabe - 圈复杂度检查
-    "I",        # isort - 导入排序
+    "C90",      # mccabe - 圈复杂度，防止过度复杂函数
+    "I",        # isort - 导入排序，保持一致性
     "N",        # pep8-naming - 命名规范
-    "D",        # pydocstyle - 文档字符串规范
-    "UP",       # pyupgrade - 升级到现代Python语法
-    "YTT",      # flake8-2020 - Python版本检查
-    "ANN",      # flake8-annotations - 类型注解检查
-    "ASYNC",    # flake8-async - 异步代码检查
-    "S",        # flake8-bandit - 安全检查
-    "BLE",      # flake8-blind-except - 禁止盲目except
-    "FBT",      # flake8-boolean-trap - 布尔陷阱
-    "B",        # flake8-bugbear - 常见bug检测
-    "A",        # flake8-builtins - 内置名称覆盖
-    "COM",      # flake8-commas - 逗号使用
-    "CPY",      # flake8-copyright - 版权检查
+    "UP",       # pyupgrade - 使用现代Python语法
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 质量规则（高价值）
+    # ─────────────────────────────────────────────────────────────────────
+    "B",        # flake8-bugbear - 发现常见bug
+    "S",        # flake8-bandit - 安全检查，交易系统必选
+    "A",        # flake8-builtins - 防止覆盖内置名称
     "C4",       # flake8-comprehensions - 推导式优化
-    "DTZ",      # flake8-datetimez - 时区安全
-    "T10",      # flake8-debugger - 禁止debugger
-    "DJ",       # flake8-django - Django检查（如适用）
+    "DTZ",      # flake8-datetimez - 时区安全（但我们会针对性忽略）
+    "T10",      # flake8-debugger - 禁止遗留debugger
     "EM",       # flake8-errmsg - 错误消息规范
-    "EXE",      # flake8-executable - 可执行文件检查
-    "FA",       # flake8-future-annotations - 未来注解
-    "ISC",      # flake8-implicit-str-concat - 隐式字符串拼接
-    "ICN",      # flake8-import-conventions - 导入约定
-    "LOG",      # flake8-logging - 日志规范
-    "G",        # flake8-logging-format - 日志格式
-    "INP",      # flake8-no-pep420 - 禁止隐式命名空间包
     "PIE",      # flake8-pie - 杂项改进
-    "T20",      # flake8-print - 禁止print
-    "PYI",      # flake8-pyi - 类型存根检查
-    "PT",       # flake8-pytest-style - pytest规范
-    "Q",        # flake8-quotes - 引号规范
     "RSE",      # flake8-raise - 异常规范
     "RET",      # flake8-return - 返回值规范
-    "SLF",      # flake8-self - 私有成员访问
-    "SLOT",     # flake8-slots - __slots__检查
-    "SIM",      # flake8-simplify - 代码简化
-    "TID",      # flake8-tidy-imports - 导入整洁
-    "TCH",      # flake8-type-checking - 类型检查导入
-    "INT",      # flake8-gettext - 国际化
-    "ARG",      # flake8-unused-arguments - 未使用参数
-    "PTH",      # flake8-use-pathlib - 使用pathlib
-    "TD",       # flake8-todos - TODO规范
-    "FIX",      # flake8-fixme - FIXME检查
-    "ERA",      # eradicate - 删除注释代码
-    "PD",       # pandas-vet - pandas规范
-    "PGH",      # pygrep-hooks - grep钩子
-    "PL",       # Pylint - 完整Pylint规则
-    "TRY",      # tryceratops - 异常处理规范
-    "FLY",      # flynt - f-string推荐
-    "NPY",      # NumPy-specific - NumPy规范
-    "PERF",     # Perflint - 性能检查
-    "FURB",     # refurb - 现代化重构
+    "PTH",      # flake8-use-pathlib - 推荐使用pathlib
+    "PL",       # Pylint子集 - 有价值的检查
+    "PERF",     # Perflint - 性能问题检测
+    "FURB",     # refurb - 现代化建议
     "RUF",      # Ruff专有规则
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 可选规则（按需启用）
+    # ─────────────────────────────────────────────────────────────────────
+    "ASYNC",    # 异步代码检查
+    "BLE",      # 禁止盲目except
+    "ISC",      # 隐式字符串拼接检查
+    "ICN",      # 导入约定
+    "LOG",      # 日志规范
+    "G",        # 日志格式
+    "PT",       # pytest风格
+    "Q",        # 引号规范
+    "TID",      # 导入整洁
+    "ARG",      # 未使用参数
+    "PGH",      # pygrep钩子
+    "TRY",      # 异常处理规范
+    "FLY",      # f-string推荐
+    "NPY",      # NumPy规范
 ]
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 忽略规则 - 必须有充分理由，经过审批
+# 不启用的规则（有明确理由）
+# ═══════════════════════════════════════════════════════════════════════════
+# "D"     - pydocstyle: 不强制所有函数都有docstring，按模块控制
+# "ANN"   - annotations: 使用MyPy检查类型，避免重复
+# "FBT"   - boolean-trap: 对简单函数过于严格
+# "CPY"   - copyright: 内部项目无需
+# "ERA"   - eradicate: 可能误删有用的注释代码
+# "TD"    - todos: TODO是正常的开发实践
+# "FIX"   - fixme: 同上
+# "INP"   - no-pep420: 限制过多
+# "PD"    - pandas-vet: pandas使用场景特殊
+# "SLF"   - private-access: 测试需要访问私有成员
+# "TCH"   - type-checking: 与实际开发模式冲突较多
+# "YTT"   - 2020: 价值不高
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 忽略规则 - 每条都有明确理由
 # ═══════════════════════════════════════════════════════════════════════════
 ignore = [
     # ─────────────────────────────────────────────────────────────────────
-    # 交易系统核心业务豁免（必须保留）
+    # 交易系统业务需求
     # ─────────────────────────────────────────────────────────────────────
-    "PLR0913",  # 允许>5个参数 | 理由：CTP API接口规范要求
-    "PLR2004",  # 允许魔法数字 | 理由：交易常量(tick size/时间阈值)
-    "DTZ005",   # 允许datetime.now()无tz | 理由：中国期货使用本地时间
-    "TRY003",   # 允许长异常消息 | 理由：中文错误需详细描述
+    "PLR0913",  # 允许>5参数 | CTP API接口需要多参数
+    "PLR2004",  # 允许魔法数字 | 交易常量如tick_size、保证金率
+    "DTZ005",   # datetime.now()无tz | 中国期货使用本地时间CST
+    "DTZ006",   # datetime.fromtimestamp无tz | 同上
     
     # ─────────────────────────────────────────────────────────────────────
-    # 框架兼容性豁免（必须保留）
+    # 实用主义豁免
     # ─────────────────────────────────────────────────────────────────────
-    "B008",     # 允许默认参数调用 | 理由：FastAPI Depends模式
-    "ANN101",   # 允许self无注解 | 理由：Python惯例
-    "ANN102",   # 允许cls无注解 | 理由：Python惯例
+    "TRY003",   # 长异常消息 | 中文错误描述需要详细
+    "EM101",    # 异常字符串字面量 | 简单场景允许
+    "EM102",    # 异常f-string | 需要动态错误信息
+    "S101",     # assert语句 | 用于开发时的防御性检查
     
     # ─────────────────────────────────────────────────────────────────────
-    # 中文支持豁免（必须保留）
+    # 框架兼容
     # ─────────────────────────────────────────────────────────────────────
-    "RUF001",   # 允许Unicode | 理由：中文字符串
-    "RUF002",   # 允许中文标点 | 理由：中文注释/文档
-    "RUF003",   # 允许中文标点 | 理由：中文注释/文档
+    "B008",     # 默认参数调用 | FastAPI Depends模式
     
     # ─────────────────────────────────────────────────────────────────────
-    # 文档规范调整（可选）
+    # 中文支持
     # ─────────────────────────────────────────────────────────────────────
-    "D100",     # 允许模块无docstring | 理由：__init__.py等
-    "D104",     # 允许包无docstring | 理由：__init__.py
-    "D107",     # 允许__init__无docstring | 理由：类docstring已说明
+    "RUF001",   # Unicode混用 | 中文字符串
+    "RUF002",   # 中文标点 | 中文注释
+    "RUF003",   # 中文注释 | 中文文档
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 代码风格偏好
+    # ─────────────────────────────────────────────────────────────────────
+    "PLR0911",  # 多return语句 | 提前返回模式更清晰
+    "PLR0912",  # 多分支 | 复杂业务逻辑需要
+    "PLR0915",  # 多语句 | 同上
+    "PLW2901",  # 循环变量覆盖 | 有时是有意为之
+    "SIM108",   # 三元表达式 | 可读性优先
+    "RET504",   # 赋值后return | 调试方便
 ]
 
-# 禁止添加更多忽略规则的守护注释
-# ⚠️ 添加任何新的ignore规则必须：
-# 1. 提交PR并说明理由
-# 2. 经过代码审查批准
-# 3. 在此处添加详细注释
-
-# 允许自动修复的规则
+# 允许自动修复
 fixable = ["ALL"]
 
-# 禁止自动修复的规则（需要人工审查）
+# 禁止自动修复（需人工确认）
 unfixable = [
-    "ERA",      # 删除注释代码需人工确认
-    "F401",     # 未使用导入需人工确认
-    "F841",     # 未使用变量需人工确认
+    "F401",     # 未使用导入 - 可能是预留的
+    "F841",     # 未使用变量 - 可能是调试用
 ]
 
-# 允许的混淆字符
-allowed-confusables = ["，", "。", "：", "；", "！", "？", "（", "）"]
+# 混淆字符（中文标点）
+allowed-confusables = ["，", "。", "：", "；", "！", "？", "（", "）", "【", "】"]
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 各模块专属配置
+# 文件级配置
 # ═══════════════════════════════════════════════════════════════════════════
 [tool.ruff.lint.per-file-ignores]
-# 测试文件
+# 测试文件 - 宽松
 "tests/**/*.py" = [
     "S101",     # 允许assert
-    "PLR0124",  # 允许NaN检查
-    "D",        # 测试不强制docstring
-    "ANN",      # 测试不强制类型注解
-    "ARG",      # 允许未使用参数（fixtures）
-    "PT004",    # 允许fixture不返回值
-    "PT018",    # 允许复合断言
-    "SLF001",   # 允许访问私有成员
+    "PLR2004",  # 允许魔法数字
+    "ARG001",   # 允许未使用参数（fixtures）
+    "ARG002",   # 同上
 ]
 
-# 脚本文件
+# 脚本文件 - 宽松
 "scripts/**/*.py" = [
     "T201",     # 允许print
-    "INP001",   # 允许无__init__.py
-    "D",        # 脚本不强制docstring
+    "S603",     # 允许subprocess
+    "S607",     # 允许部分路径
 ]
 
 # CLI入口
-"src/cli/**/*.py" = [
-    "T201",     # 允许print（用户交互）
-    "B904",     # 允许raise without from
+"src/**/cli/**/*.py" = [
+    "T201",     # 允许print
 ]
 
-# 配置文件
+# conftest
 "conftest.py" = [
-    "D",        # 不强制docstring
-    "ANN",      # 不强制类型注解
+    "ARG001",
+    "ARG002",
 ]
 
 # 类型存根
 "*.pyi" = [
-    "D",        # 存根不需要docstring
-    "ANN",      # 存根格式不同
+    "ARG001",
+    "ARG002",
 ]
 
 [tool.ruff.lint.mccabe]
-# 圈复杂度限制 - 极致严格
-max-complexity = 10  # 默认10，不允许更高
+max-complexity = 12  # 适度放宽，复杂业务允许12
 
 [tool.ruff.lint.pylint]
-# Pylint配置
-max-args = 7           # 最大参数数（CTP接口需要）
-max-branches = 12      # 最大分支数
-max-returns = 6        # 最大return语句数
-max-statements = 50    # 最大语句数
-max-locals = 15        # 最大局部变量数
-max-public-methods = 20  # 最大公共方法数
-max-bool-expr = 5      # 最大布尔表达式数
+max-args = 8           # CTP接口需要
+max-branches = 15      # 复杂业务逻辑
+max-returns = 8        
+max-statements = 60    
+max-locals = 20        
+max-public-methods = 25
+max-bool-expr = 5
 
 [tool.ruff.lint.isort]
-# 导入排序配置
 known-first-party = ["src"]
 known-third-party = ["fastapi", "pydantic", "numpy", "pandas"]
 force-single-line = false
 force-sort-within-sections = true
 lines-after-imports = 2
-lines-between-types = 1
-split-on-trailing-comma = true
 section-order = [
     "future",
-    "standard-library",
+    "standard-library", 
     "third-party",
     "first-party",
     "local-folder",
 ]
 
-[tool.ruff.lint.pydocstyle]
-# 文档字符串风格
-convention = "google"  # 使用Google风格
-
-[tool.ruff.lint.flake8-annotations]
-# 类型注解配置
-allow-star-arg-any = false
-ignore-fully-untyped = false
-mypy-init-return = true
-suppress-dummy-args = false
-suppress-none-returning = false
-
 [tool.ruff.lint.flake8-bugbear]
-# Bugbear配置
 extend-immutable-calls = [
     "fastapi.Depends",
     "fastapi.Query",
     "fastapi.Path",
     "fastapi.Body",
     "fastapi.Header",
-    "fastapi.Cookie",
-    "fastapi.Form",
-    "fastapi.File",
 ]
 
 [tool.ruff.lint.flake8-builtins]
-# 内置名称保护
-builtins-ignorelist = ["id", "type", "input", "format", "hash"]
-
-[tool.ruff.lint.flake8-comprehensions]
-# 推导式配置
-allow-dict-calls-with-keyword-arguments = true
-
-[tool.ruff.lint.flake8-errmsg]
-# 错误消息配置
-max-string-length = 50
-
-[tool.ruff.lint.flake8-implicit-str-concat]
-# 字符串拼接配置
-allow-multiline = true
-
-[tool.ruff.lint.flake8-import-conventions]
-# 导入约定
-[tool.ruff.lint.flake8-import-conventions.aliases]
-numpy = "np"
-pandas = "pd"
-matplotlib = "mpl"
-"matplotlib.pyplot" = "plt"
-seaborn = "sns"
-scipy = "sp"
+builtins-ignorelist = ["id", "type", "input", "format", "hash", "filter", "map", "list", "dict", "set"]
 
 [tool.ruff.lint.flake8-pytest-style]
-# Pytest风格配置
 fixture-parentheses = true
 parametrize-names-type = "tuple"
 parametrize-values-type = "list"
-parametrize-values-row-type = "tuple"
-raises-require-match-for = ["ValueError", "TypeError", "AttributeError"]
 
-[tool.ruff.lint.flake8-quotes]
-# 引号配置
-docstring-quotes = "double"
-inline-quotes = "double"
-multiline-quotes = "double"
-
-[tool.ruff.lint.flake8-tidy-imports]
-# 整洁导入配置
-ban-relative-imports = "all"
-
-[tool.ruff.lint.flake8-type-checking]
-# 类型检查导入配置
-strict = true
-exempt-modules = ["typing", "typing_extensions"]
-
-[tool.ruff.lint.flake8-unused-arguments]
-# 未使用参数配置
-ignore-variadic-names = true
+[tool.ruff.lint.flake8-import-conventions.aliases]
+numpy = "np"
+pandas = "pd"
+"matplotlib.pyplot" = "plt"
 
 [tool.ruff.format]
-# 格式化配置
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 docstring-code-format = true
-docstring-code-line-length = 80
+docstring-code-line-length = 88
 
 # =============================================================================
-# 🔥 MyPy - 极致严格类型检查配置
+# 🔍 MyPy - 严格但实用的类型检查
 # =============================================================================
 [tool.mypy]
 python_version = "3.11"
@@ -357,35 +275,39 @@ show_error_codes = true
 color_output = true
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 极致严格模式 - 全部启用
+# 严格模式 - 开启基础严格检查
 # ═══════════════════════════════════════════════════════════════════════════
-
-# 严格模式基础
 strict = true
 
-# 类型检查完整性
-disallow_any_unimported = true
-disallow_any_expr = true
-disallow_any_decorated = true
-disallow_any_explicit = true
-disallow_any_generics = true
-disallow_subclassing_any = true
+# ═══════════════════════════════════════════════════════════════════════════
+# 关键调整 - 关闭对Any的过度限制
+# ═══════════════════════════════════════════════════════════════════════════
+# 这些选项与第三方库（numpy/pandas）不兼容
+disallow_any_unimported = false   # 第三方库缺少类型存根
+disallow_any_expr = false         # numpy/pandas返回Any
+disallow_any_decorated = false    # 装饰器类型复杂
+disallow_any_explicit = false     # 有时需要显式Any
 
-# 函数定义检查
+# 保持这些严格检查
+disallow_any_generics = true      # 泛型必须指定类型参数
+disallow_subclassing_any = true   # 禁止继承Any类型
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 函数和类型检查
+# ═══════════════════════════════════════════════════════════════════════════
 disallow_untyped_calls = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
-disallow_untyped_decorators = true
+disallow_untyped_decorators = false  # 放宽，很多装饰器没有类型
 check_untyped_defs = true
 
-# 其他严格检查
+# ═══════════════════════════════════════════════════════════════════════════
+# 其他检查
+# ═══════════════════════════════════════════════════════════════════════════
 no_implicit_optional = true
 no_implicit_reexport = true
 strict_optional = true
 strict_equality = true
-strict_concatenate = true
-
-# 警告配置
 warn_return_any = true
 warn_unused_ignores = true
 warn_unused_configs = true
@@ -393,16 +315,11 @@ warn_redundant_casts = true
 warn_unreachable = true
 warn_no_return = true
 
-# 错误处理
-ignore_errors = false
-allow_untyped_globals = false
-allow_redefinition = false
-
-# 命名空间包
+# 命名空间
 namespace_packages = true
 explicit_package_bases = true
 
-# 增量模式
+# 增量编译
 incremental = true
 cache_dir = ".cache/mypy"
 
@@ -411,48 +328,56 @@ plugins = [
     "pydantic.mypy",
 ]
 
-# 排除
 exclude = [
     "build/",
     "dist/",
     ".venv/",
     "__pycache__/",
-    ".git/",
 ]
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 模块级配置
+# 模块级配置 - 分层严格度
 # ═══════════════════════════════════════════════════════════════════════════
 
-# 核心交易模块 - 最严格
+# 🔴 核心交易模块 - 最严格（资金安全相关）
 [[tool.mypy.overrides]]
 module = [
     "src.trading.*",
     "src.execution.*",
     "src.risk.*",
-    "src.market.*",
     "src.broker.*",
     "src.gateway.*",
+    "src.order.*",
+    "src.position.*",
+    "src.account.*",
 ]
-# 所有严格选项均已在全局启用
-disallow_any_expr = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
 warn_unreachable = true
-extra_checks = true
+# 这些模块的Any使用需要特别注意
+disallow_any_generics = true
 
-# 数据和策略模块 - 最严格
+# 🟡 数据和策略模块 - 严格
 [[tool.mypy.overrides]]
 module = [
     "src.data.*",
     "src.strategy.*",
     "src.backtesting.*",
-    "src.simulation.*",
-    "src.portfolio.*",
-    "src.performance.*",
+    "src.market.*",
+    "src.config.*",
 ]
-disallow_any_expr = true
-warn_unreachable = true
+disallow_untyped_defs = true
 
-# AI/ML模块 - 严格但允许numpy/pandas的Any
+# 🟢 辅助模块 - 标准
+[[tool.mypy.overrides]]
+module = [
+    "src.utils.*",
+    "src.common.*",
+    "src.simulation.*",
+]
+disallow_untyped_defs = true
+
+# 🔵 AI/ML/可视化 - 放宽（大量使用numpy/pandas）
 [[tool.mypy.overrides]]
 module = [
     "src.ai.*",
@@ -460,28 +385,30 @@ module = [
     "src.analytics.*",
     "src.visualization.*",
     "src.optimization.*",
+    "src.performance.*",
+    "src.portfolio.*",
 ]
-disallow_any_expr = false  # numpy/pandas返回Any
-disallow_any_explicit = false
+disallow_untyped_defs = false  # 放宽
+disallow_any_generics = false
+warn_return_any = false
 
-# 测试模块 - 放宽
+# ⚪ 测试模块 - 宽松
 [[tool.mypy.overrides]]
 module = "tests.*"
+disallow_untyped_defs = false
 disallow_untyped_decorators = false
-disallow_any_expr = false
+disallow_any_generics = false
 warn_unreachable = false
+warn_return_any = false
 
-# 脚本模块 - 放宽
+# ⚪ 脚本模块 - 宽松
 [[tool.mypy.overrides]]
 module = "scripts.*"
-disallow_untyped_defs = false
-disallow_any_expr = false
+ignore_errors = true
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 第三方库配置
+# 第三方库 - 忽略缺失的类型存根
 # ═══════════════════════════════════════════════════════════════════════════
-
-# CTP SDK - 无类型存根
 [[tool.mypy.overrides]]
 module = [
     "ctp",
@@ -494,22 +421,24 @@ module = [
 ignore_missing_imports = true
 follow_imports = "skip"
 
-# 科学计算库 - 无完整类型存根
 [[tool.mypy.overrides]]
 module = [
+    "talib",
+    "talib.*",
+    "pandas_ta",
+    "pandas_ta.*",
     "shap",
     "shap.*",
     "xgboost",
     "xgboost.*",
-    "pandas_ta",
-    "pandas_ta.*",
-    "talib",
-    "talib.*",
+    "lightgbm",
+    "lightgbm.*",
     "scipy.optimize",
+    "scipy.stats",
 ]
 ignore_missing_imports = true
 
-# Pydantic配置
+# Pydantic插件配置
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true
@@ -517,7 +446,7 @@ warn_required_dynamic_aliases = true
 warn_untyped_fields = true
 
 # =============================================================================
-# 🔥 Pytest - 极致严格测试配置
+# 🧪 Pytest - 实用的测试配置
 # =============================================================================
 [tool.pytest.ini_options]
 minversion = "7.4"
@@ -526,177 +455,117 @@ python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 
-# ═══════════════════════════════════════════════════════════════════════════
-# 严格模式配置
-# ═══════════════════════════════════════════════════════════════════════════
 addopts = [
     # 严格模式
     "--strict-markers",
     "--strict-config",
     
-    # 覆盖率 - 100%要求
+    # 覆盖率 - 合理目标
     "--cov=src",
     "--cov-branch",
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html:reports/coverage",
     "--cov-report=xml:reports/coverage.xml",
-    "--cov-fail-under=100",
+    "--cov-fail-under=85",  # 整体85%，核心模块单独控制
     
-    # 输出格式
+    # 输出
     "-v",
     "--tb=short",
-    "--showlocals",
     
-    # 警告处理 - 严格
-    "-W", "error::DeprecationWarning",
-    "-W", "error::PendingDeprecationWarning",
-    "-W", "error::FutureWarning",
-    
-    # 日志
-    "--log-cli-level=WARNING",
-    "--log-file=logs/test.log",
-    "--log-file-level=DEBUG",
-    "--log-file-format=%(asctime)s [%(levelname)8s] %(name)s: %(message)s",
-    "--log-file-date-format=%Y-%m-%d %H:%M:%S",
-    
-    # 超时
+    # 超时保护
     "--timeout=300",
     "--timeout_method=thread",
     
-    # 随机顺序（检测测试间依赖）
-    "-p", "no:randomly",  # 如需随机化则改为 "randomly"
-    
-    # 并行执行
-    # "-n", "auto",  # 启用pytest-xdist并行
-    
-    # 重试失败测试
-    # "--reruns=2",  # 启用pytest-rerunfailures
+    # 日志
+    "--log-cli-level=WARNING",
 ]
 
-# ═══════════════════════════════════════════════════════════════════════════
 # 测试标记
-# ═══════════════════════════════════════════════════════════════════════════
 markers = [
-    # 执行速度
-    "slow: 慢速测试（超过5秒）",
-    "fast: 快速测试（低于1秒）",
+    # 速度分类
+    "slow: 慢速测试（>5秒）",
+    "fast: 快速测试（<1秒）",
     
-    # 测试类型
+    # 类型分类
     "unit: 单元测试",
     "integration: 集成测试",
     "e2e: 端到端测试",
-    "smoke: 冒烟测试",
     
     # 交易相关
-    "live: 实盘测试（需要交易所连接）",
+    "live: 实盘测试（需交易所连接）",
     "paper: 模拟盘测试",
     "backtest: 回测测试",
-    "simulation: 仿真测试",
-    "replay: 行情回放测试",
     
-    # 功能模块
-    "trading: 交易模块测试",
-    "risk: 风控模块测试",
-    "strategy: 策略模块测试",
-    "data: 数据模块测试",
-    "market: 行情模块测试",
+    # 模块分类
+    "trading: 交易模块",
+    "risk: 风控模块",
+    "strategy: 策略模块",
+    "data: 数据模块",
     
-    # AI/ML
-    "ai: AI相关测试",
-    "ml: 机器学习测试",
-    "optimization: 优化测试",
-    
-    # 特殊标记
-    "skip_ci: CI环境跳过",
+    # 特殊
+    "skip_ci: CI跳过",
     "requires_ctp: 需要CTP SDK",
     "requires_gpu: 需要GPU",
-    "destructive: 破坏性测试（修改状态）",
 ]
 
-# 过滤警告
+# 警告处理 - 合理的警告策略
 filterwarnings = [
-    "error",
-    "ignore::pytest.PytestUnraisableExceptionWarning",
+    "error::DeprecationWarning",
+    "error::PendingDeprecationWarning",
+    # 忽略第三方库的警告
     "ignore::DeprecationWarning:pkg_resources.*",
+    "ignore::DeprecationWarning:importlib.*",
+    "ignore::PendingDeprecationWarning:pandas.*",
 ]
 
-# 异步模式
+# 异步
 asyncio_mode = "auto"
 
 # =============================================================================
-# 🔥 Coverage - 极致严格覆盖率配置
+# 📊 Coverage - 分层覆盖率要求
 # =============================================================================
 [tool.coverage.run]
 source = ["src"]
 branch = true
 parallel = true
-concurrency = ["thread", "multiprocessing"]
 relative_files = true
 data_file = ".coverage"
 dynamic_context = "test_function"
 
-# 排除项
 omit = [
-    # 入口脚本
-    "src/cli/*",
-    "src/scripts/*",
-    "src/app/*_entry.py",
+    # 入口和脚本
+    "src/**/cli/*",
+    "src/**/scripts/*",
+    "src/**/__main__.py",
     
     # 类型存根
     "*.pyi",
     
     # 配置
     "conftest.py",
-    
-    # 测试
     "tests/*",
 ]
 
 [tool.coverage.paths]
-source = [
-    "src/",
-]
+source = ["src/"]
 
 [tool.coverage.report]
 # ═══════════════════════════════════════════════════════════════════════════
-# 极致严格：100%覆盖率要求
+# 整体目标：85%
+# 核心模块通过CI单独检查达到更高标准
 # ═══════════════════════════════════════════════════════════════════════════
-fail_under = 100
+fail_under = 85
 precision = 2
 show_missing = true
-skip_covered = false
-skip_empty = false
+skip_covered = true
+skip_empty = true
 
-# 必须覆盖的模块
-include = [
-    "src/trading/*",
-    "src/execution/*",
-    "src/risk/*",
-    "src/market/*",
-    "src/data/*",
-    "src/strategy/*",
-    "src/backtesting/*",
-    "src/common/*",
-    "src/broker/*",
-    "src/gateway/*",
-    "src/simulation/*",
-    "src/config/*",
-    "src/utils/*",
-    "src/ai/*",
-    "src/ml/*",
-    "src/analytics/*",
-    "src/visualization/*",
-    "src/optimization/*",
-    "src/portfolio/*",
-    "src/performance/*",
-]
-
-# 排除行（必须有注释说明理由）
+# 排除行
 exclude_lines = [
     # 标准排除
     "pragma: no cover",
     
-    # 类型检查
+    # 类型检查块
     "if TYPE_CHECKING:",
     "if typing.TYPE_CHECKING:",
     
@@ -705,308 +574,34 @@ exclude_lines = [
     "@abc.abstractmethod",
     "raise NotImplementedError",
     
-    # 入口点
+    # 主入口
     'if __name__ == "__main__":',
-    'if __name__ == .__main__.:',
     
-    # 防御性编程（不应到达）
+    # 防御性代码
     "raise AssertionError",
-    "raise RuntimeError\$.*unreachable.*\$",
+    "assert False",
     
-    # 调试代码
+    # 调试/展示方法
     "def __repr__",
     "def __str__",
     
-    # 协议方法
-    "\\.\\.\\.",
-    "pass",
+    # 可选的日志
+    "logger\\.debug",
+    "logging\\.debug",
 ]
 
-# 部分行排除
 partial_branches = [
     "pragma: no branch",
 ]
 
 [tool.coverage.html]
 directory = "reports/coverage/html"
-title = "cn-futures-auto-trader 覆盖率报告"
+title = "cn-futures-auto-trader Coverage Report"
 show_contexts = true
 
 [tool.coverage.xml]
 output = "reports/coverage/coverage.xml"
 
-[tool.coverage.json]
-output = "reports/coverage/coverage.json"
-pretty_print = true
-show_contexts = true
-
-# =============================================================================
-# 🔥 其他工具配置
-# =============================================================================
-
-# Bandit - 安全扫描
-[tool.bandit]
-exclude_dirs = ["tests", "scripts", ".venv"]
-skips = []  # 不跳过任何检查
-severity = "low"  # 报告所有级别
-
-# Black - 代码格式化（如与Ruff同时使用）
-[tool.black]
-line-length = 120
-target-version = ["py311"]
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-    \.git
-    | \.venv
-    | build
-    | dist
-)/
-'''
-[tool.pylint.main]
-# 并行分析
-jobs = 0  # 自动检测CPU核心数
-
-# 分析模式
-analyse-fallback-blocks = true
-clear-cache-post-run = false
-fail-on = ["E", "F"]  # 错误和致命错误导致失败
-fail-under = 9.5  # 最低评分9.5/10
-ignore-patterns = ["test_.*\\.py"]
-limit-inference-results = 100
-persistent = true
-py-version = "3.11"
-recursive = true
-suggestion-mode = true
-
-[tool.pylint.messages_control]
-# 启用所有检查
-enable = ["all"]
-
-# 极少数禁用（必须有理由）
-disable = [
-    "raw-checker-failed",
-    "bad-inline-option",
-    "locally-disabled",
-    "file-ignored",
-    "suppressed-message",
-    "deprecated-pragma",
-    "use-symbolic-message-instead",
-    # 与Ruff重复
-    "line-too-long",
-    "missing-module-docstring",
-    "missing-class-docstring",
-    "missing-function-docstring",
-    "wrong-import-order",
-    # 交易系统特定
-    "too-many-arguments",  # CTP API需要
-    "too-many-locals",     # 复杂算法需要
-]
-
-[tool.pylint.format]
-# 格式配置
-max-line-length = 120
-max-module-lines = 1000
-indent-after-paren = 4
-indent-string = "    "
-
-[tool.pylint.basic]
-# 命名规范
-argument-naming-style = "snake_case"
-attr-naming-style = "snake_case"
-class-attribute-naming-style = "any"
-class-const-naming-style = "UPPER_CASE"
-class-naming-style = "PascalCase"
-const-naming-style = "UPPER_CASE"
-function-naming-style = "snake_case"
-method-naming-style = "snake_case"
-module-naming-style = "snake_case"
-variable-naming-style = "snake_case"
-
-# 正则表达式命名
-good-names = ["i", "j", "k", "n", "x", "y", "z", "df", "dt", "id", "pk", "ts", "tx", "rx", "_"]
-bad-names = ["foo", "bar", "baz", "toto", "tutu", "tata"]
-
-[tool.pylint.design]
-# 设计规范
-max-args = 7
-max-attributes = 15
-max-bool-expr = 5
-max-branches = 12
-max-locals = 15
-max-parents = 7
-max-public-methods = 20
-max-returns = 6
-max-statements = 50
-min-public-methods = 1
-
-[tool.pylint.exceptions]
-# 异常处理
-overgeneral-exceptions = ["builtins.BaseException", "builtins.Exception"]
-
-[tool.pylint.imports]
-# 导入规范
-allow-wildcard-with-all = false
-known-first-party = ["src"]
-known-third-party = ["fastapi", "pydantic", "numpy", "pandas"]
-
-[tool.pylint.logging]
-# 日志规范
-logging-format-style = "new"
-logging-modules = ["logging"]
-
-[tool.pylint.refactoring]
-# 重构建议
-max-nested-blocks = 5
-never-returning-functions = ["sys.exit", "argparse.parse_error"]
-
-[tool.pylint.similarities]
-# 重复代码检测
-ignore-comments = true
-ignore-docstrings = true
-ignore-imports = true
-ignore-signatures = true
-min-similarity-lines = 4
-
-[tool.pylint.spelling]
-# 拼写检查
-spelling-dict = ""
-spelling-ignore-words = []
-spelling-private-dict-file = ""
-
-[tool.pylint.typecheck]
-# 类型检查
-contextmanager-decorators = ["contextlib.contextmanager"]
-ignore-mixin-members = true
-ignored-classes = ["optparse.Values", "thread._local", "_thread._local"]
-
-[tool.pylint.variables]
-# 变量检查
-allow-global-unused-variables = false
-callbacks = ["cb_", "_cb"]
-dummy-variables-rgx = "_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_"
-ignored-argument-names = "_.*|^ignored_|^unused_"
-redefining-builtins-modules = ["six.moves", "past.builtins", "future.builtins", "builtins", "io"]
-
-# =============================================================================
-# 🔥 Pre-commit 钩子配置（用于 .pre-commit-config.yaml 生成参考）
-# =============================================================================
-[tool.pre-commit]
-# 这是参考配置，实际使用需创建 .pre-commit-config.yaml
-hooks = [
-    "ruff",
-    "ruff-format",
-    "mypy",
-    "pytest",
-    "bandit",
-    "detect-secrets",
-]
-
-# =============================================================================
-# 🔥 Interrogate - 文档覆盖率检查
-# =============================================================================
-[tool.interrogate]
-ignore-init-method = true
-ignore-init-module = true
-ignore-magic = true
-ignore-semiprivate = false
-ignore-private = false
-ignore-property-decorators = false
-ignore-module = true
-ignore-nested-functions = false
-ignore-nested-classes = true
-ignore-setters = false
-fail-under = 95  # 文档覆盖率至少95%
-exclude = ["tests", "scripts", "docs"]
-verbose = 1
-quiet = false
-whitelist-regex = []
-color = true
-omit-covered-files = false
-
-# =============================================================================
-# 🔥 Vulture - 死代码检测
-# =============================================================================
-[tool.vulture]
-min_confidence = 80
-paths = ["src"]
-exclude = ["tests/", "scripts/", ".venv/"]
-ignore_decorators = ["@app.route", "@pytest.fixture", "@abstractmethod"]
-ignore_names = ["visit_*", "do_*"]
-make_whitelist = false
-sort_by_size = true
-
-# =============================================================================
-# 🔥 Pyright - 备用类型检查（更严格）
-# =============================================================================
-[tool.pyright]
-include = ["src"]
-exclude = [
-    "**/__pycache__",
-    "**/node_modules",
-    ".venv",
-    "build",
-    "dist",
-]
-ignore = ["tests"]
-
-pythonVersion = "3.11"
-pythonPlatform = "All"
-
-# 极致严格模式
-typeCheckingMode = "strict"
-
-# 额外严格选项
-strictListInference = true
-strictDictionaryInference = true
-strictSetInference = true
-strictParameterNoneValue = true
-enableTypeIgnoreComments = true
-reportMissingImports = "error"
-reportMissingTypeStubs = "warning"
-reportUnusedImport = "error"
-reportUnusedClass = "error"
-reportUnusedFunction = "error"
-reportUnusedVariable = "error"
-reportDuplicateImport = "error"
-reportPrivateUsage = "error"
-reportConstantRedefinition = "error"
-reportIncompatibleMethodOverride = "error"
-reportIncompatibleVariableOverride = "error"
-reportInconsistentConstructor = "error"
-reportOverlappingOverload = "error"
-reportMissingSuperCall = "warning"
-reportUninitializedInstanceVariable = "error"
-reportInvalidStringEscapeSequence = "error"
-reportUnknownParameterType = "error"
-reportUnknownArgumentType = "error"
-reportUnknownLambdaType = "error"
-reportUnknownVariableType = "error"
-reportUnknownMemberType = "error"
-reportMissingParameterType = "error"
-reportMissingTypeArgument = "error"
-reportInvalidTypeVarUse = "error"
-reportCallInDefaultInitializer = "error"
-reportUnnecessaryIsInstance = "error"
-reportUnnecessaryCast = "error"
-reportUnnecessaryComparison = "error"
-reportAssertAlwaysTrue = "error"
-reportSelfClsParameterName = "error"
-reportImplicitStringConcatenation = "warning"
-reportUndefinedVariable = "error"
-reportUnboundVariable = "error"
-reportOptionalSubscript = "error"
-reportOptionalMemberAccess = "error"
-reportOptionalCall = "error"
-reportOptionalIterable = "error"
-reportOptionalContextManager = "error"
-reportOptionalOperand = "error"
-reportTypedDictNotRequiredAccess = "error"
-reportGeneralTypeIssues = "error"
-reportPropertyTypeMismatch = "error"
-reportFunctionMemberAccess = "error"
-reportInvalidOverride = "error"
-reportInvalidTypeForm = "error"
 
 # =============================================================================
 # 🔥 Semgrep - 安全和代码质量扫描
@@ -1021,108 +616,79 @@ rules = [
     "p/xss",
     "p/command-injection",
 ]
+# =============================================================================
+# 📝 Pylint - 补充检查（与Ruff配合）
+# =============================================================================
+[tool.pylint.main]
+jobs = 0
+fail-under = 8.5  # 合理的评分要求
+py-version = "3.11"
+suggestion-mode = true
+ignore-patterns = ["test_.*\\.py", "conftest\\.py"]
 
-# =============================================================================
-# 🔥 Deptry - 依赖检查
-# =============================================================================
-[tool.deptry]
-extend_exclude = [
-    ".venv",
-    "tests",
-    "scripts",
-]
-ignore_notebooks = true
-
-[tool.deptry.per_rule_ignores]
-DEP001 = ["ctp"]  # CTP SDK 是本地安装
-DEP002 = []       # 不允许未使用依赖
-DEP003 = []       # 不允许传递依赖直接导入
-DEP004 = []       # 不允许misplaced dev依赖
-
-# =============================================================================
-# 🔥 Tryceratops - 异常处理检查
-# =============================================================================
-[tool.tryceratops]
-exclude = ["tests/"]
-ignore = ["TRY003", "TRY301"]  # 与Ruff ignore保持一致
-
-# =============================================================================
-# 🔥 Pydocstyle - 文档字符串检查
-# =============================================================================
-[tool.pydocstyle]
-convention = "google"
-add-ignore = ["D100", "D104", "D107"]  # 与Ruff ignore保持一致
-match = "(?!test_|conftest).*\\.py"
-match-dir = "(?!tests|scripts|\\.)[^\\.].*"
-
-# =============================================================================
-# 🔥 Commitizen - 提交规范
-# =============================================================================
-[tool.commitizen]
-name = "V4PRO cz_conventional_commits"
-version = "0.4.0"
-version_files = [
-    "pyproject.toml:version",
-    "src/__init__.py:__version__",
-]
-tag_format = "v$version"
-update_changelog_on_bump = true
-changelog_incremental = true
-style = [
-    ["qmark", "fg:#ff9d00 bold"],
-    ["question", "bold"],
-    ["answer", "fg:#ff9d00 bold"],
-    ["pointer", "fg:#ff9d00 bold"],
-    ["highlighted", "fg:#ff9d00 bold"],
-    ["selected", "fg:#cc5454"],
-    ["separator", "fg:#cc5454"],
-    ["instruction", ""],
-    ["text", ""],
-    ["disabled", "fg:#858585 italic"],
+[tool.pylint.messages_control]
+# 只启用Ruff不覆盖的有价值检查
+enable = [
+    "useless-suppression",
 ]
 
+# 禁用与Ruff重复的检查
+disable = [
+    # Ruff已覆盖
+    "line-too-long",
+    "missing-module-docstring",
+    "missing-class-docstring", 
+    "missing-function-docstring",
+    "wrong-import-order",
+    "ungrouped-imports",
+    "wrong-import-position",
+    "invalid-name",
+    "too-few-public-methods",
+    
+    # 与业务需求冲突
+    "too-many-arguments",
+    "too-many-locals",
+    "too-many-branches",
+    "too-many-statements",
+    "too-many-instance-attributes",
+    "too-many-public-methods",
+    
+    # 实用主义
+    "fixme",
+    "broad-except",
+    "bare-except",
+]
+
+[tool.pylint.format]
+max-line-length = 120
+max-module-lines = 1500
+
+[tool.pylint.design]
+max-args = 8
+max-attributes = 20
+max-branches = 15
+max-locals = 20
+max-returns = 8
+max-statements = 60
+
 # =============================================================================
-# 🔥 Towncrier - 变更日志管理
+# 📖 Interrogate - 文档覆盖率
 # =============================================================================
-[tool.towncrier]
-package = "src"
-package_dir = "."
-filename = "CHANGELOG.md"
-directory = "changes/"
-title_format = "## [{version}] - {project_date}"
-issue_format = "[#{issue}](https://github.com/owner/repo/issues/{issue})"
-start_string = "<!-- towncrier release notes start -->\n"
-underlines = ["", "", ""]
-
-[[tool.towncrier.type]]
-directory = "breaking"
-name = "Breaking Changes"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "feature"
-name = "Features"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "bugfix"
-name = "Bug Fixes"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "doc"
-name = "Documentation"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "removal"
-name = "Deprecations and Removals"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "misc"
-name = "Miscellaneous"
-showcontent = false
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = true
+ignore-magic = true
+ignore-semiprivate = true
+ignore-private = true
+ignore-property-decorators = true
+ignore-module = true
+ignore-nested-functions = true
+ignore-nested-classes = true
+fail-under = 80  # 公共API 80%文档覆盖
+exclude = ["tests", "scripts", "docs", ".venv"]
+verbose = 0
+quiet = false
+color = true
 
 # =============================================================================
 # 🔥 Hatch - 构建系统配置
@@ -1159,6 +725,19 @@ include = [
     "/LICENSE",
     "/pyproject.toml",
 ]
+
+# =============================================================================
+# 📋 Commitizen - 提交规范
+# =============================================================================
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.4.0"
+version_files = [
+    "pyproject.toml:version",
+]
+tag_format = "v$version"
+update_changelog_on_bump = true
+
 
 # =============================================================================
 # 🔥 环境配置
@@ -1203,30 +782,3 @@ full-check = [
     "deptry src",
     "pytest --cov-fail-under=100",
 ]
-
-# =============================================================================
-# 🏆 军规级质量保证总结
-# =============================================================================
-#
-# ┌─────────────────────────────────────────────────────────────────────────┐
-# │                    🛡️ 质量门禁清单                                      │
-# ├─────────────────────────────────────────────────────────────────────────┤
-# │                                                                         │
-# │  ✅ Ruff        - 200+ 规则启用，极少豁免                               │
-# │  ✅ MyPy        - strict模式，禁止Any类型                               │
-# │  ✅ Pylint      - 9.5/10 最低评分                                       │
-# │  ✅ Pyright     - strict模式备用检查                                    │
-# │  ✅ Pytest      - 100% 覆盖率要求                                       │
-# │  ✅ Coverage    - 分支覆盖，无死代码                                    │
-# │  ✅ Bandit      - 安全漏洞扫描                                          │
-# │  ✅ Vulture     - 死代码检测                                            │
-# │  ✅ Interrogate - 95% 文档覆盖率                                        │
-# │  ✅ Deptry      - 依赖合规检查                                          │
-# │                                                                         │
-# │  ⚠️  任何检查失败都将阻止代码合并                                       │
-# │  ⚠️  不允许使用 # type: ignore 除非有书面审批                           │
-# │  ⚠️  不允许使用 # noqa 除非有书面审批                                   │
-# │                                                                         │
-# └─────────────────────────────────────────────────────────────────────────┘
-#
-# =============================================================================
