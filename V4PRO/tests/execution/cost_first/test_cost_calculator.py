@@ -265,12 +265,16 @@ class TestCostValidator:
 
     def test_validate_pass(self, validator: CostValidator) -> None:
         """测试验证通过场景."""
+        # expected_profit 需要足够高以保证 RR ratio >= min_rr_ratio (2.0)
+        # total_cost 约为 205 (fee=35 + slippage=100 + impact=70)
+        # total_loss = expected_loss + total_cost = 100 + 205 = 305
+        # 要使 RR ratio >= 2.0，需要 expected_profit >= 610
         result = validator.validate(
             instrument="rb2501",
             price=3500.0,
             volume=10,
             direction="buy",
-            expected_profit=500.0,
+            expected_profit=800.0,  # 增加预期盈利以确保 RR ratio > 2.0
             expected_loss=100.0,
         )
 
