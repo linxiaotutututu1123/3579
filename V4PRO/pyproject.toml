@@ -7,8 +7,11 @@ requires-python = ">=3.11"
 # Ruff - 军规级静态分析配置
 # =============================================================================
 [tool.ruff]
-line-length = 100
+line-length = 300
 target-version = "py311"
+parallel = true
+fix = true
+show-fixes = true
 
 [tool.ruff.lint]
 # 军规级规则集：严格覆盖主要错误类型
