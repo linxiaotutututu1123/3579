@@ -51,7 +51,8 @@
       "Skill(sc:site-packages:superclaude:agents:learning-guide)",
       "Skill(sc:site-packages:superclaude:agents:quality-engineer)",
       "Bash(mkdir:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Skill(sc:workflow)"
     ]
   }
 }
