@@ -170,36 +170,41 @@ allowed-confusables = ["，", "。", "：", "；", "！", "？", "（", "）", "
 # 文件级配置
 # ═══════════════════════════════════════════════════════════════════════════
 [tool.ruff.lint.per-file-ignores]
-# 测试文件 - 宽松
+# 测试文件
 "tests/**/*.py" = [
     "S101",     # 允许assert
-    "PLR2004",  # 允许魔法数字
-    "ARG001",   # 允许未使用参数（fixtures）
-    "ARG002",   # 同上
+    "PLR0124",  # 允许NaN检查
+    "D",        # 测试不强制docstring
+    "ANN",      # 测试不强制类型注解
+    "ARG",      # 允许未使用参数（fixtures）
+    "PT004",    # 允许fixture不返回值
+    "PT018",    # 允许复合断言
+    "SLF001",   # 允许访问私有成员
 ]
 
-# 脚本文件 - 宽松
+# 脚本文件
 "scripts/**/*.py" = [
     "T201",     # 允许print
-    "S603",     # 允许subprocess
-    "S607",     # 允许部分路径
+    "INP001",   # 允许无__init__.py
+    "D",        # 脚本不强制docstring
 ]
 
 # CLI入口
-"src/**/cli/**/*.py" = [
-    "T201",     # 允许print
+"src/cli/**/*.py" = [
+    "T201",     # 允许print（用户交互）
+    "B904",     # 允许raise without from
 ]
 
-# conftest
+# 配置文件
 "conftest.py" = [
-    "ARG001",
-    "ARG002",
+    "D",        # 不强制docstring
+    "ANN",      # 不强制类型注解
 ]
 
 # 类型存根
 "*.pyi" = [
-    "ARG001",
-    "ARG002",
+    "D",        # 存根不需要docstring
+    "ANN",      # 存根格式不同
 ]
 
 [tool.ruff.lint.mccabe]
@@ -330,49 +335,40 @@ exclude = [
     "__pycache__/",
 ]
 
+
 # ═══════════════════════════════════════════════════════════════════════════
-# 模块级配置 - 分层严格度
+# 模块级配置
 # ═══════════════════════════════════════════════════════════════════════════
 
-# 🔴 核心交易模块 - 最严格（资金安全相关）
+# 核心交易模块 - 最严格
 [[tool.mypy.overrides]]
 module = [
     "src.trading.*",
     "src.execution.*",
     "src.risk.*",
+    "src.market.*",
     "src.broker.*",
     "src.gateway.*",
-    "src.order.*",
-    "src.position.*",
-    "src.account.*",
 ]
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
+# 所有严格选项均已在全局启用
+disallow_any_expr = true
 warn_unreachable = true
-# 这些模块的Any使用需要特别注意
-disallow_any_generics = true
+extra_checks = true
 
-# 🟡 数据和策略模块 - 严格
+# 数据和策略模块 - 最严格
 [[tool.mypy.overrides]]
 module = [
     "src.data.*",
     "src.strategy.*",
     "src.backtesting.*",
-    "src.market.*",
-    "src.config.*",
-]
-disallow_untyped_defs = true
-
-# 🟢 辅助模块 - 标准
-[[tool.mypy.overrides]]
-module = [
-    "src.utils.*",
-    "src.common.*",
     "src.simulation.*",
+    "src.portfolio.*",
+    "src.performance.*",
 ]
-disallow_untyped_defs = true
+disallow_any_expr = true
+warn_unreachable = true
 
-# 🔵 AI/ML/可视化 - 放宽（大量使用numpy/pandas）
+# AI/ML模块 - 严格但允许numpy/pandas的Any
 [[tool.mypy.overrides]]
 module = [
     "src.ai.*",
@@ -380,26 +376,22 @@ module = [
     "src.analytics.*",
     "src.visualization.*",
     "src.optimization.*",
-    "src.performance.*",
-    "src.portfolio.*",
 ]
-disallow_untyped_defs = false  # 放宽
-disallow_any_generics = false
-warn_return_any = false
+disallow_any_expr = false  # numpy/pandas返回Any
+disallow_any_explicit = false
 
-# ⚪ 测试模块 - 宽松
+# 测试模块 - 放宽
 [[tool.mypy.overrides]]
 module = "tests.*"
-disallow_untyped_defs = false
 disallow_untyped_decorators = false
-disallow_any_generics = false
+disallow_any_expr = false
 warn_unreachable = false
-warn_return_any = false
 
-# ⚪ 脚本模块 - 宽松
+# 脚本模块 - 放宽
 [[tool.mypy.overrides]]
 module = "scripts.*"
-ignore_errors = true
+disallow_untyped_defs = false
+disallow_any_expr = false
 
 # ═══════════════════════════════════════════════════════════════════════════
 # 第三方库 - 忽略缺失的类型存根
