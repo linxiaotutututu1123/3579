@@ -42,25 +42,24 @@ from .exceptions import (
     # LLM相关异常
     LLMError,
     LLMRateLimitError,
-    LLMConnectionError,
+    LLMTimeoutError,
     LLMResponseError,
     # Agent相关异常
     AgentError,
     AgentNotFoundError,
-    AgentBusyError,
-    AgentCapabilityError,
-    # Task相关异常
-    TaskError,
-    TaskNotFoundError,
     TaskExecutionError,
-    TaskTimeoutError,
-    TaskDependencyError,
+    CapabilityMismatchError,
+    # Workflow相关异常
+    WorkflowError,
+    QualityGateError,
+    PhaseTransitionError,
+    DependencyError,
+    # Tool相关异常
+    ToolError,
+    ToolExecutionError,
+    ToolTimeoutError,
     # 配置相关异常
-    ConfigError,
-    ConfigValidationError,
-    # 通信相关异常
-    CommunicationError,
-    MessageDeliveryError,
+    ConfigurationError,
 )
 
 from .config import (
