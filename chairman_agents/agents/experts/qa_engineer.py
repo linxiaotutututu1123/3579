@@ -41,23 +41,23 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
-from ...core.types import (
+from chairman_agents.core.types import (
     AgentCapability,
+    AgentProfile,
     AgentRole,
     Artifact,
     ArtifactType,
     ReasoningStep,
     Task,
+    TaskContext,
     TaskResult,
-    ToolType,
+    TaskStatus,
     generate_id,
 )
-from .base_expert import BaseExpertAgent, ExecutionContext
+from chairman_agents.agents.experts.tech_writer import BaseExpertAgent
 
 if TYPE_CHECKING:
-    from ...cognitive.memory import MemorySystem
-    from ...cognitive.reasoning import ReasoningEngine
-    from .base_expert import LLMClientProtocol
+    pass
 
 
 # =============================================================================
