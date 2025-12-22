@@ -221,6 +221,10 @@ __all__ = [
     # MCP占位符客户端 (v4.5)
     "PlaceholderMCPClient",
     "PositionExposure",
+    # 报告配置 (v4.5)
+    "ReportConfig",
+    # 报告格式枚举 (v4.5)
+    "ReportFormat",
     "RiskAction",
     "RiskAttributionEngine",
     "RiskConfig",
@@ -267,9 +271,19 @@ __all__ = [
     "create_ml_predictor",
     # MCP评估器工厂 (v4.5)
     "create_mcp_assessor",
+    # 报告生成器工厂 (v4.5)
+    "create_report_generator",
     # 特征提取 (v4.4)
     "extract_features",
     "format_confidence_report",
+    # 生成JSON报告 (v4.5)
+    "generate_json_report",
+    # 生成Markdown报告 (v4.5)
+    "generate_markdown_report",
+    # 生成富文本报告 (v4.5)
+    "generate_rich_report",
+    # 生成表格报告 (v4.5)
+    "generate_table_report",
     "get_all_scenarios",
     "get_default_tester",
     "get_factor_summary",
