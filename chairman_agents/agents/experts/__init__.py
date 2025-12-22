@@ -5,6 +5,7 @@
 智能体列表:
     - TechWriterAgent: 技术文档智能体，精通技术文档和 API 文档写作
     - DevOpsEngineerAgent: DevOps 工程师，精通 CI/CD 和基础设施
+    - CodeReviewerAgent: 代码审查员，精通代码质量和最佳实践
 
 Example:
     >>> from chairman_agents.agents.experts import TechWriterAgent, DocStyle
@@ -14,6 +15,10 @@ Example:
     >>> from chairman_agents.agents.experts import DevOpsEngineerAgent
     >>> devops = DevOpsEngineerAgent(profile, llm_client, memory)
     >>> pipeline = await devops.design_pipeline(project_spec)
+
+    >>> from chairman_agents.agents.experts import CodeReviewerAgent
+    >>> reviewer = CodeReviewerAgent(profile, llm_client, memory)
+    >>> review = await reviewer.review_code(code, context)
 """
 
 from __future__ import annotations

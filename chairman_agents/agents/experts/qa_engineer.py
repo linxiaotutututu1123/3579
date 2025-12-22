@@ -1422,13 +1422,11 @@ class QAEngineerAgent(BaseExpertAgent):
     def _add_reasoning_step(self, thought: str) -> None:
         """Add a reasoning step to the current execution context."""
         step = ReasoningStep(
-            step_number=len(getattr(self, "_current_reasoning", [])) + 1,
+            step_number=len(self._reasoning_trace) + 1,
             thought=thought,
             confidence=0.8,
         )
-        if not hasattr(self, "_current_reasoning"):
-            self._current_reasoning: list[ReasoningStep] = []
-        self._current_reasoning.append(step)
+        self._reasoning_trace.append(step)
 
     def _generate_sample_value(self, field_type: str, index: int) -> Any:
         """Generate a sample value for a field type."""
