@@ -14,9 +14,18 @@ Example:
 from __future__ import annotations
 
 from chairman_agents.agents.base import (
+    # 基类
     AgentConfig,
     BaseExpertAgent,
+    # 协作类型
+    CollaborationStatus,
+    FeedbackItem,
+    HelpRequest,
+    ReviewRequest,
+    # 协议
+    AgentRegistryProtocol,
     LLMClientProtocol,
+    MessageBrokerProtocol,
     ToolExecutorProtocol,
 )
 
@@ -24,7 +33,14 @@ __all__ = [
     # 基类
     "BaseExpertAgent",
     "AgentConfig",
+    # 协作类型
+    "CollaborationStatus",
+    "ReviewRequest",
+    "HelpRequest",
+    "FeedbackItem",
     # 协议
     "LLMClientProtocol",
     "ToolExecutorProtocol",
+    "MessageBrokerProtocol",
+    "AgentRegistryProtocol",
 ]
