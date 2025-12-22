@@ -38,6 +38,9 @@ select = [
     "RUF",    # ruff 专有规则
     “PLC”,    # pylint-codestyle
     "PLR",    # pylint-errors
+    "PLR",    # pylint-refactoring
+    "PLW",    # pylint-warnings
+    ”T20",    # flake8-tidy-imports (导入规范)
 ]
 
 # （不许随便加忽略，必须有理由。不许简化任何规则，不许简化任何功能和逻辑！）
