@@ -530,7 +530,7 @@ def get_feature_dim(config: FeatureConfig | None = None) -> int:
         config: 特征配置
 
     返回:
-        特征维度
+        特征维度 (默认25维, v4.5)
     """
     if config is None:
         config = FeatureConfig()
@@ -544,6 +544,9 @@ def get_feature_dim(config: FeatureConfig | None = None) -> int:
         dim += 4
     if config.include_advanced:
         dim += 6
+    if config.include_v45:
+        dim += 5  # v4.5新增: parallel_mode_score, token_efficiency,
+                  #          tool_optimization, mcp_integration, task_complexity
 
     return dim
 
