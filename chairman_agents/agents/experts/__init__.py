@@ -4,12 +4,11 @@
 
 智能体列表:
     - TechWriterAgent: 技术文档智能体，精通技术文档和 API 文档写作
-    - CodeReviewerAgent: 代码审查智能体，精通代码质量和最佳实践
 
 Example:
-    >>> from chairman_agents.agents.experts import TechWriterAgent, CodeReviewerAgent
-    >>> writer = TechWriterAgent(profile, llm_client, memory)
-    >>> reviewer = CodeReviewerAgent(profile, llm_client, memory)
+    >>> from chairman_agents.agents.experts import TechWriterAgent, DocStyle
+    >>> agent = TechWriterAgent(profile, llm_client)
+    >>> result = await agent.execute(task)
 """
 
 from __future__ import annotations
@@ -29,29 +28,11 @@ from chairman_agents.agents.experts.tech_writer import (
     UserGuide,
 )
 
-from chairman_agents.agents.experts.code_reviewer import (
-    # Enums
-    ReviewSeverity,
-    ReviewCategory,
-    # Data Classes
-    ReviewContext,
-    NamingIssue,
-    ComplexityReport,
-    RefactoringSuggestion,
-    PatternViolation,
-    QualityScores,
-    CodeReview,
-    # Agent
-    CodeReviewerAgent,
-)
-
 __all__ = [
     # 枚举
     "DocStyle",
     "DocFormat",
-    "ReviewSeverity",
-    "ReviewCategory",
-    # 数据类 - TechWriter
+    # 数据类
     "APIEndpoint",
     "APISpec",
     "APIDocumentation",
@@ -60,17 +41,8 @@ __all__ = [
     "FeatureSpec",
     "ProjectInfo",
     "Commit",
-    # 数据类 - CodeReviewer
-    "ReviewContext",
-    "NamingIssue",
-    "ComplexityReport",
-    "RefactoringSuggestion",
-    "PatternViolation",
-    "QualityScores",
-    "CodeReview",
     # 基类
     "BaseExpertAgent",
     # 智能体
     "TechWriterAgent",
-    "CodeReviewerAgent",
 ]
