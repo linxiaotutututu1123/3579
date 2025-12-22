@@ -52,7 +52,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
+    pass  # 保留TYPE_CHECKING块用于未来扩展
 
 
 # ============================================================
