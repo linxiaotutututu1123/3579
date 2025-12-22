@@ -13,6 +13,7 @@ from .types import (
     AgentId,
     TaskId,
     ArtifactId,
+    generate_id,
     # 枚举类型
     AgentRole,
     ExpertiseLevel,
@@ -28,6 +29,11 @@ from .types import (
     TaskContext,
     Artifact,
     QualityRequirements,
+    TaskResult,
+    ReasoningStep,
+    ReviewComment,
+    AgentMessage,
+    AgentState,
 )
 
 from .exceptions import (
