@@ -354,7 +354,7 @@ class RealtimePipeline(DataPipeline):
 
         # 添加到缓冲区
         with self._buffer_lock:
-            if len(self._buffer) >= self._buffer.maxlen:
+            if self._buffer.maxlen is not None and len(self._buffer) >= self._buffer.maxlen:
                 # 缓冲区已满，丢弃最旧的数据
                 self._dropped_count += 1
                 self._record_audit(
