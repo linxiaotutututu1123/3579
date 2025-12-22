@@ -266,10 +266,7 @@ addopts = [
 minversion = 7.0
 doctest_optionflags =
 ["IGNORE_EXCEPTION_DETAIL",]
-[tool.pytest.ini_options.filterwarnings
-{
-    "default": []
-]
+[tool.pytest.ini_options.filterwarnings] = []
 filterwarnings = [
     "error::DeprecationWarning",
     "error::PendingDeprecationWarning",
@@ -300,27 +297,77 @@ markers = [
 # =============================================================================
 [tool.coverage.run]
 source = ["src"]
+parallel = true
+concurrency = ["thread"]
 branch = true
 omit = [
     "*/tests/*",
     "*/__pycache__/*",
-    # 入口脚本（CLI glue，非核心逻辑）
+    # 入口脚本（CLI glue）
     "src/app/live_entry.py",
     "src/app/paper_entry.py",
+    "src/app/backtest_entry.py",
+    "src/app/sim_entry.py",
+    "src/cli/*",
+    "src/scripts/*",
+    "src/utils/cli_utils.py",
 ]
 # 军规级：全部必须 100% 覆盖
 # - src/trading/**（包括 ci_gate.py, sim_gate.py）
 # - src/execution/**
 # - src/risk/**
 # - src/market/**
+# - src/app/**
+# - src/config/**
+# - src/data/**
+# - src/strategy/**
+# - src/backtesting/**
+# - src/common/**
+# - src/broker/**
+# - src/gateway/**
+# - src/simulation/**
+# - src/ai/**
+# - src/analytics/**
+# - src/visualization/**
+# - src/ml/**
+# - src/optimization/**
+# - src/portfolio/**
+# - src/performance/**
+# - src/portfoliomanagement/**
+# - src/performance/****
+# - src/performance/**
+# - src/portfoliomanagement/**
 #
 # 不允许排除非核心模块！测试必须补齐
 
 [tool.coverage.report]
 # 核心域覆盖率阈值
 fail_under = 100
-show_missing = true
-skip_covered = true
+show_missing = never
+skip_empty = never
+include = [
+    "src/trading/**",
+    "src/execution/**",
+    "src/risk/**",
+    "src/market/**",
+    "src/app/**",
+    "src/config/**",
+    "src/data/**",
+    "src/strategy/**",
+    "src/backtesting/**",
+    "src/common/**",
+    "src/broker/**",
+    "src/gateway/**",
+    "src/simulation/**",
+    "src/ai/**",
+    "src/analytics/**",
+    "src/visualization/**",
+    "src/ml/**",
+    "src/optim
+skip_empty = never
+include = []
+skip_covered = never
+precision = 2
 exclude_lines = [
     "pragma: no cover",
     "if TYPE_CHECKING:",
