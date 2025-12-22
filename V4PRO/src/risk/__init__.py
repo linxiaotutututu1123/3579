@@ -153,6 +153,8 @@ __all__ = [
     "ConfidenceMonitor",
     "ConfidenceMonitorConfig",
     "ConfidenceResult",
+    # MCP包装器 (v4.5)
+    "Context7Wrapper",
     "Decision",
     # 动态VaR引擎 (v4.2)
     "DynamicVaREngine",
@@ -166,12 +168,26 @@ __all__ = [
     "GPDParameters",
     "ImpactLevel",
     "LiquidityMetrics",
+    # MCP包装器 (v4.5)
+    "MagicWrapper",
+    # MCP调用结果 (v4.5)
+    "MCPCallResult",
+    # MCP客户端协议 (v4.5)
+    "MCPClient",
+    # MCP增强评估器 (v4.5)
+    "MCPEnhancedAssessor",
+    # MCP集成配置 (v4.5)
+    "MCPIntegrationConfig",
+    # MCP状态枚举 (v4.5)
+    "MCPStatus",
     # 市场状态枚举 (D8)
     "MarketRegime",
     # ML增强评估器 (v4.4)
     "MLEnhancedAssessor",
     # 性能指标 (D8)
     "PerformanceMetrics",
+    # MCP占位符客户端 (v4.5)
+    "PlaceholderMCPClient",
     "PositionExposure",
     "RiskAction",
     "RiskAttributionEngine",
@@ -183,6 +199,8 @@ __all__ = [
     "RiskMode",
     "RiskState",
     "ScenarioType",
+    # MCP包装器 (v4.5)
+    "SequentialWrapper",
     # 统计响应 (v4.4)
     "StatisticsResponse",
     "StressScenario",
@@ -190,6 +208,8 @@ __all__ = [
     "StressTestSummary",
     "StressTester",
     "TaskType",
+    # MCP包装器 (v4.5)
+    "TavilyWrapper",
     # 训练配置 (v4.4)
     "TrainingConfig",
     "TrainingResult",
@@ -213,6 +233,8 @@ __all__ = [
     # ML工厂函数 (v4.4)
     "create_ml_enhanced_assessor",
     "create_ml_predictor",
+    # MCP评估器工厂 (v4.5)
+    "create_mcp_assessor",
     # 特征提取 (v4.4)
     "extract_features",
     "format_confidence_report",
@@ -232,6 +254,8 @@ __all__ = [
     "quick_limit_var",
     # 快速ML预测 (v4.4)
     "quick_ml_predict",
+    # 快速MCP评估 (v4.5)
+    "quick_mcp_assess",
     # 快速监控检查 (v4.4)
     "quick_monitor_check",
     "run_stress_test",

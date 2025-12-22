@@ -844,11 +844,12 @@ class ConfidenceMLPredictor:
         state = {
             "model_state_dict": self._model.state_dict(),
             "feature_dim": self._feature_dim,
+            "model_version": self._model_version,  # v4.5: 保存模型版本
             "is_trained": self._is_trained,
             "saved_at": datetime.now().isoformat(),  # noqa: DTZ005
         }
         torch.save(state, path)
-        logger.info("模型已保存: %s", path)
+        logger.info("模型已保存: %s (版本: %s)", path, self._model_version)
 
     def load_model(self, path: str | Path) -> None:
         """加载模型.
@@ -861,9 +862,19 @@ class ConfidenceMLPredictor:
             raise FileNotFoundError(f"模型文件不存在: {path}")
 
         state = torch.load(path, weights_only=True)
+
+        # v4.5: 检查模型版本兼容性
+        saved_version = state.get("model_version", "v4.4")
+        if saved_version != self._model_version:
+            logger.warning(
+                "模型版本不匹配: 加载版本=%s, 当前版本=%s",
+                saved_version,
+                self._model_version,
+            )
+
         self._model.load_state_dict(state["model_state_dict"])
         self._is_trained = state.get("is_trained", True)
-        logger.info("模型已加载: %s", path)
+        logger.info("模型已加载: %s (版本: %s)", path, saved_version)
 
     def get_training_history(self) -> list[TrainingResult]:
         """获取训练历史."""
