@@ -153,6 +153,8 @@ from src.risk.stress_test_china import (
 
 
 __all__ = [
+    # ANSI颜色代码 (v4.5报告)
+    "ANSIColors",
     "HYPOTHETICAL_SCENARIOS",
     "STRESS_SCENARIOS",
     "AccountSnapshot",
@@ -175,10 +177,14 @@ __all__ = [
     # 置信度ML (v4.4)
     "ConfidenceMLP",
     "ConfidenceMLPredictor",
+    # 置信度报告生成器 (v4.5)
+    "ConfidenceReportGenerator",
+    "ConfidenceResult",
+    # 置信度Transformer模型 (v4.5)
+    "ConfidenceTransformer",
     # 置信度监控 (v4.4)
     "ConfidenceMonitor",
     "ConfidenceMonitorConfig",
-    "ConfidenceResult",
     # MCP包装器 (v4.5)
     "Context7Wrapper",
     "Decision",
