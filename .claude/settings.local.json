@@ -56,7 +56,8 @@
       "Bash(uv run pytest:*)",
       "Bash(uv pip install:*)",
       "Bash(uv sync:*)",
-      "Bash(VIRTUAL_ENV=\"\" uv run pytest:*)"
+      "Bash(VIRTUAL_ENV=\"\" uv run pytest:*)",
+      "Bash(uv run python:*)"
     ]
   }
 }
