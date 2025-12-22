@@ -1,3 +1,5 @@
+第一版 不可改动，只可参考，需要自己建造新的文件 实现后面的升级版本.
+
 from __future__ import annotations
 
 import uuid
