@@ -112,8 +112,9 @@ class TestCostFirstCalculator:
             direction="buy",
             market_depth=depth,
         )
-        # 4 tick * 1.0 * 100 * 10 = 4000.0
-        assert slippage == 4000.0
+        # volume_ratio = 100/50 = 2.0, 所以是3 tick
+        # 3 tick * 1.0 * 100 * 10 = 3000.0
+        assert slippage == 3000.0
 
     def test_estimate_slippage_no_depth(self, calculator: CostFirstCalculator) -> None:
         """测试无深度信息滑点估算."""
