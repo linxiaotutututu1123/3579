@@ -55,6 +55,22 @@ from chairman_agents.agents.experts.devops_engineer import (
     DevOpsEngineerAgent,
 )
 
+from chairman_agents.agents.experts.code_reviewer import (
+    # 枚举
+    ReviewSeverity,
+    ReviewCategory,
+    # 数据类
+    ReviewContext,
+    NamingIssue,
+    ComplexityReport,
+    RefactoringSuggestion,
+    PatternViolation,
+    QualityScores,
+    CodeReview,
+    # 智能体
+    CodeReviewerAgent,
+)
+
 __all__ = [
     # =========================================================================
     # TechWriter 相关

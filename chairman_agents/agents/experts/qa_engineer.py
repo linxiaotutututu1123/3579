@@ -853,7 +853,12 @@ class QAEngineerAgent(BaseExpertAgent):
         - Defect analysis and tracking
 
     Example:
-        >>> agent = QAEngineerAgent()
+        >>> profile = AgentProfile(
+        ...     name="QA Engineer",
+        ...     role=AgentRole.QA_ENGINEER,
+        ...     capabilities=[AgentCapability.TEST_PLANNING]
+        ... )
+        >>> agent = QAEngineerAgent(profile, llm_client)
         >>> strategy = await agent.analyze_requirements(requirements)
         >>> test_cases = await agent.generate_test_cases(feature_spec)
     """
@@ -861,48 +866,19 @@ class QAEngineerAgent(BaseExpertAgent):
     role = AgentRole.QA_ENGINEER
     """The role of this agent"""
 
-    default_capabilities = [
-        AgentCapability.TEST_PLANNING,
-        AgentCapability.TEST_CASE_DESIGN,
-        AgentCapability.UNIT_TESTING,
-        AgentCapability.INTEGRATION_TESTING,
-        AgentCapability.E2E_TESTING,
-        AgentCapability.PERFORMANCE_TESTING,
-        AgentCapability.CODE_REVIEW,
-        AgentCapability.REQUIREMENT_ANALYSIS,
-    ]
-    """Default capabilities for QA Engineer"""
-
     def __init__(
         self,
-        profile=None,
-        llm_client: LLMClientProtocol | None = None,
-        reasoning_engine: ReasoningEngine | None = None,
-        memory_system: MemorySystem | None = None,
-        name: str | None = None,
-    ):
+        profile: AgentProfile,
+        llm_client: Any,
+    ) -> None:
         """Initialize the QA Engineer agent.
 
         Args:
             profile: Agent profile configuration
             llm_client: LLM client for text generation
-            reasoning_engine: Reasoning engine for cognitive operations
-            memory_system: Memory system for context retrieval
-            name: Optional agent name override
         """
-        super().__init__(
-            profile=profile,
-            llm_client=llm_client,
-            reasoning_engine=reasoning_engine,
-            memory_system=memory_system,
-            name=name or "QA Engineer",
-        )
-
-        # Add QA-specific tools
-        self.profile.allowed_tools.extend([
-            ToolType.TEST_RUNNER,
-            ToolType.LINTER,
-        ])
+        super().__init__(profile, llm_client)
+        self._reasoning_trace: list[ReasoningStep] = []
 
     # =========================================================================
     # Main Execution
