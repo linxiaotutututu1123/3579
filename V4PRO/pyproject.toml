@@ -9,7 +9,7 @@ requires-python = ">=3.11"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-
+每一个代码都要满足M1到M33的要求）每一个代码都要M1到M33都要满足）每写完一个代码模块都要检查是否满足军规 M1-M33。
 [tool.ruff.lint]
 # 军规级规则集：严格覆盖主要错误类型
 select = [
