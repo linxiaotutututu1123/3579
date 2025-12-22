@@ -362,6 +362,167 @@ def _encode_regime(regime: str) -> float:
     return encoding.get(regime, 0.5)
 
 
+# =============================================================================
+# v4.5 新增特征计算函数
+# =============================================================================
+
+
+def _compute_parallel_mode_score(context: ConfidenceContext) -> float:
+    """计算并行模式分数 (v4.5).
+
+    评估任务是否适合并行执行, 基于:
+    - 任务独立性
+    - 资源冲突风险
+    - 批量操作潜力
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        并行模式分数 [0, 1]
+    """
+    # 基于任务类型和上下文计算并行适配度
+    base_score = 0.5
+
+    # 高信号一致性表明任务可独立执行
+    if context.signal_consistency > 0.8:
+        base_score += 0.2
+
+    # 低波动性环境更适合并行执行
+    if context.volatility < 0.3:
+        base_score += 0.15
+
+    # 已验证架构的任务更适合并行化
+    if context.architecture_verified:
+        base_score += 0.15
+
+    return min(1.0, max(0.0, base_score))
+
+
+def _compute_token_efficiency(context: ConfidenceContext) -> float:
+    """计算令牌效率分数 (v4.5).
+
+    评估任务的令牌使用效率, 基于:
+    - 预执行检查完成度 (减少无效令牌消耗)
+    - 文档准备情况
+    - 任务复杂度
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        令牌效率分数 [0, 1]
+    """
+    # 预执行检查完成度对令牌效率影响最大
+    pre_exec_checks = [
+        context.duplicate_check_complete,
+        context.architecture_verified,
+        context.has_official_docs,
+        context.has_oss_reference,
+        context.root_cause_identified,
+    ]
+    pre_exec_score = sum(1 for c in pre_exec_checks if c) / len(pre_exec_checks)
+
+    # 信号强度高意味着决策更清晰, 需要更少的探索
+    signal_bonus = context.signal_strength * 0.2
+
+    return min(1.0, pre_exec_score * 0.8 + signal_bonus)
+
+
+def _compute_tool_optimization(context: ConfidenceContext) -> float:
+    """计算工具优化分数 (v4.5).
+
+    评估任务的工具选择优化程度, 基于:
+    - 批量操作潜力
+    - 专用工具匹配度
+    - 操作复杂度
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        工具优化分数 [0, 1]
+    """
+    # 已验证架构意味着可以使用更专业的工具
+    arch_score = 0.3 if context.architecture_verified else 0.0
+
+    # 文档可用性提升工具选择准确度
+    doc_score = 0.25 if context.has_official_docs else 0.0
+    oss_score = 0.15 if context.has_oss_reference else 0.0
+
+    # 流动性分数反映操作环境的稳定性
+    liquidity_score = context.liquidity_score * 0.3
+
+    return min(1.0, arch_score + doc_score + oss_score + liquidity_score)
+
+
+def _compute_mcp_integration(context: ConfidenceContext) -> float:
+    """计算MCP集成分数 (v4.5).
+
+    评估任务对MCP服务器的集成程度, 基于:
+    - 外部信号有效性 (MCP数据源)
+    - 系统对齐度
+    - 跨资产协调能力
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        MCP集成分数 [0, 1]
+    """
+    # 外部信号有效性反映MCP数据源质量
+    external_score = 0.0
+    if context.external_signal_valid:
+        external_score = context.external_signal_correlation * 0.4
+
+    # 体制对齐反映系统协调性
+    regime_score = 0.3 if context.regime_alignment else 0.0
+
+    # 低跨资产相关性意味着更好的独立MCP协调
+    correlation_score = (1.0 - context.cross_asset_correlation) * 0.3
+
+    return min(1.0, external_score + regime_score + correlation_score)
+
+
+def _encode_task_complexity(context: ConfidenceContext) -> float:
+    """编码任务复杂度 (v4.5).
+
+    将任务复杂度编码为数值, 基于:
+    - 任务类型
+    - 市场条件
+    - 信号复杂度
+
+    参数:
+        context: 置信度评估上下文
+
+    返回:
+        任务复杂度编码 [0, 1], 值越高表示任务越简单
+    """
+    # 任务类型复杂度编码
+    task_type_scores = {
+        TaskType.SIMPLE_FIX: 1.0,      # 简单修复: 最低复杂度
+        TaskType.BUG_FIX: 0.8,         # Bug修复: 中低复杂度
+        TaskType.ENHANCEMENT: 0.6,     # 功能增强: 中等复杂度
+        TaskType.NEW_FEATURE: 0.4,     # 新功能: 中高复杂度
+        TaskType.REFACTORING: 0.3,     # 重构: 高复杂度
+        TaskType.ARCHITECTURE: 0.2,    # 架构变更: 最高复杂度
+    }
+    task_score = task_type_scores.get(context.task_type, 0.5)
+
+    # 市场条件调整
+    market_scores = {
+        "NORMAL": 1.0,
+        "TRENDING": 0.9,
+        "RANGE": 0.8,
+        "VOLATILE": 0.4,
+        "CRISIS": 0.2,
+    }
+    market_adjustment = market_scores.get(context.market_condition, 0.5) * 0.3
+
+    # 综合分数: 任务类型权重70%, 市场调整权重30%
+    return min(1.0, task_score * 0.7 + market_adjustment)
+
+
 def get_feature_dim(config: FeatureConfig | None = None) -> int:
     """获取特征维度.
 
