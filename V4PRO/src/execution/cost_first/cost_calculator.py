@@ -76,6 +76,30 @@ class CostAlertLevel(Enum):
     BLOCK = "BLOCK"
 
 
+# 告警级别严重程度映射 (值越大越严重)
+_ALERT_LEVEL_SEVERITY: dict[CostAlertLevel, int] = {
+    CostAlertLevel.NORMAL: 0,
+    CostAlertLevel.WARNING: 1,
+    CostAlertLevel.CRITICAL: 2,
+    CostAlertLevel.BLOCK: 3,
+}
+
+
+def _max_alert_level(level1: CostAlertLevel, level2: CostAlertLevel) -> CostAlertLevel:
+    """比较两个告警级别，返回更严重的级别.
+
+    参数:
+        level1: 第一个告警级别
+        level2: 第二个告警级别
+
+    返回:
+        更严重的告警级别
+    """
+    if _ALERT_LEVEL_SEVERITY[level1] >= _ALERT_LEVEL_SEVERITY[level2]:
+        return level1
+    return level2
+
+
 @dataclass(frozen=True)
 class MarketDepth:
     """市场深度数据.
