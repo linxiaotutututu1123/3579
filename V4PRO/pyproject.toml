@@ -242,9 +242,11 @@ addopts = [
     "--log-datefmt=%Y-%m-%d %H:%M:%S",
     "--log-file-mode=a",
     "--log-file=logs/test.log",
-    “PLC”,
-    "PLR",
+    "PLC",
+    "PLR",PLR",
+    "PLR",PLR",
     "PLW",
+    "PLR",
     "T20",
 ]
 filterwarnings = [
