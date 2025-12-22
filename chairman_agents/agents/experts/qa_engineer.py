@@ -1498,14 +1498,14 @@ class QAEngineerAgent(BaseExpertAgent):
     async def _execute_general_qa_task(
         self,
         task: Task,
-        context: ExecutionContext,
+        artifacts: list[Artifact],
     ) -> None:
         """Execute a general QA task."""
         # Analyze requirements if provided
         requirements = task.context.get("requirements", [])
         if requirements:
             strategy = await self.analyze_requirements(requirements)
-            context.artifacts.append(self._strategy_to_artifact(strategy))
+            artifacts.append(self._strategy_to_artifact(strategy))
 
         # Create general QA report
         report = Artifact(
@@ -1513,9 +1513,9 @@ class QAEngineerAgent(BaseExpertAgent):
             name="QA Analysis Report",
             content=f"QA analysis for task: {task.title}\n"
                    f"Description: {task.description}",
-            created_by=self.id,
+            created_by=self.agent_id,
         )
-        context.artifacts.append(report)
+        artifacts.append(report)
 
     # =========================================================================
     # Artifact Conversion

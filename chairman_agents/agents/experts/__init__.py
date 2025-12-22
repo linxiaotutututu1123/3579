@@ -76,6 +76,28 @@ from chairman_agents.agents.experts.code_reviewer import (
     CodeReviewerAgent,
 )
 
+from chairman_agents.agents.experts.frontend_engineer import (
+    # 枚举
+    FrontendFramework,
+    ComponentType,
+    StyleApproach,
+    # 数据类
+    ComponentSpec,
+    ComponentDesign,
+    UIReviewComment,
+    PerformanceMetrics,
+    Optimization,
+    DesignTokens,
+    # 策略类
+    FrameworkStrategy,
+    ReactStrategy,
+    VueStrategy,
+    SvelteStrategy,
+    FrameworkStrategyFactory,
+    # 智能体
+    FrontendEngineerAgent,
+)
+
 __all__ = [
     # =========================================================================
     # TechWriter 相关
