@@ -24,6 +24,9 @@ V4PRO Scenarios (MCP集成):
 - K62: CONFIDENCE.MCP.CONTEXT7 - Context7文档验证
 - K63: CONFIDENCE.MCP.SEQUENTIAL - 分步推理检查
 - K64: CONFIDENCE.MCP.VERIFY - 综合MCP验证
+- K65: CONFIDENCE.REPORT.MARKDOWN - Markdown报告
+- K66: CONFIDENCE.REPORT.JSON - JSON报告
+- K67: CONFIDENCE.REPORT.RICH - 终端富文本报告
 """
 
 from src.risk.attribution import (
