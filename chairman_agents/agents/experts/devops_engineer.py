@@ -888,7 +888,7 @@ class DevOpsEngineerAgent(BaseExpertAgent):
         stages.append(checkout_stage)
 
         # 环境设置阶段
-        setup_jobs = []
+        setup_jobs: list[dict[str, Any]] = []
         if project.language == "python":
             setup_jobs.extend([
                 {"uses": "actions/setup-python@v5", "with": {"python-version": "3.12"}},

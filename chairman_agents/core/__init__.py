@@ -62,9 +62,15 @@ from .exceptions import (
     ConfigurationError,
 )
 
+from .protocols import (
+    LLMClientProtocol,
+    ToolExecutorProtocol,
+    MessageBrokerProtocol,
+    AgentRegistryProtocol,
+)
+
 from .config import (
-    # Exceptions
-    ConfigurationError,
+    # Exceptions (ConfigurationError already imported from exceptions)
     ConfigValidationError as ConfigValidationErr,
     ConfigLoadError,
     # Configuration classes
@@ -129,6 +135,11 @@ __all__ = [
     "ToolError",
     "ToolExecutionError",
     "ToolTimeoutError",
+    # 协议
+    "LLMClientProtocol",
+    "ToolExecutorProtocol",
+    "MessageBrokerProtocol",
+    "AgentRegistryProtocol",
     # 配置管理
     "ConfigurationError",
     "ConfigValidationErr",

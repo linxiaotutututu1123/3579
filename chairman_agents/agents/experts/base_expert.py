@@ -40,6 +40,8 @@ from ...core.types import (
     generate_id,
 )
 
+from ...cognitive.memory import MemoryQuery
+
 if TYPE_CHECKING:
     from ...cognitive.memory import MemorySystem
     from ...cognitive.reasoning import ReasoningEngine
@@ -363,11 +365,12 @@ class BaseExpertAgent(ABC):
         # Retrieve relevant memories if memory system is available
         if self._memory_system is not None:
             try:
-                memories = await self._memory_system.retrieve(
+                memory_query = MemoryQuery(
                     query=f"{task.title} {task.description}",
                     limit=10,
                 )
-                context.memory_context = [m.content for m in memories]
+                results = self._memory_system.retrieve(memory_query)
+                context.memory_context = [m.content for m, _score in results]
             except Exception as e:
                 logger.warning("Failed to retrieve memories: %s", e)
 

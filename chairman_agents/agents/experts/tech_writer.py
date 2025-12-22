@@ -25,6 +25,7 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol
 
+from chairman_agents.core.protocols import LLMClientProtocol
 from chairman_agents.core.types import (
     AgentCapability,
     AgentProfile,
@@ -40,25 +41,6 @@ from chairman_agents.core.types import (
 
 if TYPE_CHECKING:
     pass
-
-
-# =============================================================================
-# LLM 客户端协议
-# =============================================================================
-
-
-class LLMClientProtocol(Protocol):
-    """LLM 客户端协议，定义智能体所需的接口."""
-
-    async def generate(
-        self,
-        prompt: str,
-        *,
-        temperature: float = 0.7,
-        max_tokens: int = 2048,
-    ) -> str:
-        """生成文本响应."""
-        ...
 
 
 # =============================================================================

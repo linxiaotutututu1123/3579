@@ -40,6 +40,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from ...core.exceptions import TaskExecutionError
+from ...core.protocols import LLMClientProtocol
 from ...core.types import (
     AgentCapability,
     AgentId,
@@ -485,20 +486,6 @@ class CodeReview:
     def get_issues_by_category(self, category: ReviewCategory) -> list[ReviewComment]:
         """Get all issues of a specific category."""
         return [c for c in self.comments if c.category == category.value]
-
-
-# =============================================================================
-# LLM Client Protocol
-# =============================================================================
-
-
-@runtime_checkable
-class LLMClientProtocol(Protocol):
-    """Protocol for LLM client interface."""
-
-    async def generate(self, prompt: str, **kwargs: Any) -> str:
-        """Generate a response from the LLM."""
-        ...
 
 
 # =============================================================================

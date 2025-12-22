@@ -23,6 +23,7 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol
 
+from chairman_agents.core.protocols import LLMClientProtocol
 from chairman_agents.core.types import (
     AgentCapability,
     AgentProfile,
@@ -42,14 +43,6 @@ if TYPE_CHECKING:
     from chairman_agents.cognitive.reasoning import ReasoningEngine
 
 logger = logging.getLogger(__name__)
-
-
-class LLMClientProtocol(Protocol):
-    """Protocol for LLM client interface."""
-
-    async def generate(
-        self, prompt: str, *, temperature: float = 0.7, max_tokens: int = 2048
-    ) -> str: ...
 
 
 class VulnerabilitySeverity(Enum):

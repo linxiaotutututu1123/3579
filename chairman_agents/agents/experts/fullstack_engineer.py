@@ -39,6 +39,7 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
+from ...core.protocols import LLMClientProtocol
 from ...core.types import (
     AgentCapability,
     AgentId,
@@ -47,12 +48,15 @@ from ...core.types import (
     Artifact,
     ArtifactType,
     ExpertiseLevel,
+    ReasoningStep,
     Task,
     TaskResult,
     TaskStatus,
     ToolType,
     generate_id,
 )
+
+from ...cognitive.memory import MemoryQuery
 
 if TYPE_CHECKING:
     from ...cognitive.memory import MemorySystem
@@ -667,27 +671,6 @@ class IntegrationPlan:
 
 
 # =============================================================================
-# LLM Client Protocol
-# =============================================================================
-
-
-@runtime_checkable
-class LLMClientProtocol(Protocol):
-    """Protocol for LLM client interface."""
-
-    async def generate(
-        self,
-        prompt: str,
-        *,
-        system_prompt: str | None = None,
-        temperature: float = 0.7,
-        max_tokens: int = 4096,
-    ) -> str:
-        """Generate text from the LLM."""
-        ...
-
-
-# =============================================================================
 # Base Expert Agent
 # =============================================================================
 
@@ -813,7 +796,7 @@ class BaseExpertAgent(ABC):
             memory_type: Type of memory (episodic, semantic, procedural)
         """
         if self._memory is not None:
-            self._memory.add(content, memory_type=memory_type)
+            self._memory.store(content, memory_type=memory_type)
 
     async def _recall(
         self,
@@ -832,8 +815,9 @@ class BaseExpertAgent(ABC):
         if self._memory is None:
             return []
 
-        results = self._memory.search(query, limit=limit)
-        return [item.content for item in results]
+        memory_query = MemoryQuery(query=query, limit=limit)
+        results = self._memory.retrieve(memory_query)
+        return [item.content for item, _score in results]
 
     def _create_artifact(
         self,
@@ -951,7 +935,7 @@ class FullstackEngineerAgent(BaseExpertAgent):
             task_type = await self._analyze_task_type(task)
 
             artifacts: list[Artifact] = []
-            reasoning_steps = []
+            reasoning_steps: list[ReasoningStep] = []
 
             # Execute based on task type
             if task_type == "feature":
@@ -964,8 +948,8 @@ class FullstackEngineerAgent(BaseExpertAgent):
                 ))
 
             elif task_type == "api":
-                spec = self._extract_endpoint_spec(task)
-                impl = await self.implement_api(spec)
+                endpoint_spec = self._extract_endpoint_spec(task)
+                impl = await self.implement_api(endpoint_spec)
                 for file_path, code in impl.code.items():
                     artifacts.append(self._create_artifact(
                         name=file_path,

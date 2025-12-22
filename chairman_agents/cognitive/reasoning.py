@@ -28,6 +28,7 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol
 
+from chairman_agents.core.protocols import LLMClientProtocol
 from chairman_agents.core.types import generate_id
 
 if TYPE_CHECKING:
@@ -37,29 +38,6 @@ if TYPE_CHECKING:
 # =============================================================================
 # 类型定义
 # =============================================================================
-
-
-class LLMClientProtocol(Protocol):
-    """LLM 客户端协议，定义推理引擎所需的接口."""
-
-    async def generate(
-        self,
-        prompt: str,
-        *,
-        temperature: float = 0.7,
-        max_tokens: int = 2048,
-    ) -> str:
-        """生成文本响应.
-
-        Args:
-            prompt: 输入提示
-            temperature: 采样温度
-            max_tokens: 最大生成 token 数
-
-        Returns:
-            生成的文本响应
-        """
-        ...
 
 
 class ReasoningStrategy(Enum):
