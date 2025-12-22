@@ -134,6 +134,21 @@ from src.risk.dynamic_var import (
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.manager import Decision, RiskManager
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode, RiskState
+from src.risk.margin_monitor import (
+    DynamicMarginConfig,
+    DynamicMarginMonitor,
+    ForceCloseRisk,
+    MarginAlertLevel,
+    MarginCallAlert,
+    MarginCallReason,
+    MarginRiskAction,
+    MarginSnapshot,
+    MarginUpdateResult,
+    assess_force_close_risk,
+    create_dynamic_margin_monitor,
+    get_default_dynamic_monitor,
+    quick_margin_check,
+)
 from src.risk.stress_test_china import (
     HYPOTHETICAL_SCENARIOS,
     STRESS_SCENARIOS,
