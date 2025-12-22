@@ -254,10 +254,21 @@ addopts = [
     "--log-file-level=ERROR",
     "--log-file=logs/critical.log",
     "--log-file-level=CRTICAL",
+    "--log-file=logs/fatal.log",
+    "--log-file-level=FATAL",
+    "--log-file=logs/emergency.log",
+    "--log-file-level=EMERGENCY",
+    "--log-file=logs/alert.log",
+    "--log-file-level=ALERT",
+    "--log-file=logs/crit.log",
+    "--log-file-level=CRITICAL",
 ]
 minversion = 7.0
 doctest_optionflags =
 ["IGNORE_EXCEPTION_DETAIL",]
+[tool.pytest.ini_options.filterwarnings
+{
+    "default": []
 ]
 filterwarnings = [
     "error::DeprecationWarning",
