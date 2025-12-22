@@ -8,6 +8,7 @@
     - CodeReviewerAgent: 代码审查员，精通代码质量和最佳实践
     - FrontendEngineerAgent: 前端工程师，精通 UI 组件开发
     - FullstackEngineerAgent: 全栈工程师，精通端到端开发
+    - QAEngineerAgent: QA 工程师，精通测试策略和自动化测试
 
 Example:
     >>> from chairman_agents.agents.experts import TechWriterAgent, DocStyle
@@ -205,4 +206,25 @@ __all__ = [
     "FrameworkStrategyFactory",
     # 智能体
     "FrontendEngineerAgent",
+    # =========================================================================
+    # FullstackEngineer 相关
+    # =========================================================================
+    # 枚举
+    "FullstackFrontendFramework",
+    "BackendFramework",
+    "DatabaseType",
+    "APIStyle",
+    # 规格数据类
+    "FullstackFeatureSpec",
+    "EndpointSpec",
+    "Entity",
+    "ServiceSpec",
+    # 输出数据类
+    "FeatureDesign",
+    "APIImplementation",
+    "DatabaseSchema",
+    "Prototype",
+    "IntegrationPlan",
+    # 智能体
+    "FullstackEngineerAgent",
 ]
