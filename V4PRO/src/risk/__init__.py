@@ -262,6 +262,8 @@ __all__ = [
     "MarginSnapshot",
     # 保证金更新结果 (v4.3 Phase 9)
     "MarginUpdateResult",
+    # 市场因子枚举 (v4.6 Phase 10)
+    "MarketFactor",
     # MCP调用结果 (v4.5)
     "MCPCallResult",
     # MCP客户端协议 (v4.5)
@@ -297,8 +299,16 @@ __all__ = [
     "ScenarioType",
     # MCP包装器 (v4.5)
     "SequentialWrapper",
+    # SHAP归因分析器 (v4.6 Phase 10)
+    "SHAPAttributor",
+    "SHAPAttributionMethod",
+    "SHAPAttributionResult",
+    "SHAPFactorContribution",
     # 统计响应 (v4.4)
     "StatisticsResponse",
+    # 策略因子枚举 (v4.6 Phase 10)
+    "StrategyBreakdown",
+    "StrategyFactor",
     "StressScenario",
     "StressTestResult",
     "StressTestSummary",
@@ -306,6 +316,9 @@ __all__ = [
     "TaskType",
     # MCP包装器 (v4.5)
     "TavilyWrapper",
+    # 时间归因 (v4.6 Phase 10)
+    "TimeAttribution",
+    "TimeDimension",
     # 训练配置 (v4.4)
     "TrainingConfig",
     "TrainingResult",
@@ -319,6 +332,8 @@ __all__ = [
     "assess_from_json",
     "assess_pre_execution",
     "assess_signal",
+    # 组合收益归因 (v4.6 Phase 10)
+    "attribute_portfolio_returns",
     "attribute_trade_loss",
     "create_attribution_engine",
     # 自适应VaR工厂函数 (D8)
@@ -337,6 +352,8 @@ __all__ = [
     "create_mcp_assessor",
     # 报告生成器工厂 (v4.5)
     "create_report_generator",
+    # SHAP归因工厂 (v4.6 Phase 10)
+    "create_shap_attributor",
     # 特征提取 (v4.4)
     "extract_features",
     "format_confidence_report",
@@ -358,6 +375,12 @@ __all__ = [
     # 市场状态辅助函数 (D8)
     "get_regime_from_volatility",
     "get_scenario_by_name",
+    # SHAP因子摘要 (v4.6 Phase 10)
+    "get_shap_factor_summary",
+    # 策略摘要 (v4.6 Phase 10)
+    "get_strategy_summary",
+    # 时间归因摘要 (v4.6 Phase 10)
+    "get_time_summary",
     # 快速VaR计算函数
     "quick_adaptive_var",
     # 快速API评估 (v4.4)
