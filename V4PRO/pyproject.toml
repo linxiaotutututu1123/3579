@@ -335,6 +335,29 @@ exclude = [
     "__pycache__/",
 ]
 
+[tool.pylint.logging]
+# 日志规范
+logging-format-style = "new"
+logging-modules = ["logging"]
+
+[tool.pylint.refactoring]
+# 重构建议
+max-nested-blocks = 5
+never-returning-functions = ["sys.exit", "argparse.parse_error"]
+
+[tool.pylint.similarities]
+# 重复代码检测
+ignore-comments = true
+ignore-docstrings = true
+ignore-imports = true
+ignore-signatures = true
+min-similarity-lines = 4
+
+[tool.pylint.spelling]
+# 拼写检查
+spelling-dict = ""
+spelling-ignore-words = []
+spelling-private-dict-file = ""
 
 # ═══════════════════════════════════════════════════════════════════════════
 # 模块级配置
@@ -530,50 +553,74 @@ filterwarnings = [
 asyncio_mode = "auto"
 
 # =============================================================================
-# 📊 Coverage - 分层覆盖率要求
+# 🔥 Coverage - 极致严格覆盖率配置
 # =============================================================================
 [tool.coverage.run]
 source = ["src"]
 branch = true
 parallel = true
+concurrency = ["thread", "multiprocessing"]
 relative_files = true
 data_file = ".coverage"
 dynamic_context = "test_function"
 
+# 排除项
 omit = [
-    # 入口和脚本
-    "src/**/cli/*",
-    "src/**/scripts/*",
-    "src/**/__main__.py",
+    # 入口脚本
+    "src/scripts/*",
+    "src/app/*_entry.py",
     
     # 类型存根
     "*.pyi",
     
-    # 配置
-    "conftest.py",
-    "tests/*",
+    
 ]
 
 [tool.coverage.paths]
-source = ["src/"]
+source = [
+    "src/",
+]
 
 [tool.coverage.report]
 # ═══════════════════════════════════════════════════════════════════════════
-# 整体目标：85%
-# 核心模块通过CI单独检查达到更高标准
+# 极致严格：100%覆盖率要求
 # ═══════════════════════════════════════════════════════════════════════════
-fail_under = 85
+fail_under = 95.0
 precision = 2
 show_missing = true
-skip_covered = true
-skip_empty = true
+skip_covered = false
+skip_empty = false
 
-# 排除行
+# 必须覆盖的模块
+include = [
+    "src/trading/*",
+    "src/execution/*",
+    "src/risk/*",
+    "src/market/*",
+    "src/data/*",
+    "src/strategy/*",
+    "src/backtesting/*",
+    "src/common/*",
+    "src/broker/*",
+    "src/gateway/*",
+    "src/simulation/*",
+    "src/config/*",
+    "src/utils/*",
+    "src/ai/*",
+    "src/ml/*",
+    "src/analytics/*",
+    "src/visualization/*",
+    "src/optimization/*",
+    "src/portfolio/*",
+    "src/performance/*",
+]
+
+# 排除行（必须有注释说明理由）
 exclude_lines = [
     # 标准排除
     "pragma: no cover",
     
-    # 类型检查块
+    # 类型检查
     "if TYPE_CHECKING:",
     "if typing.TYPE_CHECKING:",
     
@@ -582,38 +629,50 @@ exclude_lines = [
     "@abc.abstractmethod",
     "raise NotImplementedError",
     
-    # 主入口
+    # 入口点
     'if __name__ == "__main__":',
+    'if __name__ == .__main__.:',
     
-    # 防御性代码
+    # 防御性编程（不应到达）
     "raise AssertionError",
-    "assert False",
+    "raise RuntimeError\$.*unreachable.*\$",
     
-    # 调试/展示方法
+    # 调试代码
     "def __repr__",
     "def __str__",
     
-    # 可选的日志
-    "logger\\.debug",
-    "logging\\.debug",
+    # 协议方法
+    "\\.\\.\\.",
+    "pass",
 ]
 
+# 部分行排除
 partial_branches = [
     "pragma: no branch",
 ]
 
 [tool.coverage.html]
 directory = "reports/coverage/html"
-title = "cn-futures-auto-trader Coverage Report"
+title = "cn-futures-auto-trader 覆盖率报告"
 show_contexts = true
 
 [tool.coverage.xml]
 output = "reports/coverage/coverage.xml"
 
+[tool.coverage.json]
+output = "reports/coverage/coverage.json"
+pretty_print = true
+show_contexts = true
 
 # =============================================================================
 # 🔥 Semgrep - 安全和代码质量扫描
 # =============================================================================
+# Bandit - 安全扫描
+[tool.bandit]
+exclude_dirs = ["tests", "scripts", ".venv"]
+skips = []  # 不跳过任何检查
+severity = "low"  # 报告所有级别
+
 [tool.semgrep]
 # 这是参考配置，实际使用需在CI中配置
 rules = [
@@ -678,6 +737,18 @@ max-branches = 15
 max-locals = 20
 max-returns = 8
 max-statements = 60
+
+# =============================================================================
+# 🔥 Vulture - 死代码检测
+# =============================================================================
+[tool.vulture]
+min_confidence = 80
+paths = ["src"]
+exclude = ["tests/", "scripts/", ".venv/"]
+ignore_decorators = ["@app.route", "@pytest.fixture", "@abstractmethod"]
+ignore_names = ["visit_*", "do_*"]
+make_whitelist = false
+sort_by_size = true
 
 # =============================================================================
 # 📖 Interrogate - 文档覆盖率
