@@ -146,6 +146,20 @@ class ConfidenceContext:
     strategy_regime: str = "UNKNOWN"  # 策略适用体制
     cross_asset_correlation: float = 0.0  # 跨资产相关性风险 (0=低相关, 1=高相关)
 
+    # v4.5 并行执行检查
+    parallel_execution_mode: bool = False  # 是否启用并行执行模式
+    independent_operations: int = 0  # 独立操作数量 (可并行执行的操作数)
+    has_dependencies: bool = True  # 是否存在依赖关系 (False=可完全并行)
+
+    # v4.5 令牌效率检查
+    estimated_tokens: int = 0  # 预估令牌消耗
+    task_complexity: str = "MEDIUM"  # 任务复杂度 (SIMPLE/MEDIUM/COMPLEX)
+    token_budget_ok: bool = True  # 令牌预算是否充足
+
+    # v4.5 工具优化检查
+    uses_optimal_tools: bool = False  # 是否使用最优工具组合
+    tool_selection_score: float = 0.0  # 工具选择评分 (0.0-1.0)
+
     # 元数据
     metadata: dict[str, Any] = field(default_factory=dict)
 
