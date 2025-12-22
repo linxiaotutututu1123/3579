@@ -36,6 +36,8 @@ select = [
     "FLY",    # flynt (f-string 推荐)
     "PERF",   # perflint (性能)
     "RUF",    # ruff 专有规则
+    “PLC”,    # pylint-codestyle
+    "PLR",    # pylint-errors
 ]
 
 # （不许随便加忽略，必须有理由。不许简化任何规则，不许简化任何功能和逻辑！）
