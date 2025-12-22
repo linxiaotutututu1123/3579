@@ -1612,26 +1612,25 @@ EXCHANGE_CONFIG = {
 | `CHINA.CALENDAR.TRADING_DAY` | 交易日计算正确 | 0 |
 | `CHINA.CALENDAR.HOLIDAY` | 节假日处理正确 | 0 |
 | `CHINA.FEE.BY_VOLUME_CALC` | 按手收费计算 | 0 |
-| `CHINA.FEE.BY_VALUE_CALC` | 按金额收费计算 | M5 |
-| `CHINA.FEE.CLOSE_TODAY_CALC` | 平今手续费计算 | M14 |
-| `CHINA.LIMIT.PRICE_CHECK` | 涨跌停价格检查 | M13 |
-| `CHINA.LIMIT.ORDER_REJECT` | 超限订单拒绝 | M13 |
-| `CHINA.MARGIN.RATIO_CHECK` | 保证金率检查 | M16 |
-| `CHINA.MARGIN.USAGE_MONITOR` | 保证金使用监控 | M16 |
-| `CHINA.MARGIN.WARNING_LEVEL` | 保证金预警等级 | M16 |
-| `CHINA.TRIGGER.LIMIT_PRICE` | 涨跌停触发器 | M6, M13 |
-| `CHINA.TRIGGER.MARGIN_CALL` | 保证金追缴触发 | M6, M16 |
-| `CHINA.TRIGGER.DELIVERY` | 交割月接近触发 | M6, M15 |
-| `CHINA.STRESS.2015_CRASH` | 2015股灾场景 | M6 |
-| `CHINA.STRESS.2020_OIL` | 2020原油负价场景 | M6 |
-| `CHINA.STRESS.2022_LITHIUM` | 2022碳酸锂场景 | M6 |
-| `CHINA.ARB.DELIVERY_AWARE` | 交割感知套利 | M15 |
-| `CHINA.ARB.POSITION_TRANSFER` | 移仓换月逻辑 | M15 |
-| `CHINA.COMPLIANCE.RULE_CHECK` | 合规规则检查 | M17 |
-| `CHINA.COMPLIANCE.REPORT_FREQUENCY` | 报撤单频率检查 | M17 |
-| `CHINA.PROGRAMMATIC.ORDER_LIMIT` | 程序化下单限额 | M17 | |
-| `CHINA.PROGRAMMATIC.POSITION_LIMIT` | 程序化持仓
-|限额 | M17 |
+| `CHINA.FEE.BY_VALUE_CALC` | 按金额收费计算 | 0 |
+| `CHINA.FEE.CLOSE_TODAY_CALC` | 平今手续费计算 | 0 |
+| `CHINA.LIMIT.PRICE_CHECK` | 涨跌停价格检查 | 0 |
+| `CHINA.LIMIT.ORDER_REJECT` | 超限订单拒绝 | 0 |
+| `CHINA.MARGIN.RATIO_CHECK` | 保证金率检查 | 0 |
+| `CHINA.MARGIN.USAGE_MONITOR` | 保证金使用监控 | 0 |
+| `CHINA.MARGIN.WARNING_LEVEL` | 保证金预警等级 | 0 |
+| `CHINA.TRIGGER.LIMIT_PRICE` | 涨跌停触发器 | 0 |
+| `CHINA.TRIGGER.MARGIN_CALL` | 保证金追缴触发 | 0 |
+| `CHINA.TRIGGER.DELIVERY` | 交割月接近触发 | 0 |
+| `CHINA.STRESS.2015_CRASH` | 2015股灾场景 | 0 |
+| `CHINA.STRESS.2020_OIL` | 2020原油负价场景 | 0 |
+| `CHINA.STRESS.2022_LITHIUM` | 2022碳酸锂场景 | 0 |
+| `CHINA.ARB.DELIVERY_AWARE` | 交割感知套利 | 0 |
+| `CHINA.ARB.POSITION_TRANSFER` | 移仓换月逻辑 | 0 |
+| `CHINA.COMPLIANCE.RULE_CHECK` | 合规规则检查 | 0 |
+| `CHINA.COMPLIANCE.REPORT_FREQUENCY` | 报撤单频率检查 | 0 |
+| `CHINA.PROGRAMMATIC.ORDER_LIMIT` | 程序化下单限额 | 0 | |
+| `CHINA.PROGRAMMATIC.POSITION_LIMIT` | 程序化持仓限额 | 0 |
 |---------|----------|------|
 
 ---
@@ -1755,28 +1754,28 @@ class ComplianceThrottle:
 
 | Rule ID | 场景描述 | 军规 |
 |---------|----------|------|
-| `ALGO.TWAP.SLICE_CALC` | TWAP切片计算 | M5 |
-| `ALGO.TWAP.TIME_DISTRIBUTE` | TWAP时间分布 | M5 |
-| `ALGO.VWAP.VOLUME_PROFILE` | VWAP成交量分布 | M5 |
-| `ALGO.VWAP.PARTICIPATION` | VWAP参与率控制 | M5 |
-| `ALGO.ICEBERG.DISPLAY_SIZE` | 冰山单显示量 | M5 |
-| `ALGO.ICEBERG.REFRESH` | 冰山单刷新逻辑 | M5 |
-| `ALGO.ADAPTIVE.MARKET_STATE` | 自适应市场状态 | M5 |
-| `ALGO.ADAPTIVE.STRATEGY_SWITCH` | 自适应策略切换 | M4 |
-| `ALGO.IMPACT.ALMGREN_CHRISS` | Almgren-Chriss模型 | M5 |
-| `ALGO.IMPACT.TEMPORARY` | 临时冲击计算 | M5 |
-| `ALGO.IMPACT.PERMANENT` | 永久冲击计算 | M5 |
-| `THROTTLE.5S_LIMIT` | 5秒限制检查 | M17 |
-| `THROTTLE.DAILY_LIMIT` | 日内限制检查 | M17 |
-| `THROTTLE.HIGH_FREQ_DETECT` | 高频检测 | M17 |
-| `THROTTLE.WARNING_LEVEL` | 预警等级 | M17 |
-| `EXP.MATURITY.80_THRESHOLD` | 80%成熟度门槛 | M18 |
-| `EXP.MATURITY.60_DIMENSION` | 60%维度门槛 | M18 |
-| `EXP.MATURITY.90_DAYS` | 90天最低训练 | M18 |
-| `EXP.GATE.NO_BYPASS` | 禁止绕过门禁 | M18 |
-| `EXP.GATE.MANUAL_APPROVAL` | 需人工审批 | M12, M18 |
-| `EXP.MONITOR.PROGRESS` | 进度监控正确 | M18 |
-| `EXP.MONITOR.ALERT` | 告警生成正确 | M9 |
+| `ALGO.TWAP.SLICE_CALC` | TWAP切片计算 | 0 |
+| `ALGO.TWAP.TIME_DISTRIBUTE` | TWAP时间分布 | 0 |
+| `ALGO.VWAP.VOLUME_PROFILE` | VWAP成交量分布 | 0 |
+| `ALGO.VWAP.PARTICIPATION` | VWAP参与率控制 | 0 |
+| `ALGO.ICEBERG.DISPLAY_SIZE` | 冰山单显示量 | 0 |
+| `ALGO.ICEBERG.REFRESH` | 冰山单刷新逻辑 | 0 |
+| `ALGO.ADAPTIVE.MARKET_STATE` | 自适应市场状态 | 0 |
+| `ALGO.ADAPTIVE.STRATEGY_SWITCH` | 自适应策略切换 | 0 |
+| `ALGO.IMPACT.ALMGREN_CHRISS` | Almgren-Chriss模型 | 0 |
+| `ALGO.IMPACT.TEMPORARY` | 临时冲击计算 | 0 |
+| `ALGO.IMPACT.PERMANENT` | 永久冲击计算 | 0 |
+| `THROTTLE.5S_LIMIT` | 5秒限制检查 | 0 |
+| `THROTTLE.DAILY_LIMIT` | 日内限制检查 | 0 |
+| `THROTTLE.HIGH_FREQ_DETECT` | 高频检测 | 0 |
+| `THROTTLE.WARNING_LEVEL` | 预警等级 | 0 |
+| `EXP.MATURITY.80_THRESHOLD` | 80%成熟度门槛 | 0 |
+| `EXP.MATURITY.60_DIMENSION` | 60%维度门槛 | 0 |
+| `EXP.MATURITY.90_DAYS` | 90天最低训练 | 0 |
+| `EXP.GATE.NO_BYPASS` | 禁止绕过门禁 | 0 |
+| `EXP.GATE.MANUAL_APPROVAL` | 需人工审批 | 0 |
+| `EXP.MONITOR.PROGRESS` | 进度监控正确 | 0 |
+| `EXP.MONITOR.ALERT` | 告警生成正确 | 0 |
 |---------|----------|------|
 
 ---
@@ -1817,22 +1816,22 @@ class ComplianceThrottle:
 
 | Rule ID | 场景描述 | 军规 |
 |---------|----------|------|
-| `COMPLIANCE.REGISTRATION` | 程序化交易备案 | M17 |
-| `COMPLIANCE.ALGO_RECORD` | 算法备案记录 | M17 |
-| `COMPLIANCE.REPORT_CANCEL` | 报撤单频率监控 | M17 |
-| `COMPLIANCE.HIGH_FREQ_DETECT` | 高频交易检测 | M17 |
-| `COMPLIANCE.LARGE_ORDER` | 大额订单复核 | M12, M17 |
-| `COMPLIANCE.STRESS_TEST` | 压力测试执行 | M6, M17 |
-| `COMPLIANCE.EMERGENCY_STOP` | 紧急停止机制 | M6, M17 |
-| `MONITOR.HEALTH.CHECK` | 健康检查执行 | M9 |
-| `MONITOR.HEALTH.COMPONENT` | 组件状态监控 | M9 |
-| `MONITOR.HEALTH.DEGRADED` | 降级状态检测 | M4, M9 |
-| `MONITOR.METRICS.COUNTER` | 计数器指标 | M9 |
-| `MONITOR.METRICS.GAUGE` | 仪表盘指标 | M9 |
-| `MONITOR.METRICS.HISTOGRAM` | 直方图指标 | M9 |
-| `MONITOR.METRICS.PROMETHEUS` | Prometheus导出 | M9 |
-| `MONITOR.ALERT.THRESHOLD` | 阈值告警 | M9 |
-| `MONITOR.ALERT.CHANNEL` | 告警渠道 | M9 |
+| `COMPLIANCE.REGISTRATION` | 程序化交易备案 | 0 |
+| `COMPLIANCE.ALGO_RECORD` | 算法备案记录 | 0 |
+| `COMPLIANCE.REPORT_CANCEL` | 报撤单频率监控 | 0 |
+| `COMPLIANCE.HIGH_FREQ_DETECT` | 高频交易检测 | 0 |
+| `COMPLIANCE.LARGE_ORDER` | 大额订单复核 | 0 |
+| `COMPLIANCE.STRESS_TEST` | 压力测试执行 | 0 |
+| `COMPLIANCE.EMERGENCY_STOP` | 紧急停止机制 | 0 |
+| `MONITOR.HEALTH.CHECK` | 健康检查执行 | 0 |
+| `MONITOR.HEALTH.COMPONENT` | 组件状态监控 | 0 |
+| `MONITOR.HEALTH.DEGRADED` | 降级状态检测 | 0 |
+| `MONITOR.METRICS.COUNTER` | 计数器指标 | 0 |
+| `MONITOR.METRICS.GAUGE` | 仪表盘指标 | 0 |
+| `MONITOR.METRICS.HISTOGRAM` | 直方图指标 | 0 |
+| `MONITOR.METRICS.PROMETHEUS` | Prometheus导出 | 0 |
+| `MONITOR.ALERT.THRESHOLD` | 阈值告警 | 0 |
+| `MONITOR.ALERT.CHANNEL` | 告警渠道 | 0 |
 |---------|----------|------|
 
 ---
@@ -1900,36 +1899,36 @@ class EnhancedVaRCalculator(VaRCalculator):
 
 | Rule ID | 场景描述 | 军规 |
 |---------|----------|------|
-| `PORTFOLIO.POSITION.UPDATE` | 持仓更新正确 | M1 |
-| `PORTFOLIO.POSITION.LIMIT` | 持仓限额检查 | M6 |
-| `PORTFOLIO.POSITION.NET` | 净持仓计算 | M1 |
-| `PORTFOLIO.RISK.EXPOSURE` | 风险敞口计算 | M6 |
-| `PORTFOLIO.RISK.CONCENTRATION` | 集中度计算 | M6 |
-| `PORTFOLIO.PNL.ATTRIBUTION` | 盈亏归因 | M19 |
-| `PORTFOLIO.SHARPE.CALCULATE` | 夏普比率计算 | M19 |
-| `PORTFOLIO.DRAWDOWN.MAX` | 最大回撤计算 | M6 |
-| `PORTFOLIO.SNAPSHOT.TIMESERIES` | 时序快照 | M3 |
-| `VAR.HISTORICAL.PERCENTILE` | 历史VaR计算 | M6 |
-| `VAR.PARAMETRIC.NORMAL` | 参数VaR计算 | M6 |
-| `VAR.MONTECARLO.SIMULATION` | 蒙特卡洛VaR | M6 |
-| `VAR.ES.CALCULATE` | ES/CVaR计算 | M6 |
-| `VAR.EVT.GPD` | EVT-GPD方法 | M6 |
-| `VAR.SEMIPARAMETRIC.KERNEL` | 半参数方法 | M6 |
-| `VAR.LIMIT_ADJUSTED` | 涨跌停调整 | M6, M13 |
-| `VAR.LIQUIDITY_ADJUSTED` | 流动性调整 | M6 |
-| `RISK.ATTRIBUTION.FACTOR` | 因子归因 | M19 |
-| `RISK.ATTRIBUTION.STRATEGY` | 策略归因 | M19 |
-| `RISK.ATTRIBUTION.POSITION` | 持仓归因 | M19 |
-| `RISK.BREACH.DETECT` | 风险突破检测 | M6 |
-| `RISK.BREACH.ACTION` | 风险突破动作 | M6 |
-| `RISK.STRESS.SCENARIO` | 压力测试场景 | M6 |
-| `RISK.STRESS.RESULT` | 压力测试结果 | M6 |
-| `RISK.KILLSWITCH.TRIGGER` | 熔断触发 | M6 |
-| `CONFIDENCE.PRE_EXEC` | 预执行置信度检查 (v4.3) | M3, M31 |
-| `CONFIDENCE.SIGNAL` | 信号置信度评估 (v4.3) | M3, M19 |
-| `CONFIDENCE.AUDIT` | 置信度审计追踪 (v4.3) | M3 |
-| `CONFIDENCE.ADAPTIVE` | 自适应阈值调整 (v4.3) | M6, M31 |
-| `CONFIDENCE.TREND` | 置信度趋势分析 (v4.3) | M19, M31 |
+| `PORTFOLIO.POSITION.UPDATE` | 持仓更新正确 | 0 |
+| `PORTFOLIO.POSITION.LIMIT` | 持仓限额检查 | 0 |
+| `PORTFOLIO.POSITION.NET` | 净持仓计算 | 0 |
+| `PORTFOLIO.RISK.EXPOSURE` | 风险敞口计算 | 0 |
+| `PORTFOLIO.RISK.CONCENTRATION` | 集中度计算 | 0 |
+| `PORTFOLIO.PNL.ATTRIBUTION` | 盈亏归因 | 0 |
+| `PORTFOLIO.SHARPE.CALCULATE` | 夏普比率计算 | 0 |
+| `PORTFOLIO.DRAWDOWN.MAX` | 最大回撤计算 | 0 |
+| `PORTFOLIO.SNAPSHOT.TIMESERIES` | 时序快照 | 0 |
+| `VAR.HISTORICAL.PERCENTILE` | 历史VaR计算 | 0 |
+| `VAR.PARAMETRIC.NORMAL` | 参数VaR计算 | 0 |
+| `VAR.MONTECARLO.SIMULATION` | 蒙特卡洛VaR | 0 |
+| `VAR.ES.CALCULATE` | ES/CVaR计算 | 0 |
+| `VAR.EVT.GPD` | EVT-GPD方法 | 0 |
+| `VAR.SEMIPARAMETRIC.KERNEL` | 半参数方法 | 0 |
+| `VAR.LIMIT_ADJUSTED` | 涨跌停调整 | 0 |
+| `VAR.LIQUIDITY_ADJUSTED` | 流动性调整 | 0 |
+| `RISK.ATTRIBUTION.FACTOR` | 因子归因 | 0 |
+| `RISK.ATTRIBUTION.STRATEGY` | 策略归因 | 0 |
+| `RISK.ATTRIBUTION.POSITION` | 持仓归因 | 0 |
+| `RISK.BREACH.DETECT` | 风险突破检测 | 0 |
+| `RISK.BREACH.ACTION` | 风险突破动作 | 0 |
+| `RISK.STRESS.SCENARIO` | 压力测试场景 | 0 |
+| `RISK.STRESS.RESULT` | 压力测试结果 | 0 |
+| `RISK.KILLSWITCH.TRIGGER` | 熔断触发 | 0 |
+| `CONFIDENCE.PRE_EXEC` | 预执行置信度检查 (v4.3) | 0 |
+| `CONFIDENCE.SIGNAL` | 信号置信度评估 (v4.3) | 0 |
+| `CONFIDENCE.AUDIT` | 置信度审计追踪 (v4.3) | 0 |
+| `CONFIDENCE.ADAPTIVE` | 自适应阈值调整 (v4.3) | 0 |
+| `CONFIDENCE.TREND` | 置信度趋势分析 (v4.3) | 0 |
 |---------|----------|------|
 
 ---
