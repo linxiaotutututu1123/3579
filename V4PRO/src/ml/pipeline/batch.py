@@ -540,7 +540,6 @@ class BatchPipeline(DataPipeline):
         processing_start = time.time()
 
         # 分批处理
-        batch_size = self._config.batch_size
         checkpoint_interval = self.CHECKPOINT_INTERVAL
 
         for i, item in enumerate(data):
