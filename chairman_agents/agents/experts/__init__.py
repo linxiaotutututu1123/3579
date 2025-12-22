@@ -6,6 +6,8 @@
     - TechWriterAgent: 技术文档智能体，精通技术文档和 API 文档写作
     - DevOpsEngineerAgent: DevOps 工程师，精通 CI/CD 和基础设施
     - CodeReviewerAgent: 代码审查员，精通代码质量和最佳实践
+    - FrontendEngineerAgent: 前端工程师，精通 UI 组件开发
+    - FullstackEngineerAgent: 全栈工程师，精通端到端开发
 
 Example:
     >>> from chairman_agents.agents.experts import TechWriterAgent, DocStyle
@@ -19,6 +21,10 @@ Example:
     >>> from chairman_agents.agents.experts import CodeReviewerAgent
     >>> reviewer = CodeReviewerAgent(profile, llm_client, memory)
     >>> review = await reviewer.review_code(code, context)
+
+    >>> from chairman_agents.agents.experts import FullstackEngineerAgent
+    >>> fullstack = FullstackEngineerAgent(profile, llm_client, memory)
+    >>> design = await fullstack.design_feature(spec)
 """
 
 from __future__ import annotations
@@ -96,6 +102,27 @@ from chairman_agents.agents.experts.frontend_engineer import (
     FrameworkStrategyFactory,
     # 智能体
     FrontendEngineerAgent,
+)
+
+from chairman_agents.agents.experts.fullstack_engineer import (
+    # 枚举
+    FrontendFramework as FullstackFrontendFramework,
+    BackendFramework,
+    DatabaseType,
+    APIStyle,
+    # 规格数据类
+    FeatureSpec as FullstackFeatureSpec,
+    EndpointSpec,
+    Entity,
+    ServiceSpec,
+    # 输出数据类
+    FeatureDesign,
+    APIImplementation,
+    DatabaseSchema,
+    Prototype,
+    IntegrationPlan,
+    # 智能体
+    FullstackEngineerAgent,
 )
 
 __all__ = [

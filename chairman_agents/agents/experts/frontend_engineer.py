@@ -1557,13 +1557,13 @@ export const Variant: Story = {{
 
 ## Usage
 
-\`\`\`tsx
+```tsx
 import {{ {spec.name} }} from '@/components/{spec.name}';
 
 function Example() {{
   return <{spec.name} />;
 }}
-\`\`\`
+```
 
 ## Props
 {props_table}
@@ -1576,9 +1576,9 @@ function Example() {{
 
 ### Basic
 
-\`\`\`tsx
+```tsx
 <{spec.name} />
-\`\`\`
+```
 """
 
     async def _analyze_accessibility(self, spec: ComponentSpec) -> list[str]:
