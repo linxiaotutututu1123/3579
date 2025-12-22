@@ -58,9 +58,23 @@ from .exceptions import (
 )
 
 from .config import (
+    # Exceptions
+    ConfigurationError,
+    ConfigValidationError as ConfigValidationErr,
+    ConfigLoadError,
+    # Configuration classes
+    LLMConfig,
+    TeamConfig,
+    OrchestratorConfig,
+    QualityConfig,
+    PathConfig,
+    LoggingConfig,
     Config,
+    # Global management functions
     get_config,
     set_config,
+    reset_config,
+    init_config,
 )
 
 __all__ = [
