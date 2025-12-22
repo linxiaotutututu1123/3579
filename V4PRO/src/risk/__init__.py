@@ -203,6 +203,9 @@ __all__ = [
     # MCP包装器 (v4.5)
     "Context7Wrapper",
     "Decision",
+    # 动态保证金监控 (v4.3 Phase 9)
+    "DynamicMarginConfig",
+    "DynamicMarginMonitor",
     # 动态VaR引擎 (v4.2)
     "DynamicVaREngine",
     "DynamicVaRResult",
@@ -212,11 +215,25 @@ __all__ = [
     "FactorType",
     # 特征配置 (v4.4)
     "FeatureConfig",
+    # 强平风险评估 (v4.3 Phase 9)
+    "ForceCloseRisk",
     "GPDParameters",
     "ImpactLevel",
     "LiquidityMetrics",
     # MCP包装器 (v4.5)
     "MagicWrapper",
+    # 保证金告警级别 (v4.3 Phase 9)
+    "MarginAlertLevel",
+    # 追保告警 (v4.3 Phase 9)
+    "MarginCallAlert",
+    # 追保原因 (v4.3 Phase 9)
+    "MarginCallReason",
+    # 保证金风险处置动作 (v4.3 Phase 9)
+    "MarginRiskAction",
+    # 保证金快照 (v4.3 Phase 9)
+    "MarginSnapshot",
+    # 保证金更新结果 (v4.3 Phase 9)
+    "MarginUpdateResult",
     # MCP调用结果 (v4.5)
     "MCPCallResult",
     # MCP客户端协议 (v4.5)
@@ -269,6 +286,8 @@ __all__ = [
     "VaRMethod",
     # VaR调度状态 (D8)
     "VaRScheduleState",
+    # 强平风险评估函数 (v4.3 Phase 9)
+    "assess_force_close_risk",
     "assess_from_json",
     "assess_pre_execution",
     "assess_signal",
@@ -280,6 +299,8 @@ __all__ = [
     "create_api",
     # 置信度监控工厂 (v4.4)
     "create_confidence_monitor",
+    # 动态保证金监控工厂 (v4.3 Phase 9)
+    "create_dynamic_margin_monitor",
     "create_dynamic_var_engine",
     # ML工厂函数 (v4.4)
     "create_ml_enhanced_assessor",
@@ -300,6 +321,8 @@ __all__ = [
     # 生成表格报告 (v4.5)
     "generate_table_report",
     "get_all_scenarios",
+    # 获取默认动态保证金监控器 (v4.3 Phase 9)
+    "get_default_dynamic_monitor",
     "get_default_tester",
     "get_factor_summary",
     # 特征维度 (v4.4)
@@ -313,6 +336,8 @@ __all__ = [
     "quick_assess",
     "quick_evt_var",
     "quick_limit_var",
+    # 快速保证金检查 (v4.3 Phase 9)
+    "quick_margin_check",
     # 快速ML预测 (v4.4)
     "quick_ml_predict",
     # 快速MCP评估 (v4.5)
