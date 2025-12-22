@@ -176,8 +176,8 @@ class MemorySystem:
         Splits Chinese into individual characters while keeping
         English words together.
         """
-        tokens = []
-        current_english = []
+        tokens: list[str] = []
+        current_english: list[str] = []
 
         for char in text:
             if self.CHINESE_PATTERN.match(char):
@@ -255,7 +255,7 @@ class MemorySystem:
         # Term frequency bonus: reward more occurrences in memory
         tf_bonus = 0.0
         if intersection:
-            memory_token_freq = {}
+            memory_token_freq: dict[str, int] = {}
             for token in memory_tokens:
                 memory_token_freq[token] = memory_token_freq.get(token, 0) + 1
 

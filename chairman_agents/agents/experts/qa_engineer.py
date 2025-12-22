@@ -1395,7 +1395,7 @@ class QAEngineerAgent(BaseExpertAgent):
 
             if not nullable:
                 # Create record with null value for non-nullable field
-                negative_record = {f.get("name", ""): "valid" for f in schema.fields}
+                negative_record: dict[str, str | None] = {f.get("name", ""): "valid" for f in schema.fields}
                 negative_record[field_name] = None
                 dataset.negative_cases.append(negative_record)
 

@@ -299,7 +299,7 @@ class PipelineStage:
 
     def to_github_actions(self) -> dict[str, Any]:
         """转换为 GitHub Actions 格式."""
-        job = {
+        job: dict[str, Any] = {
             "name": self.name,
             "runs-on": "ubuntu-latest",
             "steps": self.jobs,
@@ -316,7 +316,7 @@ class PipelineStage:
 
     def to_gitlab_ci(self) -> dict[str, Any]:
         """转换为 GitLab CI 格式."""
-        stage = {
+        stage: dict[str, Any] = {
             "stage": self.name,
             "script": [j.get("run", "") for j in self.jobs if "run" in j],
         }
