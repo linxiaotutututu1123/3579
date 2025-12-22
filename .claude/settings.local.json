@@ -65,7 +65,8 @@
       "Bash(PYTHONPATH=. \"C:/Users/1/2468/3579/V4PRO/.venv/Scripts/python.exe\":*)",
       "Bash(uv run ruff check:*)",
       "Bash(git checkout:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(dir:*)"
     ]
   }
 }
