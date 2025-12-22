@@ -58,7 +58,8 @@
       "Bash(uv sync:*)",
       "Bash(VIRTUAL_ENV=\"\" uv run pytest:*)",
       "Bash(uv run python:*)",
-      "Bash(uv venv)"
+      "Bash(uv venv)",
+      "Bash(.venv/Scripts/python:*)"
     ]
   }
 }
