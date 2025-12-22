@@ -242,6 +242,15 @@ addopts = [
     "--log-datefmt=%Y-%m-%d %H:%M:%S",
     "--log-file-mode=a",
     "--log-file=logs/test.log",
+    “PLC”,
+    "PLR",
+    "PLW",
+    "T20",
+]
+filterwarnings = [
+    "error::DeprecationWarning",
+    "error::PendingDeprecationWarning",
+]
 ]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
