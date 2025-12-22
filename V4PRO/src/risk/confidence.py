@@ -840,37 +840,51 @@ class ConfidenceAssessor:
         return checks
 
     def _assess_combined(self, context: ConfidenceContext) -> list[ConfidenceCheck]:
-        """组合评估 (预执行 + 信号 + 扩展 + 高级).
+        """组合评估 (预执行 + 信号 + 扩展 + 高级 + v4.5增强).
+
+        军规覆盖: M3(完整审计), M19(风险归因)
 
         权重分配:
-        - 预执行检查: 30%
-        - 信号检查: 30%
-        - 扩展检查: 20%
-        - 高级检查: 20%
+        - 预执行检查: 25%
+        - 信号检查: 25%
+        - 扩展检查: 15%
+        - 高级检查: 15%
+        - v4.5增强检查: 20%
         """
         pre_exec_checks = self._assess_pre_execution(context)
         signal_checks = self._assess_signal(context)
         extended_checks = self._assess_extended(context)
         advanced_checks = self._assess_advanced(context)
+        v45_checks = self._assess_v45_enhanced(context)
 
-        # 调整权重 (预执行30% + 信号30% + 扩展20% + 高级20%)
+        # 调整权重 (预执行25% + 信号25% + 扩展15% + 高级15% + v4.5增强20%)
         for check in pre_exec_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.3
+            check_dict["weight"] *= 0.25
 
         for check in signal_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.3
+            check_dict["weight"] *= 0.25
 
         for check in extended_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.2
+            check_dict["weight"] *= 0.15
 
         for check in advanced_checks:
             check_dict = check.to_dict()
-            check_dict["weight"] *= 0.2
+            check_dict["weight"] *= 0.15
 
-        return pre_exec_checks + signal_checks + extended_checks + advanced_checks
+        for check in v45_checks:
+            check_dict = check.to_dict()
+            check_dict["weight"] *= 0.20
+
+        return (
+            pre_exec_checks
+            + signal_checks
+            + extended_checks
+            + advanced_checks
+            + v45_checks
+        )
 
     def _get_recommendation(
         self, level: ConfidenceLevel, checks: list[ConfidenceCheck]
