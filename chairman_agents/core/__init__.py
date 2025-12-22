@@ -88,6 +88,7 @@ __all__ = [
     "AgentId",
     "TaskId",
     "ArtifactId",
+    "generate_id",
     # 枚举类型
     "AgentRole",
     "ExpertiseLevel",
@@ -103,6 +104,11 @@ __all__ = [
     "TaskContext",
     "Artifact",
     "QualityRequirements",
+    "TaskResult",
+    "ReasoningStep",
+    "ReviewComment",
+    "AgentMessage",
+    "AgentState",
     # 基础异常
     "ChairmanAgentError",
     # LLM相关异常
