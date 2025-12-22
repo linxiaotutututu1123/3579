@@ -1536,7 +1536,7 @@ class QAEngineerAgent(BaseExpertAgent):
             type=ArtifactType.TEST_PLAN,
             name=strategy.name,
             content=content,
-            created_by=self.id,
+            created_by=self.agent_id,
         )
 
     def _test_cases_to_artifact(self, test_cases: list[TestCase]) -> Artifact:
@@ -1552,7 +1552,7 @@ class QAEngineerAgent(BaseExpertAgent):
             type=ArtifactType.TEST_CODE,
             name="Generated Test Cases",
             content=content,
-            created_by=self.id,
+            created_by=self.agent_id,
         )
 
     def _test_suite_to_artifact(self, suite: TestSuite) -> Artifact:
@@ -1569,7 +1569,7 @@ class QAEngineerAgent(BaseExpertAgent):
             type=ArtifactType.TEST_PLAN,
             name=suite.name,
             content=content,
-            created_by=self.id,
+            created_by=self.agent_id,
         )
 
     def _edge_cases_to_artifact(self, edge_cases: list[EdgeCase]) -> Artifact:
@@ -1585,7 +1585,7 @@ class QAEngineerAgent(BaseExpertAgent):
             type=ArtifactType.TEST_PLAN,
             name="Edge Case Analysis",
             content=content,
-            created_by=self.id,
+            created_by=self.agent_id,
         )
 
     def _dataset_to_artifact(self, dataset: TestDataSet) -> Artifact:
@@ -1599,7 +1599,7 @@ class QAEngineerAgent(BaseExpertAgent):
             type=ArtifactType.TEST_CODE,
             name=dataset.name,
             content=content,
-            created_by=self.id,
+            created_by=self.agent_id,
         )
 
 
