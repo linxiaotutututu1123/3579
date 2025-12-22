@@ -893,7 +893,8 @@ class TestRealtimePipelineStatus:
     def test_get_metrics(self, realtime_pipeline: RealtimePipeline) -> None:
         """TC-241: 获取管道指标."""
         realtime_pipeline.start()
-        realtime_pipeline.ingest({"data": 1})
+        # process() increments _processed_count, ingest() only adds to buffer
+        realtime_pipeline.process({"data": 1})
         metrics = realtime_pipeline.get_metrics()
         assert isinstance(metrics, PipelineMetrics)
         assert metrics.records_processed >= 1
