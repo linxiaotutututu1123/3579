@@ -1,5 +1,5 @@
 """
-风险管理模块 (军规级 v4.2).
+风险管理模块 (军规级 v4.5).
 
 V4PRO Platform Component - Phase 7/10 中国期货市场特化
 V4 SPEC: §15 Phase 10, §22 VaR风控增强, §23 压力测试场景, §24 模型可解释性
@@ -10,12 +10,19 @@ V4 SPEC: §15 Phase 10, §22 VaR风控增强, §23 压力测试场景, §24 模�
 - 动态VaR引擎 (DynamicVaREngine) [v4.2新增]
 - 中国期货压力测试 (StressTester)
 - 风险归因引擎 (RiskAttributionEngine) [v4.1新增]
+- 置信度MCP集成 (MCPEnhancedAssessor) [v4.5新增]
 
 军规覆盖:
+- M3: 完整审计 - MCP调用审计追踪
 - M6: 熔断保护 - 极端风险预警
 - M13: 涨跌停感知 - 涨跌停调整VaR
 - M16: 保证金监控 - 流动性调整VaR
 - M19: 风险归因 - SHAP因子分析
+
+V4PRO Scenarios (MCP集成):
+- K62: CONFIDENCE.MCP.CONTEXT7 - Context7文档验证
+- K63: CONFIDENCE.MCP.SEQUENTIAL - 分步推理检查
+- K64: CONFIDENCE.MCP.VERIFY - 综合MCP验证
 """
 
 from src.risk.attribution import (
