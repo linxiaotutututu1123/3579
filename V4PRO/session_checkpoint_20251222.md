@@ -147,6 +147,7 @@ ATTRIBUTION_DIMENSIONS = {
 | 高 | Phase 6 (55文件) 尚未开发 | 工作量巨大 | TODO |
 | 中 | Phase 7 剩余6个策略 | 策略完整性 | TODO |
 | 中 | Phase 8 剩余3个模块 | 架构完整性 | TODO |
+| ~~低~~ | ~~Phase 9 合规监控~~ | ~~已100%完成~~ | **DONE** |
 | 低 | Phase 10 剩余4个模块 | 风控完整性 | TODO |
 
 ---
