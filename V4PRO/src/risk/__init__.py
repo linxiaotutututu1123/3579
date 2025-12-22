@@ -1,8 +1,9 @@
 """
-风险管理模块 (军规级 v4.5).
+风险管理模块 (军规级 v4.6).
 
 V4PRO Platform Component - Phase 7/10 中国期货市场特化
 V4 SPEC: §15 Phase 10, §22 VaR风控增强, §23 压力测试场景, §24 模型可解释性
+V4 SPEC: SS25 多维归因分析, SS26 SHAP可解释性
 
 功能特性:
 - 风险管理器 (RiskManager)
@@ -12,13 +13,14 @@ V4 SPEC: §15 Phase 10, §22 VaR风控增强, §23 压力测试场景, §24 模�
 - 风险归因引擎 (RiskAttributionEngine) [v4.1新增]
 - 置信度MCP集成 (MCPEnhancedAssessor) [v4.5新增]
 - 置信度报告生成器 (ConfidenceReportGenerator) [v4.5新增]
+- SHAP多维归因分析器 (SHAPAttributor) [v4.6新增]
 
 军规覆盖:
 - M3: 完整审计 - MCP调用审计追踪
 - M6: 熔断保护 - 极端风险预警
 - M13: 涨跌停感知 - 涨跌停调整VaR
 - M16: 保证金监控 - 流动性调整VaR
-- M19: 风险归因 - SHAP因子分析
+- M19: 风险归因 - SHAP因子分析, 多维收益归因
 
 V4PRO Scenarios (MCP集成):
 - K62: CONFIDENCE.MCP.CONTEXT7 - Context7文档验证
@@ -27,8 +29,12 @@ V4PRO Scenarios (MCP集成):
 - K65: CONFIDENCE.REPORT.MARKDOWN - Markdown报告
 - K66: CONFIDENCE.REPORT.JSON - JSON报告
 - K67: CONFIDENCE.REPORT.RICH - 终端富文本报告
+- K68: RISK.ATTRIBUTION.SHAP - SHAP多维归因 [v4.6新增]
+- K69: RISK.ATTRIBUTION.TIME - 时间序列归因 [v4.6新增]
+- K70: RISK.ATTRIBUTION.STRATEGY - 策略收益分解 [v4.6新增]
 """
 
+# 原有风险归因 (v4.1)
 from src.risk.attribution import (
     AttributionMethod,
     AttributionResult,
@@ -38,6 +44,28 @@ from src.risk.attribution import (
     attribute_trade_loss,
     create_attribution_engine,
     get_factor_summary,
+)
+
+# SHAP多维归因 (v4.6 Phase 10)
+from src.risk.attribution.shap_attribution import (
+    # 枚举
+    AttributionMethod as SHAPAttributionMethod,
+    MarketFactor,
+    StrategyFactor,
+    TimeDimension,
+    # 数据类
+    AttributionResult as SHAPAttributionResult,
+    FactorContribution as SHAPFactorContribution,
+    StrategyBreakdown,
+    TimeAttribution,
+    # 核心类
+    SHAPAttributor,
+    # 便捷函数
+    attribute_portfolio_returns,
+    create_shap_attributor,
+    get_factor_summary as get_shap_factor_summary,
+    get_strategy_summary,
+    get_time_summary,
 )
 from src.risk.confidence import (
     ConfidenceAssessor,
