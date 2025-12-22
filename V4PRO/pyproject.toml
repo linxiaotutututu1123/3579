@@ -432,80 +432,101 @@ init_typed = true
 warn_required_dynamic_aliases = true
 warn_untyped_fields = true
 
-# =============================================================================
-# 🧪 Pytest - 实用的测试配置
-# =============================================================================
-[tool.pytest.ini_options]
-minversion = "7.4"
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-
+# ═══════════════════════════════════════════════════════════════════════════
+# 严格模式配置
+# ═══════════════════════════════════════════════════════════════════════════
 addopts = [
     # 严格模式
     "--strict-markers",
     "--strict-config",
     
-    # 覆盖率 - 合理目标
+    # 覆盖率 - 95%要求
     "--cov=src",
     "--cov-branch",
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html:reports/coverage",
     "--cov-report=xml:reports/coverage.xml",
-    "--cov-fail-under=85",  # 整体85%，核心模块单独控制
+    "--cov-fail-under=95%",
     
-    # 输出
+    # 输出格式
     "-v",
     "--tb=short",
+    "--showlocals",
     
-    # 超时保护
-    "--timeout=300",
-    "--timeout_method=thread",
+    # 警告处理 - 严格
+    "-W", "error::DeprecationWarning",
+    "-W", "error::PendingDeprecationWarning",
+    "-W", "error::FutureWarning",
     
     # 日志
     "--log-cli-level=WARNING",
+    "--log-file=logs/test.log",
+    "--log-file-level=DEBUG",
+    "--log-file-format=%(asctime)s [%(levelname)8s] %(name)s: %(message)s",
+    "--log-file-date-format=%Y-%m-%d %H:%M:%S",
+    
+    # 超时
+    "--timeout=300",
+    "--timeout_method=thread",
+    
+    # 随机顺序（检测测试间依赖）
+    "-p", "no:randomly",  # 如需随机化则改为 "randomly"
+    
+    # 并行执行
+    # "-n", "auto",  # 启用pytest-xdist并行
+    
+    # 重试失败测试
+    # "--reruns=2",  # 启用pytest-rerunfailures
 ]
 
+# ═══════════════════════════════════════════════════════════════════════════
 # 测试标记
+# ═══════════════════════════════════════════════════════════════════════════
 markers = [
-    # 速度分类
-    "slow: 慢速测试（>5秒）",
-    "fast: 快速测试（<1秒）",
+    # 执行速度
+    "slow: 慢速测试（超过5秒）",
+    "fast: 快速测试（低于1秒）",
     
-    # 类型分类
+    # 测试类型
     "unit: 单元测试",
     "integration: 集成测试",
     "e2e: 端到端测试",
+    "smoke: 冒烟测试",
     
     # 交易相关
-    "live: 实盘测试（需交易所连接）",
+    "live: 实盘测试（需要交易所连接）",
     "paper: 模拟盘测试",
     "backtest: 回测测试",
+    "simulation: 仿真测试",
+    "replay: 行情回放测试",
     
-    # 模块分类
-    "trading: 交易模块",
-    "risk: 风控模块",
-    "strategy: 策略模块",
-    "data: 数据模块",
+    # 功能模块
+    "trading: 交易模块测试",
+    "risk: 风控模块测试",
+    "strategy: 策略模块测试",
+    "data: 数据模块测试",
+    "market: 行情模块测试",
     
-    # 特殊
-    "skip_ci: CI跳过",
+    # AI/ML
+    "ai: AI相关测试",
+    "ml: 机器学习测试",
+    "optimization: 优化测试",
+    
+    # 特殊标记
+    "skip_ci: CI环境跳过",
     "requires_ctp: 需要CTP SDK",
     "requires_gpu: 需要GPU",
+    "destructive: 破坏性测试（修改状态）",
 ]
 
-# 警告处理 - 合理的警告策略
+# 过滤警告
 filterwarnings = [
-    "error::DeprecationWarning",
-    "error::PendingDeprecationWarning",
-    # 忽略第三方库的警告
+    "error",
+    "ignore::pytest.PytestUnraisableExceptionWarning",
     "ignore::DeprecationWarning:pkg_resources.*",
-    "ignore::DeprecationWarning:importlib.*",
-    "ignore::PendingDeprecationWarning:pandas.*",
 ]
 
-# 异步
+# 异步模式
 asyncio_mode = "auto"
 
 # =============================================================================
