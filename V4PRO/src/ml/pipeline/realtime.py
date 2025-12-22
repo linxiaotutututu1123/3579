@@ -176,7 +176,7 @@ class LatencyTracker:
         """
         self.samples.append(latency_ms)
         if len(self.samples) > self.max_samples:
-            self.samples = self.samples[-self.max_samples:]
+            self.samples = self.samples[-self.max_samples :]
 
     @property
     def p99(self) -> float:
@@ -290,9 +290,7 @@ class RealtimePipeline(DataPipeline):
         self._on_circuit_close = on_circuit_close
 
         # 延迟追踪
-        self._latency_tracker = LatencyTracker(
-            p99_threshold_ms=self.MAX_LATENCY_MS
-        )
+        self._latency_tracker = LatencyTracker(p99_threshold_ms=self.MAX_LATENCY_MS)
 
         # 审计日志 (M3)
         self._audit_log: list[dict[str, Any]] = []
@@ -546,7 +544,9 @@ class RealtimePipeline(DataPipeline):
                     {
                         "seq_id": item.sequence_id,
                         "stream_latency_ms": round(latency_ms, 3),
-                        "queue_latency_ms": round((start_time - item.timestamp) * 1000, 3),
+                        "queue_latency_ms": round(
+                            (start_time - item.timestamp) * 1000, 3
+                        ),
                     },
                 )
 

@@ -127,7 +127,9 @@ class BatchProcessingResult:
     """
 
     success_items: list[Any] = field(default_factory=list)
-    failed_items: list[tuple[int, Any, str]] = field(default_factory=list)  # (index, item, error)
+    failed_items: list[tuple[int, Any, str]] = field(
+        default_factory=list
+    )  # (index, item, error)
     error_details: list[dict[str, Any]] = field(default_factory=list)
     processing_time_ms: float = 0.0
 
@@ -290,11 +292,13 @@ class BatchPipeline(DataPipeline):
 
         # 审计日志 (M3)
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "set_random_state",
-                "seed": seed,
-                "purpose": "M7_deterministic_processing",
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "set_random_state",
+                    "seed": seed,
+                    "purpose": "M7_deterministic_processing",
+                }
+            )
 
         # 知识沉淀 (M33)
         if self._config.enable_knowledge:
@@ -375,12 +379,14 @@ class BatchPipeline(DataPipeline):
 
         # 审计日志 (M3)
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "ingest",
-                "input_type": type(data).__name__,
-                "output_count": len(result),
-                "duration_ms": round(duration_ms, 2),
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "ingest",
+                    "input_type": type(data).__name__,
+                    "output_count": len(result),
+                    "duration_ms": round(duration_ms, 2),
+                }
+            )
 
         return result
 
@@ -424,12 +430,14 @@ class BatchPipeline(DataPipeline):
 
         # 审计日志 (M3)
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "validate",
-                "is_valid": is_valid,
-                "reason": reason,
-                "duration_ms": round(duration_ms, 2),
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "validate",
+                    "is_valid": is_valid,
+                    "reason": reason,
+                    "duration_ms": round(duration_ms, 2),
+                }
+            )
 
         return is_valid
 
@@ -462,11 +470,13 @@ class BatchPipeline(DataPipeline):
         # 审计日志 (M3)
         if self._config.enable_audit:
             count = len(result) if isinstance(result, list) else 1
-            self._metrics.add_audit_entry({
-                "action": "transform",
-                "record_count": count,
-                "duration_ms": round(duration_ms, 2),
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "transform",
+                    "record_count": count,
+                    "duration_ms": round(duration_ms, 2),
+                }
+            )
 
         return result
 
@@ -527,13 +537,15 @@ class BatchPipeline(DataPipeline):
 
         # 记录批次开始 (M3)
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "batch_start",
-                "batch_id": self._current_batch_id,
-                "total_count": self._total_count,
-                "data_hash": data_hash,
-                "random_state": self._random_state,
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "batch_start",
+                    "batch_id": self._current_batch_id,
+                    "total_count": self._total_count,
+                    "data_hash": data_hash,
+                    "random_state": self._random_state,
+                }
+            )
 
         # 处理结果
         batch_result = BatchProcessingResult()
@@ -551,11 +563,13 @@ class BatchPipeline(DataPipeline):
                 self._metrics.records_processed += 1
             else:
                 batch_result.failed_items.append((i, item, error))
-                batch_result.error_details.append({
-                    "index": i,
-                    "error": error,
-                    "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
-                })
+                batch_result.error_details.append(
+                    {
+                        "index": i,
+                        "error": error,
+                        "timestamp": datetime.now().isoformat(),  # noqa: DTZ005
+                    }
+                )
                 self._metrics.record_error(error.split(":")[0] if error else "unknown")
 
             self._processed_count += 1
@@ -567,21 +581,25 @@ class BatchPipeline(DataPipeline):
 
                 # 审计日志 (M3)
                 if self._config.enable_audit:
-                    self._metrics.add_audit_entry({
-                        "action": "checkpoint_created",
-                        "batch_id": self._current_batch_id,
-                        "processed_count": self._processed_count,
-                        "progress": round(self.get_progress(), 4),
-                    })
+                    self._metrics.add_audit_entry(
+                        {
+                            "action": "checkpoint_created",
+                            "batch_id": self._current_batch_id,
+                            "processed_count": self._processed_count,
+                            "progress": round(self.get_progress(), 4),
+                        }
+                    )
 
         # 计算处理时间
         batch_result.processing_time_ms = (time.time() - processing_start) * 1000
 
         # 更新指标
-        self._metrics.latency_ms = batch_result.processing_time_ms / max(1, self._total_count)
+        self._metrics.latency_ms = batch_result.processing_time_ms / max(
+            1, self._total_count
+        )
         if batch_result.processing_time_ms > 0:
-            self._metrics.throughput_per_sec = (
-                self._total_count / (batch_result.processing_time_ms / 1000)
+            self._metrics.throughput_per_sec = self._total_count / (
+                batch_result.processing_time_ms / 1000
             )
 
         # 停止管道
@@ -589,21 +607,23 @@ class BatchPipeline(DataPipeline):
 
         # 记录批次完成 (M3)
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "batch_complete",
-                "batch_id": self._current_batch_id,
-                "success_count": batch_result.success_count,
-                "failed_count": batch_result.failed_count,
-                "success_rate": round(batch_result.success_rate, 4),
-                "processing_time_ms": round(batch_result.processing_time_ms, 2),
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "batch_complete",
+                    "batch_id": self._current_batch_id,
+                    "success_count": batch_result.success_count,
+                    "failed_count": batch_result.failed_count,
+                    "success_rate": round(batch_result.success_rate, 4),
+                    "processing_time_ms": round(batch_result.processing_time_ms, 2),
+                }
+            )
 
         # 知识沉淀 (M33)
         if self._config.enable_knowledge:
             self.record_knowledge(
                 category="batch_processing",
                 content=f"批次{self._current_batch_id}处理完成: "
-                        f"{batch_result.success_count}/{self._total_count}成功",
+                f"{batch_result.success_count}/{self._total_count}成功",
                 context={
                     "batch_id": self._current_batch_id,
                     "success_rate": batch_result.success_rate,
@@ -638,10 +658,12 @@ class BatchPipeline(DataPipeline):
         if not self.validate(ingested_data):
             error_msg = "数据验证失败"
             if self._config.enable_audit:
-                self._metrics.add_audit_entry({
-                    "action": "process_failed",
-                    "reason": error_msg,
-                })
+                self._metrics.add_audit_entry(
+                    {
+                        "action": "process_failed",
+                        "reason": error_msg,
+                    }
+                )
             raise ValueError(error_msg)
 
         # 转换
@@ -682,12 +704,14 @@ class BatchPipeline(DataPipeline):
 
         # 审计日志 (M3)
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "save_checkpoint",
-                "batch_id": self._current_batch_id,
-                "processed_count": self._processed_count,
-                "progress": round(self.get_progress(), 4),
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "save_checkpoint",
+                    "batch_id": self._current_batch_id,
+                    "processed_count": self._processed_count,
+                    "progress": round(self.get_progress(), 4),
+                }
+            )
 
         return checkpoint_dict
 
@@ -710,7 +734,12 @@ class BatchPipeline(DataPipeline):
         if not checkpoint:
             raise ValueError("检查点数据为空")
 
-        required_keys = ["batch_id", "processed_count", "total_count", "last_processed_index"]
+        required_keys = [
+            "batch_id",
+            "processed_count",
+            "total_count",
+            "last_processed_index",
+        ]
         for key in required_keys:
             if key not in checkpoint:
                 raise ValueError(f"检查点缺少必要字段: {key}")
@@ -732,19 +761,21 @@ class BatchPipeline(DataPipeline):
 
         # 审计日志 (M3)
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "load_checkpoint",
-                "batch_id": self._current_batch_id,
-                "processed_count": self._processed_count,
-                "checkpoint_timestamp": checkpoint.get("timestamp", "unknown"),
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "load_checkpoint",
+                    "batch_id": self._current_batch_id,
+                    "processed_count": self._processed_count,
+                    "checkpoint_timestamp": checkpoint.get("timestamp", "unknown"),
+                }
+            )
 
         # 知识沉淀 (M33)
         if self._config.enable_knowledge:
             self.record_knowledge(
                 category="checkpoint_recovery",
                 content=f"从检查点恢复批次{self._current_batch_id}，"
-                        f"已处理{self._processed_count}/{self._total_count}",
+                f"已处理{self._processed_count}/{self._total_count}",
                 context={
                     "batch_id": self._current_batch_id,
                     "resume_index": self._last_processed_index + 1,
@@ -813,10 +844,12 @@ class BatchPipeline(DataPipeline):
         # 审计日志 (M3)
         if self._config.enable_audit:
             processor_name = getattr(processor, "__name__", type(processor).__name__)
-            self._metrics.add_audit_entry({
-                "action": "set_item_processor",
-                "processor": processor_name,
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "set_item_processor",
+                    "processor": processor_name,
+                }
+            )
 
     def reset(self) -> None:
         """重置管道状态.
@@ -833,10 +866,12 @@ class BatchPipeline(DataPipeline):
 
         # 审计日志 (M3)
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "pipeline_reset",
-                "purpose": "clear_all_state",
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "pipeline_reset",
+                    "purpose": "clear_all_state",
+                }
+            )
 
     def get_checkpoint_info(self) -> dict[str, Any]:
         """获取当前检查点信息.

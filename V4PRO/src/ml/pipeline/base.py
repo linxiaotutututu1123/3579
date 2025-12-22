@@ -356,8 +356,7 @@ class PipelineMetrics:
             "throughput_per_sec": round(self.throughput_per_sec, 2),
             "duration_ms": round(self.duration_ms, 2),
             "stage_metrics": {
-                stage.value: metrics
-                for stage, metrics in self.stage_metrics.items()
+                stage.value: metrics for stage, metrics in self.stage_metrics.items()
             },
             "error_counts": self.error_counts,
             "start_time": self.start_time,
@@ -615,11 +614,13 @@ class DataPipeline(ABC):
         self._current_stage = ProcessingStage.INGEST
 
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "pipeline_start",
-                "mode": self._config.mode.value,
-                "sources": [s.value for s in self._config.sources],
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "pipeline_start",
+                    "mode": self._config.mode.value,
+                    "sources": [s.value for s in self._config.sources],
+                }
+            )
 
     def stop(self) -> None:
         """停止管道.
@@ -630,12 +631,14 @@ class DataPipeline(ABC):
         self._metrics.end_time = datetime.now().isoformat()  # noqa: DTZ005
 
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "pipeline_stop",
-                "records_processed": self._metrics.records_processed,
-                "records_failed": self._metrics.records_failed,
-                "success_rate": self._metrics.success_rate,
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "pipeline_stop",
+                    "records_processed": self._metrics.records_processed,
+                    "records_failed": self._metrics.records_failed,
+                    "success_rate": self._metrics.success_rate,
+                }
+            )
 
     def reset(self) -> None:
         """重置管道状态.
@@ -667,11 +670,13 @@ class DataPipeline(ABC):
         self._current_stage = stage
 
         if self._config.enable_audit:
-            self._metrics.add_audit_entry({
-                "action": "stage_update",
-                "from_stage": self.STAGE_ORDER[current_idx].value,
-                "to_stage": stage.value,
-            })
+            self._metrics.add_audit_entry(
+                {
+                    "action": "stage_update",
+                    "from_stage": self.STAGE_ORDER[current_idx].value,
+                    "to_stage": stage.value,
+                }
+            )
 
     def record_knowledge(
         self,
@@ -691,13 +696,15 @@ class DataPipeline(ABC):
         if not self._config.enable_knowledge:
             return
 
-        self._metrics.add_knowledge_entry({
-            "category": category,
-            "content": content,
-            "context": context or {},
-            "stage": self._current_stage.value,
-            "processing_count": self._processing_count,
-        })
+        self._metrics.add_knowledge_entry(
+            {
+                "category": category,
+                "content": content,
+                "context": context or {},
+                "stage": self._current_stage.value,
+                "processing_count": self._processing_count,
+            }
+        )
 
     def get_audit_log(self) -> list[dict[str, Any]]:
         """获取审计日志 (M3).
