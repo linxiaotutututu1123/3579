@@ -153,6 +153,8 @@ V4PRO是一个中国期货量化交易系统，核心目标：
 |------|------|------|
 | 动态VaR引擎 | ✅ 完成 | AdaptiveVaRScheduler |
 | 熔断恢复闭环 | ✅ 完成 | CircuitBreakerController |
+| 置信度报告生成 | ✅ 完成 | ConfidenceReportGenerator (~580行) |
+| MCP集成层 | ✅ 完成 | MCPEnhancedAssessor (~650行) |
 | 多维收益归因 | ⏸ 待开发 | SHAP |
 | 风险归因扩展 | ⏸ 待开发 | M19 |
 | 风险归因SHAP | ⏸ 待开发 | - |
