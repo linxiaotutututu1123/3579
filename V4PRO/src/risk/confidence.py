@@ -279,6 +279,11 @@ class ConfidenceAssessor:
     WEIGHT_REGIME_ALIGNMENT: ClassVar[float] = 0.10  # 市场体制对齐
     WEIGHT_CORRELATION: ClassVar[float] = 0.10  # 跨资产相关性
 
+    # v4.5 增强检查项权重
+    WEIGHT_PARALLEL_EXECUTION: ClassVar[float] = 0.10  # 并行执行优化
+    WEIGHT_TOKEN_EFFICIENCY: ClassVar[float] = 0.10  # 令牌效率
+    WEIGHT_TOOL_OPTIMIZATION: ClassVar[float] = 0.10  # 工具选择优化
+
     def __init__(
         self,
         high_threshold: float = 0.90,

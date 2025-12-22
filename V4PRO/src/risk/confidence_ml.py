@@ -245,6 +245,7 @@ class FeatureConfig:
         include_signal: 是否包含信号特征
         include_extended: 是否包含扩展特征
         include_advanced: 是否包含高级特征
+        include_v45: 是否包含v4.5新增特征 (5维)
         normalize: 是否归一化特征
     """
 
@@ -252,6 +253,7 @@ class FeatureConfig:
     include_signal: bool = True
     include_extended: bool = True
     include_advanced: bool = True
+    include_v45: bool = True  # v4.5新增: 5个智能体优化特征
     normalize: bool = True
 
 
@@ -314,6 +316,16 @@ def extract_features(
             float(context.regime_alignment),
             1.0 - context.cross_asset_correlation,  # 反转: 低相关=高分
             _encode_regime(context.current_regime),
+        ])
+
+    # v4.5新增特征 (5维) - 智能体优化指标
+    if config.include_v45:
+        features.extend([
+            _compute_parallel_mode_score(context),
+            _compute_token_efficiency(context),
+            _compute_tool_optimization(context),
+            _compute_mcp_integration(context),
+            _encode_task_complexity(context),
         ])
 
     tensor = torch.tensor(features, dtype=torch.float32)
