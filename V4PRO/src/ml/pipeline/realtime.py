@@ -934,7 +934,7 @@ class RealtimePipeline(DataPipeline):
 
 
 def create_realtime_pipeline(
-    buffer_size: int = RealtimePipeline.DEFAULT_BUFFER_SIZE,
+    config_or_buffer_size: PipelineConfig | int = RealtimePipeline.DEFAULT_BUFFER_SIZE,
     enable_audit: bool = True,
     enable_knowledge: bool = True,
     on_circuit_open: Callable[[], None] | None = None,
@@ -943,9 +943,11 @@ def create_realtime_pipeline(
     """创建实时管道.
 
     Args:
-        buffer_size: 缓冲区大小
-        enable_audit: 是否启用审计日志 (M3)
-        enable_knowledge: 是否启用知识沉淀 (M33)
+        config_or_buffer_size: PipelineConfig对象或缓冲区大小(int)
+            - 如果传入PipelineConfig对象，直接使用该配置
+            - 如果传入int，作为buffer_size创建默认配置
+        enable_audit: 是否启用审计日志 (M3)，仅当config_or_buffer_size为int时生效
+        enable_knowledge: 是否启用知识沉淀 (M33)，仅当config_or_buffer_size为int时生效
         on_circuit_open: 熔断打开回调
         on_circuit_close: 熔断关闭回调
 
@@ -953,23 +955,32 @@ def create_realtime_pipeline(
         RealtimePipeline实例
 
     示例:
+        >>> # 方式1: 使用简单参数
         >>> pipeline = create_realtime_pipeline(
-        ...     buffer_size=5000,
+        ...     config_or_buffer_size=5000,
         ...     on_circuit_open=lambda: print("Circuit opened!"),
         ... )
+        >>> # 方式2: 使用PipelineConfig对象
+        >>> config = PipelineConfig(mode=PipelineMode.REALTIME, buffer_size=5000)
+        >>> pipeline = create_realtime_pipeline(config)
     """
     from src.ml.pipeline.base import DataSource
 
-    config = PipelineConfig(
-        mode=PipelineMode.REALTIME,
-        sources=[DataSource.MARKET],
-        buffer_size=buffer_size,
-        enable_audit=enable_audit,
-        enable_knowledge=enable_knowledge,
-    )
+    # 支持传入PipelineConfig对象或buffer_size整数
+    if isinstance(config_or_buffer_size, PipelineConfig):
+        config = config_or_buffer_size
+    else:
+        config = PipelineConfig(
+            mode=PipelineMode.REALTIME,
+            sources=[DataSource.MARKET],
+            buffer_size=config_or_buffer_size,
+            enable_audit=enable_audit,
+            enable_knowledge=enable_knowledge,
+        )
 
     return RealtimePipeline(
         config,
         on_circuit_open=on_circuit_open,
         on_circuit_close=on_circuit_close,
     )
+
