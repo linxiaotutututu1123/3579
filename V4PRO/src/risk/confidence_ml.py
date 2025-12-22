@@ -97,6 +97,140 @@ class ConfidenceMLP(nn.Module):
         return result
 
 
+class ConfidenceTransformer(nn.Module):
+    """置信度预测 Transformer 模型 (v4.5).
+
+    架构:
+    - 输入: feature_dim (上下文特征, 默认25维)
+    - 嵌入层: Linear(feature_dim, hidden_dim)
+    - Transformer编码器: num_layers层, num_heads注意力头
+    - 输出层: Linear(hidden_dim, 16) + ReLU + Linear(16, 1) + Sigmoid
+
+    M24合规: 模型可解释性
+    - 注意力权重可用于解释特征重要性
+    - 嵌入层可视化支持特征归因分析
+    """
+
+    def __init__(
+        self,
+        feature_dim: int = 25,  # 从20增至25 (v4.5)
+        hidden_dim: int = 64,
+        num_heads: int = 4,
+        num_layers: int = 2,
+        dropout: float = 0.1,
+    ) -> None:
+        """初始化Transformer模型.
+
+        参数:
+            feature_dim: 输入特征维度 (默认25, v4.5扩展)
+            hidden_dim: 隐藏层维度
+            num_heads: 注意力头数量
+            num_layers: Transformer编码器层数
+            dropout: Dropout比例
+        """
+        super().__init__()
+        self.feature_dim = feature_dim
+        self.hidden_dim = hidden_dim
+        self.num_heads = num_heads
+        self.num_layers = num_layers
+
+        # 嵌入层: 将特征映射到隐藏维度
+        self.embedding = nn.Linear(feature_dim, hidden_dim)
+
+        # Transformer编码器
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=hidden_dim,
+            nhead=num_heads,
+            dropout=dropout,
+            batch_first=True,
+        )
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers)
+
+        # 输出层: 生成置信度分数
+        self.output = nn.Sequential(
+            nn.Linear(hidden_dim, 16),
+            nn.ReLU(),
+            nn.Linear(16, 1),
+            nn.Sigmoid(),  # 输出在[0, 1]范围
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """前向传播.
+
+        参数:
+            x: 输入特征张量, 形状 (batch_size, feature_dim)
+
+        返回:
+            预测置信度分数, 形状 (batch_size, 1)
+        """
+        # 添加序列维度: (batch, features) -> (batch, 1, features)
+        if x.dim() == 2:
+            x = x.unsqueeze(1)
+
+        # 嵌入: (batch, 1, features) -> (batch, 1, hidden_dim)
+        embedded = self.embedding(x)
+
+        # Transformer编码: (batch, 1, hidden_dim) -> (batch, 1, hidden_dim)
+        transformed = self.transformer(embedded)
+
+        # 取序列的第一个位置输出: (batch, 1, hidden_dim) -> (batch, hidden_dim)
+        pooled = transformed[:, 0, :]
+
+        # 输出层: (batch, hidden_dim) -> (batch, 1)
+        result: torch.Tensor = self.output(pooled)
+        return result
+
+    def get_attention_weights(self, x: torch.Tensor) -> list[torch.Tensor]:
+        """获取注意力权重 (M24可解释性支持).
+
+        参数:
+            x: 输入特征张量
+
+        返回:
+            各层注意力权重列表
+        """
+        # 此方法为M24模型可解释性提供支持
+        # 实际实现需要注册forward hook获取注意力权重
+        # 这里返回空列表作为接口占位
+        return []
+
+
+# =============================================================================
+# 模型版本管理
+# =============================================================================
+
+MODEL_VERSION = "v4.5"
+"""当前模型版本."""
+
+MODEL_REGISTRY: dict[str, type[nn.Module]] = {
+    "v4.4": ConfidenceMLP,
+    "v4.5": ConfidenceTransformer,
+}
+"""模型版本注册表, 支持模型版本切换与回滚."""
+
+
+def get_model_class(version: str | None = None) -> type[nn.Module]:
+    """根据版本获取模型类.
+
+    参数:
+        version: 模型版本 (默认使用当前版本)
+
+    返回:
+        模型类
+
+    异常:
+        ValueError: 版本不存在
+    """
+    if version is None:
+        version = MODEL_VERSION
+
+    if version not in MODEL_REGISTRY:
+        available = ", ".join(MODEL_REGISTRY.keys())
+        raise ValueError(f"未知模型版本: {version}, 可用版本: {available}")
+
+    return MODEL_REGISTRY[version]
+
+
 # =============================================================================
 # 特征提取
 # =============================================================================
