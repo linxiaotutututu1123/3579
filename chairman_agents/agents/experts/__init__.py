@@ -113,4 +113,20 @@ __all__ = [
     "DeploymentPlan",
     # 智能体
     "DevOpsEngineerAgent",
+    # =========================================================================
+    # CodeReviewer 相关
+    # =========================================================================
+    # 枚举
+    "ReviewSeverity",
+    "ReviewCategory",
+    # 数据类
+    "ReviewContext",
+    "NamingIssue",
+    "ComplexityReport",
+    "RefactoringSuggestion",
+    "PatternViolation",
+    "QualityScores",
+    "CodeReview",
+    # 智能体
+    "CodeReviewerAgent",
 ]

@@ -884,7 +884,11 @@ class QAEngineerAgent(BaseExpertAgent):
     # Main Execution
     # =========================================================================
 
-    async def execute(self, task: Task) -> TaskResult:
+    async def execute(
+        self,
+        task: Task,
+        context: TaskContext | None = None,
+    ) -> TaskResult:
         """Execute a QA-related task.
 
         Handles various QA tasks including:
@@ -896,51 +900,84 @@ class QAEngineerAgent(BaseExpertAgent):
 
         Args:
             task: The task to execute
+            context: Task context
 
         Returns:
             TaskResult with QA artifacts
         """
-        context = await self._prepare_execution(task)
+        import time
+
+        start_time = time.time()
+        self._reasoning_trace = []
 
         try:
+            task.status = TaskStatus.IN_PROGRESS
+            task.started_at = datetime.now()
+
             # Determine task type and route to appropriate handler
             task_type = task.context.get("qa_task_type", "general")
+            artifacts: list[Artifact] = []
 
             if task_type == "strategy":
                 requirements = task.context.get("requirements", [])
                 strategy = await self.analyze_requirements(requirements)
-                context.artifacts.append(self._strategy_to_artifact(strategy))
+                artifacts.append(self._strategy_to_artifact(strategy))
 
             elif task_type == "test_cases":
                 feature_spec = self._extract_feature_spec(task)
                 test_cases = await self.generate_test_cases(feature_spec)
-                context.artifacts.append(self._test_cases_to_artifact(test_cases))
+                artifacts.append(self._test_cases_to_artifact(test_cases))
 
             elif task_type == "test_suite":
                 scope = self._extract_test_scope(task)
                 suite = await self.design_test_suite(scope)
-                context.artifacts.append(self._test_suite_to_artifact(suite))
+                artifacts.append(self._test_suite_to_artifact(suite))
 
             elif task_type == "edge_cases":
                 function_spec = self._extract_function_spec(task)
                 edge_cases = await self.identify_edge_cases(function_spec)
-                context.artifacts.append(self._edge_cases_to_artifact(edge_cases))
+                artifacts.append(self._edge_cases_to_artifact(edge_cases))
 
             elif task_type == "test_data":
                 schema = self._extract_data_schema(task)
                 dataset = await self.create_test_data(schema)
-                context.artifacts.append(self._dataset_to_artifact(dataset))
+                artifacts.append(self._dataset_to_artifact(dataset))
 
             else:
                 # General QA task - analyze and provide recommendations
-                await self._execute_general_qa_task(task, context)
+                await self._execute_general_qa_task(task, artifacts)
 
-            return await self._finalize_execution(context, success=True)
+            execution_time = time.time() - start_time
+            task.status = TaskStatus.COMPLETED
+            task.completed_at = datetime.now()
+
+            result = TaskResult(
+                task_id=task.id,
+                success=True,
+                artifacts=artifacts,
+                reasoning_trace=self._reasoning_trace,
+                confidence_score=0.85,
+                quality_score=0.9,
+                execution_time_seconds=execution_time,
+                suggestions=[
+                    "Review generated test cases for completeness",
+                    "Consider adding more edge case tests",
+                    "Ensure test data covers boundary conditions",
+                ],
+            )
+            self._task_history.append(result)
+            return result
 
         except Exception as e:
             logger.error("QA task execution failed: %s", e)
-            return await self._finalize_execution(
-                context, success=False, error_message=str(e)
+            task.status = TaskStatus.FAILED
+            execution_time = time.time() - start_time
+            return TaskResult(
+                task_id=task.id,
+                success=False,
+                error_message=str(e),
+                error_type=type(e).__name__,
+                execution_time_seconds=execution_time,
             )
 
     # =========================================================================
