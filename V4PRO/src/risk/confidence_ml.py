@@ -607,18 +607,23 @@ class TrainingResult:
 class ConfidenceMLPredictor:
     """置信度ML预测器.
 
-    使用MLP模型基于历史模式预测置信度。
+    使用ML模型基于历史模式预测置信度。
+    支持v4.4 (MLP) 和 v4.5 (Transformer) 模型版本。
 
     功能:
-    - 特征提取
+    - 特征提取 (25维, v4.5)
     - 模型训练
     - 置信度预测
     - 模型持久化
+    - 模型版本管理
 
     示例:
         >>> predictor = ConfidenceMLPredictor()
         >>> score = predictor.predict_confidence(context)
         >>> print(f"ML预测置信度: {score:.0%}")
+
+        >>> # 使用v4.4版本
+        >>> predictor_v44 = ConfidenceMLPredictor(model_version="v4.4")
     """
 
     DEFAULT_MODEL_PATH: ClassVar[str] = "models/confidence_ml.pt"
@@ -627,16 +632,23 @@ class ConfidenceMLPredictor:
         self,
         model_path: str | Path | None = None,
         feature_config: FeatureConfig | None = None,
+        model_version: str | None = None,
     ) -> None:
         """初始化预测器.
 
         参数:
             model_path: 模型文件路径 (可选，用于加载已训练模型)
             feature_config: 特征配置
+            model_version: 模型版本 (默认使用当前版本v4.5)
         """
         self._feature_config = feature_config or FeatureConfig()
         self._feature_dim = get_feature_dim(self._feature_config)
-        self._model = ConfidenceMLP(feature_dim=self._feature_dim)
+        self._model_version = model_version or MODEL_VERSION
+
+        # 根据版本创建模型
+        model_class = get_model_class(self._model_version)
+        self._model: nn.Module = model_class(feature_dim=self._feature_dim)
+
         self._is_trained = False
         self._training_history: list[TrainingResult] = []
 
@@ -649,9 +661,14 @@ class ConfidenceMLPredictor:
         return self._is_trained
 
     @property
-    def model(self) -> ConfidenceMLP:
+    def model(self) -> nn.Module:
         """获取模型."""
         return self._model
+
+    @property
+    def model_version(self) -> str:
+        """获取模型版本."""
+        return self._model_version
 
     def predict_confidence(self, context: ConfidenceContext) -> float:
         """预测置信度.

@@ -62,6 +62,20 @@ from src.risk.confidence_ml import (
     get_feature_dim,
     quick_ml_predict,
 )
+from src.risk.confidence_mcp import (
+    Context7Wrapper,
+    MagicWrapper,
+    MCPCallResult,
+    MCPClient,
+    MCPEnhancedAssessor,
+    MCPIntegrationConfig,
+    MCPStatus,
+    PlaceholderMCPClient,
+    SequentialWrapper,
+    TavilyWrapper,
+    create_mcp_assessor,
+    quick_mcp_assess,
+)
 from src.risk.confidence_monitor import (
     AlertRecord,
     ConfidenceMonitor,
