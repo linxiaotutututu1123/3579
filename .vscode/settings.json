@@ -34,6 +34,7 @@
     "source.organizeImports.ruff": "explicit"
     }
   },
+    "ruff.nativeServer": "on",
     "ruff.lint.enable": true,
     "ruff.path": ["${workspaceFolder}/.venv/Scripts/ruff"],
     "ruff.importStrategy": "fromEnvironment",
