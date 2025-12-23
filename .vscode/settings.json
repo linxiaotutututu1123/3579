@@ -14,7 +14,10 @@
     "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
-  },
+    },
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": true,
     "editor.inlayHints.enabled": "on",
@@ -98,9 +101,27 @@
     "terminal.integrated.defaultProfile.linux": "bash",
     "terminal.integrated.env.linux": {
     "PYTHONPATH": "${workspaceFolder}/src"
+  },
+
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.extraPaths": ["${workspaceFolder}/src"],
+  "python.analysis.diagnosticSeverityOverrides": {
+  "reportUnusedImport": "warning",
+  "reportUnusedVariable": "warning",
+  },
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.smoothScrolling": true,                         
+    "editor.mouseWheelZoom": true,
+    "editor.linkedEditing": true,
+    "editor.suggest.showStatusBar": true,
+    "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+
+
+
   }
-}
-
-
-
-
