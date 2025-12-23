@@ -845,3 +845,230 @@ Wave 2 (集成): 更新__init__.py + 军规验证
 | 模型准确率 | ~85% | ~95% | +10-15% |
 | 报告格式 | 1 | 4 | +300% |
 | MCP集成 | 无 | 2服务 | 新增 |
+
+---
+
+## 2025-12-22 第三批实施经验总结
+
+### 降级兜底机制 (M4)
+
+**问题**: 系统故障时需要平滑降级，避免交易中断
+
+**解决方案**: 4级降级策略
+```python
+FALLBACK_LEVELS = {
+    "GRACEFUL": 1,     # 优雅降级: 功能受限但继续运行
+    "REDUCED": 2,      # 精简模式: 仅核心功能
+    "MANUAL": 3,       # 人工接管: 自动交易暂停
+    "EMERGENCY": 4,    # 紧急模式: 全面停止
+}
+```
+
+**核心组件联动**:
+- FallbackExecutor: 降级执行器，处理降级后的订单执行
+- FallbackManager: 降级管理器，协调整体降级策略
+- ManualQueue: 人工处理队列，接收降级后需人工处理的订单
+
+**算法降级映射**:
+```python
+ALGORITHM_FALLBACK = {
+    "AGGRESSIVE": "TWAP",    # 激进策略降级为TWAP
+    "TWAP": "ICEBERG",       # TWAP降级为冰山
+    "ICEBERG": "MARKET",     # 冰山降级为市价
+    "VWAP": "TWAP",          # VWAP降级为TWAP
+}
+```
+
+### 成本先行机制 (M5)
+
+**问题**: 交易成本超出预期导致策略亏损
+
+**解决方案**: 三维成本计算
+```python
+@dataclass
+class TradingCost:
+    """交易成本三维模型"""
+    commission: float      # 手续费成本
+    slippage: float        # 滑点成本
+    market_impact: float   # 市场冲击成本
+
+    @property
+    def total(self) -> float:
+        return self.commission + self.slippage + self.market_impact
+```
+
+**CostValidator阈值检查**:
+```python
+COST_THRESHOLDS = {
+    "commission_ratio": 0.0003,    # 手续费率上限 0.03%
+    "slippage_ratio": 0.001,       # 滑点率上限 0.1%
+    "impact_ratio": 0.005,         # 冲击成本率上限 0.5%
+    "total_ratio": 0.01,           # 总成本率上限 1%
+}
+```
+
+**验证结果**: 26个测试用例全部通过
+
+### 审计追踪机制 (M3)
+
+**问题**: 交易记录需要防篡改且可追溯
+
+**解决方案**: SHA256校验和 + 链式追踪
+```python
+@dataclass
+class AuditRecord:
+    """审计记录"""
+    trace_id: str          # 追踪ID (全局唯一)
+    parent_id: str | None  # 父级ID (链式追踪)
+    checksum: str          # SHA256校验和
+    timestamp: float       # 时间戳
+    operation: str         # 操作类型
+    data: dict             # 操作数据
+
+def calculate_checksum(self) -> str:
+    """计算防篡改校验和"""
+    content = f"{self.trace_id}{self.parent_id}{self.timestamp}{self.operation}"
+    return hashlib.sha256(content.encode()).hexdigest()
+```
+
+**合规存储期限**:
+```python
+RETENTION_POLICY = {
+    "trading": 5 * 365,    # 交易记录: 5年
+    "system": 3 * 365,     # 系统日志: 3年
+    "audit": 10 * 365,     # 审计追踪: 10年
+}
+```
+
+### 涨跌停处理 (M13)
+
+**问题**: 订单价格可能超出涨跌停限制
+
+**解决方案**: 5种价格状态识别
+```python
+class PriceStatus(Enum):
+    """价格状态"""
+    NORMAL = "NORMAL"                    # 正常
+    NEAR_LIMIT_UP = "NEAR_LIMIT_UP"      # 接近涨停 (差距<0.5%)
+    AT_LIMIT_UP = "AT_LIMIT_UP"          # 涨停
+    NEAR_LIMIT_DOWN = "NEAR_LIMIT_DOWN"  # 接近跌停 (差距<0.5%)
+    AT_LIMIT_DOWN = "AT_LIMIT_DOWN"      # 跌停
+```
+
+**价格合法性验证**:
+```python
+def validate_price(self, price: float, instrument: str) -> tuple[bool, float]:
+    """验证价格是否在涨跌停范围内，返回(是否合法, 调整后价格)"""
+    limit_up = self.get_limit_up(instrument)
+    limit_down = self.get_limit_down(instrument)
+
+    if price > limit_up:
+        return False, limit_up    # 自动调整到涨停价
+    if price < limit_down:
+        return False, limit_down  # 自动调整到跌停价
+    return True, price
+```
+
+### 保证金监控 (M16)
+
+**问题**: 保证金不足可能导致强平风险
+
+**解决方案**: 5级告警机制
+```python
+class MarginLevel(Enum):
+    """保证金风险等级"""
+    SAFE = "SAFE"              # 安全: 使用率<50%
+    WARNING = "WARNING"        # 警告: 使用率50%-70%
+    DANGER = "DANGER"          # 危险: 使用率70%-85%
+    CRITICAL = "CRITICAL"      # 临界: 使用率85%-95%
+    FORCE_CLOSE = "FORCE_CLOSE"  # 强平: 使用率>95%
+```
+
+**追保预警生成**:
+```python
+def generate_margin_call(self, account: str, current_ratio: float) -> MarginCall:
+    """生成追保通知"""
+    level = self.calculate_level(current_ratio)
+    required_amount = self.calculate_required_margin(account)
+
+    return MarginCall(
+        account=account,
+        level=level,
+        current_ratio=current_ratio,
+        required_amount=required_amount,
+        deadline=self.get_margin_deadline(level),
+    )
+```
+
+**与VaR引擎集成**: 保证金使用率纳入VaR计算因子
+
+### SHAP归因分析 (M19)
+
+**问题**: 需要解释策略收益来源
+
+**解决方案**: 多维因子归因
+```python
+# 市场因子
+class MarketFactor(Enum):
+    BETA = "BETA"            # Beta暴露
+    MOMENTUM = "MOMENTUM"    # 动量因子
+    VOLATILITY = "VOLATILITY"  # 波动率因子
+
+# 策略因子
+class StrategyFactor(Enum):
+    ALPHA = "ALPHA"          # Alpha收益
+    TIMING = "TIMING"        # 择时能力
+    SELECTION = "SELECTION"  # 选股能力
+
+# 时间维度
+class TimeFrame(Enum):
+    DAILY = "DAILY"
+    WEEKLY = "WEEKLY"
+    MONTHLY = "MONTHLY"
+```
+
+**归因计算**:
+```python
+def calculate_attribution(
+    self,
+    returns: pd.Series,
+    factors: pd.DataFrame
+) -> dict[str, float]:
+    """计算SHAP归因值"""
+    # 使用SHAP进行因子归因
+    explainer = shap.LinearExplainer(model, factors)
+    shap_values = explainer.shap_values(factors)
+
+    return {
+        factor: shap_values[:, i].mean()
+        for i, factor in enumerate(factors.columns)
+    }
+```
+
+**验证结果**: 12个测试用例全部通过
+
+---
+
+## 第三批模块性能基准
+
+| 模块 | 测试用例数 | 通过率 | 关键指标 |
+|------|------------|--------|----------|
+| 降级兜底 (M4) | 18 | 100% | 4级降级策略 |
+| 成本先行 (M5) | 26 | 100% | 三维成本计算 |
+| 审计追踪 (M3) | 15 | 100% | SHA256防篡改 |
+| 涨跌停处理 (M13) | 12 | 100% | 5种价格状态 |
+| 保证金监控 (M16) | 20 | 100% | 5级告警机制 |
+| SHAP归因 (M19) | 12 | 100% | 多维因子归因 |
+
+---
+
+## 第三批关键设计决策
+
+| 决策点 | 选择 | 理由 |
+|--------|------|------|
+| 降级策略 | 4级渐进式 | 平滑过渡，避免突然中断 |
+| 成本计算 | 三维模型 | 全面覆盖交易成本 |
+| 审计追踪 | 链式+校验和 | 防篡改+可追溯 |
+| 涨跌停 | 自动调整 | 避免订单被拒 |
+| 保证金 | 预警优先 | 提前防范强平风险 |
+| 归因分析 | SHAP方法 | 可解释性强 |

@@ -1,0 +1,141 @@
+# 🏆 Chairman Agents - 主席级智能体团队系统
+
+<p align="center">
+  <img src="docs/assets/logo.png" alt="Chairman Agents Logo" width="200">
+</p>
+
+<p align="center">
+  <strong>世界级多智能体协作开发平台</strong>
+</p>
+
+<p align="center">
+  <a href="#特性">特性</a> •
+  <a href="#快速开始">快速开始</a> •
+  <a href="#架构">架构</a> •
+  <a href="#团队成员">团队成员</a> •
+  <a href="#使用示例">使用示例</a> •
+  <a href="#文档">文档</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License">
+  <img src="https://img.shields.io/badge/coverage-80%25-brightgreen.svg" alt="Coverage">
+  <img src="https://img.shields.io/badge/type--checked-mypy-blue.svg" alt="MyPy">
+</p>
+
+---
+
+## 📖 简介
+
+**Chairman Agents** 是一个主席级的多智能体协作系统，能够自主完成从需求分析到部署的全流程软件开发。系统模拟了硅谷顶级科技公司的完整研发团队，每个智能体都是该领域的"世界级专家"。
+
+### 🎯 核心理念
+
+  一行代码，一个团队，完成整个项目 复制代码  
+### ✨ 为什么选择 Chairman Agents？
+
+| 传统开发 | Chairman Agents |
+|---------|-----------------|
+| 需要组建团队 | 一键创建世界级团队 |
+| 沟通成本高 | 智能体自动协作 |
+| 质量参差不齐 | 多层质量门禁保证 |
+| 进度难以控制 | 自动化工作流管理 |
+| 文档常常滞后 | 自动生成技术文档 |
+
+---
+
+## ✨ 特性
+
+### 🧠 认知能力
+- **深度推理**：思维链(CoT)、思维树(ToT)、自我反思
+- **记忆系统**：短期记忆、长期记忆、情景记忆、语义记忆
+- **规划能力**：多步骤任务规划和执行
+
+### 🤝 协作机制
+- **技术辩论**：多智能体观点碰撞，达成最优方案
+- **共识投票**：民主决策机制，支持多种投票策略
+- **结对编程**：实时协作开发
+- **代码审查**：多层质量把关
+
+### 👥 专业团队
+- **18种专业角色**：覆盖软件开发全生命周期
+- **35种能力定义**：精准的任务匹配
+- **动态负载均衡**：智能任务分配
+
+### 🔧 工程能力
+- **工具集成**：代码执行、文件操作、Git、终端命令
+- **质量门禁**：Lint、类型检查、测试、安全扫描
+- **工作流引擎**：8种预定义工作流，支持自定义
+
+### 🔌 灵活集成
+- **多LLM支持**：OpenAI、Anthropic、本地模型
+- **智能路由**：自动选择最优模型
+- **故障转移**：高可用保障
+
+---
+
+## 🚀 快速开始
+
+### 安装
+
+```bash
+# 使用pip安装
+pip install chairman-agents
+
+# 或从源码安装
+git clone https://github.com/chairman-ai/agent-team.git
+cd agent-team
+pip install -e ".[dev]"
+  配置   # 设置API密钥
+export OPENAI_API_KEY="sk-xxx"
+# 或
+export ANTHROPIC_API_KEY="sk-xxx"
+  一行代码启动 python 复制代码  import asyncio
+from chairman_agents import create_world_class_team, TaskContext
+from chairman_agents.integration.llm import create_llm_client
+
+async def main():
+    # 创建团队
+    llm = create_llm_client(provider="openai")
+    team = create_world_class_team(llm_client=llm)
+    
+    # 执行项目
+    result = await team.execute("开发一个用户管理系统API")
+    
+    print(f"完成！产出物: {len(result['artifacts'])}个")
+
+asyncio.run(main())
+  命令行使用 bash 复制代码  # 执行项目
+chairman run "开发一个博客系统"
+
+# 查看团队
+chairman team --list
+
+# 查看工作流
+chairman workflow --list
+    🏗️ 架构 
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+│                              用户层                                      │
+│         CLI  │  API  │  SDK  │  Web Interface                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                            团队层 (team.py)                              │
+│                    AgentTeam - 团队管理和协调                            │
+├─────────────────────────────────────────────────────────────────────────┤
+│                          编排层 (orchestration/)                         │
+│              任务分配 │ 并行执行 │ 故障恢复 │ 负载均衡                   │
+├─────────────────────────────────────────────────────────────────────────┤
+│                          工作流层 (workflow/)                            │
+│              工作流引擎 │ 质量门禁 │ 预定义流程                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                          智能体层 (agents/)                              │
+│  PM │ 架构师 │ 后端 │ 前端 │ 测试 │ 安全 │ DevOps │ 审查 │ 文档          │
+├─────────────────────────────────────────────────────────────────────────┤
+│  认知层           │  协作层           │  工具层        │  集成层         │
+│  推理/记忆/反思   │  辩论/共识/结对   │  代码/Git/终端 │  LLM/外部API   │
+├─────────────────────────────────────────────────────────────────────────┤
+│                           核心层 (core/)                                 │
+│                  18种角色 │ 35种能力 │ 类型定义                          │
+└─────────────────────────────────────────────────────────────────────────┘
+    👥 团队成员 角色 名称 职责 专业等级   📋 项目经理 Alex 需求分析、任务拆分、进度管理 Senior  🏛️ 系统架构师 Sarah 架构设计、技术选型、API设计 Principal  ⚙️ 后端工程师 Michael 后端开发、API实现、数据库 Senior  🎨 前端工程师 Emma 前端开发、UI实现、用户体验 Senior  🧪 测试工程师 Lisa 测试策略、自动化测试、质量保证 Senior  🔒 安全架构师 James 安全设计、漏洞分析、安全审计 Principal  🚀 DevOps工程师 Kevin CI/CD、容器化、基础设施 Senior  👀 代码审查员 Rachel 代码质量、最佳实践、规范检查 Staff  📝 技术文档师 Nancy 文档编写、API文档、用户指南 Senior

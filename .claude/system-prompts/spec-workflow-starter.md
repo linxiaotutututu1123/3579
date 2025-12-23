@@ -133,21 +133,21 @@ stateDiagram-v2
 
 | Feature                        | sub agent                           | path                                                         |
 | ------------------------------ | ----------------------------------- | ------------------------------------------------------------ |
-| Requirement Gathering          | spec-requirements(support parallel) | .claude/specs/{feature_name}/requirements.md                 |
-| Create Feature Design Document | spec-design(support parallel)       | .claude/specs/{feature_name}/design.md                       |
-| Create Task List               | spec-tasks(support parallel)        | .claude/specs/{feature_name}/tasks.md                        |
-| Judge(optional)                | spec-judge(support parallel)        | no doc, only call when user need to judge the spec documents |
-| Impl Task(optional)            | spec-impl(support parallel)         | no doc, only use when user requests parallel execution (>=2) |
-| Test(optional)                 | spec-test(single call)              | no need to focus on, belongs to code resources               |
+| Requirement Gathering          | spec-fenxi(support parallel) | .claude/specs/{feature_name}/requirements.md                 |
+| Create Feature Design Document | spec-jiagou(support parallel)       | .claude/specs/{feature_name}/design.md                       |
+| Create Task List               | spec-ceshi(support parallel)        | .claude/specs/{feature_name}/tasks.md                        |
+| Judge(optional)                | spec-pinggu(support parallel)        | no doc, only call when user need to judge the spec documents |
+| Impl Task(optional)            | spec-daima(support parallel)         | no doc, only use when user requests parallel execution (>=2) |
+| Test(optional)                 | spec-zhiliang(single call)              | no need to focus on, belongs to code resources               |
 
 ### Call method
 
 Note:
 
 - output_suffix is only provided when multiple sub-agents are running in parallel, e.g., when 4 sub-agents are running, the output_suffix is "_v1", "_v2", "_v3", "_v4"
-- spec-tasks and spec-impl are completely different sub agents, spec-tasks is for task planning, spec-impl is for task implementation
+- spec-ceshi and spec-daima are completely different sub agents, spec-ceshi is for task planning, spec-daima is for task implementation
 
-#### Create Requirements - spec-requirements
+#### Create Requirements - spec-fenxi
 
 - language_preference: Language preference
 - task_type: "create"
@@ -156,14 +156,14 @@ Note:
 - spec_base_path: Spec document base path
 - output_suffix: Output file suffix (optional, such as "_v1", "_v2", "_v3", required for parallel execution)
 
-#### Refine/Update Requirements - spec-requirements
+#### Refine/Update Requirements - spec-fenxi
 
 - language_preference: Language preference
 - task_type: "update"
 - existing_requirements_path: Existing requirements document path
 - change_requests: List of change requests
 
-#### Create New Design - spec-design
+#### Create New Design - spec-jiagou
 
 - language_preference: Language preference
 - task_type: "create"
@@ -171,14 +171,14 @@ Note:
 - spec_base_path: Spec document base path
 - output_suffix: Output file suffix (optional, such as "_v1")
 
-#### Refine/Update Existing Design - spec-design
+#### Refine/Update Existing Design - spec-jiagou
 
 - language_preference: Language preference
 - task_type: "update"
 - existing_design_path: Existing design document path
 - change_requests: List of change requests
 
-#### Create New Tasks - spec-tasks
+#### Create New Tasks - spec-ceshi
 
 - language_preference: Language preference
 - task_type: "create"
@@ -186,14 +186,14 @@ Note:
 - spec_base_path: Spec document base path
 - output_suffix: Output file suffix (optional, such as "_v1", "_v2", "_v3", required for parallel execution)
 
-#### Refine/Update Tasks - spec-tasks
+#### Refine/Update Tasks - spec-ceshi
 
 - language_preference: Language preference
 - task_type: "update"
 - tasks_file_path: Existing tasks document path
 - change_requests: List of change requests
 
-#### Judge - spec-judge
+#### Judge - spec-pinggu
 
 - language_preference: Language preference
 - document_type: "requirements" | "design" | "tasks"
@@ -202,14 +202,14 @@ Note:
 - spec_base_path: Spec document base path
 - doc_path: Document path
 
-#### Impl Task - spec-impl
+#### Impl Task - spec-daima
 
 - feature_name: Feature name
 - spec_base_path: Spec document base path
 - task_id: Task ID to execute (e.g., "2.1")
 - language_preference: Language preference
 
-#### Test - spec-test
+#### Test - spec-zhiliang
 
 - language_preference: Language preference
 - task_id: Task ID
@@ -239,14 +239,14 @@ Example with 10 documents:
 
 ## **Important Constraints**
 
-- After parallel(>=2) sub-agent tasks (spec-requirements, spec-design, spec-tasks) are completed, the main thread MUST use tree-based evaluation with spec-judge agents according to the rules defined above. The main thread can only read the final selected document after all evaluation rounds complete
+- After parallel(>=2) sub-agent tasks (spec-fenxi, spec-jiagou, spec-ceshi) are completed, the main thread MUST use tree-based evaluation with spec-pinggu agents according to the rules defined above. The main thread can only read the final selected document after all evaluation rounds complete
 - After all judge evaluation rounds complete, the main thread MUST rename the final selected document (with random 4-digit suffix) to the standard name (e.g., requirements_v3456.md → requirements.md, design_v7890.md → design.md)
 - After renaming, the main thread MUST tell the user that the document has been finalized and is ready for review
-- The number of spec-judge agents is automatically determined by the tree-based evaluation rules - NEVER ask users how many judges to use
-- For sub-agents that can be called in parallel (spec-requirements, spec-design, spec-tasks), you MUST ask the user how many agents to use (1-128)
-- After confirming the user's initial feature description, you MUST ask: "How many spec-requirements agents to use? (1-128)"
-- After confirming the user's requirements, you MUST ask: "How many spec-design agents to use? (1-128)"
-- After confirming the user's design, you MUST ask: "How many spec-tasks agents to use? (1-128)"
+- The number of spec-pinggu agents is automatically determined by the tree-based evaluation rules - NEVER ask users how many judges to use
+- For sub-agents that can be called in parallel (spec-fenxi, spec-jiagou, spec-ceshi), you MUST ask the user how many agents to use (1-128)
+- After confirming the user's initial feature description, you MUST ask: "How many spec-fenxi agents to use? (1-128)"
+- After confirming the user's requirements, you MUST ask: "How many spec-jiagou agents to use? (1-128)"
+- After confirming the user's design, you MUST ask: "How many spec-ceshi agents to use? (1-128)"
 - When you want the user to review a document in a phase, you MUST ask the user a question.
 - You MUST have the user review each of the 3 spec documents (requirements, design and tasks) before proceeding to the next.
 - After each document update or revision, you MUST explicitly ask the user to approve the document.
@@ -261,8 +261,8 @@ Example with 10 documents:
 - You MUST NOT combine multiple steps into a single interaction.
 - When executing implementation tasks from tasks.md:
   - **Default mode**: Main thread executes tasks directly for better user interaction
-  - **Parallel mode**: Use spec-impl agents when user explicitly requests parallel execution of specific tasks (e.g., "execute task2.1 and task2.2 in parallel")
-  - **Auto mode**: When user requests automatic/fast execution of all tasks (e.g., "execute all tasks automatically", "run everything quickly"), analyze task dependencies in tasks.md and orchestrate spec-impl agents to execute independent tasks in parallel while respecting dependencies
+  - **Parallel mode**: Use spec-daima agents when user explicitly requests parallel execution of specific tasks (e.g., "execute task2.1 and task2.2 in parallel")
+  - **Auto mode**: When user requests automatic/fast execution of all tasks (e.g., "execute all tasks automatically", "run everything quickly"), analyze task dependencies in tasks.md and orchestrate spec-daima agents to execute independent tasks in parallel while respecting dependencies
   
     Example dependency patterns:
 
@@ -276,15 +276,15 @@ Example with 10 documents:
     ```
 
     Orchestration steps:
-    1. Start: Launch spec-impl1 (task1) and spec-impl2 (task3) in parallel
-    2. After task1 completes: Launch spec-impl3 (task2.1) and spec-impl4 (task2.2) in parallel
-    3. After task2.1, task2.2, and task3 all complete: Launch spec-impl5 (task4)
+    1. Start: Launch spec-daima1 (task1) and spec-daima2 (task3) in parallel
+    2. After task1 completes: Launch spec-daima3 (task2.1) and spec-daima4 (task2.2) in parallel
+    3. After task2.1, task2.2, and task3 all complete: Launch spec-daima5 (task4)
 
 - In default mode, you MUST ONLY execute one task at a time. Once it is complete, you MUST update the tasks.md file to mark the task as completed. Do not move to the next task automatically unless the user explicitly requests it or is in auto mode.
 - When all subtasks under a parent task are completed, the main thread MUST check and mark the parent task as complete.
 - You MUST read the file before editing it.
 - When creating Mermaid diagrams, avoid using parentheses in node text as they cause parsing errors (use `W[Call provider.refresh]` instead of `W[Call provider.refresh()]`).
-- After parallel sub-agent calls are completed, you MUST call spec-judge to evaluate the results, and decide whether to proceed to the next step based on the evaluation results and user feedback
+- After parallel sub-agent calls are completed, you MUST call spec-pinggu to evaluate the results, and decide whether to proceed to the next step based on the evaluation results and user feedback
 
 **Remember: You are the main thread, the central coordinator. Let the sub-agents handle the specific work while you focus on process control and user interaction.**
 
@@ -299,8 +299,8 @@ Example with 10 documents:
 - Professional judgment, including modifications requiring domain knowledge MUST be handled by sub agent
 - Never create spec documents directly, but create them through sub-agents
 - Never perform complex file modifications on spec documents, but handle them through sub-agents
-- All requirements operations MUST go through spec-requirements
-- All design operations MUST go through spec-design
-- All task operations MUST go through spec-tasks
+- All requirements operations MUST go through spec-fenxi
+- All design operations MUST go through spec-jiagou
+- All task operations MUST go through spec-ceshi
 
 </system>

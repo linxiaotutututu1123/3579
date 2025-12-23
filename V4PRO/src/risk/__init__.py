@@ -1,8 +1,9 @@
 """
-风险管理模块 (军规级 v4.5).
+风险管理模块 (军规级 v4.6).
 
 V4PRO Platform Component - Phase 7/10 中国期货市场特化
 V4 SPEC: §15 Phase 10, §22 VaR风控增强, §23 压力测试场景, §24 模型可解释性
+V4 SPEC: SS25 多维归因分析, SS26 SHAP可解释性
 
 功能特性:
 - 风险管理器 (RiskManager)
@@ -12,13 +13,14 @@ V4 SPEC: §15 Phase 10, §22 VaR风控增强, §23 压力测试场景, §24 模�
 - 风险归因引擎 (RiskAttributionEngine) [v4.1新增]
 - 置信度MCP集成 (MCPEnhancedAssessor) [v4.5新增]
 - 置信度报告生成器 (ConfidenceReportGenerator) [v4.5新增]
+- SHAP多维归因分析器 (SHAPAttributor) [v4.6新增]
 
 军规覆盖:
 - M3: 完整审计 - MCP调用审计追踪
 - M6: 熔断保护 - 极端风险预警
 - M13: 涨跌停感知 - 涨跌停调整VaR
 - M16: 保证金监控 - 流动性调整VaR
-- M19: 风险归因 - SHAP因子分析
+- M19: 风险归因 - SHAP因子分析, 多维收益归因
 
 V4PRO Scenarios (MCP集成):
 - K62: CONFIDENCE.MCP.CONTEXT7 - Context7文档验证
@@ -27,8 +29,12 @@ V4PRO Scenarios (MCP集成):
 - K65: CONFIDENCE.REPORT.MARKDOWN - Markdown报告
 - K66: CONFIDENCE.REPORT.JSON - JSON报告
 - K67: CONFIDENCE.REPORT.RICH - 终端富文本报告
+- K68: RISK.ATTRIBUTION.SHAP - SHAP多维归因 [v4.6新增]
+- K69: RISK.ATTRIBUTION.TIME - 时间序列归因 [v4.6新增]
+- K70: RISK.ATTRIBUTION.STRATEGY - 策略收益分解 [v4.6新增]
 """
 
+# 原有风险归因 (v4.1)
 from src.risk.attribution import (
     AttributionMethod,
     AttributionResult,
@@ -38,6 +44,28 @@ from src.risk.attribution import (
     attribute_trade_loss,
     create_attribution_engine,
     get_factor_summary,
+)
+
+# SHAP多维归因 (v4.6 Phase 10)
+from src.risk.attribution.shap_attribution import (
+    # 枚举
+    AttributionMethod as SHAPAttributionMethod,
+    MarketFactor,
+    StrategyFactor,
+    TimeDimension,
+    # 数据类
+    AttributionResult as SHAPAttributionResult,
+    FactorContribution as SHAPFactorContribution,
+    StrategyBreakdown,
+    TimeAttribution,
+    # 核心类
+    SHAPAttributor,
+    # 便捷函数
+    attribute_portfolio_returns,
+    create_shap_attributor,
+    get_factor_summary as get_shap_factor_summary,
+    get_strategy_summary,
+    get_time_summary,
 )
 from src.risk.confidence import (
     ConfidenceAssessor,
@@ -134,6 +162,21 @@ from src.risk.dynamic_var import (
 from src.risk.events import RiskEvent, RiskEventType
 from src.risk.manager import Decision, RiskManager
 from src.risk.state import AccountSnapshot, RiskConfig, RiskMode, RiskState
+from src.risk.margin_monitor import (
+    DynamicMarginConfig,
+    DynamicMarginMonitor,
+    ForceCloseRisk,
+    MarginAlertLevel,
+    MarginCallAlert,
+    MarginCallReason,
+    MarginRiskAction,
+    MarginSnapshot,
+    MarginUpdateResult,
+    assess_force_close_risk,
+    create_dynamic_margin_monitor,
+    get_default_dynamic_monitor,
+    quick_margin_check,
+)
 from src.risk.stress_test_china import (
     HYPOTHETICAL_SCENARIOS,
     STRESS_SCENARIOS,
@@ -188,6 +231,9 @@ __all__ = [
     # MCP包装器 (v4.5)
     "Context7Wrapper",
     "Decision",
+    # 动态保证金监控 (v4.3 Phase 9)
+    "DynamicMarginConfig",
+    "DynamicMarginMonitor",
     # 动态VaR引擎 (v4.2)
     "DynamicVaREngine",
     "DynamicVaRResult",
@@ -197,11 +243,27 @@ __all__ = [
     "FactorType",
     # 特征配置 (v4.4)
     "FeatureConfig",
+    # 强平风险评估 (v4.3 Phase 9)
+    "ForceCloseRisk",
     "GPDParameters",
     "ImpactLevel",
     "LiquidityMetrics",
     # MCP包装器 (v4.5)
     "MagicWrapper",
+    # 保证金告警级别 (v4.3 Phase 9)
+    "MarginAlertLevel",
+    # 追保告警 (v4.3 Phase 9)
+    "MarginCallAlert",
+    # 追保原因 (v4.3 Phase 9)
+    "MarginCallReason",
+    # 保证金风险处置动作 (v4.3 Phase 9)
+    "MarginRiskAction",
+    # 保证金快照 (v4.3 Phase 9)
+    "MarginSnapshot",
+    # 保证金更新结果 (v4.3 Phase 9)
+    "MarginUpdateResult",
+    # 市场因子枚举 (v4.6 Phase 10)
+    "MarketFactor",
     # MCP调用结果 (v4.5)
     "MCPCallResult",
     # MCP客户端协议 (v4.5)
@@ -237,8 +299,16 @@ __all__ = [
     "ScenarioType",
     # MCP包装器 (v4.5)
     "SequentialWrapper",
+    # SHAP归因分析器 (v4.6 Phase 10)
+    "SHAPAttributor",
+    "SHAPAttributionMethod",
+    "SHAPAttributionResult",
+    "SHAPFactorContribution",
     # 统计响应 (v4.4)
     "StatisticsResponse",
+    # 策略因子枚举 (v4.6 Phase 10)
+    "StrategyBreakdown",
+    "StrategyFactor",
     "StressScenario",
     "StressTestResult",
     "StressTestSummary",
@@ -246,6 +316,9 @@ __all__ = [
     "TaskType",
     # MCP包装器 (v4.5)
     "TavilyWrapper",
+    # 时间归因 (v4.6 Phase 10)
+    "TimeAttribution",
+    "TimeDimension",
     # 训练配置 (v4.4)
     "TrainingConfig",
     "TrainingResult",
@@ -254,9 +327,13 @@ __all__ = [
     "VaRMethod",
     # VaR调度状态 (D8)
     "VaRScheduleState",
+    # 强平风险评估函数 (v4.3 Phase 9)
+    "assess_force_close_risk",
     "assess_from_json",
     "assess_pre_execution",
     "assess_signal",
+    # 组合收益归因 (v4.6 Phase 10)
+    "attribute_portfolio_returns",
     "attribute_trade_loss",
     "create_attribution_engine",
     # 自适应VaR工厂函数 (D8)
@@ -265,6 +342,8 @@ __all__ = [
     "create_api",
     # 置信度监控工厂 (v4.4)
     "create_confidence_monitor",
+    # 动态保证金监控工厂 (v4.3 Phase 9)
+    "create_dynamic_margin_monitor",
     "create_dynamic_var_engine",
     # ML工厂函数 (v4.4)
     "create_ml_enhanced_assessor",
@@ -273,6 +352,8 @@ __all__ = [
     "create_mcp_assessor",
     # 报告生成器工厂 (v4.5)
     "create_report_generator",
+    # SHAP归因工厂 (v4.6 Phase 10)
+    "create_shap_attributor",
     # 特征提取 (v4.4)
     "extract_features",
     "format_confidence_report",
@@ -285,6 +366,8 @@ __all__ = [
     # 生成表格报告 (v4.5)
     "generate_table_report",
     "get_all_scenarios",
+    # 获取默认动态保证金监控器 (v4.3 Phase 9)
+    "get_default_dynamic_monitor",
     "get_default_tester",
     "get_factor_summary",
     # 特征维度 (v4.4)
@@ -292,12 +375,20 @@ __all__ = [
     # 市场状态辅助函数 (D8)
     "get_regime_from_volatility",
     "get_scenario_by_name",
+    # SHAP因子摘要 (v4.6 Phase 10)
+    "get_shap_factor_summary",
+    # 策略摘要 (v4.6 Phase 10)
+    "get_strategy_summary",
+    # 时间归因摘要 (v4.6 Phase 10)
+    "get_time_summary",
     # 快速VaR计算函数
     "quick_adaptive_var",
     # 快速API评估 (v4.4)
     "quick_assess",
     "quick_evt_var",
     "quick_limit_var",
+    # 快速保证金检查 (v4.3 Phase 9)
+    "quick_margin_check",
     # 快速ML预测 (v4.4)
     "quick_ml_predict",
     # 快速MCP评估 (v4.5)

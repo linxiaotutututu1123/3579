@@ -51,7 +51,22 @@
       "Skill(sc:site-packages:superclaude:agents:learning-guide)",
       "Skill(sc:site-packages:superclaude:agents:quality-engineer)",
       "Bash(mkdir:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Skill(sc:workflow)",
+      "Bash(uv run pytest:*)",
+      "Bash(uv pip install:*)",
+      "Bash(uv sync:*)",
+      "Bash(VIRTUAL_ENV=\"\" uv run pytest:*)",
+      "Bash(uv run python:*)",
+      "Bash(uv venv)",
+      "Bash(.venv/Scripts/python:*)",
+      "Bash(.venv/Scripts/pip install:*)",
+      "Bash(\"C:/Users/1/2468/3579/V4PRO/.venv/Scripts/pip.exe\" install:*)",
+      "Bash(PYTHONPATH=. \"C:/Users/1/2468/3579/V4PRO/.venv/Scripts/python.exe\":*)",
+      "Bash(uv run ruff check:*)",
+      "Bash(git checkout:*)",
+      "Bash(git restore:*)",
+      "Bash(dir:*)"
     ]
   }
 }
