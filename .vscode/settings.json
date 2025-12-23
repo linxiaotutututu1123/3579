@@ -1,7 +1,127 @@
 {
-    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.typeCheckingMode": "strict",
     "azureFunctions.projectLanguage": "Python",
     "azureFunctions.projectRuntime": "~4",
-    "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.mcpProjectType": "SelfHostedMcpServer"
-}
+    "debug.internalConsoleOptions": "openOnFirstSessionStart",
+    "azureFunctions.mcpProjectType": "McpExtensionServer",
+    "editor.fontSize": 14,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.rulers": [88, 120],
+    "editor.wordWrap": "off",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": false,
+    "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+    },
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+    "editor.inlayHints.enabled": "on",
+    "editor.stickyScroll.enabled": true,
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.completeFunctionParens": true,
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.variableTypes": true,
+    "python.analysis.inlayHints.pytestParameters": true,
+    "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit",
+    "source.organizeImports.ruff": "explicit"
+    }
+  },
+    "ruff.nativeServer": "on",
+    "ruff.lint.enable": true,
+    "ruff.path": ["${workspaceFolder}/.venv/Scripts/ruff"],
+    "ruff.importStrategy": "fromEnvironment",
+    "ruff.fixAll": true,
+
+    "mypy-type-checker.path": ["${workspaceFolder}/.venv/Scripts/mypy"],
+    "mypy-type-checker.importStrategy": "fromEnvironment",
+    "mypy-type-checker.args": ["--config-file", "${workspaceFolder}/pyproject.toml"],
+    "mypy-type-checker.severity": {
+    "error": "Error",
+    "note": "Information"
+  },
+
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": [
+    "tests",
+    "-v",
+    "--tb=short"
+  ],
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/*.egg-info": true,
+    "**/.coverage": true,
+    "**/htmlcov": true
+  },
+    "files.watcherExclude": {
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+    "**/.git/**": true
+  },
+    "files.associations": {
+    "*.py": "python",
+    "*.pyi": "python",
+    "pyproject.toml": "toml"
+  },
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "workbench.colorCustomizations": {
+    "editorRuler.foreground": "#3a3a3a"
+  },
+  // Error Lens
+    "errorLens.enabled": true,
+    "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+    "errorLens.messageMaxChars": 100,
+    "errorLens.followCursor": "closestProblem",
+    "errorLens.gutterIconsEnabled": true,
+
+  // Git
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.suggestSmartCommit": false,
+
+  // 终端
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}/src"
+  },
+
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.extraPaths": ["${workspaceFolder}/src"],
+  "python.analysis.diagnosticSeverityOverrides": {
+  "reportUnusedImport": "warning",
+  "reportUnusedVariable": "warning",
+  },
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.smoothScrolling": true,                         
+    "editor.mouseWheelZoom": true,
+    "editor.linkedEditing": true,
+    "editor.suggest.showStatusBar": true,
+    "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+
+
+
+  }
