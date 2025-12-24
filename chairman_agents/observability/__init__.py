@@ -1,7 +1,21 @@
-"""可观测性模块 - 监控、追踪、日志."""
+"""可观测性模块 - 监控、追踪、日志.
+
+提供应用程序可观测性功能:
+- tracer: 分布式追踪
+- metrics: 指标收集
+- logger: 结构化日志
+
+使用示例:
+    >>> from chairman_agents.observability import Tracer, MetricsCollector, StructuredLogger
+    >>>
+    >>> tracer = Tracer("my-service")
+    >>> collector = MetricsCollector("my-service")
+    >>> logger = StructuredLogger("my-service")
+"""
 
 from __future__ import annotations
 
+# Tracer exports
 from chairman_agents.observability.tracer import (
     SpanId,
     TraceId,
@@ -14,6 +28,8 @@ from chairman_agents.observability.tracer import (
     set_tracer,
     reset_tracer,
 )
+
+# Metrics exports
 from chairman_agents.observability.metrics import (
     MetricName,
     Labels,
@@ -27,6 +43,8 @@ from chairman_agents.observability.metrics import (
     set_collector,
     reset_collector,
 )
+
+# Logger exports
 from chairman_agents.observability.logger import (
     LogContext,
     LogLevel,
@@ -44,7 +62,7 @@ from chairman_agents.observability.logger import (
 )
 
 __all__ = [
-    # tracer
+    # Tracer
     "SpanId",
     "TraceId",
     "SpanStatus",
@@ -55,7 +73,7 @@ __all__ = [
     "get_tracer",
     "set_tracer",
     "reset_tracer",
-    # metrics
+    # Metrics
     "MetricName",
     "Labels",
     "MetricType",
@@ -67,7 +85,7 @@ __all__ = [
     "get_collector",
     "set_collector",
     "reset_collector",
-    # logger
+    # Logger
     "LogContext",
     "LogLevel",
     "LogFormat",
