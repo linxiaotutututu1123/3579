@@ -543,6 +543,7 @@ class ParallelExecutor:
         executor_fn: TaskExecutorFn,
         *,
         timeout: float | None = None,
+        priority: int | None = None,
     ) -> ExecutionResult:
         """执行单个任务.
 
@@ -550,6 +551,7 @@ class ParallelExecutor:
             task: 要执行的任务
             executor_fn: 任务执行函数
             timeout: 超时时间（秒），为空时使用默认值
+            priority: 任务优先级（可选，默认使用任务自身优先级）
 
         Returns:
             执行结果
@@ -557,8 +559,20 @@ class ParallelExecutor:
         Raises:
             RuntimeError: 执行器未运行时抛出
         """
-        if self.state != ExecutorState.RUNNING:
+        if self.state not in (ExecutorState.RUNNING, ExecutorState.PAUSED):
             raise RuntimeError(f"执行器状态异常: {self.state.value}")
+
+        # 等待暂停结束
+        await self._pause_event.wait()
+
+        # 检查关闭事件
+        if self._shutdown_event.is_set():
+            return ExecutionResult(
+                task_id=task.id,
+                task=task,
+                success=False,
+                error=Exception("执行器正在关闭"),
+            )
 
         timeout = timeout or self.config.default_timeout
         return await self._execute_with_retry(task, executor_fn, timeout)
@@ -569,21 +583,29 @@ class ParallelExecutor:
         executor_fn: TaskExecutorFn,
         *,
         timeout: float | None = None,
+        sort_by_priority: bool = True,
     ) -> BatchResult:
         """批量执行任务.
 
         根据配置的执行模式并行或顺序执行任务。
+        支持按优先级排序。
 
         Args:
             tasks: 任务列表
             executor_fn: 任务执行函数
             timeout: 每个任务的超时时间
+            sort_by_priority: 是否按优先级排序任务
 
         Returns:
             批量执行结果
         """
-        if self.state != ExecutorState.RUNNING:
+        if self.state not in (ExecutorState.RUNNING, ExecutorState.PAUSED):
             raise RuntimeError(f"执行器状态异常: {self.state.value}")
+
+        # 初始化进度跟踪
+        self._total_tasks = len(tasks)
+        self._completed_tasks = 0
+        self._failed_tasks = 0
 
         batch_result = BatchResult(
             total=len(tasks),
@@ -592,14 +614,22 @@ class ParallelExecutor:
 
         timeout = timeout or self.config.default_timeout
 
+        # 按优先级排序
+        if sort_by_priority and self.config.priority_enabled:
+            sorted_tasks = sorted(tasks, key=lambda t: t.priority.value)
+        else:
+            sorted_tasks = list(tasks)
+
         if self.config.mode == ExecutionMode.SEQUENTIAL:
-            results = await self._execute_sequential(tasks, executor_fn, timeout)
+            results = await self._execute_sequential(sorted_tasks, executor_fn, timeout)
         elif self.config.mode == ExecutionMode.BATCHED:
-            results = await self._execute_batched(tasks, executor_fn, timeout)
+            results = await self._execute_batched(sorted_tasks, executor_fn, timeout)
         elif self.config.mode == ExecutionMode.ADAPTIVE:
-            results = await self._execute_adaptive(tasks, executor_fn, timeout)
+            results = await self._execute_adaptive(sorted_tasks, executor_fn, timeout)
         else:  # PARALLEL
-            results = await self._execute_parallel(tasks, executor_fn, timeout)
+            results = await self._execute_parallel_with_priority(
+                sorted_tasks, executor_fn, timeout
+            )
 
         batch_result.results = results
         batch_result.completed_at = datetime.now()
