@@ -257,3 +257,4 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "requires_llm: Requires LLM API")
     config.addinivalue_line("markers", "orchestration: Orchestration module tests")
     config.addinivalue_line("markers", "workflow: Workflow pipeline tests")
+    config.addinivalue_line("markers", "llm: LLM client tests")
