@@ -14,7 +14,7 @@ import uuid
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 @dataclass
