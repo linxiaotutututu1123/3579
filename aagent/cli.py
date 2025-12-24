@@ -1,7 +1,10 @@
 """CLI for AI Agent Architect (minimal)"""
+
+from pathlib import Path
+
 import typer
 import uvicorn
-from pathlib import Path
+
 from aagent.spec_engine import render_design
 
 app = typer.Typer()

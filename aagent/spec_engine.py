@@ -1,4 +1,5 @@
 """Minimal spec engine: generate a design.md file using spec-design template."""
+
 from pathlib import Path
 
 TEMPLATE = """# 设计文档：{feature}
