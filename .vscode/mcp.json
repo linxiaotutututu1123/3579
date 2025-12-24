@@ -4,25 +4,25 @@
 			"id": "project-ref",
 			"type": "promptString",
 			"description": "Supabase project reference ID",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "read-only",
 			"type": "promptString",
 			"description": "Enable read-only mode",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "features",
 			"type": "promptString",
 			"description": "Comma-separated list of features to enable",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "api-url",
 			"type": "promptString",
 			"description": "Custom API URL",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "SUPABASE_ACCESS_TOKEN",
@@ -46,37 +46,37 @@
 			"id": "codacy_cli_version",
 			"type": "promptString",
 			"description": "Optional: pin Codacy CLI version used by local analysis (e.g., 2.3.1).",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "chroma_client_type",
 			"type": "promptString",
 			"description": "Client type: ephemeral (default), persistent, cloud, or http.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "chroma_dotenv_path",
 			"type": "promptString",
 			"description": "Optional path to .env (defaults to ./.chroma_env).",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "chroma_data_dir",
 			"type": "promptString",
 			"description": "Data directory for persistent client.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "chroma_tenant",
 			"type": "promptString",
 			"description": "Chroma Cloud tenant ID.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "chroma_database",
 			"type": "promptString",
 			"description": "Chroma Cloud database name.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "chroma_api_key",
@@ -88,13 +88,13 @@
 			"id": "chroma_host",
 			"type": "promptString",
 			"description": "Self-hosted Chroma host.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "chroma_port",
 			"type": "promptString",
 			"description": "Self-hosted Chroma port.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "chroma_custom_auth",
@@ -118,13 +118,13 @@
 			"id": "ai_search_endpoint",
 			"type": "promptString",
 			"description": "Your Azure AI Search endpoint (https://<service>.search.windows.net/). Required for knowledge tools.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "ai_search_api_version",
 			"type": "promptString",
 			"description": "API version (defaults to 2025-03-01-preview).",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "search_auth_method",
@@ -136,13 +136,13 @@
 			"id": "azure_tenant_id",
 			"type": "promptString",
 			"description": "Required if using service-principal auth.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "azure_client_id",
 			"type": "promptString",
 			"description": "Required if using service-principal auth.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "azure_client_secret",
@@ -160,13 +160,13 @@
 			"id": "eval_data_dir",
 			"type": "promptString",
 			"description": "Path to JSONL datasets for evaluation tools.",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "az_openai_endpoint",
 			"type": "promptString",
 			"description": "Endpoint for text-quality evaluators (optional).",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "az_openai_api_key",
@@ -178,25 +178,25 @@
 			"id": "az_openai_deployment",
 			"type": "promptString",
 			"description": "Deployment name (e.g., gpt-4o) used by evaluators (optional).",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "az_openai_api_version",
 			"type": "promptString",
 			"description": "API version for Azure OpenAI (optional).",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "ai_project_endpoint",
 			"type": "promptString",
 			"description": "Azure AI Project endpoint for agent tools (optional).",
-			"password": false
+			"password": true
 		},
 		{
 			"id": "env_file_path",
 			"type": "promptString",
 			"description": "Path to a .env file to load (e.g., ${workspaceFolder}/.env).",
-			"password": false
+			"password": true
 		}
 	],
 	"servers": {
