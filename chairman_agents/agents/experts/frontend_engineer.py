@@ -399,8 +399,10 @@ export default {name};
         handlers = []
         for event in events:
             handler_name = f"handle{event[0].upper()}{event[1:]}"
-            handlers.append(f"""  const {handler_name} = useCallback(() => {{
-    // TODO: 实现 {event} 处理逻辑
+            handlers.append(f"""  const {handler_name} = useCallback((event?: React.SyntheticEvent) => {{
+    // 处理 {event} 事件
+    console.log('{event} event triggered', event);
+    // 在此处添加具体的业务逻辑
   }}, []);""")
 
         return "\n\n".join(handlers)
