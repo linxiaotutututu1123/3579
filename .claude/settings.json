@@ -10,19 +10,7 @@
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "200000",
     "MAX_THINKING_TOKENS": "150000",
 
-    "BASH_DEFAULT_TIMEOUT_MS": "600000",
-    "BASH_MAX_TIMEOUT_MS": "1200000",
-
-    "EDITOR": "code --wait",
-    "LANG": "zh_CN.UTF-8",
-    "PYTHONIOENCODING": "utf-8",
-    "PYTHONUTF8": "1",
-
-    "UV_SYSTEM_PYTHON": "1",
-    "PIP_DISABLE_PIP_VERSION_CHECK": "1",
-
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+    "BASH_DEFAULT_TIMEOUT_MS": "200000",
   },
 
   "enabledPlugins": {
@@ -38,7 +26,7 @@
     "asana@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
     "greptile@claude-plugins-official": true,
-    "laravel-boost@claude-plugins-official": true
+    "laravel-boost@claude-plugins-official": true,
   },
 
   "permissions": {
@@ -238,7 +226,7 @@
 
       "Task(*)",
       "Agent(*)",
-      "Notebook(*)"
+      "Notebook(*)",
     ],
     "deny": [
       "Bash(rm -rf /)",
@@ -309,45 +297,45 @@
       "Write(**/.ssh/config)",
       "Write(**/credentials)",
       "Write(**/secrets.json)",
-      "Write(**/token.json)"
+      "Write(**/token.json)",
     ],
   },
 
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:/Users/1/2468/3579"],
-      "env": {}
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "env": {},
     },
     "memory": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-memory"],
-      "env": {}
+      "env": {},
     },
     "fetch": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-fetch"],
-      "env": {}
+      "env": {},
     },
     "sequential-thinking": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "env": {}
+      "env": {},
     },
     "puppeteer": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
-      "env": {}
+      "env": {},
     },
     "sqlite": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sqlite"],
-      "env": {}
+      "env": {},
     },
     "everything": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-everything"],
-      "env": {}
+      "env": {},
     },
   },
 
@@ -356,34 +344,34 @@
       {
         "matcher": "Bash(*)",
         "command": "echo '[PRE] 执行命令...'",
-        "timeout": 5000
+        "timeout": 5000,
       },
     ],
     "postToolExecution": [
       {
         "matcher": "Write(**/*.py)",
         "command": "ruff format \"$TOOL_INPUT\" 2>nul || true",
-        "timeout": 30000
+        "timeout": 30000,
       },
       {
         "matcher": "Write(**/*.py)",
         "command": "ruff check --fix \"$TOOL_INPUT\" 2>nul || true",
-        "timeout": 30000
+        "timeout": 30000,
       },
       {
         "matcher": "Write(**/*.{ts,tsx,js,jsx,vue,svelte})",
         "command": "npx prettier --write \"$TOOL_INPUT\" 2>nul || npx eslint --fix \"$TOOL_INPUT\" 2>nul || true",
-        "timeout": 30000
+        "timeout": 30000,
       },
       {
         "matcher": "Write(**/*.{json,yaml,yml,md,html,css,scss})",
         "command": "npx prettier --write \"$TOOL_INPUT\" 2>nul || true",
-        "timeout": 30000
+        "timeout": 30000,
       },
       {
         "matcher": "Write(**/*.rs)",
         "command": "rustfmt \"$TOOL_INPUT\" 2>nul || true",
-        "timeout": 30000
+        "timeout": 30000,
       },
     ],
   },
@@ -399,6 +387,6 @@
   "cleanupPeriodDays": 60,
 
   "fileSuggestion": {
-    "enabled": true
+    "enabled": true,
   },
 }
