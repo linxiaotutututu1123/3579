@@ -744,7 +744,7 @@ class AnthropicClient(BaseLLMClient):
             content=content,
         ))
 
-        return ChatResult(
+        result = ChatResult(
             id=response.id,
             content=content,
             finish_reason=response.stop_reason or "stop",
@@ -754,6 +754,12 @@ class AnthropicClient(BaseLLMClient):
             latency_ms=latency,
             messages=response_messages,
         )
+
+        # 缓存结果
+        if use_cache:
+            self._cache_chat(messages, result, model, temperature, max_tokens)
+
+        return result
 
     async def stream(
         self,
