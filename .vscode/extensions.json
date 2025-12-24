@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "ms-azuretools.vscode-azurefunctions",
-    "eamodio.gitlens"
+    "eamodio.gitlens",
+    "github.copilot"
   ]
 }
