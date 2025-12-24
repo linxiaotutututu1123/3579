@@ -923,6 +923,14 @@ class OpenAIClient(BaseLLMClient):
         **kwargs: Any,
     ) -> ChatResult:
         """执行聊天补全."""
+        # 不带工具时检查缓存(工具调用结果不可缓存)
+        use_cache = tools is None and not kwargs.get("skip_cache", False)
+
+        if use_cache:
+            cached = self._get_cached_chat(messages, model, temperature, max_tokens)
+            if cached is not None:
+                return cached
+
         client = await self._ensure_client()
         start_time = time.perf_counter()
 
