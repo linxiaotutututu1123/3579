@@ -4,7 +4,8 @@
     "allow": [
       "Bash(env)",
       "Skill(sc:workflow)",
-      "Skill(sc:save)"
+      "Skill(sc:save)",
+      "Bash(python -m pytest chairman_agents/tests/ -v --tb=short)"
     ]
   },
   "enabledPlugins": {
