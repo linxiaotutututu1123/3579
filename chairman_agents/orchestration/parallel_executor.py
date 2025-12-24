@@ -212,9 +212,12 @@ class ExecutorConfig:
         default_timeout: 默认超时时间（秒）
         max_retries: 最大重试次数
         retry_delay: 重试间隔（秒）
+        retry_backoff: 重试退避系数（每次重试间隔乘以此系数）
         mode: 执行模式
         batch_size: 批处理大小（仅 BATCHED 模式）
         graceful_shutdown_timeout: 优雅关闭超时时间（秒）
+        priority_enabled: 是否启用优先级队列
+        progress_interval: 进度回调间隔（秒）
     """
 
     max_workers: int = 4
@@ -229,6 +232,9 @@ class ExecutorConfig:
     retry_delay: float = 1.0
     """重试间隔（秒）"""
 
+    retry_backoff: float = 2.0
+    """重试退避系数"""
+
     mode: ExecutionMode = ExecutionMode.PARALLEL
     """执行模式"""
 
@@ -237,6 +243,12 @@ class ExecutorConfig:
 
     graceful_shutdown_timeout: float = 30.0
     """优雅关闭超时时间（秒）"""
+
+    priority_enabled: bool = True
+    """是否启用优先级队列"""
+
+    progress_interval: float = 1.0
+    """进度回调间隔（秒）"""
 
 
 @dataclass
@@ -248,10 +260,13 @@ class ExecutorStats:
         total_successful: 总成功数
         total_failed: 总失败数
         total_retried: 总重试数
+        total_timed_out: 总超时数
+        total_cancelled: 总取消数
         current_running: 当前运行中任务数
         average_execution_time: 平均执行时间（秒）
         max_execution_time: 最长执行时间（秒）
         min_execution_time: 最短执行时间（秒）
+        peak_concurrent: 峰值并发数
     """
 
     total_executed: int = 0
@@ -266,6 +281,12 @@ class ExecutorStats:
     total_retried: int = 0
     """总重试数"""
 
+    total_timed_out: int = 0
+    """总超时数"""
+
+    total_cancelled: int = 0
+    """总取消数"""
+
     current_running: int = 0
     """当前运行中任务数"""
 
@@ -277,6 +298,17 @@ class ExecutorStats:
 
     min_execution_time: float = float("inf")
     """最短执行时间（秒）"""
+
+    peak_concurrent: int = 0
+    """峰值并发数"""
+
+
+# Type aliases for progress callbacks
+ProgressCallback = Callable[[int, int, int], None]
+"""进度回调类型: (completed, failed, total) -> None"""
+
+TaskProgressCallback = Callable[[TaskId, str, float], None]
+"""任务进度回调类型: (task_id, status, progress_percent) -> None"""
 
 
 # =============================================================================
