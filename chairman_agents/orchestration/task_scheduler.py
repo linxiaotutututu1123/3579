@@ -507,11 +507,12 @@ class TaskScheduler:
             if self.state == SchedulerState.PAUSED:
                 self.state = SchedulerState.RUNNING
 
-    async def submit(self, task: Task) -> None:
+    async def submit(self, task: Task, timeout: float | None = None) -> None:
         """提交单个任务到调度器.
 
         Args:
             task: 要提交的任务
+            timeout: 任务执行超时时间（秒），None 使用默认值
 
         Raises:
             RuntimeError: 队列已满时抛出
@@ -525,14 +526,26 @@ class TaskScheduler:
                 await self.dependency_resolver.add_task(task)
 
             scheduled_task = self._create_scheduled_task(task)
+
+            # 设置超时
+            if timeout is not None:
+                scheduled_task.execution_deadline = datetime.now() + timedelta(seconds=timeout)
+            elif self.config.default_timeout:
+                scheduled_task.execution_deadline = datetime.now() + timedelta(
+                    seconds=self.config.default_timeout
+                )
+
             self._enqueue(scheduled_task)
             self._pending_tasks[task.id] = scheduled_task
             self._stats.total_submitted += 1
-            self._stats.current_queue_size = len(self._queue)
+            self._update_queue_stats()
 
             # 触发回调
             for callback in self._on_task_scheduled:
-                callback(task)
+                try:
+                    callback(task)
+                except Exception:
+                    pass  # 忽略回调异常
 
     async def submit_batch(self, tasks: Sequence[Task]) -> None:
         """批量提交任务.
