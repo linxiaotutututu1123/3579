@@ -1,5 +1,5 @@
 {
-  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.typeCheckingMode": "standard",
   "azureFunctions.projectLanguage": "Python",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "openOnFirstSessionStart",
@@ -120,7 +120,7 @@
   "editor.suggest.showStatusBar": true,
   "editor.quickSuggestions": {
     "other": true,
-    "comments": false,
+    "comments": true,
     "strings": true
   },
   "git.ignoreLimitWarning": true,
