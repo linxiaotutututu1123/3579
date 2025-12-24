@@ -177,9 +177,13 @@ class SchedulerStats:
         total_scheduled: 总调度任务数
         total_completed: 总完成任务数
         total_failed: 总失败任务数
+        total_cancelled: 总取消任务数
+        total_timed_out: 总超时任务数
         current_queue_size: 当前队列大小
         average_wait_time: 平均等待时间（秒）
         average_execution_time: 平均执行时间（秒）
+        peak_queue_size: 峰值队列大小
+        peak_concurrent: 峰值并发数
     """
 
     total_submitted: int = 0
@@ -194,6 +198,12 @@ class SchedulerStats:
     total_failed: int = 0
     """总失败任务数"""
 
+    total_cancelled: int = 0
+    """总取消任务数"""
+
+    total_timed_out: int = 0
+    """总超时任务数"""
+
     current_queue_size: int = 0
     """当前队列大小"""
 
@@ -202,6 +212,48 @@ class SchedulerStats:
 
     average_execution_time: float = 0.0
     """平均执行时间（秒）"""
+
+    peak_queue_size: int = 0
+    """峰值队列大小"""
+
+    peak_concurrent: int = 0
+    """峰值并发数"""
+
+
+@dataclass
+class SchedulerConfig:
+    """调度器配置.
+
+    Attributes:
+        max_queue_size: 最大队列大小
+        max_concurrent: 最大并发执行数
+        default_timeout: 默认任务超时时间（秒）
+        batch_size: 批处理大小
+        enable_dependency_resolution: 是否启用依赖解析
+        graceful_shutdown_timeout: 优雅关闭超时时间（秒）
+        task_fetch_timeout: 获取任务的超时时间（秒）
+    """
+
+    max_queue_size: int = 10000
+    """最大队列大小"""
+
+    max_concurrent: int = 10
+    """最大并发执行数"""
+
+    default_timeout: float = 300.0
+    """默认任务超时时间（秒）"""
+
+    batch_size: int = 50
+    """批处理大小"""
+
+    enable_dependency_resolution: bool = True
+    """是否启用依赖解析"""
+
+    graceful_shutdown_timeout: float = 30.0
+    """优雅关闭超时时间（秒）"""
+
+    task_fetch_timeout: float = 5.0
+    """获取任务的超时时间（秒）"""
 
 
 # =============================================================================
