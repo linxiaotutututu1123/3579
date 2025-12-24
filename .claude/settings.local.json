@@ -133,15 +133,5 @@
       "Write(*.pem)",
       "Write(*.key)"
     ]
-  },
-
-  "hooks": {
-    "postToolExecution": [
-      {
-        "matcher": "Write(**/*.py)",
-        "command": "ruff format \"$TOOL_INPUT\" 2>nul & ruff check --fix \"$TOOL_INPUT\" 2>nul || exit 0",
-        "timeout": 60000
-      }
-    ]
   }
 }
