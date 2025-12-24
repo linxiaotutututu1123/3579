@@ -23,13 +23,11 @@ import asyncio
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from collections.abc import Awaitable, Callable, Sequence
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
 from chairman_agents.core.exceptions import TaskExecutionError
 from chairman_agents.core.types import Task, TaskId, TaskResult, TaskStatus
-
-if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable, Sequence
 
 
 # =============================================================================
