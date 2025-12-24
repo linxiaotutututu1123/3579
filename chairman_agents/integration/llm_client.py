@@ -329,6 +329,7 @@ class BaseLLMClient(ABC):
     - 配置管理
     - 重试逻辑
     - 错误处理
+    - 响应缓存
     """
 
     def __init__(self, config: LLMConfig) -> None:
@@ -340,6 +341,40 @@ class BaseLLMClient(ABC):
         self._config = config
         self._request_count = 0
         self._total_tokens = 0
+        self._cache: LLMResponseCache | None = None
+
+        # 初始化缓存
+        if config.cache_enabled:
+            self._init_cache()
+
+    def _init_cache(self) -> None:
+        """初始化响应缓存."""
+        from chairman_agents.integration.llm_cache import CacheConfig, LLMResponseCache
+
+        cache_config = CacheConfig(
+            enabled=self._config.cache_enabled,
+            max_size=self._config.cache_max_size,
+            ttl_seconds=self._config.cache_ttl_seconds,
+        )
+        self._cache = LLMResponseCache(cache_config)
+
+    @property
+    def cache(self) -> LLMResponseCache | None:
+        """返回缓存实例."""
+        return self._cache
+
+    @property
+    def cache_enabled(self) -> bool:
+        """返回缓存是否启用."""
+        return self._cache is not None and self._cache.enabled
+
+    @cache_enabled.setter
+    def cache_enabled(self, value: bool) -> None:
+        """设置缓存启用状态."""
+        if self._cache is None and value:
+            self._init_cache()
+        elif self._cache is not None:
+            self._cache.enabled = value
 
     @property
     @abstractmethod
