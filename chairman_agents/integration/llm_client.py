@@ -453,6 +453,134 @@ class BaseLLMClient(ABC):
         self._request_count += 1
         self._total_tokens += usage.total_tokens
 
+    def _get_cached_completion(
+        self,
+        prompt: str,
+        model: str | None,
+        temperature: float | None,
+        max_tokens: int | None,
+    ) -> CompletionResult | None:
+        """获取缓存的补全结果.
+
+        Args:
+            prompt: 提示词
+            model: 模型名称
+            temperature: 温度参数
+            max_tokens: 最大token数
+
+        Returns:
+            缓存的CompletionResult或None
+        """
+        if self._cache is None:
+            return None
+
+        cached = self._cache.get_completion(
+            prompt,
+            model=self._get_model(model),
+            temperature=self._get_temperature(temperature),
+            max_tokens=self._get_max_tokens(max_tokens),
+        )
+
+        if cached is not None:
+            # 返回深拷贝避免缓存污染
+            return copy.deepcopy(cached)
+        return None
+
+    def _cache_completion(
+        self,
+        prompt: str,
+        result: CompletionResult,
+        model: str | None,
+        temperature: float | None,
+        max_tokens: int | None,
+    ) -> None:
+        """缓存补全结果.
+
+        Args:
+            prompt: 提示词
+            result: CompletionResult
+            model: 模型名称
+            temperature: 温度参数
+            max_tokens: 最大token数
+        """
+        if self._cache is None:
+            return
+
+        self._cache.set_completion(
+            prompt,
+            result,
+            model=self._get_model(model),
+            temperature=self._get_temperature(temperature),
+            max_tokens=self._get_max_tokens(max_tokens),
+        )
+
+    def _get_cached_chat(
+        self,
+        messages: list[Message],
+        model: str | None,
+        temperature: float | None,
+        max_tokens: int | None,
+    ) -> ChatResult | None:
+        """获取缓存的聊天结果.
+
+        Args:
+            messages: 消息列表
+            model: 模型名称
+            temperature: 温度参数
+            max_tokens: 最大token数
+
+        Returns:
+            缓存的ChatResult或None
+        """
+        if self._cache is None:
+            return None
+
+        # 将消息列表转换为可序列化的格式
+        messages_dict = [msg.to_dict() for msg in messages]
+
+        cached = self._cache.get_chat(
+            messages_dict,
+            model=self._get_model(model),
+            temperature=self._get_temperature(temperature),
+            max_tokens=self._get_max_tokens(max_tokens),
+        )
+
+        if cached is not None:
+            # 返回深拷贝避免缓存污染
+            return copy.deepcopy(cached)
+        return None
+
+    def _cache_chat(
+        self,
+        messages: list[Message],
+        result: ChatResult,
+        model: str | None,
+        temperature: float | None,
+        max_tokens: int | None,
+    ) -> None:
+        """缓存聊天结果.
+
+        Args:
+            messages: 消息列表
+            result: ChatResult
+            model: 模型名称
+            temperature: 温度参数
+            max_tokens: 最大token数
+        """
+        if self._cache is None:
+            return
+
+        # 将消息列表转换为可序列化的格式
+        messages_dict = [msg.to_dict() for msg in messages]
+
+        self._cache.set_chat(
+            messages_dict,
+            result,
+            model=self._get_model(model),
+            temperature=self._get_temperature(temperature),
+            max_tokens=self._get_max_tokens(max_tokens),
+        )
+
 
 # =============================================================================
 # Anthropic客户端实现
