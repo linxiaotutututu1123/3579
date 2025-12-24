@@ -1,15 +1,15 @@
 {
   "permissions": {
     "allow": [
+
       "Bash(python *)",
       "Bash(.venv/Scripts/python.exe *)",
       "Bash(.venv/Scripts/pip.exe *)",
       "Bash(.venv/bin/python *)",
       "Bash(.venv/bin/pip *)",
-
-      "Bash(source *)",
       "Bash(uv *)",
       "Bash(poetry *)",
+
 
       "Bash(pytest *)",
       "Bash(ruff *)",
@@ -18,117 +18,65 @@
       "Bash(isort *)",
       "Bash(pre-commit *)",
 
+
       "Bash(git *)",
 
+
       "Bash(ls *)",
-      "Bash(dir *)",
       "Bash(cat *)",
-      "Bash(type *)",
       "Bash(head *)",
       "Bash(tail *)",
       "Bash(grep *)",
       "Bash(find *)",
-      "Bash(wc *)",
       "Bash(tree *)",
       "Bash(mkdir *)",
       "Bash(cp *)",
       "Bash(mv *)",
-      "Bash(rm __pycache__/*)",
+      "Bash(echo *)",
+      "Bash(pwd)",
+
+      "Bash(rm -rf __pycache__)",
       "Bash(rm -rf .pytest_cache)",
       "Bash(rm -rf .mypy_cache)",
       "Bash(rm -rf .ruff_cache)",
-      "Bash(echo *)",
-      "Bash(pwd)",
-      "Bash(cd *)",
 
       "Bash(curl *)",
       "Bash(wget *)",
-      "Bash(gpg *)",
-      "Bash(xargs *)",
+
 
       "Bash(PYTHONIOENCODING=utf-8 *)",
-      "Bash(PYTHONPATH=. *)",
-      "Bash(PYTHONPATH=.. *)",
-      "Bash(VIRTUAL_ENV=* *)",
+      "Bash(PYTHONPATH=* *)",
 
-      "Bash(superclaude *)",
-      "Bash(superclaude:*)",
-      "Bash(sc *)",
-      "Bash(sc:*)",
 
-      "Skill(sc:help)",
-      "Skill(sc:analyze)",
-      "Skill(sc:improve)",
-      "Skill(sc:implement)",
-      "Skill(sc:design)",
-      "Skill(sc:save)",
-      "Skill(sc:workflow)",
-      "Skill(sc:debug)",
-      "Skill(sc:refactor)",
-      "Skill(sc:test)",
-      "Skill(sc:doc)",
-      "Skill(sc:review)",
-      "Skill(sc:explain)",
-      "Skill(sc:optimize)",
-      "Skill(sc:security)",
       "Skill(sc:*)",
-
-      "Skill(site-packages:superclaude:agents:root-cause-analyst)",
-      "Skill(site-packages:superclaude:agents:refactoring-expert)",
-      "Skill(site-packages:superclaude:agents:backend-architect)",
-      "Skill(site-packages:superclaude:agents:learning-guide)",
-      "Skill(site-packages:superclaude:agents:quality-engineer)",
-      "Skill(site-packages:superclaude:agents:security-auditor)",
-      "Skill(site-packages:superclaude:agents:performance-optimizer)",
-      "Skill(site-packages:superclaude:agents:documentation-writer)",
-      "Skill(site-packages:superclaude:agents:test-engineer)",
-      "Skill(site-packages:superclaude:agents:code-reviewer)",
-      "Skill(site-packages:superclaude:agents:*)",
-      "Skill(site-packages:*)",
-
-      "Skill(kfc:spec-design)",
+      "Skill(site-packages:superclaude:*)",
       "Skill(kfc:*)",
-
-      "SlashCommand(/sc:help)",
-      "SlashCommand(/sc:design)",
-      "SlashCommand(/sc:design:*)",
-      "SlashCommand(/sc:analyze)",
-      "SlashCommand(/sc:improve)",
-      "SlashCommand(/sc:implement)",
       "SlashCommand(/sc:*)",
+
 
       "WebSearch",
       "WebFetch(*)",
-
       "Read(*)",
-      "Read(**)",
       "Edit(*)",
-      "Edit(**)",
       "Write(*)",
-      "Write(**)",
-
       "mcp__*",
-
       "Task(*)",
       "Agent(*)"
     ],
     "deny": [
-      "Bash(rm -rf /)",
-      "Bash(rm -rf ~)",
-      "Bash(rm -rf .)",
-      "Bash(rm -rf C:*)",
-      "Bash(del /f /s /q C:*)",
-      "Bash(git push --force origin main)",
-      "Bash(git push -f origin main)",
 
-      "Write(.git/objects/**)",
-      "Write(.git/refs/**)",
-      "Write(.venv/Lib/**)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git reset --hard *)",
+
+      "Write(.git/**)",
+      "Write(.venv/**)",
       "Write(node_modules/**)",
       "Write(.env)",
-      "Write(.env.local)",
+      "Write(.env.*)",
       "Write(*.pem)",
-      "Write(*.key)"
+      "Write(*.key)",
+      "Write(*_secret*)"
     ]
   }
 }
