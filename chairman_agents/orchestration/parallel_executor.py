@@ -1110,6 +1110,44 @@ class ParallelExecutor:
 
         return results
 
+    async def _execute_parallel(
+        self,
+        tasks: Sequence[Task],
+        executor_fn: TaskExecutorFn,
+        timeout: float,
+    ) -> list[ExecutionResult]:
+        """完全并行执行任务.
+
+        Args:
+            tasks: 任务列表
+            executor_fn: 执行函数
+            timeout: 超时时间
+
+        Returns:
+            执行结果列表
+        """
+        coroutines = [
+            self._execute_with_retry(task, executor_fn, timeout) for task in tasks
+        ]
+        results = await asyncio.gather(*coroutines, return_exceptions=True)
+
+        # 处理异常结果
+        processed_results: list[ExecutionResult] = []
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                processed_results.append(
+                    ExecutionResult(
+                        task_id=tasks[i].id,
+                        task=tasks[i],
+                        success=False,
+                        error=result,
+                    )
+                )
+            else:
+                processed_results.append(result)
+
+        return processed_results
+
     async def _execute_sequential(
         self,
         tasks: Sequence[Task],
