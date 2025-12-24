@@ -95,6 +95,7 @@ class MemorySystem:
         self,
         storage_path: Path | None = None,
         use_embeddings: bool = False,
+        embedding_model: str = "paraphrase-multilingual-MiniLM-L12-v2",
     ):
         """
         Initialize the memory system.
@@ -102,14 +103,22 @@ class MemorySystem:
         Args:
             storage_path: Path for persistent storage
             use_embeddings: Whether to use vector embeddings
+            embedding_model: Name of the sentence-transformers model to use
         """
         self.memories: dict[str, MemoryItem] = {}
         self.storage_path = storage_path
         self.use_embeddings = use_embeddings
+        self._embedding_model_name = embedding_model
 
         # Chinese tokenization support (optional)
         self._jieba_available = self._check_jieba()
         self._jieba = None
+
+        # Embedding model support (optional)
+        self._embedding_model = None
+        self._embeddings_available = False
+        if use_embeddings:
+            self._init_embedding_model()
 
         # Load existing memories if storage path exists
         if storage_path and storage_path.exists():
@@ -123,6 +132,83 @@ class MemorySystem:
             return True
         except ImportError:
             return False
+
+    def _init_embedding_model(self) -> None:
+        """
+        Initialize the sentence-transformers embedding model.
+
+        Checks if sentence-transformers is available and loads the model.
+        If not available, gracefully degrades to text matching.
+        """
+        try:
+            from sentence_transformers import SentenceTransformer
+
+            self._embedding_model = SentenceTransformer(self._embedding_model_name)
+            self._embeddings_available = True
+        except ImportError:
+            # sentence-transformers not installed, degrade gracefully
+            self._embedding_model = None
+            self._embeddings_available = False
+        except Exception:
+            # Model loading failed, degrade gracefully
+            self._embedding_model = None
+            self._embeddings_available = False
+
+    def _generate_embedding(self, text: str) -> list[float] | None:
+        """
+        Generate embedding vector for text.
+
+        Args:
+            text: Input text to embed
+
+        Returns:
+            List of floats representing the embedding vector, or None if unavailable
+        """
+        if not self._embeddings_available or self._embedding_model is None:
+            return None
+
+        if not text or not text.strip():
+            return None
+
+        try:
+            # Generate embedding using sentence-transformers
+            embedding = self._embedding_model.encode(text, convert_to_numpy=True)
+            # Convert numpy array to list for JSON serialization
+            return embedding.tolist()
+        except Exception:
+            # Embedding generation failed, return None
+            return None
+
+    def _cosine_similarity(
+        self,
+        a: list[float],
+        b: list[float],
+    ) -> float:
+        """
+        Calculate cosine similarity between two vectors.
+
+        Args:
+            a: First embedding vector
+            b: Second embedding vector
+
+        Returns:
+            Cosine similarity score between -1 and 1
+        """
+        if not a or not b or len(a) != len(b):
+            return 0.0
+
+        # Calculate dot product
+        dot_product = sum(x * y for x, y in zip(a, b))
+
+        # Calculate magnitudes
+        magnitude_a = math.sqrt(sum(x * x for x in a))
+        magnitude_b = math.sqrt(sum(x * x for x in b))
+
+        # Avoid division by zero
+        if magnitude_a == 0 or magnitude_b == 0:
+            return 0.0
+
+        return dot_product / (magnitude_a * magnitude_b)
 
     def _contains_chinese(self, text: str) -> bool:
         """Check if text contains Chinese characters."""
@@ -319,6 +405,11 @@ class MemorySystem:
         now = datetime.now()
         memory_id = str(uuid.uuid4())
 
+        # Generate embedding if enabled
+        embedding = None
+        if self.use_embeddings and self._embeddings_available:
+            embedding = self._generate_embedding(content)
+
         memory = MemoryItem(
             id=memory_id,
             content=content,
@@ -327,7 +418,7 @@ class MemorySystem:
             created_at=now,
             last_accessed=now,
             access_count=0,
-            embedding=None,  # TODO: Generate embedding if use_embeddings
+            embedding=embedding,
             metadata=metadata or {},
         )
 
