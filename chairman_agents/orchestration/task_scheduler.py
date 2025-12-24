@@ -948,12 +948,16 @@ class TaskScheduler:
         self,
         task_id: TaskId,
         error: Exception | None = None,
+        timed_out: bool = False,
     ) -> None:
         """标记任务为失败.
+
+        自动释放并发槽位并更新统计信息。
 
         Args:
             task_id: 失败的任务 ID
             error: 导致失败的异常（可选）
+            timed_out: 是否因超时失败
         """
         async with self._lock:
             if task_id in self._running_tasks:
@@ -962,13 +966,59 @@ class TaskScheduler:
                 self._failed_tasks[task_id] = scheduled_task
                 self._stats.total_failed += 1
 
+                if timed_out:
+                    self._stats.total_timed_out += 1
+
+                # 记录执行时间
+                if task_id in self._task_start_times:
+                    execution_time = time.monotonic() - self._task_start_times.pop(task_id)
+                    self._execution_times.append(execution_time)
+                    if len(self._execution_times) > 1000:
+                        self._execution_times = self._execution_times[-1000:]
+
+                # 清理超时处理器
+                if task_id in self._task_timeouts:
+                    handle = self._task_timeouts.pop(task_id)
+                    if handle:
+                        handle.cancel()
+
+                # 释放并发槽位
+                if self._current_concurrent > 0:
+                    self._current_concurrent -= 1
+
                 # 更新依赖状态
                 if self.dependency_resolver:
                     await self.dependency_resolver.mark_failed(task_id)
 
-                # 触发回调
+                # 触发失败回调
                 for callback in self._on_task_failed:
-                    callback(scheduled_task.task, error or Exception("任务执行失败"))
+                    try:
+                        callback(scheduled_task.task, error or Exception("任务执行失败"))
+                    except Exception:
+                        pass
+
+                # 触发超时回调
+                if timed_out:
+                    for callback in self._on_task_timeout:
+                        try:
+                            callback(scheduled_task.task)
+                        except Exception:
+                            pass
+
+                # 触发进度回调
+                self._notify_progress()
+
+    async def mark_timeout(self, task_id: TaskId) -> None:
+        """标记任务为超时.
+
+        Args:
+            task_id: 超时的任务 ID
+        """
+        await self.mark_failed(
+            task_id,
+            error=TimeoutError(f"任务 {task_id} 执行超时"),
+            timed_out=True,
+        )
 
     async def retry(self, task_id: TaskId, max_retries: int = 3) -> bool:
         """重试失败的任务.
