@@ -50,7 +50,9 @@ from chairman_agents.orchestration.parallel_executor import (
     ExecutorStats,
     ParallelExecutor,
     ParallelExecutorProtocol,
+    ProgressCallback,
     TaskExecutorFn,
+    TaskProgressCallback,
     execute_tasks_parallel,
 )
 from chairman_agents.orchestration.task_scheduler import (
