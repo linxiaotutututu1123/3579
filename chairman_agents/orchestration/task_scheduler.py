@@ -900,6 +900,8 @@ class TaskScheduler:
     async def mark_completed(self, task_id: TaskId) -> None:
         """标记任务为已完成.
 
+        自动释放并发槽位并更新统计信息。
+
         Args:
             task_id: 完成的任务 ID
         """
@@ -911,14 +913,36 @@ class TaskScheduler:
                 self._completed_tasks[task_id] = scheduled_task
                 self._stats.total_completed += 1
 
+                # 记录执行时间
+                if task_id in self._task_start_times:
+                    execution_time = time.monotonic() - self._task_start_times.pop(task_id)
+                    self._execution_times.append(execution_time)
+                    if len(self._execution_times) > 1000:
+                        self._execution_times = self._execution_times[-1000:]
+
+                # 清理超时处理器
+                if task_id in self._task_timeouts:
+                    handle = self._task_timeouts.pop(task_id)
+                    if handle:
+                        handle.cancel()
+
+                # 释放并发槽位
+                if self._current_concurrent > 0:
+                    self._current_concurrent -= 1
+
                 # 更新依赖状态
                 if self.dependency_resolver:
-                    newly_ready = await self.dependency_resolver.mark_completed(task_id)
-                    # 可以在这里触发新可执行任务的通知
+                    await self.dependency_resolver.mark_completed(task_id)
 
-                # 触发回调
+                # 触发完成回调
                 for callback in self._on_task_completed:
-                    callback(scheduled_task.task)
+                    try:
+                        callback(scheduled_task.task)
+                    except Exception:
+                        pass
+
+                # 触发进度回调
+                self._notify_progress()
 
     async def mark_failed(
         self,
