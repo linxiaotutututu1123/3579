@@ -547,16 +547,26 @@ class TaskScheduler:
                 except Exception:
                     pass  # 忽略回调异常
 
-    async def submit_batch(self, tasks: Sequence[Task]) -> None:
+    async def submit_batch(
+        self,
+        tasks: Sequence[Task],
+        timeout: float | None = None,
+    ) -> int:
         """批量提交任务.
 
         批量提交比逐个提交更高效，特别是需要依赖解析时。
+        支持分批处理大量任务。
 
         Args:
             tasks: 任务列表
+            timeout: 每个任务的执行超时时间（秒）
+
+        Returns:
+            成功提交的任务数量
 
         Raises:
             RuntimeError: 队列空间不足时抛出
+            DependencyError: 存在依赖问题时抛出
         """
         async with self._lock:
             if len(self._queue) + len(tasks) > self.max_queue_size:
@@ -582,13 +592,36 @@ class TaskScheduler:
                             blocking_tasks=list(result.missing_dependencies),
                         )
 
-            for task in tasks:
-                scheduled_task = self._create_scheduled_task(task)
-                self._enqueue(scheduled_task)
-                self._pending_tasks[task.id] = scheduled_task
-                self._stats.total_submitted += 1
+            submitted_count = 0
+            batch_size = self.config.batch_size
 
-            self._stats.current_queue_size = len(self._queue)
+            # 分批处理
+            for i in range(0, len(tasks), batch_size):
+                batch = tasks[i : i + batch_size]
+                for task in batch:
+                    scheduled_task = self._create_scheduled_task(task)
+
+                    # 设置超时
+                    if timeout is not None:
+                        scheduled_task.execution_deadline = (
+                            datetime.now() + timedelta(seconds=timeout)
+                        )
+                    elif self.config.default_timeout:
+                        scheduled_task.execution_deadline = datetime.now() + timedelta(
+                            seconds=self.config.default_timeout
+                        )
+
+                    self._enqueue(scheduled_task)
+                    self._pending_tasks[task.id] = scheduled_task
+                    self._stats.total_submitted += 1
+                    submitted_count += 1
+
+                # 释放锁让其他操作有机会执行
+                if i + batch_size < len(tasks):
+                    await asyncio.sleep(0)
+
+            self._update_queue_stats()
+            return submitted_count
 
     async def next(self, timeout: float | None = None) -> Task | None:
         """获取下一个待执行任务.
