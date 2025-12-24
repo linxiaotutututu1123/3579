@@ -3,6 +3,60 @@
         "3579-local-server": {
             "type": "http",
             "url": "http://localhost:7071/mcp"
+        },
+        "playwright": {
+            "command": "npx",
+            "args": ["@playwright/mcp@latest"]
+        },
+        "context7": {
+            "command": "npx",
+            "args": ["-y", "@upstash/context7-mcp"]
+        },
+        "serena": {
+            "command": "uvx",
+            "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"]
+        },
+        "firebase": {
+            "command": "npx",
+            "args": ["-y", "firebase-tools@latest", "mcp"]
+        },
+        "github": {
+            "type": "http",
+            "url": "https://api.githubcopilot.com/mcp/",
+            "headers": {
+                "Authorization": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}"
+            }
+        },
+        "gitlab": {
+            "type": "http",
+            "url": "https://gitlab.com/api/v4/mcp"
+        },
+        "slack": {
+            "type": "sse",
+            "url": "https://mcp.slack.com/sse"
+        },
+        "supabase": {
+            "type": "http",
+            "url": "https://mcp.supabase.com/mcp"
+        },
+        "stripe": {
+            "type": "http",
+            "url": "https://mcp.stripe.com"
+        },
+        "asana": {
+            "type": "sse",
+            "url": "https://mcp.asana.com/sse"
+        },
+        "linear": {
+            "type": "http",
+            "url": "https://mcp.linear.app/mcp"
+        },
+        "greptile": {
+            "type": "http",
+            "url": "https://api.greptile.com/mcp",
+            "headers": {
+                "Authorization": "Bearer ${GREPTILE_API_KEY}"
+            }
         }
     }
 }
