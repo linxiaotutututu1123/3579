@@ -384,7 +384,7 @@
         "matcher": "Write(**/*.rs)",
         "command": "rustfmt \"$TOOL_INPUT\" 2>nul || true",
         "timeout": 30000
-      }
+      },
     ],
   },
 
