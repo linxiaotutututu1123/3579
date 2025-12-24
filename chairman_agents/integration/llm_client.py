@@ -180,6 +180,9 @@ class LLMConfig:
         timeout: 超时时间(秒)
         max_retries: 最大重试次数
         retry_delay: 重试延迟(秒)
+        cache_enabled: 是否启用响应缓存
+        cache_max_size: 缓存最大条目数
+        cache_ttl_seconds: 缓存过期时间(秒), None表示永不过期
     """
 
     api_key: str = ""
@@ -190,6 +193,9 @@ class LLMConfig:
     timeout: float = 60.0
     max_retries: int = 3
     retry_delay: float = 1.0
+    cache_enabled: bool = True
+    cache_max_size: int = 1000
+    cache_ttl_seconds: float | None = None
 
 
 # =============================================================================
