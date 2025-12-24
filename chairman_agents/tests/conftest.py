@@ -255,3 +255,4 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "integration: Integration tests")
     config.addinivalue_line("markers", "slow: Slow tests")
     config.addinivalue_line("markers", "requires_llm: Requires LLM API")
+    config.addinivalue_line("markers", "orchestration: Orchestration module tests")
