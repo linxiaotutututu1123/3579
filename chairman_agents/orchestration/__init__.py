@@ -57,6 +57,7 @@ from chairman_agents.orchestration.parallel_executor import (
 )
 from chairman_agents.orchestration.task_scheduler import (
     ScheduledTask,
+    SchedulerConfig,
     SchedulerState,
     SchedulerStats,
     SchedulingStrategy,
