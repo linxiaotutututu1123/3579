@@ -1277,6 +1277,7 @@ __all__ = [
     "SchedulerState",
     "ScheduledTask",
     "SchedulerStats",
+    "SchedulerConfig",
     "TaskSchedulerProtocol",
     "TaskScheduler",
 ]

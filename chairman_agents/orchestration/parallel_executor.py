@@ -5,6 +5,9 @@
 - 任务执行超时管理
 - 错误处理和重试
 - 执行结果收集
+- 任务优先级队列
+- 进度回调
+- 优雅关闭
 
 核心类:
     ExecutionMode: 执行模式枚举
@@ -20,6 +23,8 @@ Example:
 from __future__ import annotations
 
 import asyncio
+import heapq
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -27,7 +32,7 @@ from collections.abc import Awaitable, Callable, Sequence
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
 from chairman_agents.core.exceptions import TaskExecutionError
-from chairman_agents.core.types import Task, TaskId, TaskResult, TaskStatus
+from chairman_agents.core.types import Task, TaskId, TaskPriority, TaskResult, TaskStatus
 
 
 # =============================================================================
