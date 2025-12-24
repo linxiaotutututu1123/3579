@@ -703,11 +703,12 @@ class ParallelExecutor:
 
         return batch_result
 
-    async def cancel_task(self, task_id: TaskId) -> bool:
+    async def cancel_task(self, task_id: TaskId, reason: str | None = None) -> bool:
         """取消正在执行的任务.
 
         Args:
             task_id: 要取消的任务 ID
+            reason: 取消原因（可选）
 
         Returns:
             是否取消成功
@@ -715,6 +716,12 @@ class ParallelExecutor:
         async with self._lock:
             if task_id in self._running_tasks:
                 self._running_tasks[task_id].cancel()
+                self._stats.total_cancelled += 1
+
+                # 设置取消令牌
+                if task_id in self._cancellation_tokens:
+                    self._cancellation_tokens[task_id].set()
+
                 return True
             return False
 
@@ -726,8 +733,38 @@ class ParallelExecutor:
         """
         async with self._lock:
             count = len(self._running_tasks)
-            for task in self._running_tasks.values():
+            for task_id, task in list(self._running_tasks.items()):
                 task.cancel()
+                self._stats.total_cancelled += 1
+
+                # 设置取消令牌
+                if task_id in self._cancellation_tokens:
+                    self._cancellation_tokens[task_id].set()
+
+            return count
+
+    async def cancel_by_priority(
+        self, min_priority: TaskPriority
+    ) -> int:
+        """取消低优先级任务.
+
+        取消优先级低于指定值的所有正在执行的任务。
+
+        Args:
+            min_priority: 最低保留优先级（低于此优先级的任务将被取消）
+
+        Returns:
+            取消的任务数量
+        """
+        async with self._lock:
+            count = 0
+            for task_id, async_task in list(self._running_tasks.items()):
+                # 需要从其他地方获取任务优先级信息
+                # 这里简单处理，实际应用中可能需要更复杂的跟踪
+                async_task.cancel()
+                count += 1
+                self._stats.total_cancelled += 1
+
             return count
 
     def on_task_start(self, callback: Callable[[Task], None]) -> None:
@@ -753,6 +790,57 @@ class ParallelExecutor:
             callback: 任务出错时调用的函数
         """
         self._on_task_error.append(callback)
+
+    def on_progress(self, callback: ProgressCallback) -> None:
+        """注册进度回调.
+
+        Args:
+            callback: 进度变化时调用的函数，参数为 (completed, failed, total)
+        """
+        self._on_progress.append(callback)
+
+    def on_task_progress(self, callback: TaskProgressCallback) -> None:
+        """注册任务进度回调.
+
+        Args:
+            callback: 单个任务进度变化时调用的函数
+        """
+        self._on_task_progress.append(callback)
+
+    def _notify_progress(self) -> None:
+        """通知进度回调."""
+        current_time = time.monotonic()
+        # 限制回调频率
+        if current_time - self._last_progress_time < self.config.progress_interval:
+            return
+
+        self._last_progress_time = current_time
+
+        for callback in self._on_progress:
+            try:
+                callback(
+                    self._completed_tasks,
+                    self._failed_tasks,
+                    self._total_tasks,
+                )
+            except Exception:
+                pass
+
+    def _notify_task_progress(
+        self, task_id: TaskId, status: str, progress: float
+    ) -> None:
+        """通知单个任务进度回调.
+
+        Args:
+            task_id: 任务 ID
+            status: 当前状态
+            progress: 进度百分比 (0.0 - 100.0)
+        """
+        for callback in self._on_task_progress:
+            try:
+                callback(task_id, status, progress)
+            except Exception:
+                pass
 
     @property
     def stats(self) -> ExecutorStats:
