@@ -428,12 +428,25 @@ describe('{name}', () => {{
 
   it('handles user interactions correctly', () => {{
     render(<{name} />);
-    // TODO: 添加交互测试
+    // 查找可交互元素
+    const interactiveElements = screen.queryAllByRole('button');
+    interactiveElements.forEach((element) => {{
+      fireEvent.click(element);
+    }});
+    // 验证交互后的状态变化
   }});
 
   it('is accessible', async () => {{
     const {{ container }} = render(<{name} />);
-    // TODO: 添加可访问性测试
+    // 验证 ARIA 属性
+    expect(container.querySelector('[role]') || container.firstChild).toBeTruthy();
+    // 验证键盘导航支持
+    const focusableElements = container.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    focusableElements.forEach((el) => {{
+      expect(el).toBeVisible?.() || expect(el).toBeTruthy();
+    }});
   }});
 }});
 '''

@@ -1299,12 +1299,92 @@ class FullstackEngineerAgent(BaseExpertAgent):
         )
 
     def _extract_endpoint_spec(self, task: Task) -> EndpointSpec:
-        """Extract endpoint specification from task."""
+        """Extract endpoint specification from task.
+
+        Extracts a complete endpoint specification from the task context,
+        including HTTP method, path, request/response schemas, parameters,
+        authentication requirements, and API documentation metadata.
+
+        Args:
+            task: The task containing endpoint specification in its context.
+
+        Returns:
+            EndpointSpec: A fully populated endpoint specification.
+        """
+        context = task.context
+
+        # Extract path parameters from the path pattern (e.g., /users/{id})
+        path = context.get("path", "/api/resource")
+        path_params = context.get("path_params", [])
+        if not path_params:
+            # Auto-extract path params from path pattern
+            import re
+            param_matches = re.findall(r"\{(\w+)\}", path)
+            path_params = [
+                {"name": param, "type": "str", "description": f"Path parameter: {param}"}
+                for param in param_matches
+            ]
+
+        # Extract query parameters
+        query_params = context.get("query_params", [])
+
+        # Extract request body schema
+        request_body = context.get("request_body")
+        if request_body is None and context.get("method", "GET") in ("POST", "PUT", "PATCH"):
+            # Generate default request body schema from entity if available
+            entity = context.get("entity")
+            if entity and isinstance(entity, dict):
+                request_body = {
+                    "properties": entity.get("fields", {}),
+                    "required": entity.get("required_fields", []),
+                }
+
+        # Extract response schema
+        response_schema = context.get("response_schema", {})
+        if not response_schema:
+            # Generate default response schema
+            response_schema = {
+                "properties": {
+                    "success": {"type": "boolean", "description": "Operation success status"},
+                    "data": {"type": "object", "description": "Response data"},
+                    "message": {"type": "string", "description": "Response message"},
+                },
+                "required": ["success"],
+            }
+
+        # Extract headers
+        headers = context.get("headers", [])
+
+        # Extract authentication requirement
+        auth_required = context.get("auth_required", True)
+
+        # Extract rate limit configuration
+        rate_limit = context.get("rate_limit")
+        if rate_limit is None and context.get("is_public", False):
+            # Apply default rate limit for public endpoints
+            rate_limit = {"requests_per_minute": 60, "burst": 10}
+
+        # Extract API documentation tags
+        tags = context.get("tags", [])
+        if not tags:
+            # Auto-generate tags from path
+            path_parts = [p for p in path.split("/") if p and not p.startswith("{")]
+            if path_parts:
+                tags = [path_parts[-1].replace("_", " ").title()]
+
         return EndpointSpec(
-            method=task.context.get("method", "GET"),
-            path=task.context.get("path", "/api/resource"),
+            method=context.get("method", "GET"),
+            path=path,
             summary=task.title,
             description=task.description,
+            request_body=request_body,
+            response_schema=response_schema,
+            query_params=query_params,
+            path_params=path_params,
+            headers=headers,
+            auth_required=auth_required,
+            rate_limit=rate_limit,
+            tags=tags,
         )
 
     def _extract_entities(self, task: Task) -> list[Entity]:
