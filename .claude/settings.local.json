@@ -4,8 +4,6 @@
       "Bash(python *)",
       "Bash(.venv/Scripts/python.exe *)",
       "Bash(.venv/Scripts/pip.exe *)",
-      "Bash(.venv/Scripts/python.exe *)",
-      "Bash(.venv/Scripts/pip.exe *)",
       "Bash(.venv/bin/python *)",
       "Bash(.venv/bin/pip *)",
 
@@ -35,6 +33,7 @@
       "Bash(mkdir *)",
       "Bash(cp *)",
       "Bash(mv *)",
+      "Bash(rm __pycache__/*)",
       "Bash(rm -rf .pytest_cache)",
       "Bash(rm -rf .mypy_cache)",
       "Bash(rm -rf .ruff_cache)",
