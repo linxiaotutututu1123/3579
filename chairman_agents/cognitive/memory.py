@@ -299,11 +299,13 @@ class MemorySystem:
         memory: MemoryItem,
         time_decay: bool = True,
         time_decay_factor: float = 0.1,
+        query_embedding: list[float] | None = None,
     ) -> float:
         """
         Calculate relevance score between query and memory.
 
-        Uses TF-IDF-like scoring with:
+        Uses vector similarity if embeddings are available, otherwise falls back
+        to TF-IDF-like scoring with:
         1. Token overlap (Jaccard similarity)
         2. Term frequency weighting
         3. Importance weighting
@@ -314,46 +316,71 @@ class MemorySystem:
             memory: Memory item to compare
             time_decay: Whether to apply time decay
             time_decay_factor: Decay rate (higher = faster decay)
+            query_embedding: Pre-computed query embedding (optional, for efficiency)
 
         Returns:
             Relevance score between 0 and 1
         """
-        # Tokenize query and memory content
-        query_tokens = self._tokenize(query)
-        memory_tokens = self._tokenize(memory.content)
+        base_score = 0.0
 
-        if not query_tokens or not memory_tokens:
-            return 0.0
+        # Try vector similarity first if embeddings are available
+        use_vector_similarity = (
+            self._embeddings_available
+            and memory.embedding is not None
+        )
 
-        # Calculate token overlap (Jaccard-like)
-        query_set = set(query_tokens)
-        memory_set = set(memory_tokens)
+        if use_vector_similarity:
+            # Generate query embedding if not provided
+            if query_embedding is None:
+                query_embedding = self._generate_embedding(query)
 
-        intersection = query_set & memory_set
-        union = query_set | memory_set
+            if query_embedding is not None:
+                # Calculate cosine similarity between query and memory embeddings
+                cosine_sim = self._cosine_similarity(query_embedding, memory.embedding)
+                # Normalize cosine similarity from [-1, 1] to [0, 1]
+                base_score = (cosine_sim + 1.0) / 2.0
+            else:
+                # Embedding generation failed, fall back to token-based
+                use_vector_similarity = False
 
-        if not union:
-            return 0.0
+        # Fall back to token-based similarity if vector similarity not available
+        if not use_vector_similarity:
+            # Tokenize query and memory content
+            query_tokens = self._tokenize(query)
+            memory_tokens = self._tokenize(memory.content)
 
-        # Base relevance: Jaccard similarity
-        jaccard = len(intersection) / len(union)
+            if not query_tokens or not memory_tokens:
+                return 0.0
 
-        # Term frequency bonus: reward more occurrences in memory
-        tf_bonus = 0.0
-        if intersection:
-            memory_token_freq: dict[str, int] = {}
-            for token in memory_tokens:
-                memory_token_freq[token] = memory_token_freq.get(token, 0) + 1
+            # Calculate token overlap (Jaccard-like)
+            query_set = set(query_tokens)
+            memory_set = set(memory_tokens)
 
-            total_freq = sum(memory_token_freq.get(t, 0) for t in intersection)
-            tf_bonus = min(0.2, total_freq / (len(memory_tokens) * 2))
+            intersection = query_set & memory_set
+            union = query_set | memory_set
 
-        # Coverage bonus: what fraction of query terms are found
-        coverage = len(intersection) / len(query_set) if query_set else 0
-        coverage_bonus = coverage * 0.2
+            if not union:
+                return 0.0
 
-        # Combine scores
-        base_score = jaccard + tf_bonus + coverage_bonus
+            # Base relevance: Jaccard similarity
+            jaccard = len(intersection) / len(union)
+
+            # Term frequency bonus: reward more occurrences in memory
+            tf_bonus = 0.0
+            if intersection:
+                memory_token_freq: dict[str, int] = {}
+                for token in memory_tokens:
+                    memory_token_freq[token] = memory_token_freq.get(token, 0) + 1
+
+                total_freq = sum(memory_token_freq.get(t, 0) for t in intersection)
+                tf_bonus = min(0.2, total_freq / (len(memory_tokens) * 2))
+
+            # Coverage bonus: what fraction of query terms are found
+            coverage = len(intersection) / len(query_set) if query_set else 0
+            coverage_bonus = coverage * 0.2
+
+            # Combine scores
+            base_score = jaccard + tf_bonus + coverage_bonus
 
         # Apply importance weighting
         importance_weight = 0.7 + (memory.importance * 0.3)
@@ -440,17 +467,23 @@ class MemorySystem:
         """
         results: list[tuple[MemoryItem, float]] = []
 
+        # Pre-compute query embedding for efficiency (avoid regenerating for each memory)
+        query_embedding = None
+        if self._embeddings_available:
+            query_embedding = self._generate_embedding(query.query)
+
         for memory in self.memories.values():
             # Filter by memory type if specified
             if query.memory_types and memory.memory_type not in query.memory_types:
                 continue
 
-            # Calculate relevance
+            # Calculate relevance (pass pre-computed query embedding)
             relevance = self._calculate_relevance(
                 query.query,
                 memory,
                 time_decay=query.time_decay,
                 time_decay_factor=query.time_decay_factor,
+                query_embedding=query_embedding,
             )
 
             # Filter by minimum relevance

@@ -1423,23 +1423,149 @@ class FullstackEngineerAgent(BaseExpertAgent):
     def _generate_fastapi_endpoint(self, endpoint: EndpointSpec) -> dict[str, str]:
         """Generate FastAPI endpoint code."""
         method_lower = endpoint.method.lower()
-        path_name = endpoint.path.replace("/", "_").replace("{", "").replace("}", "")
+        path_name = endpoint.path.replace("/", "_").replace("{", "").replace("}", "").strip("_")
+        func_name = f"{method_lower}_{path_name}".strip("_")
 
-        code = f'''"""Auto-generated endpoint for {endpoint.path}."""
+        # Build imports
+        imports = [
+            "from fastapi import APIRouter, HTTPException, Depends, Query, Path",
+            "from pydantic import BaseModel, Field",
+            "from typing import Any",
+        ]
 
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
+        # Build request/response models
+        models = []
+        if endpoint.request_body:
+            models.append(self._generate_pydantic_model(
+                f"{func_name.title().replace('_', '')}Request",
+                endpoint.request_body
+            ))
+        if endpoint.response_schema:
+            models.append(self._generate_pydantic_model(
+                f"{func_name.title().replace('_', '')}Response",
+                endpoint.response_schema
+            ))
 
-router = APIRouter()
+        # Build function signature parts
+        params = []
 
+        # Path parameters
+        for param in endpoint.path_params:
+            param_name = param.get("name", "id")
+            param_type = param.get("type", "str")
+            params.append(f'{param_name}: {param_type} = Path(..., description="{param.get("description", "")}")')
 
-@router.{method_lower}("{endpoint.path}")
-async def {method_lower}{path_name}():
-    """{endpoint.summary}"""
-    # TODO: Implement endpoint logic
-    return {{"message": "Success"}}
-'''
+        # Query parameters
+        for param in endpoint.query_params:
+            param_name = param.get("name", "param")
+            param_type = param.get("type", "str")
+            required = param.get("required", False)
+            default = "..." if required else "None"
+            params.append(f'{param_name}: {param_type} | None = Query({default}, description="{param.get("description", "")}")')
+
+        # Request body parameter
+        request_body_param = ""
+        if endpoint.request_body and method_lower in ("post", "put", "patch"):
+            request_body_param = f"body: {func_name.title().replace('_', '')}Request"
+            params.append(request_body_param)
+
+        # Authentication dependency
+        if endpoint.auth_required:
+            imports.append("# from app.auth import get_current_user  # Uncomment when auth is configured")
+            params.append("# current_user = Depends(get_current_user)")
+
+        # Build function signature
+        params_str = ", ".join(p for p in params if not p.startswith("#"))
+        comments_in_params = [p for p in params if p.startswith("#")]
+
+        # Build response annotation
+        response_type = f"{func_name.title().replace('_', '')}Response" if endpoint.response_schema else "dict[str, Any]"
+
+        # Generate code
+        code_parts = [
+            f'"""Auto-generated endpoint for {endpoint.path}."""',
+            "",
+            "\n".join(imports),
+            "",
+            "router = APIRouter()",
+            "",
+        ]
+
+        # Add models
+        if models:
+            code_parts.extend(models)
+            code_parts.append("")
+
+        # Add endpoint function
+        tags_str = f", tags={endpoint.tags}" if endpoint.tags else ""
+        code_parts.append(f'@router.{method_lower}("{endpoint.path}"{tags_str})')
+        code_parts.append(f"async def {func_name}({params_str}) -> {response_type}:")
+        code_parts.append(f'    """{endpoint.summary or "Handle " + endpoint.method + " request."}')
+        if endpoint.description:
+            code_parts.append(f"")
+            code_parts.append(f"    {endpoint.description}")
+        code_parts.append(f'    """')
+
+        # Add auth comment if needed
+        for comment in comments_in_params:
+            code_parts.append(f"    {comment}")
+
+        # Add implementation stub based on method
+        if method_lower == "get":
+            code_parts.append("    # Retrieve and return resource(s)")
+            code_parts.append('    return {"message": "Success", "data": None}')
+        elif method_lower == "post":
+            code_parts.append("    # Create new resource")
+            code_parts.append('    return {"message": "Created", "data": body.model_dump() if body else None}')
+        elif method_lower == "put" or method_lower == "patch":
+            code_parts.append("    # Update existing resource")
+            code_parts.append('    return {"message": "Updated", "data": body.model_dump() if body else None}')
+        elif method_lower == "delete":
+            code_parts.append("    # Delete resource")
+            code_parts.append('    return {"message": "Deleted"}')
+        else:
+            code_parts.append('    return {"message": "Success"}')
+
+        code_parts.append("")
+
+        code = "\n".join(code_parts)
         return {f"routes/{path_name}.py": code}
+
+    def _generate_pydantic_model(self, name: str, schema: dict[str, Any]) -> str:
+        """Generate a Pydantic model from schema definition."""
+        fields = []
+        properties = schema.get("properties", schema)
+        required_fields = schema.get("required", [])
+
+        for field_name, field_def in properties.items():
+            if isinstance(field_def, dict):
+                field_type = self._map_schema_type(field_def.get("type", "str"))
+                description = field_def.get("description", "")
+                is_required = field_name in required_fields
+
+                if is_required:
+                    fields.append(f'    {field_name}: {field_type} = Field(..., description="{description}")')
+                else:
+                    fields.append(f'    {field_name}: {field_type} | None = Field(None, description="{description}")')
+            else:
+                fields.append(f"    {field_name}: Any = None")
+
+        if not fields:
+            fields.append("    pass")
+
+        return f"class {name}(BaseModel):\n" + "\n".join(fields) + "\n"
+
+    def _map_schema_type(self, schema_type: str) -> str:
+        """Map JSON schema type to Python type."""
+        type_map = {
+            "string": "str",
+            "integer": "int",
+            "number": "float",
+            "boolean": "bool",
+            "array": "list",
+            "object": "dict",
+        }
+        return type_map.get(schema_type, "Any")
 
     def _generate_endpoint_tests(self, endpoint: EndpointSpec) -> dict[str, str]:
         """Generate endpoint tests."""
