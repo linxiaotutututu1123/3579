@@ -391,8 +391,11 @@ class ParallelExecutor:
     提供高效的并行任务执行能力：
     - 可配置的并发度
     - 超时控制
-    - 自动重试
+    - 自动重试（支持退避）
     - 优雅关闭
+    - 任务优先级队列
+    - 进度回调
+    - 批量执行优化
 
     Attributes:
         config: 执行器配置
@@ -427,15 +430,32 @@ class ParallelExecutor:
         self._running_tasks: dict[TaskId, asyncio.Task[ExecutionResult]] = {}
         self._lock = asyncio.Lock()
         self._shutdown_event = asyncio.Event()
+        self._pause_event = asyncio.Event()
+        self._pause_event.set()  # 默认未暂停
+
+        # 优先级队列 (priority, sequence, task)
+        self._priority_queue: list[tuple[int, int, Task]] = []
+        self._sequence_counter = 0
 
         # 统计信息
         self._stats = ExecutorStats()
         self._execution_times: list[float] = []
 
+        # 任务取消跟踪
+        self._cancellation_tokens: dict[TaskId, asyncio.Event] = {}
+
         # 回调
         self._on_task_start: list[Callable[[Task], None]] = []
         self._on_task_complete: list[Callable[[ExecutionResult], None]] = []
         self._on_task_error: list[Callable[[Task, Exception], None]] = []
+        self._on_progress: list[ProgressCallback] = []
+        self._on_task_progress: list[TaskProgressCallback] = []
+
+        # 进度跟踪
+        self._total_tasks = 0
+        self._completed_tasks = 0
+        self._failed_tasks = 0
+        self._last_progress_time = 0.0
 
     async def start(self) -> None:
         """启动执行器."""
@@ -443,33 +463,79 @@ class ParallelExecutor:
             if self.state != ExecutorState.STOPPED:
                 self._semaphore = asyncio.Semaphore(self.config.max_workers)
                 self._shutdown_event.clear()
+                self._pause_event.set()
                 self.state = ExecutorState.RUNNING
 
-    async def shutdown(self, wait: bool = True) -> None:
+    async def shutdown(self, wait: bool = True, cancel_running: bool = False) -> int:
         """关闭执行器.
+
+        支持优雅关闭，等待正在执行的任务完成或强制取消。
 
         Args:
             wait: 是否等待当前任务完成
+            cancel_running: 是否取消正在运行的任务
+
+        Returns:
+            取消的任务数量
         """
+        cancelled_count = 0
+
         async with self._lock:
             self.state = ExecutorState.SHUTTING_DOWN
             self._shutdown_event.set()
 
-        if wait and self._running_tasks:
+        # 取消正在运行的任务
+        if cancel_running:
+            for task_id, task in list(self._running_tasks.items()):
+                task.cancel()
+                cancelled_count += 1
+                self._stats.total_cancelled += 1
+
+                # 设置取消令牌
+                if task_id in self._cancellation_tokens:
+                    self._cancellation_tokens[task_id].set()
+
+        if wait and self._running_tasks and not cancel_running:
             # 等待所有运行中的任务完成
             try:
-                await asyncio.wait_for(
-                    asyncio.gather(*self._running_tasks.values(), return_exceptions=True),
-                    timeout=self.config.graceful_shutdown_timeout,
-                )
-            except asyncio.TimeoutError:
-                # 超时后取消剩余任务
-                for task in self._running_tasks.values():
-                    task.cancel()
+                start_time = time.monotonic()
+                while self._running_tasks:
+                    elapsed = time.monotonic() - start_time
+                    if elapsed >= self.config.graceful_shutdown_timeout:
+                        # 超时后取消剩余任务
+                        for task_id, task in list(self._running_tasks.items()):
+                            task.cancel()
+                            cancelled_count += 1
+                            self._stats.total_cancelled += 1
+                        break
+                    await asyncio.sleep(0.1)
+            except Exception:
+                pass
 
         async with self._lock:
             self._running_tasks.clear()
+            self._cancellation_tokens.clear()
+            self._priority_queue.clear()
             self.state = ExecutorState.STOPPED
+
+        return cancelled_count
+
+    async def pause(self) -> None:
+        """暂停执行器.
+
+        暂停后不会启动新任务，但已运行的任务会继续执行。
+        """
+        async with self._lock:
+            if self.state == ExecutorState.RUNNING:
+                self._pause_event.clear()
+                self.state = ExecutorState.PAUSED
+
+    async def resume(self) -> None:
+        """恢复执行器."""
+        async with self._lock:
+            if self.state == ExecutorState.PAUSED:
+                self._pause_event.set()
+                self.state = ExecutorState.RUNNING
 
     async def execute(
         self,
