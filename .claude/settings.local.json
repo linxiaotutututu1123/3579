@@ -1,5 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(env)",
+      "Skill(sc:workflow)"
+    ]
+  },
   "enabledPlugins": {
     "github@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
@@ -52,10 +58,5 @@
         "@modelcontextprotocol/server-puppeteer"
       ]
     }
-  },
-  "permissions": {
-    "allow": [
-      "Bash(env)"
-    ]
   }
 }
