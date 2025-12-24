@@ -1098,10 +1098,43 @@ class TaskScheduler:
         """
         self._on_task_failed.append(callback)
 
+    def on_task_timeout(self, callback: Callable[[Task], None]) -> None:
+        """注册任务超时回调.
+
+        Args:
+            callback: 任务超时时调用的函数
+        """
+        self._on_task_timeout.append(callback)
+
+    def on_task_cancelled(self, callback: Callable[[Task], None]) -> None:
+        """注册任务取消回调.
+
+        Args:
+            callback: 任务被取消时调用的函数
+        """
+        self._on_task_cancelled.append(callback)
+
+    def on_progress(
+        self, callback: Callable[[int, int, int], None]
+    ) -> None:
+        """注册进度回调.
+
+        Args:
+            callback: 进度变化时调用的函数，参数为 (completed, failed, total)
+        """
+        self._on_progress.append(callback)
+
     @property
     def stats(self) -> SchedulerStats:
         """获取调度器统计信息."""
         self._stats.current_queue_size = len(self._queue)
+        # 更新平均时间
+        if self._wait_times:
+            self._stats.average_wait_time = sum(self._wait_times) / len(self._wait_times)
+        if self._execution_times:
+            self._stats.average_execution_time = sum(self._execution_times) / len(
+                self._execution_times
+            )
         return self._stats
 
     @property
@@ -1113,6 +1146,35 @@ class TaskScheduler:
     def queue_size(self) -> int:
         """获取当前队列大小."""
         return len(self._queue)
+
+    @property
+    def running_count(self) -> int:
+        """获取正在执行的任务数."""
+        return len(self._running_tasks)
+
+    @property
+    def concurrent_slots_available(self) -> int:
+        """获取可用的并发槽位数."""
+        return self.config.max_concurrent - self._current_concurrent
+
+    def _notify_progress(self) -> None:
+        """通知进度回调."""
+        completed = self._stats.total_completed
+        failed = self._stats.total_failed
+        total = self._stats.total_submitted
+
+        for callback in self._on_progress:
+            try:
+                callback(completed, failed, total)
+            except Exception:
+                pass
+
+    def _update_queue_stats(self) -> None:
+        """更新队列相关统计信息."""
+        current_size = len(self._queue)
+        self._stats.current_queue_size = current_size
+        if current_size > self._stats.peak_queue_size:
+            self._stats.peak_queue_size = current_size
 
     def _create_scheduled_task(self, task: Task) -> ScheduledTask:
         """创建 ScheduledTask 包装.
