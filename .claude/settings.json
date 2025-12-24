@@ -1,12 +1,20 @@
 {
+  "$schema": "https://code.claude.com/schemas/settings.json",
+
   "env": {
     "ANTHROPIC_MODEL": "claude-opus-4-5-20251101-thinking",
     "ANTHROPIC_SMALL_FAST_MODEL": "claude-opus-4-5-20251101-thinking",
     "ANTHROPIC_BASE_URL": "https://api.xiaocaseai.com",
     "ANTHROPIC_AUTH_TOKEN": "sk-H2INpn37Rd2mAFRY41c9M0Y9skiOqBAG1OCXqrqJLrxzuOcS",
     "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "150000",
-    "MAX_THINKING_TOKENS": "100000"
+    "MAX_THINKING_TOKENS": "100000",
+    "EDITOR": "code --wait",
+    "LANG": "zh_CN.UTF-8",
+    "PYTHONIOENCODING": "utf-8",
+    "BASH_DEFAULT_TIMEOUT_MS": "150000",
+    "BASH_MAX_TIMEOUT_MS": "160000"
   },
+
   "enabledPlugins": {
     "github@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
@@ -21,5 +29,245 @@
     "linear@claude-plugins-official": true,
     "greptile@claude-plugins-official": true,
     "laravel-boost@claude-plugins-official": true
+  },
+
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(glab *)",
+
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(yarn *)",
+      "Bash(pnpm *)",
+      "Bash(bun *)",
+      "Bash(node *)",
+
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(pip *)",
+      "Bash(pip3 *)",
+      "Bash(poetry *)",
+      "Bash(uv *)",
+      "Bash(conda *)",
+
+      "Bash(cargo *)",
+      "Bash(rustc *)",
+      "Bash(go *)",
+      "Bash(java *)",
+      "Bash(javac *)",
+      "Bash(mvn *)",
+      "Bash(gradle *)",
+
+      "Bash(php *)",
+      "Bash(composer *)",
+      "Bash(artisan *)",
+      "Bash(laravel *)",
+
+      "Bash(docker *)",
+      "Bash(docker-compose *)",
+      "Bash(kubectl *)",
+
+      "Bash(make *)",
+      "Bash(cmake *)",
+
+      "Bash(ls *)",
+      "Bash(dir *)",
+      "Bash(cat *)",
+      "Bash(type *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(find *)",
+      "Bash(fd *)",
+      "Bash(wc *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(awk *)",
+      "Bash(sed *)",
+      "Bash(jq *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(touch *)",
+      "Bash(echo *)",
+      "Bash(pwd)",
+      "Bash(cd *)",
+      "Bash(which *)",
+      "Bash(where *)",
+      "Bash(whoami)",
+      "Bash(date)",
+      "Bash(env)",
+      "Bash(tree *)",
+
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(ping *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+
+      "Bash(code *)",
+      "Bash(subl *)",
+
+      "Bash(pytest *)",
+      "Bash(jest *)",
+      "Bash(vitest *)",
+      "Bash(mocha *)",
+      "Bash(phpunit *)",
+
+      "Bash(eslint *)",
+      "Bash(prettier *)",
+      "Bash(black *)",
+      "Bash(isort *)",
+      "Bash(ruff *)",
+      "Bash(flake8 *)",
+      "Bash(mypy *)",
+      "Bash(tsc *)",
+      "Bash(phpcs *)",
+      "Bash(phpstan *)",
+
+      "Bash(supabase *)",
+      "Bash(firebase *)",
+      "Bash(stripe *)",
+
+      "Read(**)",
+      "Edit(**)",
+      "Write(**)",
+
+      "WebFetch(https://*)",
+      "WebFetch(http://localhost:*)",
+      "WebFetch(http://127.0.0.1:*)",
+
+      "mcp__*"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf C:*)",
+      "Bash(del /f /s /q C:\\Windows*)",
+      "Bash(format *)",
+      "Bash(sudo rm -rf *)",
+      "Bash(chmod 777 *)",
+      "Bash(shutdown *)",
+      "Bash(reboot *)",
+      "Bash(:(){ :|:& };:)",
+      "Bash(mkfs *)",
+      "Bash(dd if=/dev/zero*)",
+
+      "Bash(git push --force origin main)",
+      "Bash(git push --force origin master)",
+      "Bash(git push -f origin main)",
+      "Bash(git push -f origin master)",
+
+      "Write(.git/**)",
+      "Write(node_modules/**)",
+      "Write(vendor/**)",
+      "Write(**/__pycache__/**)",
+      "Write(**/.venv/**)",
+      "Write(**/venv/**)"
+    ]
+  },
+
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "env": {}
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {}
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "env": {}
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {}
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {}
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "你的BraveSearchAPIKey"
+      }
+    }
+  },
+
+  "hooks": {
+    "postToolExecution": [
+      {
+        "matcher": "Write(**/*.{ts,tsx,js,jsx,vue})",
+        "command": "npx eslint --fix \"$TOOL_INPUT\" 2>/dev/null || true",
+        "timeout": 30000
+      },
+      {
+        "matcher": "Write(**/*.{css,scss,less,html,json,md,yaml,yml})",
+        "command": "npx prettier --write \"$TOOL_INPUT\" 2>/dev/null || true",
+        "timeout": 30000
+      },
+      {
+        "matcher": "Write(**/*.py)",
+        "command": "black \"$TOOL_INPUT\" 2>/dev/null || ruff format \"$TOOL_INPUT\" 2>/dev/null || true",
+        "timeout": 30000
+      },
+      {
+        "matcher": "Write(**/*.php)",
+        "command": "php-cs-fixer fix \"$TOOL_INPUT\" 2>/dev/null || true",
+        "timeout": 30000
+      },
+      {
+        "matcher": "Write(**/*.rs)",
+        "command": "rustfmt \"$TOOL_INPUT\" 2>/dev/null || true",
+        "timeout": 30000
+      },
+      {
+        "matcher": "Write(**/*.go)",
+        "command": "gofmt -w \"$TOOL_INPUT\" 2>/dev/null || true",
+        "timeout": 30000
+      }
+    ],
+    "onSessionStart": [
+      {
+        "command": "echo '🚀 Claude Code Opus 4.5 思考模式已启动'"
+      }
+    ],
+    "onSessionEnd": [
+      {
+        "command": "echo '📊 会话结束'"
+      }
+    ]
+  },
+
+  "thinkingMode": "enabled",
+
+  "autoCompact": true,
+
+  "autoUpdaterStatus": "enabled",
+
+  "verbose": false,
+
+  "spinnerTipsEnabled": true,
+
+  "showExpandedTodos": true,
+
+  "attribution": "auto",
+
+  "cleanupPeriodDays": 30,
+
+  "fileSuggestion": {
+    "enabled": true
   }
 }
