@@ -6,7 +6,8 @@
       "Skill(sc:workflow)",
       "Skill(sc:save)",
       "Bash(python -m pytest chairman_agents/tests/ -v --tb=short)",
-      "Bash(python -m pytest tests/ -v --tb=short --no-cov)"
+      "Bash(python -m pytest tests/ -v --tb=short --no-cov)",
+      "Bash(python -m pytest chairman_agents/tests/ -v --tb=short --no-cov)"
     ]
   },
   "enabledPlugins": {

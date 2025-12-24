@@ -872,6 +872,8 @@ class ParallelExecutor:
     ) -> ExecutionResult:
         """带重试的任务执行.
 
+        支持退避重试策略和进度通知。
+
         Args:
             task: 要执行的任务
             executor_fn: 执行函数
@@ -886,10 +888,19 @@ class ParallelExecutor:
             started_at=datetime.now(),
         )
 
+        # 创建取消令牌
+        cancel_token = asyncio.Event()
+        self._cancellation_tokens[task.id] = cancel_token
+
+        current_delay = self.config.retry_delay
+
         for attempt in range(self.config.max_retries + 1):
-            if self._shutdown_event.is_set():
-                result.error = Exception("执行器正在关闭")
+            if self._shutdown_event.is_set() or cancel_token.is_set():
+                result.error = Exception("执行器正在关闭" if self._shutdown_event.is_set() else "任务被取消")
                 break
+
+            # 等待暂停结束
+            await self._pause_event.wait()
 
             try:
                 # 获取信号量
@@ -899,17 +910,30 @@ class ParallelExecutor:
                 try:
                     result.retry_count = attempt
 
+                    # 通知任务进度
+                    self._notify_task_progress(task.id, "starting", 0.0)
+
                     # 触发开始回调
                     for callback in self._on_task_start:
-                        callback(task)
+                        try:
+                            callback(task)
+                        except Exception:
+                            pass
 
                     # 更新状态
                     task.status = TaskStatus.IN_PROGRESS
                     self._stats.current_running += 1
 
+                    # 更新峰值并发数
+                    if self._stats.current_running > self._stats.peak_concurrent:
+                        self._stats.peak_concurrent = self._stats.current_running
+
                     # 创建执行任务
                     exec_task = asyncio.create_task(executor_fn(task))
                     self._running_tasks[task.id] = exec_task
+
+                    # 通知任务进度
+                    self._notify_task_progress(task.id, "executing", 50.0)
 
                     # 等待执行完成
                     task_result = await asyncio.wait_for(exec_task, timeout=timeout)
@@ -927,9 +951,19 @@ class ParallelExecutor:
                     self._stats.total_successful += 1
                     self._update_execution_time_stats(result.execution_time)
 
+                    # 更新进度跟踪
+                    self._completed_tasks += 1
+                    self._notify_progress()
+
+                    # 通知任务进度
+                    self._notify_task_progress(task.id, "completed", 100.0)
+
                     # 触发完成回调
                     for callback in self._on_task_complete:
-                        callback(result)
+                        try:
+                            callback(result)
+                        except Exception:
+                            pass
 
                     break
 
@@ -946,25 +980,43 @@ class ParallelExecutor:
                     task_id=task.id,
                     phase="execution",
                 )
+                self._stats.total_timed_out += 1
+
                 if attempt < self.config.max_retries:
                     self._stats.total_retried += 1
-                    await asyncio.sleep(self.config.retry_delay)
+                    self._notify_task_progress(
+                        task.id, f"retrying ({attempt + 1}/{self.config.max_retries})", 0.0
+                    )
+                    await asyncio.sleep(current_delay)
+                    current_delay *= self.config.retry_backoff  # 退避
                     continue
 
             except asyncio.CancelledError:
                 result.error = Exception("任务被取消")
+                self._stats.total_cancelled += 1
+                self._notify_task_progress(task.id, "cancelled", 0.0)
                 break
 
             except Exception as e:
                 result.error = e
                 # 触发错误回调
                 for callback in self._on_task_error:
-                    callback(task, e)
+                    try:
+                        callback(task, e)
+                    except Exception:
+                        pass
 
                 if attempt < self.config.max_retries:
                     self._stats.total_retried += 1
-                    await asyncio.sleep(self.config.retry_delay)
+                    self._notify_task_progress(
+                        task.id, f"retrying ({attempt + 1}/{self.config.max_retries})", 0.0
+                    )
+                    await asyncio.sleep(current_delay)
+                    current_delay *= self.config.retry_backoff  # 退避
                     continue
+
+        # 清理取消令牌
+        self._cancellation_tokens.pop(task.id, None)
 
         if not result.success:
             result.completed_at = datetime.now()
@@ -975,45 +1027,88 @@ class ParallelExecutor:
             self._stats.total_failed += 1
             task.status = TaskStatus.FAILED
 
+            # 更新进度跟踪
+            self._failed_tasks += 1
+            self._notify_progress()
+
+            # 通知任务进度
+            self._notify_task_progress(task.id, "failed", 0.0)
+
         return result
 
-    async def _execute_parallel(
+    async def _execute_parallel_with_priority(
         self,
         tasks: Sequence[Task],
         executor_fn: TaskExecutorFn,
         timeout: float,
     ) -> list[ExecutionResult]:
-        """完全并行执行任务.
+        """按优先级并行执行任务.
+
+        使用优先级队列控制任务执行顺序。
 
         Args:
-            tasks: 任务列表
+            tasks: 已排序的任务列表
             executor_fn: 执行函数
             timeout: 超时时间
 
         Returns:
             执行结果列表
         """
-        coroutines = [
-            self._execute_with_retry(task, executor_fn, timeout) for task in tasks
-        ]
-        results = await asyncio.gather(*coroutines, return_exceptions=True)
+        if not self.config.priority_enabled:
+            return await self._execute_parallel(tasks, executor_fn, timeout)
 
-        # 处理异常结果
-        processed_results: list[ExecutionResult] = []
-        for i, result in enumerate(results):
-            if isinstance(result, Exception):
-                processed_results.append(
+        # 使用优先级队列
+        results: list[ExecutionResult] = []
+        result_dict: dict[TaskId, ExecutionResult] = {}
+        pending_tasks: set[asyncio.Task[ExecutionResult]] = set()
+
+        async def execute_one(task: Task) -> ExecutionResult:
+            return await self._execute_with_retry(task, executor_fn, timeout)
+
+        # 创建所有执行任务
+        for task in tasks:
+            if self._shutdown_event.is_set():
+                break
+            async_task = asyncio.create_task(execute_one(task))
+            pending_tasks.add(async_task)
+
+        # 等待所有任务完成
+        while pending_tasks:
+            if self._shutdown_event.is_set():
+                # 取消剩余任务
+                for t in pending_tasks:
+                    t.cancel()
+                break
+
+            done, pending_tasks = await asyncio.wait(
+                pending_tasks,
+                timeout=1.0,
+                return_when=asyncio.FIRST_COMPLETED,
+            )
+
+            for async_task in done:
+                try:
+                    result = await async_task
+                    result_dict[result.task_id] = result
+                except Exception as e:
+                    # 处理异常
+                    pass
+
+        # 按原始顺序返回结果
+        for task in tasks:
+            if task.id in result_dict:
+                results.append(result_dict[task.id])
+            else:
+                results.append(
                     ExecutionResult(
-                        task_id=tasks[i].id,
-                        task=tasks[i],
+                        task_id=task.id,
+                        task=task,
                         success=False,
-                        error=result,
+                        error=Exception("任务未完成"),
                     )
                 )
-            else:
-                processed_results.append(result)
 
-        return processed_results
+        return results
 
     async def _execute_sequential(
         self,
