@@ -3,7 +3,8 @@
   "permissions": {
     "allow": [
       "Bash(env)",
-      "Skill(sc:workflow)"
+      "Skill(sc:workflow)",
+      "Skill(sc:save)"
     ]
   },
   "enabledPlugins": {
