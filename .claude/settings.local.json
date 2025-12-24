@@ -1,101 +1,116 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+
+  "env": {
+    "ANTHROPIC_MODEL": "claude-opus-4-5-20251101-thinking",
+    "ANTHROPIC_SMALL_FAST_MODEL": "claude-opus-4-5-20251101-thinking",
+    "ANTHROPIC_BASE_URL": "https://api.xiaocaseai.com",
+    "ANTHROPIC_AUTH_TOKEN": "sk-H2INpn37Rd2mAFRY41c9M0Y9skiOqBAG1OCXqrqJLrxzuOcS",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "200000",
+    "MAX_THINKING_TOKENS": "150000",
+    "BASH_DEFAULT_TIMEOUT_MS": "300000",
+    "BASH_MAX_TIMEOUT_MS": "600000",
+    "PYTHONIOENCODING": "utf-8"
+  },
+
+  "enabledPlugins": {
+    "github@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "serena@claude-plugins-official": false,
+    "firebase@claude-plugins-official": true,
+    "gitlab@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "supabase@claude-plugins-official": true,
+    "stripe@claude-plugins-official": true,
+    "asana@claude-plugins-official": true,
+    "linear@claude-plugins-official": true,
+    "greptile@claude-plugins-official": true,
+    "laravel-boost@claude-plugins-official": true
+  },
+
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    }
+  },
+
   "permissions": {
     "allow": [
-      "Bash(python *)",
-      "Bash(python3 *)",
-      "Bash(.venv/Scripts/python.exe *)",
-      "Bash(.venv/Scripts/pip.exe *)",
-      "Bash(.venv/bin/python *)",
-      "Bash(.venv/bin/pip *)",
-      "Bash(uv *)",
-      "Bash(poetry *)",
-      "Bash(pytest *)",
-      "Bash(ruff *)",
-      "Bash(mypy *)",
-      "Bash(black *)",
-      "Bash(isort *)",
-      "Bash(pre-commit *)",
-      "Bash(git *)",
-      "Bash(npm *)",
-      "Bash(npx *)",
-      "Bash(node *)",
-      "Bash(yarn *)",
-      "Bash(pnpm *)",
-      "Bash(ls *)",
-      "Bash(dir *)",
-      "Bash(cat *)",
-      "Bash(type *)",
-      "Bash(head *)",
-      "Bash(tail *)",
-      "Bash(grep *)",
-      "Bash(find *)",
-      "Bash(tree *)",
-      "Bash(wc *)",
-      "Bash(mkdir *)",
-      "Bash(cp *)",
-      "Bash(mv *)",
-      "Bash(touch *)",
-      "Bash(echo *)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(.venv/Scripts/pip.exe:*)",
+      "Bash(.venv/bin/python:*)",
+      "Bash(.venv/bin/pip:*)",
+      "Bash(uv:*)",
+      "Bash(poetry:*)",
+      "Bash(pytest:*)",
+      "Bash(black:*)",
+      "Bash(isort:*)",
+      "Bash(pre-commit:*)",
+      "Bash(git:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(yarn:*)",
+      "Bash(pnpm:*)",
+      "Bash(ls:*)",
+      "Bash(dir:*)",
+      "Bash(cat:*)",
+      "Bash(type:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Bash(wc:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(touch:*)",
+      "Bash(echo:*)",
       "Bash(pwd)",
-      "Bash(rm *.py)",
-      "Bash(rm *.pyc)",
-      "Bash(rm -rf __pycache__)",
-      "Bash(rm -rf .pytest_cache)",
-      "Bash(rm -rf .mypy_cache)",
-      "Bash(rm -rf .ruff_cache)",
-      "Bash(curl *)",
-      "Bash(wget *)",
-      "Bash(docker *)",
-      "Bash(make *)",
-      "Bash(PYTHONIOENCODING=utf-8 *)",
-      "Bash(PYTHONPATH=. *)",
-      "Bash(PYTHONPATH=.. *)",
-
-      "Skill(sc:help)",
-      "Skill(sc:analyze)",
-      "Skill(sc:improve)",
-      "Skill(sc:implement)",
-      "Skill(sc:design)",
-      "Skill(sc:save)",
-      "Skill(sc:workflow)",
-      "Skill(sc:debug)",
-      "Skill(sc:refactor)",
-      "Skill(sc:test)",
-      "Skill(sc:doc)",
-      "Skill(sc:review)",
-      "Skill(sc:explain)",
-      "Skill(sc:optimize)",
-      "Skill(sc:security)",
-
-      "Skill(site-packages:superclaude:agents:root-cause-analyst)",
-      "Skill(site-packages:superclaude:agents:refactoring-expert)",
-      "Skill(site-packages:superclaude:agents:backend-architect)",
-      "Skill(site-packages:superclaude:agents:learning-guide)",
-      "Skill(site-packages:superclaude:agents:quality-engineer)",
-      "Skill(site-packages:superclaude:agents:security-auditor)",
-      "Skill(site-packages:superclaude:agents:performance-optimizer)",
-      "Skill(site-packages:superclaude:agents:documentation-writer)",
-      "Skill(site-packages:superclaude:agents:test-engineer)",
-      "Skill(site-packages:superclaude:agents:code-reviewer)",
-
-      "Skill(kfc:spec-design)",
-
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(docker:*)",
+      "Bash(make:*)",
       "WebSearch",
-      "Read(*)",
-      "Read(**)",
-      "Edit(*)",
-      "Edit(**)",
-      "Write(*)",
-      "Write(**)",
+      "Bash(Write *)",
+      "Bash(Agent *)",
+      "Bash(sc:*)",
+      "Bash(kfc:*)",
+      "Bash(site-packages:*)",
+      "Bash(site-packages:superclaude:*)",
+      "Bash(site-packages:superclaude:agents:*)",
+      "Bash(site-packages:superclaude:plugins:*)",
+      "Bash(site-packages:superclaude:utils:*)",
+      "Bash(site-packages:superclaude:mcp:*)",
       "mcp__*"
     ],
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf ~)",
-      "Bash(rm -rf .)",
       "Bash(rm -rf C:*)",
       "Bash(del /f /s /q C:*)",
-      "Bash(format *)",
+      "Bash(format:*)",
       "Bash(git push --force origin main)",
       "Bash(git push --force origin master)",
       "Bash(git push -f origin main)",
@@ -113,19 +128,18 @@
   },
 
   "hooks": {
-    "postToolExecution": [
+    "PostToolUse": [
       {
         "matcher": "Write(**/*.py)",
         "hooks": [
           {
-
-        "type": "command",
-
+            "type": "command",
         "command": "ruff format \"$TOOL_INPUT\" 2>nul || exit 0",
         "timeout": 30000
       }
     ]
   }
-        ]
-      }
+
+    ]
+  }
 }
