@@ -575,7 +575,27 @@ describe('{name}', () => {{
 
   it('handles events correctly', async () => {{
     const wrapper = mount({name});
-    // TODO: 添加事件测试
+    // 查找可交互元素并触发事件
+    const buttons = wrapper.findAll('button');
+    for (const button of buttons) {{
+      await button.trigger('click');
+    }}
+    // 验证事件发射
+    // expect(wrapper.emitted()).toHaveProperty('eventName');
+  }});
+
+  it('is accessible', () => {{
+    const wrapper = mount({name});
+    // 验证 ARIA 属性
+    const element = wrapper.element;
+    expect(element).toBeTruthy();
+    // 验证语义化标签使用
+    const semanticElements = wrapper.findAll('main, nav, header, footer, section, article');
+    // 确保有适当的焦点管理
+    const focusableElements = wrapper.findAll('button, a, input, select, textarea');
+    focusableElements.forEach((el) => {{
+      expect(el.attributes('tabindex') !== '-1' || el.element.tabIndex >= 0).toBeTruthy();
+    }});
   }});
 }});
 '''

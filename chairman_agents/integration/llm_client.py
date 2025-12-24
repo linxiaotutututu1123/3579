@@ -5,20 +5,29 @@
 - AnthropicClient: Anthropic Claude API客户端
 - OpenAIClient: OpenAI API客户端
 - MockClient: 测试用模拟客户端
+
+支持响应缓存:
+- 基于prompt hash的缓存键
+- LRU淘汰策略
+- 可选TTL过期
 """
 
 from __future__ import annotations
 
 import asyncio
+import copy
 import time
 from abc import ABC, abstractmethod
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
 from chairman_agents.core.types import generate_id
+
+if TYPE_CHECKING:
+    from chairman_agents.integration.llm_cache import CacheConfig, LLMResponseCache
 
 
 # =============================================================================
