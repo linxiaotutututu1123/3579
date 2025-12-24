@@ -78,6 +78,7 @@ __all__ = [
     "SchedulerState",
     "ScheduledTask",
     "SchedulerStats",
+    "SchedulerConfig",
     "TaskSchedulerProtocol",
     "TaskScheduler",
     # 并行执行器
@@ -88,6 +89,8 @@ __all__ = [
     "BatchResult",
     "ExecutorConfig",
     "ExecutorStats",
+    "ProgressCallback",
+    "TaskProgressCallback",
     "ParallelExecutorProtocol",
     "ParallelExecutor",
     "execute_tasks_parallel",
