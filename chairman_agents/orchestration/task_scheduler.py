@@ -746,45 +746,156 @@ class TaskScheduler:
                 return None
             return self._queue[0].task
 
-    async def cancel(self, task_id: TaskId) -> bool:
+    async def cancel(self, task_id: TaskId, reason: str | None = None) -> bool:
         """取消任务.
 
-        只能取消尚未开始执行的任务。
+        可以取消待处理和正在执行的任务。
 
         Args:
             task_id: 要取消的任务 ID
+            reason: 取消原因（可选）
 
         Returns:
             是否取消成功
         """
         async with self._lock:
-            if task_id not in self._pending_tasks:
-                return False
+            # 尝试取消待处理的任务
+            if task_id in self._pending_tasks:
+                # 从队列中移除
+                self._queue = [st for st in self._queue if st.task.id != task_id]
+                heapq.heapify(self._queue)
 
-            # 从队列中移除
-            self._queue = [st for st in self._queue if st.task.id != task_id]
-            heapq.heapify(self._queue)
+                scheduled_task = self._pending_tasks.pop(task_id)
+                scheduled_task.task.status = TaskStatus.CANCELLED
+                scheduled_task.metadata["cancel_reason"] = reason
+                self._cancelled_tasks[task_id] = scheduled_task
+                self._stats.total_cancelled += 1
+                self._update_queue_stats()
 
-            scheduled_task = self._pending_tasks.pop(task_id)
-            scheduled_task.task.status = TaskStatus.CANCELLED
-            self._stats.current_queue_size = len(self._queue)
+                # 触发回调
+                for callback in self._on_task_cancelled:
+                    try:
+                        callback(scheduled_task.task)
+                    except Exception:
+                        pass
 
-            return True
+                return True
 
-    async def cancel_all(self) -> int:
+            # 尝试取消正在执行的任务
+            if task_id in self._running_tasks:
+                scheduled_task = self._running_tasks.pop(task_id)
+                scheduled_task.task.status = TaskStatus.CANCELLED
+                scheduled_task.metadata["cancel_reason"] = reason
+                self._cancelled_tasks[task_id] = scheduled_task
+                self._stats.total_cancelled += 1
+
+                # 清理超时处理器
+                if task_id in self._task_timeouts:
+                    handle = self._task_timeouts.pop(task_id)
+                    if handle:
+                        handle.cancel()
+
+                # 清理开始时间
+                self._task_start_times.pop(task_id, None)
+
+                # 释放并发槽位
+                if self._current_concurrent > 0:
+                    self._current_concurrent -= 1
+
+                # 触发回调
+                for callback in self._on_task_cancelled:
+                    try:
+                        callback(scheduled_task.task)
+                    except Exception:
+                        pass
+
+                return True
+
+            return False
+
+    async def cancel_all(self, include_running: bool = False) -> int:
         """取消所有待处理任务.
+
+        Args:
+            include_running: 是否也取消正在执行的任务
 
         Returns:
             取消的任务数量
         """
         async with self._lock:
-            count = len(self._queue)
+            count = 0
+
+            # 取消待处理的任务
             for scheduled_task in self._queue:
                 scheduled_task.task.status = TaskStatus.CANCELLED
+                self._cancelled_tasks[scheduled_task.task.id] = scheduled_task
+                count += 1
+
             self._queue.clear()
             self._pending_tasks.clear()
-            self._stats.current_queue_size = 0
+            self._stats.total_cancelled += count
+            self._update_queue_stats()
+
+            # 取消正在执行的任务
+            if include_running:
+                running_count = len(self._running_tasks)
+                for task_id, scheduled_task in list(self._running_tasks.items()):
+                    scheduled_task.task.status = TaskStatus.CANCELLED
+                    self._cancelled_tasks[task_id] = scheduled_task
+
+                    # 清理超时处理器
+                    if task_id in self._task_timeouts:
+                        handle = self._task_timeouts.pop(task_id)
+                        if handle:
+                            handle.cancel()
+
+                self._running_tasks.clear()
+                self._task_start_times.clear()
+                self._current_concurrent = 0
+                self._stats.total_cancelled += running_count
+                count += running_count
+
             return count
+
+    async def cancel_by_priority(
+        self,
+        priority: TaskPriority,
+        below: bool = True,
+    ) -> int:
+        """按优先级取消任务.
+
+        Args:
+            priority: 优先级阈值
+            below: True 取消低于此优先级的任务，False 取消高于此优先级的任务
+
+        Returns:
+            取消的任务数量
+        """
+        async with self._lock:
+            to_cancel: list[TaskId] = []
+
+            for scheduled_task in self._queue:
+                task_priority = scheduled_task.task.priority.value
+                if below and task_priority > priority.value:
+                    to_cancel.append(scheduled_task.task.id)
+                elif not below and task_priority < priority.value:
+                    to_cancel.append(scheduled_task.task.id)
+
+            # 从队列中移除
+            self._queue = [
+                st for st in self._queue if st.task.id not in to_cancel
+            ]
+            heapq.heapify(self._queue)
+
+            for task_id in to_cancel:
+                if task_id in self._pending_tasks:
+                    scheduled_task = self._pending_tasks.pop(task_id)
+                    scheduled_task.task.status = TaskStatus.CANCELLED
+                    self._cancelled_tasks[task_id] = scheduled_task
+
+            self._stats.total_cancelled += len(to_cancel)
+            self._update_queue_stats()
+            return len(to_cancel)
 
     async def mark_completed(self, task_id: TaskId) -> None:
         """标记任务为已完成.
