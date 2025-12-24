@@ -3,7 +3,7 @@
   "azureFunctions.projectLanguage": "Python",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "openOnFirstSessionStart",
-  "azureFunctions.mcpProjectType": "McpExtensionServer",
+  "azureFunctions.mcpProjectType": "SelfHostedMcpServer",
   "editor.fontSize": 14,
   "editor.tabSize": 4,
   "editor.insertSpaces": true,
