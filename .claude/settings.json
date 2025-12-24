@@ -6,13 +6,23 @@
     "ANTHROPIC_SMALL_FAST_MODEL": "claude-opus-4-5-20251101-thinking",
     "ANTHROPIC_BASE_URL": "https://api.xiaocaseai.com",
     "ANTHROPIC_AUTH_TOKEN": "sk-H2INpn37Rd2mAFRY41c9M0Y9skiOqBAG1OCXqrqJLrxzuOcS",
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "150000",
-    "MAX_THINKING_TOKENS": "100000",
+
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "200000",
+    "MAX_THINKING_TOKENS": "150000",
+
+    "BASH_DEFAULT_TIMEOUT_MS": "600000",
+    "BASH_MAX_TIMEOUT_MS": "1200000",
+
     "EDITOR": "code --wait",
     "LANG": "zh_CN.UTF-8",
     "PYTHONIOENCODING": "utf-8",
-    "BASH_DEFAULT_TIMEOUT_MS": "150000",
-    "BASH_MAX_TIMEOUT_MS": "160000"
+    "PYTHONUTF8": "1",
+
+    "UV_SYSTEM_PYTHON": "1",
+    "PIP_DISABLE_PIP_VERSION_CHECK": "1",
+
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },
 
   "enabledPlugins": {
@@ -33,44 +43,81 @@
 
   "permissions": {
     "allow": [
-      "Bash(git *)",
-      "Bash(gh *)",
-      "Bash(glab *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(pip *)",
+      "Bash(pip3 *)",
+      "Bash(uv *)",
+      "Bash(poetry *)",
+      "Bash(conda *)",
+      "Bash(virtualenv *)",
+      "Bash(pytest *)",
+      "Bash(ruff *)",
+      "Bash(mypy *)",
+      "Bash(black *)",
+      "Bash(isort *)",
+      "Bash(flake8 *)",
+      "Bash(pylint *)",
+      "Bash(bandit *)",
+      "Bash(safety *)",
+      "Bash(pre-commit *)",
 
+      "Bash(.venv/Scripts/* *)",
+      "Bash(.venv/bin/* *)",
+      "Bash(.venv\\Scripts\\* *)",
+
+      "Bash(node *)",
       "Bash(npm *)",
       "Bash(npx *)",
       "Bash(yarn *)",
       "Bash(pnpm *)",
       "Bash(bun *)",
-      "Bash(node *)",
-
-      "Bash(python *)",
-      "Bash(python3 *)",
-      "Bash(pip *)",
-      "Bash(pip3 *)",
-      "Bash(poetry *)",
-      "Bash(uv *)",
-      "Bash(conda *)",
+      "Bash(deno *)",
+      "Bash(tsc *)",
+      "Bash(tsx *)",
+      "Bash(vite *)",
+      "Bash(next *)",
+      "Bash(nuxt *)",
+      "Bash(eslint *)",
+      "Bash(prettier *)",
+      "Bash(jest *)",
+      "Bash(vitest *)",
+      "Bash(playwright *)",
 
       "Bash(cargo *)",
       "Bash(rustc *)",
+      "Bash(rustfmt *)",
+      "Bash(clippy *)",
       "Bash(go *)",
-      "Bash(java *)",
-      "Bash(javac *)",
-      "Bash(mvn *)",
-      "Bash(gradle *)",
-
-      "Bash(php *)",
-      "Bash(composer *)",
-      "Bash(artisan *)",
-      "Bash(laravel *)",
+      "Bash(gofmt *)",
 
       "Bash(docker *)",
       "Bash(docker-compose *)",
+      "Bash(podman *)",
       "Bash(kubectl *)",
+      "Bash(helm *)",
+      "Bash(terraform *)",
+      "Bash(ansible *)",
 
       "Bash(make *)",
       "Bash(cmake *)",
+      "Bash(ninja *)",
+      "Bash(meson *)",
+
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(glab *)",
+      "Bash(hub *)",
+
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(http *)",
+      "Bash(httpie *)",
+
+      "Bash(jq *)",
+      "Bash(yq *)",
+      "Bash(xq *)",
+      "Bash(fx *)",
 
       "Bash(ls *)",
       "Bash(dir *)",
@@ -78,103 +125,199 @@
       "Bash(type *)",
       "Bash(head *)",
       "Bash(tail *)",
+      "Bash(less *)",
+      "Bash(more *)",
       "Bash(grep *)",
       "Bash(rg *)",
+      "Bash(ag *)",
+      "Bash(ack *)",
       "Bash(find *)",
       "Bash(fd *)",
+      "Bash(fzf *)",
+      "Bash(tree *)",
+      "Bash(exa *)",
+      "Bash(lsd *)",
+      "Bash(bat *)",
       "Bash(wc *)",
       "Bash(sort *)",
       "Bash(uniq *)",
       "Bash(awk *)",
       "Bash(sed *)",
-      "Bash(jq *)",
+      "Bash(cut *)",
+      "Bash(tr *)",
+      "Bash(xargs *)",
+      "Bash(tee *)",
+      "Bash(diff *)",
+      "Bash(patch *)",
       "Bash(mkdir *)",
       "Bash(cp *)",
       "Bash(mv *)",
       "Bash(touch *)",
       "Bash(echo *)",
+      "Bash(printf *)",
       "Bash(pwd)",
       "Bash(cd *)",
+      "Bash(pushd *)",
+      "Bash(popd)",
       "Bash(which *)",
       "Bash(where *)",
+      "Bash(whereis *)",
       "Bash(whoami)",
-      "Bash(date)",
+      "Bash(id)",
+      "Bash(date *)",
+      "Bash(time *)",
       "Bash(env)",
-      "Bash(tree *)",
-
-      "Bash(curl *)",
-      "Bash(wget *)",
-      "Bash(ping *)",
-      "Bash(ssh *)",
-      "Bash(scp *)",
+      "Bash(printenv *)",
+      "Bash(export *)",
+      "Bash(set *)",
+      "Bash(alias *)",
+      "Bash(history *)",
+      "Bash(clear)",
+      "Bash(cls)",
 
       "Bash(code *)",
       "Bash(subl *)",
+      "Bash(vim *)",
+      "Bash(nvim *)",
+      "Bash(nano *)",
+      "Bash(notepad *)",
 
-      "Bash(pytest *)",
-      "Bash(jest *)",
-      "Bash(vitest *)",
-      "Bash(mocha *)",
-      "Bash(phpunit *)",
+      "Bash(zip *)",
+      "Bash(unzip *)",
+      "Bash(tar *)",
+      "Bash(gzip *)",
+      "Bash(gunzip *)",
+      "Bash(7z *)",
 
-      "Bash(eslint *)",
-      "Bash(prettier *)",
-      "Bash(black *)",
-      "Bash(isort *)",
-      "Bash(ruff *)",
-      "Bash(flake8 *)",
-      "Bash(mypy *)",
-      "Bash(tsc *)",
-      "Bash(phpcs *)",
-      "Bash(phpstan *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(rsync *)",
+      "Bash(sftp *)",
+      "Bash(gpg *)",
+      "Bash(openssl *)",
 
-      "Bash(supabase *)",
-      "Bash(firebase *)",
-      "Bash(stripe *)",
+      "Bash(ping *)",
+      "Bash(nslookup *)",
+      "Bash(dig *)",
+      "Bash(traceroute *)",
+      "Bash(netstat *)",
+      "Bash(ss *)",
+      "Bash(ip *)",
+      "Bash(ifconfig *)",
 
+      "Bash(PYTHONIOENCODING=* *)",
+      "Bash(PYTHONPATH=* *)",
+      "Bash(VIRTUAL_ENV=* *)",
+      "Bash(PATH=* *)",
+      "Bash(NODE_ENV=* *)",
+      "Bash(CI=* *)",
+
+      "Bash(superclaude *)",
+      "Bash(superclaude:*)",
+      "Bash(sc *)",
+      "Bash(sc:*)",
+
+      "WebSearch",
+      "WebFetch(*)",
+
+      "Skill(*)",
+      "Skill(sc:*)",
+      "Skill(site-packages:*)",
+      "Skill(kfc:*)",
+
+      "SlashCommand(*)",
+      "SlashCommand(/sc:*)",
+
+      "Read(*)",
       "Read(**)",
+      "Edit(*)",
       "Edit(**)",
+      "Write(*)",
       "Write(**)",
 
-      "WebFetch(https://*)",
-      "WebFetch(http://localhost:*)",
-      "WebFetch(http://127.0.0.1:*)",
+      "mcp__*",
 
-      "mcp__*"
+      "Task(*)",
+      "Agent(*)",
+      "Notebook(*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf /*)",
       "Bash(rm -rf ~)",
-      "Bash(rm -rf C:*)",
-      "Bash(del /f /s /q C:\\Windows*)",
-      "Bash(format *)",
+      "Bash(rm -rf ~/)",
+      "Bash(rm -rf .)",
+      "Bash(rm -rf ./)",
+      "Bash(rm -rf C:)",
+      "Bash(rm -rf C:/)",
+      "Bash(rm -rf C:\\)",
+      "Bash(del /f /s /q C:\\)",
+      "Bash(del /f /s /q C:\\*)",
+      "Bash(format C:*)",
+      "Bash(format D:*)",
+      "Bash(mkfs *)",
+      "Bash(dd if=/dev/zero *)",
+      "Bash(dd if=/dev/random *)",
+      "Bash(:(){ :|:& };:)",
+
       "Bash(sudo rm -rf *)",
-      "Bash(chmod 777 *)",
+      "Bash(sudo mkfs *)",
+      "Bash(sudo dd *)",
+      "Bash(sudo chmod 777 /*)",
+      "Bash(sudo chown * /*)",
+
       "Bash(shutdown *)",
       "Bash(reboot *)",
-      "Bash(:(){ :|:& };:)",
-      "Bash(mkfs *)",
-      "Bash(dd if=/dev/zero*)",
+      "Bash(halt *)",
+      "Bash(poweroff *)",
+      "Bash(init 0)",
+      "Bash(init 6)",
 
       "Bash(git push --force origin main)",
       "Bash(git push --force origin master)",
       "Bash(git push -f origin main)",
       "Bash(git push -f origin master)",
+      "Bash(git branch -D main)",
+      "Bash(git branch -D master)",
 
-      "Write(.git/**)",
+      "Write(.git/objects/**)",
+      "Write(.git/refs/**)",
+      "Write(.git/HEAD)",
+      "Write(.git/config)",
       "Write(node_modules/**)",
-      "Write(vendor/**)",
-      "Write(**/__pycache__/**)",
-      "Write(**/.venv/**)",
-      "Write(**/venv/**)"
+      "Write(.venv/Lib/**)",
+      "Write(.venv/lib/**)",
+      "Write(__pycache__/**)",
+      "Write(*.pyc)",
+      "Write(.mypy_cache/**)",
+      "Write(.pytest_cache/**)",
+      "Write(.ruff_cache/**)",
+      "Write(dist/**)",
+      "Write(build/**)",
+      "Write(*.egg-info/**)",
+
+      "Write(.env)",
+      "Write(.env.local)",
+      "Write(.env.production)",
+      "Write(.env.*.local)",
+      "Write(*.pem)",
+      "Write(*.key)",
+      "Write(*.crt)",
+      "Write(*.p12)",
+      "Write(*.pfx)",
+      "Write(**/id_rsa*)",
+      "Write(**/id_ed25519*)",
+      "Write(**/.ssh/config)",
+      "Write(**/credentials)",
+      "Write(**/secrets.json)",
+      "Write(**/token.json)"
     ]
   },
 
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:/Users/1"],
       "env": {}
     },
     "memory": {
@@ -197,75 +340,89 @@
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
       "env": {}
     },
-    "brave-search": {
+    "sqlite": {
       "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-server-brave-search"],
-      "env": {
-        "BRAVE_API_KEY": "你的BraveSearchAPIKey"
-      }
+      "args": ["-y", "@modelcontextprotocol/server-sqlite"],
+      "env": {}
+    },
+    "everything": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everything"],
+      "env": {}
     }
   },
 
   "hooks": {
+    "preToolExecution": [
+      {
+        "matcher": "Bash(*)",
+        "command": "echo '[PRE] 执行命令...'",
+        "timeout": 5000
+      }
+    ],
     "postToolExecution": [
       {
-        "matcher": "Write(**/*.{ts,tsx,js,jsx,vue})",
-        "command": "npx eslint --fix \"$TOOL_INPUT\" 2>/dev/null || true",
-        "timeout": 30000
-      },
-      {
-        "matcher": "Write(**/*.{css,scss,less,html,json,md,yaml,yml})",
-        "command": "npx prettier --write \"$TOOL_INPUT\" 2>/dev/null || true",
+        "matcher": "Write(**/*.py)",
+        "command": "ruff format \"$TOOL_INPUT\" 2>nul || true",
         "timeout": 30000
       },
       {
         "matcher": "Write(**/*.py)",
-        "command": "black \"$TOOL_INPUT\" 2>/dev/null || ruff format \"$TOOL_INPUT\" 2>/dev/null || true",
+        "command": "ruff check --fix \"$TOOL_INPUT\" 2>nul || true",
         "timeout": 30000
       },
       {
-        "matcher": "Write(**/*.php)",
-        "command": "php-cs-fixer fix \"$TOOL_INPUT\" 2>/dev/null || true",
+        "matcher": "Write(**/*.{ts,tsx,js,jsx,vue,svelte})",
+        "command": "npx prettier --write \"$TOOL_INPUT\" 2>nul || npx eslint --fix \"$TOOL_INPUT\" 2>nul || true",
+        "timeout": 30000
+      },
+      {
+        "matcher": "Write(**/*.{json,yaml,yml,md,html,css,scss})",
+        "command": "npx prettier --write \"$TOOL_INPUT\" 2>nul || true",
         "timeout": 30000
       },
       {
         "matcher": "Write(**/*.rs)",
-        "command": "rustfmt \"$TOOL_INPUT\" 2>/dev/null || true",
+        "command": "rustfmt \"$TOOL_INPUT\" 2>nul || true",
         "timeout": 30000
       },
       {
         "matcher": "Write(**/*.go)",
-        "command": "gofmt -w \"$TOOL_INPUT\" 2>/dev/null || true",
+        "command": "gofmt -w \"$TOOL_INPUT\" 2>nul || true",
         "timeout": 30000
       }
     ],
     "onSessionStart": [
       {
-        "command": "echo '🚀 Claude Code Opus 4.5 思考模式已启动'"
+        "command": "echo '🚀 Claude Code Opus 4.5 Ultra Mode 已启动'",
+        "timeout": 5000
+      },
+      {
+        "command": "echo '📂 工作目录:' && pwd",
+        "timeout": 5000
+      },
+      {
+        "command": "echo '🐍 Python:' && python --version 2>nul || echo '未安装'",
+        "timeout": 5000
       }
     ],
     "onSessionEnd": [
       {
-        "command": "echo '📊 会话结束'"
+        "command": "echo '📊 会话结束'",
+        "timeout": 5000
       }
     ]
   },
 
   "thinkingMode": "enabled",
-
   "autoCompact": true,
-
   "autoUpdaterStatus": "enabled",
-
   "verbose": false,
-
   "spinnerTipsEnabled": true,
-
   "showExpandedTodos": true,
-
   "attribution": "auto",
-
-  "cleanupPeriodDays": 30,
+  "includeCoAuthoredBy": true,
+  "cleanupPeriodDays": 60,
 
   "fileSuggestion": {
     "enabled": true
