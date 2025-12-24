@@ -23,8 +23,9 @@ from __future__ import annotations
 
 import asyncio
 import heapq
+import time
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
@@ -36,7 +37,7 @@ from chairman_agents.orchestration.dependency_resolver import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
+    from collections.abc import Awaitable, Callable, Sequence
 
 
 # =============================================================================
