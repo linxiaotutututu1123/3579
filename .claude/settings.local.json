@@ -68,7 +68,8 @@
       "Bash(git restore:*)",
       "Bash(dir:*)",
       "Bash(gpg:*)",
-      "Skill(site-packages:kfc:spec-design)"
+      "Skill(site-packages:kfc:spec-design)",
+      "Bash(C:/Users/1/2468/3579/.venv/Scripts/pip.exe install:*)"
     ]
   }
 }
