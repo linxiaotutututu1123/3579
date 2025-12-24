@@ -2,6 +2,16 @@
 
 from __future__ import annotations
 
+from chairman_agents.integration.llm_cache import (
+    CacheConfig,
+    CacheEntry,
+    CacheStats,
+    generate_cache_key,
+    LRUCache,
+    LLMResponseCache,
+    get_global_cache,
+    reset_global_cache,
+)
 from chairman_agents.integration.llm_client import (
     MessageRole,
     Message,
@@ -32,6 +42,15 @@ from chairman_agents.integration.model_registry import (
 )
 
 __all__ = [
+    # llm_cache
+    "CacheConfig",
+    "CacheEntry",
+    "CacheStats",
+    "generate_cache_key",
+    "LRUCache",
+    "LLMResponseCache",
+    "get_global_cache",
+    "reset_global_cache",
     # llm_client
     "MessageRole",
     "Message",
