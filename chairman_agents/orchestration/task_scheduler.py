@@ -627,6 +627,7 @@ class TaskScheduler:
         """获取下一个待执行任务.
 
         根据调度策略返回最合适的任务。
+        使用信号量控制并发数量。
 
         Args:
             timeout: 等待超时时间（秒），None 表示不等待
@@ -634,18 +635,105 @@ class TaskScheduler:
         Returns:
             下一个任务，或在超时/无任务时返回 None
         """
+        # 首先尝试获取信号量（控制并发）
+        try:
+            if timeout is not None:
+                acquired = await asyncio.wait_for(
+                    self._acquire_semaphore(), timeout=timeout
+                )
+            else:
+                acquired = await asyncio.wait_for(
+                    self._acquire_semaphore(),
+                    timeout=self.config.task_fetch_timeout,
+                )
+            if not acquired:
+                return None
+        except asyncio.TimeoutError:
+            return None
+
         async with self._lock:
-            if self.state != SchedulerState.RUNNING:
+            if self.state != SchedulerState.RUNNING or self._shutdown_event.is_set():
+                self._semaphore.release()
                 return None
 
             task = await self._dequeue_next(timeout)
-            if task:
-                self._stats.total_scheduled += 1
-                self._running_tasks[task.id] = self._pending_tasks.pop(task.id)
-                task.status = TaskStatus.ASSIGNED
-                task.started_at = datetime.now()
+            if not task:
+                self._semaphore.release()
+                return None
+
+            # 记录开始时间
+            self._task_start_times[task.id] = time.monotonic()
+            wait_time = time.monotonic() - self._pending_tasks[task.id].submit_time
+            self._wait_times.append(wait_time)
+
+            self._stats.total_scheduled += 1
+            self._running_tasks[task.id] = self._pending_tasks.pop(task.id)
+            self._current_concurrent += 1
+
+            # 更新峰值并发数
+            if self._current_concurrent > self._stats.peak_concurrent:
+                self._stats.peak_concurrent = self._current_concurrent
+
+            task.status = TaskStatus.ASSIGNED
+            task.started_at = datetime.now()
 
             return task
+
+    async def _acquire_semaphore(self) -> bool:
+        """获取信号量.
+
+        Returns:
+            是否成功获取
+        """
+        await self._semaphore.acquire()
+        return True
+
+    async def release_slot(self, task_id: TaskId | None = None) -> None:
+        """释放执行槽位.
+
+        当任务完成或失败后调用，释放并发控制的槽位。
+
+        Args:
+            task_id: 完成的任务 ID（可选，用于记录执行时间）
+        """
+        if task_id and task_id in self._task_start_times:
+            execution_time = time.monotonic() - self._task_start_times.pop(task_id)
+            self._execution_times.append(execution_time)
+            # 只保留最近 1000 条记录
+            if len(self._execution_times) > 1000:
+                self._execution_times = self._execution_times[-1000:]
+
+        async with self._lock:
+            if self._current_concurrent > 0:
+                self._current_concurrent -= 1
+            self._semaphore.release()
+
+    async def acquire_with_timeout(
+        self,
+        timeout: float | None = None,
+    ) -> tuple[Task | None, float]:
+        """获取任务并返回剩余超时时间.
+
+        用于需要精确控制执行时间的场景。
+
+        Args:
+            timeout: 等待超时时间（秒）
+
+        Returns:
+            (任务, 任务的剩余超时时间) 元组
+        """
+        task = await self.next(timeout)
+        if not task:
+            return None, 0.0
+
+        remaining_timeout = self.config.default_timeout
+        if task.id in self._running_tasks:
+            scheduled_task = self._running_tasks[task.id]
+            if scheduled_task.execution_deadline:
+                remaining = (scheduled_task.execution_deadline - datetime.now()).total_seconds()
+                remaining_timeout = max(0.0, remaining)
+
+        return task, remaining_timeout
 
     async def peek(self) -> Task | None:
         """查看下一个任务但不移除.
