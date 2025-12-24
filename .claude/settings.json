@@ -64,7 +64,6 @@
 
       "Bash(.venv/Scripts/* *)",
       "Bash(.venv/bin/* *)",
-      "Bash(.venv\\Scripts\\* *)",
 
       "Bash(node *)",
       "Bash(npm *)",
@@ -250,11 +249,11 @@
       "Bash(rm -rf ./)",
       "Bash(rm -rf C:)",
       "Bash(rm -rf C:/)",
-      "Bash(rm -rf C:\\)",
-      "Bash(del /f /s /q C:\\)",
-      "Bash(del /f /s /q C:\\*)",
-      "Bash(format C:*)",
-      "Bash(format D:*)",
+      "Bash(rm -rf C://)",
+      "Bash(del /f /s /q C://)",
+      "Bash(del /f /s /q C://*)",
+      "Bash(format C://*)",
+      "Bash(format D://*)",
       "Bash(mkfs *)",
       "Bash(dd if=/dev/zero *)",
       "Bash(dd if=/dev/random *)",
@@ -317,7 +316,7 @@
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:/Users/1"],
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:/Users/1/2468/3579"],
       "env": {}
     },
     "memory": {
@@ -358,7 +357,7 @@
         "matcher": "Bash(*)",
         "command": "echo '[PRE] 执行命令...'",
         "timeout": 5000
-      }
+      },
     ],
     "postToolExecution": [
       {
@@ -385,33 +384,8 @@
         "matcher": "Write(**/*.rs)",
         "command": "rustfmt \"$TOOL_INPUT\" 2>nul || true",
         "timeout": 30000
-      },
-      {
-        "matcher": "Write(**/*.go)",
-        "command": "gofmt -w \"$TOOL_INPUT\" 2>nul || true",
-        "timeout": 30000
       }
     ],
-    "onSessionStart": [
-      {
-        "command": "echo '🚀 Claude Code Opus 4.5 Ultra Mode 已启动'",
-        "timeout": 5000
-      },
-      {
-        "command": "echo '📂 工作目录:' && pwd",
-        "timeout": 5000
-      },
-      {
-        "command": "echo '🐍 Python:' && python --version 2>nul || echo '未安装'",
-        "timeout": 5000
-      }
-    ],
-    "onSessionEnd": [
-      {
-        "command": "echo '📊 会话结束'",
-        "timeout": 5000
-      }
-    ]
   },
 
   "thinkingMode": "enabled",
