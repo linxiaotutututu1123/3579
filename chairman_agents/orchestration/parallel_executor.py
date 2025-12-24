@@ -1313,6 +1313,8 @@ __all__ = [
     "BatchResult",
     "ExecutorConfig",
     "ExecutorStats",
+    "ProgressCallback",
+    "TaskProgressCallback",
     "ParallelExecutorProtocol",
     "ParallelExecutor",
     "execute_tasks_parallel",
