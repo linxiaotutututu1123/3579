@@ -704,6 +704,11 @@ class MemorySystem:
 
         count = len(self.memories)
 
+        # Count memories with embeddings
+        memories_with_embeddings = sum(
+            1 for m in self.memories.values() if m.embedding is not None
+        )
+
         return {
             "total_memories": count,
             "by_type": by_type,
@@ -713,6 +718,9 @@ class MemorySystem:
             "oldest_memory": oldest.isoformat() if oldest else None,
             "newest_memory": newest.isoformat() if newest else None,
             "jieba_available": self._jieba_available,
+            "embeddings_available": self._embeddings_available,
+            "embedding_model": self._embedding_model_name if self._embeddings_available else None,
+            "memories_with_embeddings": memories_with_embeddings,
             "storage_path": str(self.storage_path) if self.storage_path else None,
         }
 
