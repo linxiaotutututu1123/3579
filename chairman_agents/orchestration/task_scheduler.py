@@ -331,17 +331,22 @@ class TaskScheduler:
     - 依赖关系处理
     - 优先级队列
     - 任务生命周期管理
+    - 并发控制（Semaphore）
+    - 批处理执行
+    - 超时控制
+    - 优雅取消机制
 
     Attributes:
         strategy: 当前调度策略
         state: 调度器状态
+        config: 调度器配置
         dependency_resolver: 依赖解析器
-        max_queue_size: 最大队列大小
 
     Example:
+        >>> config = SchedulerConfig(max_concurrent=5, default_timeout=60.0)
         >>> scheduler = TaskScheduler(
         ...     strategy=SchedulingStrategy.BALANCED,
-        ...     max_queue_size=1000,
+        ...     config=config,
         ... )
         >>> await scheduler.start()
         >>> await scheduler.submit(task)
@@ -352,20 +357,37 @@ class TaskScheduler:
         self,
         strategy: SchedulingStrategy = SchedulingStrategy.PRIORITY_FIRST,
         *,
-        max_queue_size: int = 10000,
-        enable_dependency_resolution: bool = True,
+        config: SchedulerConfig | None = None,
+        max_queue_size: int | None = None,
+        enable_dependency_resolution: bool | None = None,
     ) -> None:
         """初始化任务调度器.
 
         Args:
             strategy: 调度策略
-            max_queue_size: 最大队列大小
-            enable_dependency_resolution: 是否启用依赖解析
+            config: 调度器配置（推荐使用）
+            max_queue_size: 最大队列大小（向后兼容，推荐使用 config）
+            enable_dependency_resolution: 是否启用依赖解析（向后兼容）
         """
         self.strategy = strategy
         self.state = SchedulerState.IDLE
-        self.max_queue_size = max_queue_size
-        self._enable_dependency_resolution = enable_dependency_resolution
+
+        # 使用配置对象或兼容旧参数
+        if config:
+            self.config = config
+        else:
+            self.config = SchedulerConfig(
+                max_queue_size=max_queue_size or 10000,
+                enable_dependency_resolution=(
+                    enable_dependency_resolution
+                    if enable_dependency_resolution is not None
+                    else True
+                ),
+            )
+
+        # 向后兼容的属性
+        self.max_queue_size = self.config.max_queue_size
+        self._enable_dependency_resolution = self.config.enable_dependency_resolution
 
         # 内部状态
         self._queue: list[ScheduledTask] = []
@@ -373,22 +395,39 @@ class TaskScheduler:
         self._lock = asyncio.Lock()
         self._not_empty = asyncio.Condition()
 
+        # 并发控制
+        self._semaphore = asyncio.Semaphore(self.config.max_concurrent)
+        self._current_concurrent = 0
+        self._shutdown_event = asyncio.Event()
+
         # 任务跟踪
         self._pending_tasks: dict[TaskId, ScheduledTask] = {}
         self._running_tasks: dict[TaskId, ScheduledTask] = {}
         self._completed_tasks: dict[TaskId, ScheduledTask] = {}
         self._failed_tasks: dict[TaskId, ScheduledTask] = {}
+        self._cancelled_tasks: dict[TaskId, ScheduledTask] = {}
+
+        # 任务超时跟踪
+        self._task_timeouts: dict[TaskId, asyncio.TimerHandle | None] = {}
+        self._task_start_times: dict[TaskId, float] = {}
 
         # 依赖解析器
-        self.dependency_resolver = DependencyResolver() if enable_dependency_resolution else None
+        self.dependency_resolver = (
+            DependencyResolver() if self.config.enable_dependency_resolution else None
+        )
 
         # 统计信息
         self._stats = SchedulerStats()
+        self._wait_times: list[float] = []
+        self._execution_times: list[float] = []
 
         # 回调函数
         self._on_task_scheduled: list[Callable[[Task], None]] = []
         self._on_task_completed: list[Callable[[Task], None]] = []
         self._on_task_failed: list[Callable[[Task, Exception], None]] = []
+        self._on_task_timeout: list[Callable[[Task], None]] = []
+        self._on_task_cancelled: list[Callable[[Task], None]] = []
+        self._on_progress: list[Callable[[int, int, int], None]] = []  # completed, failed, total
 
     async def start(self) -> None:
         """启动调度器."""
@@ -397,12 +436,61 @@ class TaskScheduler:
                 # 重新初始化
                 self._queue.clear()
                 self._pending_tasks.clear()
+                self._semaphore = asyncio.Semaphore(self.config.max_concurrent)
+            self._shutdown_event.clear()
             self.state = SchedulerState.RUNNING
 
     async def stop(self) -> None:
         """停止调度器."""
         async with self._lock:
             self.state = SchedulerState.STOPPED
+            self._shutdown_event.set()
+
+    async def shutdown(self, wait: bool = True, cancel_pending: bool = False) -> int:
+        """优雅关闭调度器.
+
+        Args:
+            wait: 是否等待正在执行的任务完成
+            cancel_pending: 是否取消待处理的任务
+
+        Returns:
+            取消的任务数量
+        """
+        cancelled_count = 0
+
+        async with self._lock:
+            self.state = SchedulerState.STOPPED
+            self._shutdown_event.set()
+
+            # 取消待处理的任务
+            if cancel_pending:
+                cancelled_count = len(self._pending_tasks)
+                for task_id, scheduled_task in self._pending_tasks.items():
+                    scheduled_task.task.status = TaskStatus.CANCELLED
+                    self._cancelled_tasks[task_id] = scheduled_task
+                    self._stats.total_cancelled += 1
+                self._pending_tasks.clear()
+                self._queue.clear()
+
+        # 等待正在执行的任务
+        if wait and self._running_tasks:
+            try:
+                start_time = time.monotonic()
+                while self._running_tasks:
+                    elapsed = time.monotonic() - start_time
+                    if elapsed >= self.config.graceful_shutdown_timeout:
+                        break
+                    await asyncio.sleep(0.1)
+            except Exception:
+                pass
+
+        # 清理超时处理器
+        for handle in self._task_timeouts.values():
+            if handle:
+                handle.cancel()
+        self._task_timeouts.clear()
+
+        return cancelled_count
 
     async def pause(self) -> None:
         """暂停调度器.
