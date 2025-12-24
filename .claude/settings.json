@@ -310,7 +310,7 @@
       "Write(**/credentials)",
       "Write(**/secrets.json)",
       "Write(**/token.json)"
-    ]
+    ],
   },
 
   "mcpServers": {
@@ -348,7 +348,7 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-everything"],
       "env": {}
-    }
+    },
   },
 
   "hooks": {
@@ -400,5 +400,5 @@
 
   "fileSuggestion": {
     "enabled": true
-  }
+  },
 }
