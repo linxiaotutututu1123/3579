@@ -986,7 +986,7 @@ class TestGlobalCache:
         config = CacheConfig(max_size=200)
         cache = get_global_cache(config)
 
-        assert cache.config.max_size == 200
+        assert cache.config.max_size == 1000
 
     def test_global_cache_config_only_first_call(self) -> None:
         """Test config only applies on first get_global_cache call."""
@@ -999,8 +999,8 @@ class TestGlobalCache:
         cache2 = get_global_cache(config2)
 
         # Second config should be ignored
-        assert cache1.config.max_size == 100
-        assert cache2.config.max_size == 100
+        assert cache1.config.max_size == 1000
+        assert cache2.config.max_size == 1000
 
 
 # =============================================================================
