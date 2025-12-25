@@ -3,7 +3,8 @@
   "theme": "tribe",
   "active": "default",
   "activateOnStartup": true,
-  "keepExistingTerminals": false,
+  "keepExistingTerminals": true,
+  "noClear": true,
   "sessions": {
     "default": [
       {
