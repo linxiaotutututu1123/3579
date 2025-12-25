@@ -15,6 +15,7 @@
     "timonwong.shellcheck",
     "foxundermoon.shell-format",
     "tyriar.terminal-tabs",
-    "ethansk.restore-terminals"
+    "ethansk.restore-terminals",
+    "continue.continue"
   ]
 }
