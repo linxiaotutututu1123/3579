@@ -15,7 +15,8 @@
       "Bash(python -m pytest chairman_agents/tests/core/ chairman_agents/tests/integration/test_llm_cache.py -v --tb=line -q)",
       "Bash(python -m pytest chairman_agents/tests/ -v --tb=line -q)",
       "Bash(python -m pytest chairman_agents/tests/ -x --tb=short -q)",
-      "Bash(python -m pytest chairman_agents/tests/ --tb=no -q)"
+      "Bash(python -m pytest chairman_agents/tests/ --tb=no -q)",
+      "Bash(cat \"C:\\\\Users\\\\1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-1-2468-3579\\\\tasks\\\\b0618de.output\")"
     ]
   },
   "enabledPlugins": {
