@@ -1,5 +1,5 @@
 {
-  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.typeCheckingMode": "strict",
   "azureFunctions.projectLanguage": "Python",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "openOnFirstSessionStart",
@@ -127,7 +127,15 @@
   "github.copilot.enable": {
     "plaintext": true,
     "markdown": true,
-    "shellscript": true
+    "shellscript": true,
+    "python": true,
+    "typescriptreact": true,
+    "javascriptreact": true,
+    "json": true,
+    "yaml": true,
+    "rust": true,
+    "go": true,
+    "java": true,
   },
 
   // 终端快捷操作
@@ -154,6 +162,7 @@
     "comments": true,
     "strings": true
   },
+
   "git.ignoreLimitWarning": true,
   "chat.mcp.serverSampling": {
     "3579/.vscode/mcp.json: tavily": {
@@ -680,6 +689,25 @@
         "copilot/grok-code-fast-1",
         "copilot/oswe-vscode-prime"
       ]
-    }
-  }
+    },
+
+
+  "3579/.vscode/mcp.json": {
+  "codeium.enableCompletions": true,
+  "codeium.enableSearch": true,
+  "codeium.enableChat": false,  // 用 Claude Code 替代
+
+  // 语言级别控制
+  "codeium.enableConfig": {
+    "*": true,
+    "markdown": true,
+    "json": true,
+    "plaintext": false
+  },
+
+  // 其他有用配置
+  "codeium.enableCodeLens": true,    // 显示代码操作按钮
+  "codeium.completionDelay": 0,     // 补全延迟（毫秒）
+  },
+  },
 }
