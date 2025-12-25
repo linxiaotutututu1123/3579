@@ -11,7 +11,8 @@
       "Bash(pip install pyyaml pytest-asyncio -q)",
       "Bash(python -m pytest chairman_agents/tests/ --tb=line -q)",
       "Bash(python -m pytest chairman_agents/tests/core/ chairman_agents/tests/cognitive/ chairman_agents/tests/integration/test_llm_cache.py -v --tb=line -q)",
-      "Bash(python -m pytest chairman_agents/tests/core/test_exceptions.py -v)"
+      "Bash(python -m pytest chairman_agents/tests/core/test_exceptions.py -v)",
+      "Bash(python -m pytest chairman_agents/tests/core/ chairman_agents/tests/integration/test_llm_cache.py -v --tb=line -q)"
     ]
   },
   "enabledPlugins": {
