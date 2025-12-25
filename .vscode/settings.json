@@ -688,23 +688,18 @@
         "copilot/oswe-vscode-prime"
       ]
     },
-
     "3579/.vscode/mcp.json": {
       "codeium.enableCompletions": true,
       "codeium.enableSearch": true,
-      "codeium.enableChat": false, // 用 Claude Code 替代
-
-      // 语言级别控制
+      "codeium.enableChat": false,
       "codeium.enableConfig": {
         "*": true,
         "markdown": true,
         "json": true,
         "plaintext": false
       },
-
-      // 其他有用配置
-      "codeium.enableCodeLens": true, // 显示代码操作按钮
-      "codeium.completionDelay": 0 // 补全延迟（毫秒）
+      "codeium.enableCodeLens": true,
+      "codeium.completionDelay": 0
     }
   }
 }
