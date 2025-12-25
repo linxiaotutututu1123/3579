@@ -1,5 +1,5 @@
 {
-  "python.analysis.typeCheckingMode": "strict",
+  "python.analysis.typeCheckingMode": "off",
   "azureFunctions.projectLanguage": "Python",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "openOnFirstSessionStart",
@@ -135,14 +135,12 @@
     "yaml": true,
     "rust": true,
     "go": true,
-    "java": true,
+    "java": true
   },
 
   // 终端快捷操作
   "terminal.integrated.copyOnSelection": true,
   "terminal.integrated.rightClickBehavior": "paste",
-
-
 
   "python.analysis.diagnosticMode": "workspace",
   "python.analysis.autoSearchPaths": true,
@@ -691,23 +689,22 @@
       ]
     },
 
+    "3579/.vscode/mcp.json": {
+      "codeium.enableCompletions": true,
+      "codeium.enableSearch": true,
+      "codeium.enableChat": false, // 用 Claude Code 替代
 
-  "3579/.vscode/mcp.json": {
-  "codeium.enableCompletions": true,
-  "codeium.enableSearch": true,
-  "codeium.enableChat": false,  // 用 Claude Code 替代
+      // 语言级别控制
+      "codeium.enableConfig": {
+        "*": true,
+        "markdown": true,
+        "json": true,
+        "plaintext": false
+      },
 
-  // 语言级别控制
-  "codeium.enableConfig": {
-    "*": true,
-    "markdown": true,
-    "json": true,
-    "plaintext": false
-  },
-
-  // 其他有用配置
-  "codeium.enableCodeLens": true,    // 显示代码操作按钮
-  "codeium.completionDelay": 0,     // 补全延迟（毫秒）
-  },
-  },
+      // 其他有用配置
+      "codeium.enableCodeLens": true, // 显示代码操作按钮
+      "codeium.completionDelay": 0 // 补全延迟（毫秒）
+    }
+  }
 }
