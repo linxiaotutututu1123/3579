@@ -105,6 +105,37 @@
     "PYTHONPATH": "${workspaceFolder}/src"
   },
 
+  // 终端基础配置
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.fontFamily": "Cascadia Code, Consolas",
+
+  // 终端集成增强
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.shellIntegration.decorationsEnabled": "both",
+
+  // 自动激活 Python 环境
+  "python.terminal.activateEnvInCurrentTerminal": true,
+
+  // 终端环境变量
+  "terminal.integrated.env.windows": {
+    "PYTHONIOENCODING": "utf-8",
+    "LANG": "en_US.UTF-8"
+  },
+
+  // Copilot 终端集成
+  "github.copilot.enable": {
+    "plaintext": true,
+    "markdown": true,
+    "shellscript": true
+  },
+
+  // 终端快捷操作
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.rightClickBehavior": "paste",
+
+
+
   "python.analysis.diagnosticMode": "workspace",
   "python.analysis.autoSearchPaths": true,
   "python.analysis.extraPaths": ["${workspaceFolder}/src"],
