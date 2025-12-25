@@ -1,4 +1,6 @@
+
 {
+
 
 
   "env": {
@@ -91,10 +93,69 @@
     "pinecone@claude-plugins-official": true,
     "weaviate@claude-plugins-official": true,
     "chromadb@claude-plugins-official": true
+  },
+    "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git", "."]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_TOKEN": "`${GITHUB_TOKEN}" }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"]
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python *)", "Bash(pip *)", "Bash(git *)",
+      "Bash(npm *)", "Bash(npx *)", "Bash(ruff *)",
+      "Bash(pytest *)", "Bash(mypy *)", "Bash(ollama *)",
+      "Bash(ls *)", "Bash(cat *)", "Bash(mkdir *)",
+      "Bash(echo *)", "Bash(pwd)",
+      "Read", "Edit", "Write", "mcp__*"
+    ],
+    "deny": [
+      "Bash(rm -rf /)", "Bash(rm -rf ~)", "Bash(format *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          { "type": "command", "command": "ruff format \"`$TOOL_INPUT\" 2>nul || exit 0" }
+        ]
+      }
+    ]
   }
-
-
 }
+
+
+
 
 
 
