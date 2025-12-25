@@ -131,15 +131,15 @@
   },
   "permissions": {
     "allow": [
-      "Bash(python *)", "Bash(pip *)", "Bash(git *)",
-      "Bash(npm *)", "Bash(npx *)", "Bash(ruff *)",
-      "Bash(pytest *)", "Bash(mypy *)", "Bash(ollama *)",
-      "Bash(ls *)", "Bash(cat *)", "Bash(mkdir *)",
-      "Bash(echo *)", "Bash(pwd)",
+      "Bash(python:*)", "Bash(pip:*)", "Bash(git:*)",
+      "Bash(npm:*)", "Bash(npx:*)", "Bash(ruff:*)",
+      "Bash(pytest:*)", "Bash(mypy:*)", "Bash(ollama:*)",
+      "Bash(ls:*)", "Bash(cat:*)", "Bash(mkdir:*)",
+      "Bash(echo:*)", "Bash(pwd)",
       "Read", "Edit", "Write", "mcp__*"
     ],
     "deny": [
-      "Bash(rm -rf /)", "Bash(rm -rf ~)", "Bash(format *)"
+      "Bash(rm -rf /)", "Bash(rm -rf ~)", "Bash(format:*)"
     ]
   },
   "hooks": {
