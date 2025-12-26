@@ -11,7 +11,8 @@
       "Bash(npm install claude-flow)",
       "Bash(npm install -g windows-build-tools)",
       "Bash(npm rebuild)",
-      "Bash(npm install claude-flow --build-from-source)"
+      "Bash(npm install claude-flow --build-from-source)",
+      "Bash(cat .claude/settings.local.json)"
     ],
     "deny": []
   }
