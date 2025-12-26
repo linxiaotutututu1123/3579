@@ -3,8 +3,7 @@
     "allow": [
       "mcp__ruv-swarm",
       "mcp__claude-flow@alpha",
-      "mcp__flow-nexus",
-      "Bash(npx claude-flow@alpha init --force)"
+      "mcp__flow-nexus"
     ],
     "deny": []
   }

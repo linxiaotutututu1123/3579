@@ -1,6 +1,6 @@
 {
   "env": {
-    "CLAUDE_FLOW_AUTO_COMMIT": "true",
+    "CLAUDE_FLOW_AUTO_COMMIT": "false",
     "CLAUDE_FLOW_AUTO_PUSH": "false",
     "CLAUDE_FLOW_HOOKS_ENABLED": "true",
     "CLAUDE_FLOW_TELEMETRY_ENABLED": "true",
