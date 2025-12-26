@@ -1,3 +1,0 @@
-C:\Users\1\2468\3579\src\replay\runner.py
-C:\Users\1\2468\3579\src\replay\verifier.py
-C:\Users\1\2468\3579\src\replay\__init__.py

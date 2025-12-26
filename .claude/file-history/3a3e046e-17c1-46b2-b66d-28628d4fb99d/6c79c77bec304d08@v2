@@ -1,8 +1,0 @@
-"""配置模块包"""
-
-from .gateway_config import GatewayConfig, CtpConfig
-
-__all__ = [
-    'GatewayConfig',
-    'CtpConfig',
-]

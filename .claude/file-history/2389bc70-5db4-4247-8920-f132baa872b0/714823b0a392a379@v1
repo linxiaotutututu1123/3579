@@ -1,9 +1,0 @@
-{
-  "env": {
-    "ANTHROPIC_AUTH_TOKEN": "405a977e9b8d4ce0bf50012b70e55977.Q8Cm6y6d4xPhclps",
-    "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
-    "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
-  },
-  "model": "claude-opus-4-5-20251101"
-}
