@@ -28,6 +28,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+from collections.abc import Awaitable, Callable, Sequence
 
 from chairman_agents.core.exceptions import DependencyError
 from chairman_agents.core.types import Task, TaskId, TaskPriority, TaskStatus
@@ -35,9 +36,6 @@ from chairman_agents.orchestration.dependency_resolver import (
     DependencyResolver,
     ResolutionResult,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable, Sequence
 
 
 # =============================================================================
