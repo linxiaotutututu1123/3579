@@ -8,7 +8,8 @@
       "Bash(claude-flow --version)",
       "Bash(npx claude-flow@alpha memory store test \"API configuration\" --namespace semantic --reasoningbank)",
       "Bash(npx claude-flow@alpha memory query \"configuration\" --namespace semantic --reasoningbank)",
-      "Bash(npm install claude-flow)"
+      "Bash(npm install claude-flow)",
+      "Bash(npm install -g windows-build-tools)"
     ],
     "deny": []
   }
