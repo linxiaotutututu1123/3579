@@ -1,0 +1,1 @@
+"""Chairman Agents Test Suite."""

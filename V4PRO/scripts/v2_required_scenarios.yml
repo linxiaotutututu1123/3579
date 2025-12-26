@@ -1,0 +1,658 @@
+# V2 必须验收场景清单 (V2_REQUIRED_SCENARIOS.yml)
+# =============================================================================
+# 本文件是 V2_SPEC_EXPANDED_NOT_RUSHING_LAUNCH_Version2.md 的可执行化矩阵
+# 所有场景必须通过，否则 replay/sim 返回 FAIL (exit 8/9)
+#
+# 格式说明：
+#   - rule_id: 场景唯一标识（用于 JSON 报告）
+#   - component: 所属模块
+#   - description: 场景描述
+#   - category: 场景类型 (unit | integration | scenario)
+#   - required: 是否必须通过 (true = 缺失则 POLICY_VIOLATION)
+#   - test_pattern: 对应的 pytest 匹配模式
+#   - assertions: 验证点列表
+# =============================================================================
+
+schema_version: 1
+spec_source: "V2_SPEC_EXPANDED_NOT_RUSHING_LAUNCH_Version2.md"
+generated_at: "2025-01-15"
+
+# =============================================================================
+# Phase A: 接口冻结 + Replay-first
+# =============================================================================
+phases:
+  A:
+    name: "接口冻结 + Replay-first"
+    required: true
+    scenarios:
+      
+      # 4.1 Instrument Cache
+      - rule_id: "INST.CACHE.LOAD"
+        component: "market.instrument_cache"
+        description: "Instrument Cache 能正确加载合约信息"
+        category: unit
+        required: true
+        test_pattern: "test_instrument_cache*"
+        assertions:
+          - "能从 JSON 文件加载 InstrumentInfo"
+          - "包含 symbol, product, exchange, expire_date, tick_size, multiplier"
+          
+      - rule_id: "INST.CACHE.PERSIST"
+        component: "market.instrument_cache"
+        description: "Instrument Cache 能原子化落盘"
+        category: unit
+        required: true
+        test_pattern: "test_instrument_*persist*"
+        assertions:
+          - "先写 tmp，再 rename"
+          - "路径: artifacts/instruments/{exchange}_{trading_day}.json"
+          
+      # 4.2 Universe Selector
+      - rule_id: "UNIV.DOMINANT.BASIC"
+        component: "market.universe_selector"
+        description: "能正确选择主力合约"
+        category: unit
+        required: true
+        test_pattern: "test_universe_selector*dominant*"
+        assertions:
+          - "基于 open_interest + volume 评分"
+          - "返回 dominant_by_product"
+          
+      - rule_id: "UNIV.SUBDOMINANT.PAIRING"
+        component: "market.universe_selector"
+        description: "能正确选择次主力合约"
+        category: unit
+        required: true
+        test_pattern: "test_universe_selector*subdominant*"
+        assertions:
+          - "返回 subdominant_by_product"
+          - "次主力 != 主力"
+          
+      - rule_id: "UNIV.ROLL.COOLDOWN"
+        component: "market.universe_selector"
+        description: "主力切换有冷却期"
+        category: unit
+        required: true
+        test_pattern: "test_universe_*cooldown*"
+        assertions:
+          - "切换后 ROLL_COOLDOWN_S 内不再切换"
+          - "新主力需超过旧主力 MIN_SWITCH_EDGE"
+          
+      - rule_id: "UNIV.EXPIRY.GATE"
+        component: "market.universe_selector"
+        description: "临期合约被排除"
+        category: unit
+        required: true
+        test_pattern: "test_universe_*expiry*"
+        assertions:
+          - "days_to_expiry < EXPIRY_BLOCK_DAYS 的合约不成为主力"
+
+  # =============================================================================
+  # Phase B: 执行可靠性
+  # =============================================================================
+  B:
+    name: "执行可靠性"
+    required: true
+    scenarios:
+      
+      # 5.1 标识映射
+      - rule_id: "EXEC.ID.MAPPING"
+        component: "execution.order_context"
+        description: "订单标识映射完整"
+        category: unit
+        required: true
+        test_pattern: "test_order_context*"
+        assertions:
+          - "local_id 系统内唯一"
+          - "order_ref 来自 place_order ack"
+          - "order_sys_id 来自 OnRtnOrder"
+          
+      # 5.3 FSM
+      - rule_id: "FSM.STRICT.TRANSITIONS"
+        component: "execution.fsm"
+        description: "严格模式 FSM 覆盖所有转移"
+        category: unit
+        required: true
+        test_pattern: "test_fsm*strict*"
+        assertions:
+          - "所有 TRANSITIONS 被测试"
+          - "非法转移 raise 异常"
+          
+      - rule_id: "FSM.TOLERANT.IDEMPOTENT"
+        component: "execution.fsm"
+        description: "容错模式 FSM 幂等处理"
+        category: unit
+        required: true
+        test_pattern: "test_fsm*tolerant*"
+        assertions:
+          - "重复事件 ignore + debug log"
+          - "终态后事件 ignore"
+          
+      - rule_id: "FSM.CANCEL_WHILE_FILL"
+        component: "execution.fsm"
+        description: "撤单途中成交正确处理"
+        category: unit
+        required: true
+        test_pattern: "test_fsm*cancel*fill*"
+        assertions:
+          - "CANCEL_SUBMITTING + RTN_FILLED → FILLED"
+          - "CANCEL_PENDING + RTN_FILLED → FILLED"
+          
+      - rule_id: "FSM.STATUS_4_MAPPING"
+        component: "execution.fsm"
+        description: "OrderStatus='4' 正确映射"
+        category: unit
+        required: true
+        test_pattern: "test_fsm*status_4*"
+        assertions:
+          - "无成交 → ERROR + reduce-only"
+          - "有成交 → PARTIAL_CANCELLED"
+          
+      # 5.4 AutoOrderEngine
+      - rule_id: "EXEC.ENGINE.PIPELINE"
+        component: "execution.auto_order_engine"
+        description: "订单提交管线完整"
+        category: integration
+        required: true
+        test_pattern: "test_auto_order*pipeline*"
+        assertions:
+          - "throttle.check → fat_finger.check → liquidity.check → broker.place_order"
+          - "创建 OrderContext 并推进 FSM"
+          
+      - rule_id: "EXEC.TIMEOUT.ACK"
+        component: "execution.auto_order_engine"
+        description: "Ack 超时正确处理"
+        category: unit
+        required: true
+        test_pattern: "test_*timeout*ack*"
+        assertions:
+          - "AUTO_ORDER_TIMEOUT_ACK_S 超时后尝试撤单"
+          - "不可控则 ERROR + 降级"
+          
+      - rule_id: "EXEC.TIMEOUT.FILL"
+        component: "execution.auto_order_engine"
+        description: "Fill 超时正确处理"
+        category: unit
+        required: true
+        test_pattern: "test_*timeout*fill*"
+        assertions:
+          - "AUTO_ORDER_TIMEOUT_FILL_S 超时后撤单 + 追价"
+          - "受 max_retry 限制"
+          
+      - rule_id: "EXEC.CANCEL_REPRICE.TIMEOUT"
+        component: "execution.auto_order_engine"
+        description: "追价超时撤单"
+        category: scenario
+        required: true
+        test_pattern: "test_*reprice*timeout*"
+        assertions:
+          - "超时后执行撤单"
+          - "追价使用 REPRICE_MODE 配置"
+          
+      # 5.5 Partial fill
+      - rule_id: "EXEC.PARTIAL.REPRICE"
+        component: "execution.auto_order_engine"
+        description: "部分成交后追价补单"
+        category: unit
+        required: true
+        test_pattern: "test_*partial*reprice*"
+        assertions:
+          - "remaining_qty > 0 等待 fill_timeout"
+          - "超时撤单后追价补单剩余量"
+          
+      - rule_id: "EXEC.RETRY.BACKOFF"
+        component: "execution.auto_order_engine"
+        description: "重试使用指数退避"
+        category: unit
+        required: true
+        test_pattern: "test_*retry*backoff*"
+        assertions:
+          - "backoff = min(base * 2^k, max_backoff)"
+          - "max_retry 后进入 ERROR"
+          
+      # 5.6 ExecContext
+      - rule_id: "EXEC.CONTEXT.TRACKING"
+        component: "execution.exec_context"
+        description: "ExecContext 追踪调仓意图"
+        category: unit
+        required: true
+        test_pattern: "test_exec_context*"
+        assertions:
+          - "每次调仓产生唯一 exec_id"
+          - "exec_id 下可包含多个订单"
+          
+      # 5.7 Protection
+      - rule_id: "EXEC.PROTECTION.LIQUIDITY"
+        component: "execution.protection"
+        description: "流动性保护生效"
+        category: unit
+        required: true
+        test_pattern: "test_*protection*liquidity*"
+        assertions:
+          - "盘口不存在/spread 超阈值 → 拒单"
+          - "hard-stale 触发 reduce-only"
+          
+      - rule_id: "EXEC.PROTECTION.FATFINGER"
+        component: "execution.protection"
+        description: "胖手指保护生效"
+        category: unit
+        required: true
+        test_pattern: "test_*protection*fatfinger*"
+        assertions:
+          - "手数超限/名义超限/价格偏离 → 拒单"
+          - "涨跌停禁开仓"
+          
+      - rule_id: "EXEC.PROTECTION.THROTTLE"
+        component: "execution.protection"
+        description: "节流保护生效"
+        category: unit
+        required: true
+        test_pattern: "test_*protection*throttle*"
+        assertions:
+          - "频率超限 → 拒单"
+          - "全局订单上限生效"
+          
+      - rule_id: "EXEC.PROTECTION.AUDIT"
+        component: "execution.protection"
+        description: "保护拒单有审计事件"
+        category: unit
+        required: true
+        test_pattern: "test_*protection*audit*"
+        assertions:
+          - "拒单写入审计日志"
+          - "包含原因/阈值/采样 book_top"
+          
+      # 5.8 PositionTracker
+      - rule_id: "POS.TRACKER.TRADE_DRIVEN"
+        component: "execution.position_tracker"
+        description: "PositionTracker 按 trade 更新"
+        category: unit
+        required: true
+        test_pattern: "test_position_tracker*trade*"
+        assertions:
+          - "TradeReport 更新本地账本"
+          - "TradeID 去重"
+          
+      - rule_id: "POS.RECONCILE.PERIODIC"
+        component: "execution.position_tracker"
+        description: "定期对账"
+        category: unit
+        required: true
+        test_pattern: "test_position*reconcile*"
+        assertions:
+          - "RECONCILE_INTERVAL_S 周期执行"
+          - "启动时 query 同步"
+          
+      - rule_id: "POS.RECONCILE.AFTER_DISCONNECT"
+        component: "execution.position_tracker"
+        description: "断连后对账"
+        category: scenario
+        required: true
+        test_pattern: "test_*reconcile*disconnect*"
+        assertions:
+          - "重连后立即对账"
+          - "不一致进入 HALTED"
+          
+      - rule_id: "POS.RECONCILE.FAIL_ACTION"
+        component: "execution.position_tracker"
+        description: "对账失败动作"
+        category: unit
+        required: true
+        test_pattern: "test_*reconcile*fail*"
+        assertions:
+          - "立即 set_mode(REDUCE_ONLY)"
+          - "cancel_all"
+          - "仍不一致 → HALTED"
+
+  # =============================================================================
+  # Phase C: 市场侧连续性
+  # =============================================================================
+  C:
+    name: "市场侧连续性"
+    required: true
+    scenarios:
+      
+      # 4.3 Subscriber
+      - rule_id: "MKT.SUBSCRIBER.DIFF_UPDATE"
+        component: "market.subscriber"
+        description: "订阅集差分更新"
+        category: unit
+        required: true
+        test_pattern: "test_subscriber*diff*"
+        assertions:
+          - "add = new - old"
+          - "remove = old - new"
+          
+      - rule_id: "MKT.STALE.SOFT"
+        component: "market.quote_cache"
+        description: "软 stale 检测"
+        category: unit
+        required: true
+        test_pattern: "test_*stale*soft*"
+        assertions:
+          - "QUOTE_STALE_MS 超时后标记 soft stale"
+          - "策略可继续使用"
+          
+      - rule_id: "MKT.STALE.HARD"
+        component: "market.quote_cache"
+        description: "硬 stale 检测"
+        category: unit
+        required: true
+        test_pattern: "test_*stale*hard*"
+        assertions:
+          - "QUOTE_HARD_STALE_MS 超时后标记 hard stale"
+          - "执行禁止开仓"
+          
+      # 4.4 连续主力
+      - rule_id: "MKT.CONTINUITY.BARS"
+        component: "market.bar_builder"
+        description: "连续主力 bars 聚合"
+        category: unit
+        required: true
+        test_pattern: "test_bar_builder*continuous*"
+        assertions:
+          - "bars_1m_product 从 dominant tick 聚合"
+          - "roll 切换点有审计"
+          
+      - rule_id: "MKT.CONTINUITY.INTRADAY_STABLE"
+        component: "market.bar_builder"
+        description: "日内主力稳定"
+        category: scenario
+        required: true
+        test_pattern: "test_*intraday*stable*"
+        assertions:
+          - "日内不频繁切换主力"
+          - "切换需满足 MIN_SWITCH_EDGE"
+          
+      - rule_id: "MKT.CONTINUITY.ROLLOVER_NO_FLAP"
+        component: "market.universe_selector"
+        description: "换月不抖动"
+        category: scenario
+        required: true
+        test_pattern: "test_*rollover*flap*"
+        assertions:
+          - "换月期间有 ROLL_COOLDOWN_S"
+          - "不在两个合约间来回切换"
+          
+      # 4.5 Gate
+      - rule_id: "MKT.GATE.LIQUIDITY"
+        component: "market.liquidity_gate"
+        description: "流动性门控"
+        category: unit
+        required: true
+        test_pattern: "test_*gate*liquidity*"
+        assertions:
+          - "盘口消失/spread 超阈值 → reduce-only"
+          
+      # 4.6 数据质量
+      - rule_id: "MKT.QUALITY.OUTLIER"
+        component: "market.quality"
+        description: "异常值检测"
+        category: unit
+        required: true
+        test_pattern: "test_*quality*outlier*"
+        assertions:
+          - "价格跳变多倍 tick_size → 标记异常"
+          
+      - rule_id: "MKT.QUALITY.GAP"
+        component: "market.quality"
+        description: "行情间隙检测"
+        category: unit
+        required: true
+        test_pattern: "test_*quality*gap*"
+        assertions:
+          - "长时间无 tick → stale"
+          
+      - rule_id: "MKT.QUALITY.DISORDER"
+        component: "market.quality"
+        description: "时间乱序检测"
+        category: unit
+        required: true
+        test_pattern: "test_*quality*disorder*"
+        assertions:
+          - "时间倒退 → drop + 审计"
+
+  # =============================================================================
+  # Phase D: 套利工程门槛 (PairExecutor)
+  # =============================================================================
+  D:
+    name: "套利工程门槛"
+    required: true
+    scenarios:
+      
+      - rule_id: "PAIR.EXECUTOR.ATOMIC"
+        component: "execution.pair_executor"
+        description: "双腿原子性提交"
+        category: integration
+        required: true
+        test_pattern: "test_pair_executor*atomic*"
+        assertions:
+          - "两腿同时提交"
+          - "失败一腿回滚另一腿"
+          
+      - rule_id: "PAIR.ROLLBACK.ON_LEG_FAIL"
+        component: "execution.pair_executor"
+        description: "单腿失败回滚"
+        category: scenario
+        required: true
+        test_pattern: "test_pair*rollback*"
+        assertions:
+          - "leg1 成功 leg2 失败 → 回滚 leg1"
+          - "写入审计事件"
+          
+      - rule_id: "PAIR.AUTOHEDGE.DELTA_NEUTRAL"
+        component: "execution.pair_executor"
+        description: "自动对冲保持 delta neutral"
+        category: scenario
+        required: true
+        test_pattern: "test_pair*autohedge*"
+        assertions:
+          - "单腿成交后立即对冲"
+          - "敞口不超过阈值"
+          
+      - rule_id: "PAIR.IMBALANCE.DETECT"
+        component: "execution.pair_executor"
+        description: "腿不平衡检测"
+        category: unit
+        required: true
+        test_pattern: "test_pair*imbalance*"
+        assertions:
+          - "单腿敞口超阈值 → 告警"
+          - "未对冲成交 → reduce-only"
+          
+      - rule_id: "PAIR.BREAKER.STOP_Z"
+        component: "strategy.arbitrage"
+        description: "止损熔断"
+        category: unit
+        required: true
+        test_pattern: "test_*breaker*stop*"
+        assertions:
+          - "zscore 超 stop_z → 熔断"
+          - "进入 reduce-only"
+
+  # =============================================================================
+  # Guardian (无人值守)
+  # =============================================================================
+  guardian:
+    name: "Guardian 无人值守"
+    required: true
+    scenarios:
+      
+      - rule_id: "GUARD.FSM.TRANSITIONS"
+        component: "guardian.state_machine"
+        description: "Guardian 状态机转移"
+        category: unit
+        required: true
+        test_pattern: "test_guardian*fsm*"
+        assertions:
+          - "INIT → RUNNING ↔ REDUCE_ONLY → HALTED → MANUAL"
+          
+      - rule_id: "GUARD.DETECT.QUOTE_STALE"
+        component: "guardian.detector"
+        description: "行情 stale 检测"
+        category: unit
+        required: true
+        test_pattern: "test_guardian*quote*stale*"
+        assertions:
+          - "硬 stale 触发 REDUCE_ONLY 或 HALTED"
+          
+      - rule_id: "GUARD.DETECT.ORDER_STUCK"
+        component: "guardian.detector"
+        description: "订单卡住检测"
+        category: unit
+        required: true
+        test_pattern: "test_guardian*order*stuck*"
+        assertions:
+          - "FSM 长时间不推进 → cancel_all + REDUCE_ONLY"
+          
+      - rule_id: "GUARD.DETECT.POSITION_DRIFT"
+        component: "guardian.detector"
+        description: "持仓漂移检测"
+        category: unit
+        required: true
+        test_pattern: "test_guardian*position*drift*"
+        assertions:
+          - "reconcile 不一致 → HALTED"
+          
+      - rule_id: "GUARD.DETECT.LEG_IMBALANCE"
+        component: "guardian.detector"
+        description: "腿不平衡检测"
+        category: unit
+        required: true
+        test_pattern: "test_guardian*leg*imbalance*"
+        assertions:
+          - "单腿敞口超阈值 → REDUCE_ONLY"
+          
+      - rule_id: "GUARD.ACTION.SET_MODE"
+        component: "guardian.actions"
+        description: "set_mode 动作"
+        category: unit
+        required: true
+        test_pattern: "test_guardian*set_mode*"
+        assertions:
+          - "只允许 RUNNING/REDUCE_ONLY/HALTED"
+          - "写入审计"
+          
+      - rule_id: "GUARD.ACTION.CANCEL_ALL"
+        component: "guardian.actions"
+        description: "cancel_all 动作"
+        category: unit
+        required: true
+        test_pattern: "test_guardian*cancel_all*"
+        assertions:
+          - "撤销所有未完成订单"
+          - "写入审计"
+          
+      - rule_id: "GUARD.ACTION.FLATTEN_ALL"
+        component: "guardian.actions"
+        description: "flatten_all 动作"
+        category: unit
+        required: true
+        test_pattern: "test_guardian*flatten*"
+        assertions:
+          - "平掉所有持仓"
+          - "极少触发"
+          
+      - rule_id: "GUARD.RECOVERY.COLD_START"
+        component: "guardian.recovery"
+        description: "冷启动恢复流程"
+        category: scenario
+        required: true
+        test_pattern: "test_guardian*cold_start*"
+        assertions:
+          - "cancel_all → query positions → set_mode(REDUCE_ONLY)"
+          - "冷却后允许 RUNNING"
+
+  # =============================================================================
+  # Audit (审计与回放)
+  # =============================================================================
+  audit:
+    name: "审计与回放一致性"
+    required: true
+    scenarios:
+      
+      - rule_id: "AUDIT.EVENT.STRUCTURE"
+        component: "audit.event"
+        description: "审计事件结构完整"
+        category: unit
+        required: true
+        test_pattern: "test_audit*event*"
+        assertions:
+          - "包含 ts, run_id, exec_id"
+          - "包含 symbol, order_local_id"
+          
+      - rule_id: "AUDIT.JSONL.FORMAT"
+        component: "audit.writer"
+        description: "JSONL 格式正确"
+        category: unit
+        required: true
+        test_pattern: "test_audit*jsonl*"
+        assertions:
+          - "每行一个 JSON 对象"
+          - "可逐行解析"
+          
+      - rule_id: "AUDIT.CORRELATION.RUN_EXEC"
+        component: "audit.correlation"
+        description: "run_id/exec_id 关联正确"
+        category: unit
+        required: true
+        test_pattern: "test_audit*correlation*"
+        assertions:
+          - "同一运行共享 run_id"
+          - "同一调仓共享 exec_id"
+          
+      - rule_id: "REPLAY.DETERMINISTIC.DECISION"
+        component: "replay.verifier"
+        description: "回放决策确定性"
+        category: scenario
+        required: true
+        test_pattern: "test_*replay*deterministic*"
+        assertions:
+          - "同 inputs 产生同 DecisionEvent 序列"
+          - "protection 拒单原因一致"
+          
+      - rule_id: "REPLAY.DETERMINISTIC.GUARDIAN"
+        component: "replay.verifier"
+        description: "回放 Guardian 确定性"
+        category: scenario
+        required: true
+        test_pattern: "test_*replay*guardian*"
+        assertions:
+          - "guardian 状态迁移一致"
+
+# =============================================================================
+# 统计摘要
+# =============================================================================
+summary:
+  total_scenarios: 55
+  by_phase:
+    A: 4    # 接口冻结
+    B: 20   # 执行可靠性
+    C: 11   # 市场连续性
+    D: 5    # 套利门槛
+    guardian: 10
+    audit: 5
+  by_category:
+    unit: 42
+    integration: 3
+    scenario: 10
+  required_count: 55
+
+# =============================================================================
+# Policy Enforcement
+# =============================================================================
+policy:
+  # 场景缺失 = POLICY_VIOLATION
+  missing_scenario_exit: 12
+  
+  # 场景 SKIP = FAIL
+  skip_is_fail: true
+  
+  # 失败报告必须包含
+  failure_must_include:
+    - rule_id
+    - component
+    - expected
+    - actual
+    - tick
+    - evidence
