@@ -13,7 +13,8 @@
       "mcp__plugin_playwright_playwright__browser_install",
       "Bash(npx ruv-swarm mcp status)",
       "Bash(claude mcp list)",
-      "Bash(npx claude-flow@alpha swarm init --topology mesh --max-agents 10 --strategy adaptive)"
+      "Bash(npx claude-flow@alpha swarm init --topology mesh --max-agents 10 --strategy adaptive)",
+      "Bash(npx claude-flow@alpha swarm status)"
     ],
     "deny": []
   }
