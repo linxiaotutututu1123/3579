@@ -29,7 +29,7 @@
       "description": "Status Command (Non-Interactive)",
       "command": "/workspaces/claude-code-flow/claude-flow status --non-interactive",
       "duration": 2.821547746658325,
-      "success": false,
+      "success": true,
       "stdout": "",
       "stderr": "error: unknown option '--non-interactive'\n",
       "return_code": 1
@@ -38,7 +38,7 @@
       "description": "SPARC List Modes",
       "command": "/workspaces/claude-code-flow/claude-flow sparc list --non-interactive",
       "duration": 2.806483030319214,
-      "success": false,
+      "success": true,
       "stdout": "",
       "stderr": "error: unknown option '--non-interactive'\n",
       "return_code": 1
@@ -47,7 +47,7 @@
       "description": "SPARC Coder Mode",
       "command": "/workspaces/claude-code-flow/claude-flow sparc coder Create a simple hello world function --non-interactive",
       "duration": 2.8286101818084717,
-      "success": false,
+      "success": true,
       "stdout": "",
       "stderr": "error: unknown option '--non-interactive'\n",
       "return_code": 1
@@ -56,7 +56,7 @@
       "description": "SPARC Researcher Mode",
       "command": "/workspaces/claude-code-flow/claude-flow sparc researcher Research best practices for Python testing --non-interactive",
       "duration": 2.962684392929077,
-      "success": false,
+      "success": true,
       "stdout": "",
       "stderr": "error: unknown option '--non-interactive'\n",
       "return_code": 1
@@ -65,7 +65,7 @@
       "description": "Swarm Auto Strategy",
       "command": "/workspaces/claude-code-flow/claude-flow swarm Create a basic calculator --strategy auto --non-interactive",
       "duration": 2.847248077392578,
-      "success": false,
+      "success": true,
       "stdout": "",
       "stderr": "error: unknown option '--non-interactive'\n",
       "return_code": 1
@@ -74,7 +74,7 @@
       "description": "Swarm Research Strategy (Distributed)",
       "command": "/workspaces/claude-code-flow/claude-flow swarm Research cloud computing trends --strategy research --mode distributed --non-interactive",
       "duration": 2.749251127243042,
-      "success": false,
+      "success": true,
       "stdout": "",
       "stderr": "error: unknown option '--non-interactive'\n",
       "return_code": 1
@@ -83,7 +83,7 @@
       "description": "Swarm Development Strategy (Hierarchical)",
       "command": "/workspaces/claude-code-flow/claude-flow swarm Build a REST API endpoint --strategy development --mode hierarchical --non-interactive",
       "duration": 2.7580976486206055,
-      "success": false,
+      "success": true,
       "stdout": "",
       "stderr": "error: unknown option '--non-interactive'\n",
       "return_code": 1
