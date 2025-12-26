@@ -1,8 +1,4 @@
-
 {
-
-
-
   "env": {
     "ANTHROPIC_MODEL": "claude-opus-4-5-20251101-thinking",
     "ANTHROPIC_SMALL_FAST_MODEL": "claude-haiku-4-5-20251001-thinking",
@@ -12,150 +8,117 @@
     "MAX_THINKING_TOKENS": "150000",
     "BASH_DEFAULT_TIMEOUT_MS": "300000",
     "BASH_MAX_TIMEOUT_MS": "600000",
-    "PYTHONIOENCODING": "utf-8"
-  },
-
-  "enabledPlugins": {
-    "github@claude-plugins-official": true,
-    "gitlab@claude-plugins-official": true,
-    "bitbucket@claude-plugins-official": true,
-    "aws@claude-plugins-official": true,
-    "azure@claude-plugins-official": true,
-    "google-cloud@claude-plugins-official": true,
-    "digitalocean@claude-plugins-official": true,
-    "heroku@claude-plugins-official": true,
-    "firebase@claude-plugins-official": true,
-    "mongodb@claude-plugins-official": true,
-    "postgresql@claude-plugins-official": true,
-    "mysql@claude-plugins-official": true,
-    "redis@claude-plugins-official": true,
-    "mongodb-atlas@claude-plugins-official": true,
-    "stripe@claude-plugins-official": true,
-    "sentry@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true,
-    "netlify@claude-plugins-official": true,
-    "cloudflare@claude-plugins-official": true,
-    "docker@claude-plugins-official": true,
-    "kubernetes@claude-plugins-official": true,
-    "openfaas@claude-plugins-official": true,
-    "gcloud@claude-plugins-official": true,
-    "aws-lambda@claude-plugins-official": true,
-    "aws-sagemaker@claude-plugins-official": true,
-    "aws-step-functions@claude-plugins-official": true,
-    "aws-glue@claude-plugins-official": true,
-    "aws-dynamodb@claude-plugins-official": true,
-    "aws-rds@claude-plugins-official": true,
-    "aws-sns@claude-plugins-official": true,
-    "aws-sqs@claude-plugins-official": true,
-    "aws-kinesis@claude-plugins-official": true,
-    "aws-firehose@claude-plugins-official": true,
-    "aws-elasticsearch@claude-plugins-official": true,
-    "aws-cognito@claude-plugins-official": true,
-    "aws-api-gateway@claude-plugins-official": true,
-    "aws-lambda-layer@claude-plugins-official": true,
-    "aws-athena@claude-plugins-official": true,
-    "terraform@claude-plugins-official": true,
-    "pulumi@claude-plugins-official": true,
-    "datadog@claude-plugins-official": true,
-    "pagerduty@claude-plugins-official": true,
-    "twilio@claude-plugins-official": true,
-    "sendgrid@claude-plugins-official": true,
-    "mailchimp@claude-plugins-official": true,
-    "hubspot@claude-plugins-official": true,
-    "salesforce@claude-plugins-official": true,
-    "zendesk@claude-plugins-official": true,
-    "intercom@claude-plugins-official": true,
-    "segment@claude-plugins-official": true,
-    "amplitude@claude-plugins-official": true,
-    "mixpanel@claude-plugins-official": true,
-    "posthog@claude-plugins-official": true,
-    "algolia@claude-plugins-official": true,
-    "onesignal@claude-plugins-official": true,
-    "rollbar@claude-plugins-official": true,
-    "newrelic@claude-plugins-official": true,
-    "splunk@claude-plugins-official": true,
-    "logstash@claude-plugins-official": true,
-    "graylog@claude-plugins-official": true,
-    "fluent-bit@claude-plugins-official": true,
-    "prometheus@claude-plugins-official": true,
-    "grafana@claude-plugins-official": true,
-    "opensearch@claude-plugins-official": true,
-    "elastic-apm@claude-plugins-official": true,
-    "jaeger@claude-plugins-official": true,
-    "zipkin@claude-plugins-official": true,
-    "datadog-trace-agent@claude-plugins-official": true,
-    "datadog-app-monitoring@claude-plugins-official": true,
-    "datadog-infrastructure-monitoring@claude-plugins-official": true,
-    "datadog-security-monitoring@claude-plugins-official": true,
-    "datadog-log-management@claude-plugins-official": true,
-    "datadog-ci-pipelines@claude-plugins-official": true,
-    "elasticsearch@claude-plugins-official": true,
-    "pinecone@claude-plugins-official": true,
-    "weaviate@claude-plugins-official": true,
-    "chromadb@claude-plugins-official": true
-  },
-    "mcpServers": {
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
-    },
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
-    },
-    "fetch": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"]
-    },
-    "puppeteer": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
-    },
-    "git": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-git", "."]
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": { "GITHUB_TOKEN": "`${GITHUB_TOKEN}" }
-    },
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@context7/mcp-server"]
-    }
+    "PYTHONIOENCODING": "utf-8",
+    "CLAUDE_FLOW_AUTO_COMMIT": "false",
+    "CLAUDE_FLOW_AUTO_PUSH": "false",
+    "CLAUDE_FLOW_HOOKS_ENABLED": "true",
+    "CLAUDE_FLOW_TELEMETRY_ENABLED": "true",
+    "CLAUDE_FLOW_REMOTE_EXECUTION": "true",
+    "CLAUDE_FLOW_CHECKPOINTS_ENABLED": "true"
   },
   "permissions": {
     "allow": [
-      "Bash(python:*)", "Bash(pip:*)", "Bash(git:*)",
-      "Bash(npm:*)", "Bash(npx:*)", "Bash(ruff:*)",
-      "Bash(pytest:*)", "Bash(mypy:*)", "Bash(ollama:*)",
-      "Bash(ls:*)", "Bash(cat:*)", "Bash(mkdir:*)",
-      "Bash(echo:*)", "Bash(pwd)",
-      "Read", "Edit", "Write", "mcp__*"
+      "Bash(npx claude-flow:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:*)",
+      "Bash(npm test:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(git config:*)",
+      "Bash(git tag:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git stash:*)",
+      "Bash(jq:*)",
+      "Bash(node:*)",
+      "Bash(which:*)",
+      "Bash(pwd)",
+      "Bash(ls:*)"
     ],
     "deny": [
-      "Bash(rm -rf /)", "Bash(rm -rf ~)", "Bash(format:*)"
+      "Bash(rm -rf /)"
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat | jq -r '.tool_input.command // empty' | tr '\\n' '\\0' | xargs -0 -I {} npx claude-flow@alpha hooks pre-command --command '{}' --validate-safety true --prepare-resources true"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat | jq -r '.tool_input.file_path // .tool_input.path // empty' | tr '\\n' '\\0' | xargs -0 -I {} npx claude-flow@alpha hooks pre-edit --file '{}' --auto-assign-agents true --load-context true"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
-        "matcher": "Write",
+        "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "ruff format \"`$TOOL_INPUT\" 2>nul || exit 0" }
+          {
+            "type": "command",
+            "command": "cat | jq -r '.tool_input.command // empty' | tr '\\n' '\\0' | xargs -0 -I {} npx claude-flow@alpha hooks post-command --command '{}' --track-metrics true --store-results true"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat | jq -r '.tool_input.file_path // .tool_input.path // empty' | tr '\\n' '\\0' | xargs -0 -I {} npx claude-flow@alpha hooks post-edit --file '{}' --format true --update-memory true"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash -c 'INPUT=$(cat); CUSTOM=$(echo \"$INPUT\" | jq -r \".custom_instructions // \\\"\\\"\"); echo \"🔄 PreCompact Guidance:\"; echo \"📋 IMPORTANT: Review CLAUDE.md in project root for:\"; echo \"   • 54 available agents and concurrent usage patterns\"; echo \"   • Swarm coordination strategies (hierarchical, mesh, adaptive)\"; echo \"   • SPARC methodology workflows with batchtools optimization\"; echo \"   • Critical concurrent execution rules (GOLDEN RULE: 1 MESSAGE = ALL OPERATIONS)\"; if [ -n \"$CUSTOM\" ]; then echo \"🎯 Custom compact instructions: $CUSTOM\"; fi; echo \"✅ Ready for compact operation\"'"
+          }
+        ]
+      },
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash -c 'echo \"🔄 Auto-Compact Guidance (Context Window Full):\"; echo \"📋 CRITICAL: Before compacting, ensure you understand:\"; echo \"   • All 54 agents available in .claude/agents/ directory\"; echo \"   • Concurrent execution patterns from CLAUDE.md\"; echo \"   • Batchtools optimization for 300% performance gains\"; echo \"   • Swarm coordination strategies for complex tasks\"; echo \"⚡ Apply GOLDEN RULE: Always batch operations in single messages\"; echo \"✅ Auto-compact proceeding with full agent context\"'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx claude-flow@alpha hooks session-end --generate-summary true --persist-state true --export-metrics true"
+          }
         ]
       }
     ]
+  },
+  "includeCoAuthoredBy": true,
+  "enabledMcpjsonServers": ["claude-flow", "ruv-swarm"],
+  "statusLine": {
+    "type": "command",
+    "command": ".claude/statusline-command.sh"
   }
 }
-
-
-
-
-
-
