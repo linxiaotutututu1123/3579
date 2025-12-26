@@ -9,7 +9,8 @@
       "mcp__plugin_playwright_playwright__browser_tabs",
       "mcp__plugin_greptile_greptile__list_custom_context",
       "mcp__plugin_context7_context7__resolve-library-id",
-      "mcp__taskmaster-ai__get_tasks"
+      "mcp__taskmaster-ai__get_tasks",
+      "mcp__plugin_playwright_playwright__browser_install"
     ],
     "deny": []
   }
