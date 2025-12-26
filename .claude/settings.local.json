@@ -3,7 +3,9 @@
     "allow": [
       "mcp__ruv-swarm",
       "mcp__claude-flow@alpha",
-      "mcp__flow-nexus"
+      "mcp__flow-nexus",
+      "Bash(npm install -g claude-flow@alpha)",
+      "Bash(claude-flow --version)"
     ],
     "deny": []
   }
