@@ -959,9 +959,9 @@ class ParallelExecutor:
                     self._notify_task_progress(task.id, "completed", 100.0)
 
                     # 触发完成回调
-                    for callback in self._on_task_complete:
+                    for complete_cb in self._on_task_complete:
                         try:
-                            callback(result)
+                            complete_cb(result)
                         except Exception:
                             pass
 
@@ -1000,9 +1000,9 @@ class ParallelExecutor:
             except Exception as e:
                 result.error = e
                 # 触发错误回调
-                for callback in self._on_task_error:
+                for error_cb in self._on_task_error:
                     try:
-                        callback(task, e)
+                        error_cb(task, e)
                     except Exception:
                         pass
 
