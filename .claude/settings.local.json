@@ -24,7 +24,8 @@
       "Bash(python -m pytest chairman_agents/tests/integration/test_llm_cache.py chairman_agents/tests/integration/test_llm_client.py -v --tb=no -q)",
       "Bash(uv run mypy chairman_agents/ --ignore-missing-imports)",
       "Bash(uv run mypy chairman_agents/orchestration/parallel_executor.py --ignore-missing-imports)",
-      "Bash(uv run mypy chairman_agents/cognitive/memory.py chairman_agents/workflow/stage_manager.py chairman_agents/api/server.py)"
+      "Bash(uv run mypy chairman_agents/cognitive/memory.py chairman_agents/workflow/stage_manager.py chairman_agents/api/server.py)",
+      "Bash(.venv/Scripts/python.exe -m mypy chairman_agents/orchestration/parallel_executor.py chairman_agents/orchestration/task_scheduler.py --show-error-codes)"
     ]
   },
   "enabledPlugins": {
