@@ -989,17 +989,17 @@ class TaskScheduler:
                     await self.dependency_resolver.mark_failed(task_id)
 
                 # 触发失败回调
-                for callback in self._on_task_failed:
+                for failed_cb in self._on_task_failed:
                     try:
-                        callback(scheduled_task.task, error or Exception("任务执行失败"))
+                        failed_cb(scheduled_task.task, error or Exception("任务执行失败"))
                     except Exception:
                         pass
 
                 # 触发超时回调
                 if timed_out:
-                    for callback in self._on_task_timeout:
+                    for timeout_cb in self._on_task_timeout:
                         try:
-                            callback(scheduled_task.task)
+                            timeout_cb(scheduled_task.task)
                         except Exception:
                             pass
 
