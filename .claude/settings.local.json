@@ -1,85 +1,10 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
-      "Bash(env)",
-      "Skill(sc:workflow)",
-      "Skill(sc:save)",
       "mcp__ruv-swarm",
       "mcp__claude-flow@alpha",
-      "mcp__flow-nexus",
-      "Bash(python -m pytest chairman_agents/tests/ -v --tb=short)",
-      "Bash(python -m pytest tests/ -v --tb=short --no-cov)",
-      "Bash(python -m pytest chairman_agents/tests/ -v --tb=short --no-cov)",
-      "Bash(pip install pyyaml pytest-asyncio -q)",
-      "Bash(python -m pytest chairman_agents/tests/ --tb=line -q)",
-      "Bash(python -m pytest chairman_agents/tests/core/ chairman_agents/tests/cognitive/ chairman_agents/tests/integration/test_llm_cache.py -v --tb=line -q)",
-      "Bash(python -m pytest chairman_agents/tests/core/test_exceptions.py -v)",
-      "Bash(python -m pytest chairman_agents/tests/core/ chairman_agents/tests/integration/test_llm_cache.py -v --tb=line -q)",
-      "Bash(python -m pytest chairman_agents/tests/ -v --tb=line -q)",
-      "Bash(python -m pytest chairman_agents/tests/ -x --tb=short -q)",
-      "Bash(python -m pytest chairman_agents/tests/ --tb=no -q)",
-      "Bash(cat \"C:\\\\Users\\\\1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-1-2468-3579\\\\tasks\\\\b0618de.output\")",
-      "Bash(python -m pytest chairman_agents/tests/core/ chairman_agents/tests/cognitive/ -v --tb=no -q)",
-      "Bash(python -m pytest chairman_agents/tests/integration/test_llm_cache.py chairman_agents/tests/integration/test_llm_client.py -v --tb=no -q)",
-      "Bash(uv run mypy chairman_agents/ --ignore-missing-imports)",
-      "Bash(uv run mypy chairman_agents/orchestration/parallel_executor.py --ignore-missing-imports)",
-      "Bash(uv run mypy chairman_agents/cognitive/memory.py chairman_agents/workflow/stage_manager.py chairman_agents/api/server.py)",
-      "Bash(.venv/Scripts/python.exe -m mypy chairman_agents/orchestration/parallel_executor.py chairman_agents/orchestration/task_scheduler.py --show-error-codes)",
-      "Bash(.venv/Scripts/python.exe -m mypy chairman_agents/api/routes.py --show-error-codes)"
-    ]
-  },
-  "enabledPlugins": {
-    "github@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "playwright@claude-plugins-official": true,
-    "serena@claude-plugins-official": false,
-    "firebase@claude-plugins-official": true,
-    "gitlab@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
-    "supabase@claude-plugins-official": true,
-    "stripe@claude-plugins-official": true,
-    "asana@claude-plugins-official": true,
-    "linear@claude-plugins-official": true,
-    "greptile@claude-plugins-official": true,
-    "laravel-boost@claude-plugins-official": true
-  },
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "."
-      ]
-    },
-    "memory": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-memory"
-      ]
-    },
-    "fetch": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-fetch"
-      ]
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ]
-    },
-    "puppeteer": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-puppeteer"
-      ]
-    }
+      "mcp__flow-nexus"
+    ],
+    "deny": []
   }
 }
