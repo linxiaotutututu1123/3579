@@ -1,3 +1,24 @@
+
+   Mypy 类型检查报告
+
+       检查结果: 67 个源文件，11 个文件中发现 45 个错误
+
+       ---
+       错误分类与优先级
+
+       P0 - 关键 (运行时可能崩溃)
+
+       | 文件                               | 行号       | 错误类型            | 问题描述                                    |
+       |------------------------------------|------------|---------------------|---------------------------------------------|
+       | orchestration/parallel_executor.py | 932        | arg-type            | create_task 参数类型不兼容                  |
+       | orchestration/parallel_executor.py | 962, 1003  | assignment          | 回调函数签名不匹配                          |
+       | orchestration/parallel_executor.py | 964, 1005  | call-arg            | 回调调用参数错误                            |
+       | orchestration/parallel_executor.py | 1147       | arg-type            | BaseException 被添加到 ExecutionResult 列表 |
+       | orchestration/task_scheduler.py    | 1002, 1004 | assignment/call-arg | 回调函数签名不匹配      
+
+
+
+
   P1 - 高优先级 (逻辑错误风险)
 
        | 文件                      | 行号 | 错误类型   | 问题描述                    |
