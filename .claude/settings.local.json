@@ -6,7 +6,8 @@
       "mcp__flow-nexus",
       "Bash(npm install claude-flow@alpha)",
       "Bash(npx claude-flow@alpha memory store test \"API configuration\" --namespace semantic --reasoningbank)",
-      "Bash(npx claude-flow@alpha memory query \"configuration\" --namespace semantic --reasoningbank)"
+      "Bash(npx claude-flow@alpha memory query \"configuration\" --namespace semantic --reasoningbank)",
+      "Bash(npm install claude-flow)"
     ],
     "deny": []
   }
