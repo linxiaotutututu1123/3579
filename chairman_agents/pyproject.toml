@@ -473,26 +473,26 @@ python_classes = ["Test*"]
 addopts = [
     "--strict-markers",
     "--strict-config",
-    
-    # 覆盖率
-    "--cov=src/chairman_agents",
-    "--cov-branch",
-    "--cov-report=term-missing:skip-covered",
-    "--cov-report=html:reports/coverage",
-    "--cov-report=xml:reports/coverage.xml",
-    "--cov-fail-under=80",
-    
+
+    # 覆盖率 (需要 pytest-cov, 可选安装后启用)
+    # "--cov=src/chairman_agents",
+    # "--cov-branch",
+    # "--cov-report=term-missing:skip-covered",
+    # "--cov-report=html:reports/coverage",
+    # "--cov-report=xml:reports/coverage.xml",
+    # "--cov-fail-under=80",
+
     # 输出
     "-v",
     "--tb=short",
     "--showlocals",
-    
-    # 超时
-    "--timeout=120",
-    
-    # 并行 (可选)
+
+    # 超时 (需要 pytest-timeout, 可选安装后启用)
+    # "--timeout=120",
+
+    # 并行 (需要 pytest-xdist, 可选安装后启用)
     # "-n", "auto",
-    
+
     # 日志
     "--log-cli-level=INFO",
     "--log-file=logs/test.log",

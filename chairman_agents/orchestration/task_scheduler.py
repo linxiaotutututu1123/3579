@@ -23,10 +23,12 @@ from __future__ import annotations
 
 import asyncio
 import heapq
+import time
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+from collections.abc import Awaitable, Callable, Sequence
 
 from chairman_agents.core.exceptions import DependencyError
 from chairman_agents.core.types import Task, TaskId, TaskPriority, TaskStatus
@@ -34,9 +36,6 @@ from chairman_agents.orchestration.dependency_resolver import (
     DependencyResolver,
     ResolutionResult,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
 
 
 # =============================================================================
@@ -176,9 +175,13 @@ class SchedulerStats:
         total_scheduled: 总调度任务数
         total_completed: 总完成任务数
         total_failed: 总失败任务数
+        total_cancelled: 总取消任务数
+        total_timed_out: 总超时任务数
         current_queue_size: 当前队列大小
         average_wait_time: 平均等待时间（秒）
         average_execution_time: 平均执行时间（秒）
+        peak_queue_size: 峰值队列大小
+        peak_concurrent: 峰值并发数
     """
 
     total_submitted: int = 0
@@ -193,6 +196,12 @@ class SchedulerStats:
     total_failed: int = 0
     """总失败任务数"""
 
+    total_cancelled: int = 0
+    """总取消任务数"""
+
+    total_timed_out: int = 0
+    """总超时任务数"""
+
     current_queue_size: int = 0
     """当前队列大小"""
 
@@ -201,6 +210,48 @@ class SchedulerStats:
 
     average_execution_time: float = 0.0
     """平均执行时间（秒）"""
+
+    peak_queue_size: int = 0
+    """峰值队列大小"""
+
+    peak_concurrent: int = 0
+    """峰值并发数"""
+
+
+@dataclass
+class SchedulerConfig:
+    """调度器配置.
+
+    Attributes:
+        max_queue_size: 最大队列大小
+        max_concurrent: 最大并发执行数
+        default_timeout: 默认任务超时时间（秒）
+        batch_size: 批处理大小
+        enable_dependency_resolution: 是否启用依赖解析
+        graceful_shutdown_timeout: 优雅关闭超时时间（秒）
+        task_fetch_timeout: 获取任务的超时时间（秒）
+    """
+
+    max_queue_size: int = 10000
+    """最大队列大小"""
+
+    max_concurrent: int = 10
+    """最大并发执行数"""
+
+    default_timeout: float = 300.0
+    """默认任务超时时间（秒）"""
+
+    batch_size: int = 50
+    """批处理大小"""
+
+    enable_dependency_resolution: bool = True
+    """是否启用依赖解析"""
+
+    graceful_shutdown_timeout: float = 30.0
+    """优雅关闭超时时间（秒）"""
+
+    task_fetch_timeout: float = 5.0
+    """获取任务的超时时间（秒）"""
 
 
 # =============================================================================
@@ -278,17 +329,22 @@ class TaskScheduler:
     - 依赖关系处理
     - 优先级队列
     - 任务生命周期管理
+    - 并发控制（Semaphore）
+    - 批处理执行
+    - 超时控制
+    - 优雅取消机制
 
     Attributes:
         strategy: 当前调度策略
         state: 调度器状态
+        config: 调度器配置
         dependency_resolver: 依赖解析器
-        max_queue_size: 最大队列大小
 
     Example:
+        >>> config = SchedulerConfig(max_concurrent=5, default_timeout=60.0)
         >>> scheduler = TaskScheduler(
         ...     strategy=SchedulingStrategy.BALANCED,
-        ...     max_queue_size=1000,
+        ...     config=config,
         ... )
         >>> await scheduler.start()
         >>> await scheduler.submit(task)
@@ -299,20 +355,37 @@ class TaskScheduler:
         self,
         strategy: SchedulingStrategy = SchedulingStrategy.PRIORITY_FIRST,
         *,
-        max_queue_size: int = 10000,
-        enable_dependency_resolution: bool = True,
+        config: SchedulerConfig | None = None,
+        max_queue_size: int | None = None,
+        enable_dependency_resolution: bool | None = None,
     ) -> None:
         """初始化任务调度器.
 
         Args:
             strategy: 调度策略
-            max_queue_size: 最大队列大小
-            enable_dependency_resolution: 是否启用依赖解析
+            config: 调度器配置（推荐使用）
+            max_queue_size: 最大队列大小（向后兼容，推荐使用 config）
+            enable_dependency_resolution: 是否启用依赖解析（向后兼容）
         """
         self.strategy = strategy
         self.state = SchedulerState.IDLE
-        self.max_queue_size = max_queue_size
-        self._enable_dependency_resolution = enable_dependency_resolution
+
+        # 使用配置对象或兼容旧参数
+        if config:
+            self.config = config
+        else:
+            self.config = SchedulerConfig(
+                max_queue_size=max_queue_size or 10000,
+                enable_dependency_resolution=(
+                    enable_dependency_resolution
+                    if enable_dependency_resolution is not None
+                    else True
+                ),
+            )
+
+        # 向后兼容的属性
+        self.max_queue_size = self.config.max_queue_size
+        self._enable_dependency_resolution = self.config.enable_dependency_resolution
 
         # 内部状态
         self._queue: list[ScheduledTask] = []
@@ -320,22 +393,39 @@ class TaskScheduler:
         self._lock = asyncio.Lock()
         self._not_empty = asyncio.Condition()
 
+        # 并发控制
+        self._semaphore = asyncio.Semaphore(self.config.max_concurrent)
+        self._current_concurrent = 0
+        self._shutdown_event = asyncio.Event()
+
         # 任务跟踪
         self._pending_tasks: dict[TaskId, ScheduledTask] = {}
         self._running_tasks: dict[TaskId, ScheduledTask] = {}
         self._completed_tasks: dict[TaskId, ScheduledTask] = {}
         self._failed_tasks: dict[TaskId, ScheduledTask] = {}
+        self._cancelled_tasks: dict[TaskId, ScheduledTask] = {}
+
+        # 任务超时跟踪
+        self._task_timeouts: dict[TaskId, asyncio.TimerHandle | None] = {}
+        self._task_start_times: dict[TaskId, float] = {}
 
         # 依赖解析器
-        self.dependency_resolver = DependencyResolver() if enable_dependency_resolution else None
+        self.dependency_resolver = (
+            DependencyResolver() if self.config.enable_dependency_resolution else None
+        )
 
         # 统计信息
         self._stats = SchedulerStats()
+        self._wait_times: list[float] = []
+        self._execution_times: list[float] = []
 
         # 回调函数
         self._on_task_scheduled: list[Callable[[Task], None]] = []
         self._on_task_completed: list[Callable[[Task], None]] = []
         self._on_task_failed: list[Callable[[Task, Exception], None]] = []
+        self._on_task_timeout: list[Callable[[Task], None]] = []
+        self._on_task_cancelled: list[Callable[[Task], None]] = []
+        self._on_progress: list[Callable[[int, int, int], None]] = []  # completed, failed, total
 
     async def start(self) -> None:
         """启动调度器."""
@@ -344,12 +434,61 @@ class TaskScheduler:
                 # 重新初始化
                 self._queue.clear()
                 self._pending_tasks.clear()
+                self._semaphore = asyncio.Semaphore(self.config.max_concurrent)
+            self._shutdown_event.clear()
             self.state = SchedulerState.RUNNING
 
     async def stop(self) -> None:
         """停止调度器."""
         async with self._lock:
             self.state = SchedulerState.STOPPED
+            self._shutdown_event.set()
+
+    async def shutdown(self, wait: bool = True, cancel_pending: bool = False) -> int:
+        """优雅关闭调度器.
+
+        Args:
+            wait: 是否等待正在执行的任务完成
+            cancel_pending: 是否取消待处理的任务
+
+        Returns:
+            取消的任务数量
+        """
+        cancelled_count = 0
+
+        async with self._lock:
+            self.state = SchedulerState.STOPPED
+            self._shutdown_event.set()
+
+            # 取消待处理的任务
+            if cancel_pending:
+                cancelled_count = len(self._pending_tasks)
+                for task_id, scheduled_task in self._pending_tasks.items():
+                    scheduled_task.task.status = TaskStatus.CANCELLED
+                    self._cancelled_tasks[task_id] = scheduled_task
+                    self._stats.total_cancelled += 1
+                self._pending_tasks.clear()
+                self._queue.clear()
+
+        # 等待正在执行的任务
+        if wait and self._running_tasks:
+            try:
+                start_time = time.monotonic()
+                while self._running_tasks:
+                    elapsed = time.monotonic() - start_time
+                    if elapsed >= self.config.graceful_shutdown_timeout:
+                        break
+                    await asyncio.sleep(0.1)
+            except Exception:
+                pass
+
+        # 清理超时处理器
+        for handle in self._task_timeouts.values():
+            if handle:
+                handle.cancel()
+        self._task_timeouts.clear()
+
+        return cancelled_count
 
     async def pause(self) -> None:
         """暂停调度器.
@@ -366,11 +505,12 @@ class TaskScheduler:
             if self.state == SchedulerState.PAUSED:
                 self.state = SchedulerState.RUNNING
 
-    async def submit(self, task: Task) -> None:
+    async def submit(self, task: Task, timeout: float | None = None) -> None:
         """提交单个任务到调度器.
 
         Args:
             task: 要提交的任务
+            timeout: 任务执行超时时间（秒），None 使用默认值
 
         Raises:
             RuntimeError: 队列已满时抛出
@@ -384,25 +524,47 @@ class TaskScheduler:
                 await self.dependency_resolver.add_task(task)
 
             scheduled_task = self._create_scheduled_task(task)
+
+            # 设置超时
+            if timeout is not None:
+                scheduled_task.execution_deadline = datetime.now() + timedelta(seconds=timeout)
+            elif self.config.default_timeout:
+                scheduled_task.execution_deadline = datetime.now() + timedelta(
+                    seconds=self.config.default_timeout
+                )
+
             self._enqueue(scheduled_task)
             self._pending_tasks[task.id] = scheduled_task
             self._stats.total_submitted += 1
-            self._stats.current_queue_size = len(self._queue)
+            self._update_queue_stats()
 
             # 触发回调
             for callback in self._on_task_scheduled:
-                callback(task)
+                try:
+                    callback(task)
+                except Exception:
+                    pass  # 忽略回调异常
 
-    async def submit_batch(self, tasks: Sequence[Task]) -> None:
+    async def submit_batch(
+        self,
+        tasks: Sequence[Task],
+        timeout: float | None = None,
+    ) -> int:
         """批量提交任务.
 
         批量提交比逐个提交更高效，特别是需要依赖解析时。
+        支持分批处理大量任务。
 
         Args:
             tasks: 任务列表
+            timeout: 每个任务的执行超时时间（秒）
+
+        Returns:
+            成功提交的任务数量
 
         Raises:
             RuntimeError: 队列空间不足时抛出
+            DependencyError: 存在依赖问题时抛出
         """
         async with self._lock:
             if len(self._queue) + len(tasks) > self.max_queue_size:
@@ -428,18 +590,42 @@ class TaskScheduler:
                             blocking_tasks=list(result.missing_dependencies),
                         )
 
-            for task in tasks:
-                scheduled_task = self._create_scheduled_task(task)
-                self._enqueue(scheduled_task)
-                self._pending_tasks[task.id] = scheduled_task
-                self._stats.total_submitted += 1
+            submitted_count = 0
+            batch_size = self.config.batch_size
 
-            self._stats.current_queue_size = len(self._queue)
+            # 分批处理
+            for i in range(0, len(tasks), batch_size):
+                batch = tasks[i : i + batch_size]
+                for task in batch:
+                    scheduled_task = self._create_scheduled_task(task)
+
+                    # 设置超时
+                    if timeout is not None:
+                        scheduled_task.execution_deadline = (
+                            datetime.now() + timedelta(seconds=timeout)
+                        )
+                    elif self.config.default_timeout:
+                        scheduled_task.execution_deadline = datetime.now() + timedelta(
+                            seconds=self.config.default_timeout
+                        )
+
+                    self._enqueue(scheduled_task)
+                    self._pending_tasks[task.id] = scheduled_task
+                    self._stats.total_submitted += 1
+                    submitted_count += 1
+
+                # 释放锁让其他操作有机会执行
+                if i + batch_size < len(tasks):
+                    await asyncio.sleep(0)
+
+            self._update_queue_stats()
+            return submitted_count
 
     async def next(self, timeout: float | None = None) -> Task | None:
         """获取下一个待执行任务.
 
         根据调度策略返回最合适的任务。
+        使用信号量控制并发数量。
 
         Args:
             timeout: 等待超时时间（秒），None 表示不等待
@@ -447,18 +633,105 @@ class TaskScheduler:
         Returns:
             下一个任务，或在超时/无任务时返回 None
         """
+        # 首先尝试获取信号量（控制并发）
+        try:
+            if timeout is not None:
+                acquired = await asyncio.wait_for(
+                    self._acquire_semaphore(), timeout=timeout
+                )
+            else:
+                acquired = await asyncio.wait_for(
+                    self._acquire_semaphore(),
+                    timeout=self.config.task_fetch_timeout,
+                )
+            if not acquired:
+                return None
+        except asyncio.TimeoutError:
+            return None
+
         async with self._lock:
-            if self.state != SchedulerState.RUNNING:
+            if self.state != SchedulerState.RUNNING or self._shutdown_event.is_set():
+                self._semaphore.release()
                 return None
 
             task = await self._dequeue_next(timeout)
-            if task:
-                self._stats.total_scheduled += 1
-                self._running_tasks[task.id] = self._pending_tasks.pop(task.id)
-                task.status = TaskStatus.ASSIGNED
-                task.started_at = datetime.now()
+            if not task:
+                self._semaphore.release()
+                return None
+
+            # 记录开始时间
+            self._task_start_times[task.id] = time.monotonic()
+            wait_time = time.monotonic() - self._pending_tasks[task.id].submit_time
+            self._wait_times.append(wait_time)
+
+            self._stats.total_scheduled += 1
+            self._running_tasks[task.id] = self._pending_tasks.pop(task.id)
+            self._current_concurrent += 1
+
+            # 更新峰值并发数
+            if self._current_concurrent > self._stats.peak_concurrent:
+                self._stats.peak_concurrent = self._current_concurrent
+
+            task.status = TaskStatus.ASSIGNED
+            task.started_at = datetime.now()
 
             return task
+
+    async def _acquire_semaphore(self) -> bool:
+        """获取信号量.
+
+        Returns:
+            是否成功获取
+        """
+        await self._semaphore.acquire()
+        return True
+
+    async def release_slot(self, task_id: TaskId | None = None) -> None:
+        """释放执行槽位.
+
+        当任务完成或失败后调用，释放并发控制的槽位。
+
+        Args:
+            task_id: 完成的任务 ID（可选，用于记录执行时间）
+        """
+        if task_id and task_id in self._task_start_times:
+            execution_time = time.monotonic() - self._task_start_times.pop(task_id)
+            self._execution_times.append(execution_time)
+            # 只保留最近 1000 条记录
+            if len(self._execution_times) > 1000:
+                self._execution_times = self._execution_times[-1000:]
+
+        async with self._lock:
+            if self._current_concurrent > 0:
+                self._current_concurrent -= 1
+            self._semaphore.release()
+
+    async def acquire_with_timeout(
+        self,
+        timeout: float | None = None,
+    ) -> tuple[Task | None, float]:
+        """获取任务并返回剩余超时时间.
+
+        用于需要精确控制执行时间的场景。
+
+        Args:
+            timeout: 等待超时时间（秒）
+
+        Returns:
+            (任务, 任务的剩余超时时间) 元组
+        """
+        task = await self.next(timeout)
+        if not task:
+            return None, 0.0
+
+        remaining_timeout = self.config.default_timeout
+        if task.id in self._running_tasks:
+            scheduled_task = self._running_tasks[task.id]
+            if scheduled_task.execution_deadline:
+                remaining = (scheduled_task.execution_deadline - datetime.now()).total_seconds()
+                remaining_timeout = max(0.0, remaining)
+
+        return task, remaining_timeout
 
     async def peek(self) -> Task | None:
         """查看下一个任务但不移除.
@@ -471,48 +744,161 @@ class TaskScheduler:
                 return None
             return self._queue[0].task
 
-    async def cancel(self, task_id: TaskId) -> bool:
+    async def cancel(self, task_id: TaskId, reason: str | None = None) -> bool:
         """取消任务.
 
-        只能取消尚未开始执行的任务。
+        可以取消待处理和正在执行的任务。
 
         Args:
             task_id: 要取消的任务 ID
+            reason: 取消原因（可选）
 
         Returns:
             是否取消成功
         """
         async with self._lock:
-            if task_id not in self._pending_tasks:
-                return False
+            # 尝试取消待处理的任务
+            if task_id in self._pending_tasks:
+                # 从队列中移除
+                self._queue = [st for st in self._queue if st.task.id != task_id]
+                heapq.heapify(self._queue)
 
-            # 从队列中移除
-            self._queue = [st for st in self._queue if st.task.id != task_id]
-            heapq.heapify(self._queue)
+                scheduled_task = self._pending_tasks.pop(task_id)
+                scheduled_task.task.status = TaskStatus.CANCELLED
+                scheduled_task.metadata["cancel_reason"] = reason
+                self._cancelled_tasks[task_id] = scheduled_task
+                self._stats.total_cancelled += 1
+                self._update_queue_stats()
 
-            scheduled_task = self._pending_tasks.pop(task_id)
-            scheduled_task.task.status = TaskStatus.CANCELLED
-            self._stats.current_queue_size = len(self._queue)
+                # 触发回调
+                for callback in self._on_task_cancelled:
+                    try:
+                        callback(scheduled_task.task)
+                    except Exception:
+                        pass
 
-            return True
+                return True
 
-    async def cancel_all(self) -> int:
+            # 尝试取消正在执行的任务
+            if task_id in self._running_tasks:
+                scheduled_task = self._running_tasks.pop(task_id)
+                scheduled_task.task.status = TaskStatus.CANCELLED
+                scheduled_task.metadata["cancel_reason"] = reason
+                self._cancelled_tasks[task_id] = scheduled_task
+                self._stats.total_cancelled += 1
+
+                # 清理超时处理器
+                if task_id in self._task_timeouts:
+                    handle = self._task_timeouts.pop(task_id)
+                    if handle:
+                        handle.cancel()
+
+                # 清理开始时间
+                self._task_start_times.pop(task_id, None)
+
+                # 释放并发槽位
+                if self._current_concurrent > 0:
+                    self._current_concurrent -= 1
+
+                # 触发回调
+                for callback in self._on_task_cancelled:
+                    try:
+                        callback(scheduled_task.task)
+                    except Exception:
+                        pass
+
+                return True
+
+            return False
+
+    async def cancel_all(self, include_running: bool = False) -> int:
         """取消所有待处理任务.
+
+        Args:
+            include_running: 是否也取消正在执行的任务
 
         Returns:
             取消的任务数量
         """
         async with self._lock:
-            count = len(self._queue)
+            count = 0
+
+            # 取消待处理的任务
             for scheduled_task in self._queue:
                 scheduled_task.task.status = TaskStatus.CANCELLED
+                self._cancelled_tasks[scheduled_task.task.id] = scheduled_task
+                count += 1
+
             self._queue.clear()
             self._pending_tasks.clear()
-            self._stats.current_queue_size = 0
+            self._stats.total_cancelled += count
+            self._update_queue_stats()
+
+            # 取消正在执行的任务
+            if include_running:
+                running_count = len(self._running_tasks)
+                for task_id, scheduled_task in list(self._running_tasks.items()):
+                    scheduled_task.task.status = TaskStatus.CANCELLED
+                    self._cancelled_tasks[task_id] = scheduled_task
+
+                    # 清理超时处理器
+                    if task_id in self._task_timeouts:
+                        handle = self._task_timeouts.pop(task_id)
+                        if handle:
+                            handle.cancel()
+
+                self._running_tasks.clear()
+                self._task_start_times.clear()
+                self._current_concurrent = 0
+                self._stats.total_cancelled += running_count
+                count += running_count
+
             return count
+
+    async def cancel_by_priority(
+        self,
+        priority: TaskPriority,
+        below: bool = True,
+    ) -> int:
+        """按优先级取消任务.
+
+        Args:
+            priority: 优先级阈值
+            below: True 取消低于此优先级的任务，False 取消高于此优先级的任务
+
+        Returns:
+            取消的任务数量
+        """
+        async with self._lock:
+            to_cancel: list[TaskId] = []
+
+            for scheduled_task in self._queue:
+                task_priority = scheduled_task.task.priority.value
+                if below and task_priority > priority.value:
+                    to_cancel.append(scheduled_task.task.id)
+                elif not below and task_priority < priority.value:
+                    to_cancel.append(scheduled_task.task.id)
+
+            # 从队列中移除
+            self._queue = [
+                st for st in self._queue if st.task.id not in to_cancel
+            ]
+            heapq.heapify(self._queue)
+
+            for task_id in to_cancel:
+                if task_id in self._pending_tasks:
+                    scheduled_task = self._pending_tasks.pop(task_id)
+                    scheduled_task.task.status = TaskStatus.CANCELLED
+                    self._cancelled_tasks[task_id] = scheduled_task
+
+            self._stats.total_cancelled += len(to_cancel)
+            self._update_queue_stats()
+            return len(to_cancel)
 
     async def mark_completed(self, task_id: TaskId) -> None:
         """标记任务为已完成.
+
+        自动释放并发槽位并更新统计信息。
 
         Args:
             task_id: 完成的任务 ID
@@ -525,25 +911,51 @@ class TaskScheduler:
                 self._completed_tasks[task_id] = scheduled_task
                 self._stats.total_completed += 1
 
+                # 记录执行时间
+                if task_id in self._task_start_times:
+                    execution_time = time.monotonic() - self._task_start_times.pop(task_id)
+                    self._execution_times.append(execution_time)
+                    if len(self._execution_times) > 1000:
+                        self._execution_times = self._execution_times[-1000:]
+
+                # 清理超时处理器
+                if task_id in self._task_timeouts:
+                    handle = self._task_timeouts.pop(task_id)
+                    if handle:
+                        handle.cancel()
+
+                # 释放并发槽位
+                if self._current_concurrent > 0:
+                    self._current_concurrent -= 1
+
                 # 更新依赖状态
                 if self.dependency_resolver:
-                    newly_ready = await self.dependency_resolver.mark_completed(task_id)
-                    # 可以在这里触发新可执行任务的通知
+                    await self.dependency_resolver.mark_completed(task_id)
 
-                # 触发回调
+                # 触发完成回调
                 for callback in self._on_task_completed:
-                    callback(scheduled_task.task)
+                    try:
+                        callback(scheduled_task.task)
+                    except Exception:
+                        pass
+
+                # 触发进度回调
+                self._notify_progress()
 
     async def mark_failed(
         self,
         task_id: TaskId,
         error: Exception | None = None,
+        timed_out: bool = False,
     ) -> None:
         """标记任务为失败.
+
+        自动释放并发槽位并更新统计信息。
 
         Args:
             task_id: 失败的任务 ID
             error: 导致失败的异常（可选）
+            timed_out: 是否因超时失败
         """
         async with self._lock:
             if task_id in self._running_tasks:
@@ -552,13 +964,59 @@ class TaskScheduler:
                 self._failed_tasks[task_id] = scheduled_task
                 self._stats.total_failed += 1
 
+                if timed_out:
+                    self._stats.total_timed_out += 1
+
+                # 记录执行时间
+                if task_id in self._task_start_times:
+                    execution_time = time.monotonic() - self._task_start_times.pop(task_id)
+                    self._execution_times.append(execution_time)
+                    if len(self._execution_times) > 1000:
+                        self._execution_times = self._execution_times[-1000:]
+
+                # 清理超时处理器
+                if task_id in self._task_timeouts:
+                    handle = self._task_timeouts.pop(task_id)
+                    if handle:
+                        handle.cancel()
+
+                # 释放并发槽位
+                if self._current_concurrent > 0:
+                    self._current_concurrent -= 1
+
                 # 更新依赖状态
                 if self.dependency_resolver:
                     await self.dependency_resolver.mark_failed(task_id)
 
-                # 触发回调
-                for callback in self._on_task_failed:
-                    callback(scheduled_task.task, error or Exception("任务执行失败"))
+                # 触发失败回调
+                for failed_cb in self._on_task_failed:
+                    try:
+                        failed_cb(scheduled_task.task, error or Exception("任务执行失败"))
+                    except Exception:
+                        pass
+
+                # 触发超时回调
+                if timed_out:
+                    for timeout_cb in self._on_task_timeout:
+                        try:
+                            timeout_cb(scheduled_task.task)
+                        except Exception:
+                            pass
+
+                # 触发进度回调
+                self._notify_progress()
+
+    async def mark_timeout(self, task_id: TaskId) -> None:
+        """标记任务为超时.
+
+        Args:
+            task_id: 超时的任务 ID
+        """
+        await self.mark_failed(
+            task_id,
+            error=TimeoutError(f"任务 {task_id} 执行超时"),
+            timed_out=True,
+        )
 
     async def retry(self, task_id: TaskId, max_retries: int = 3) -> bool:
         """重试失败的任务.
@@ -638,10 +1096,43 @@ class TaskScheduler:
         """
         self._on_task_failed.append(callback)
 
+    def on_task_timeout(self, callback: Callable[[Task], None]) -> None:
+        """注册任务超时回调.
+
+        Args:
+            callback: 任务超时时调用的函数
+        """
+        self._on_task_timeout.append(callback)
+
+    def on_task_cancelled(self, callback: Callable[[Task], None]) -> None:
+        """注册任务取消回调.
+
+        Args:
+            callback: 任务被取消时调用的函数
+        """
+        self._on_task_cancelled.append(callback)
+
+    def on_progress(
+        self, callback: Callable[[int, int, int], None]
+    ) -> None:
+        """注册进度回调.
+
+        Args:
+            callback: 进度变化时调用的函数，参数为 (completed, failed, total)
+        """
+        self._on_progress.append(callback)
+
     @property
     def stats(self) -> SchedulerStats:
         """获取调度器统计信息."""
         self._stats.current_queue_size = len(self._queue)
+        # 更新平均时间
+        if self._wait_times:
+            self._stats.average_wait_time = sum(self._wait_times) / len(self._wait_times)
+        if self._execution_times:
+            self._stats.average_execution_time = sum(self._execution_times) / len(
+                self._execution_times
+            )
         return self._stats
 
     @property
@@ -653,6 +1144,35 @@ class TaskScheduler:
     def queue_size(self) -> int:
         """获取当前队列大小."""
         return len(self._queue)
+
+    @property
+    def running_count(self) -> int:
+        """获取正在执行的任务数."""
+        return len(self._running_tasks)
+
+    @property
+    def concurrent_slots_available(self) -> int:
+        """获取可用的并发槽位数."""
+        return self.config.max_concurrent - self._current_concurrent
+
+    def _notify_progress(self) -> None:
+        """通知进度回调."""
+        completed = self._stats.total_completed
+        failed = self._stats.total_failed
+        total = self._stats.total_submitted
+
+        for callback in self._on_progress:
+            try:
+                callback(completed, failed, total)
+            except Exception:
+                pass
+
+    def _update_queue_stats(self) -> None:
+        """更新队列相关统计信息."""
+        current_size = len(self._queue)
+        self._stats.current_queue_size = current_size
+        if current_size > self._stats.peak_queue_size:
+            self._stats.peak_queue_size = current_size
 
     def _create_scheduled_task(self, task: Task) -> ScheduledTask:
         """创建 ScheduledTask 包装.
@@ -755,6 +1275,7 @@ __all__ = [
     "SchedulerState",
     "ScheduledTask",
     "SchedulerStats",
+    "SchedulerConfig",
     "TaskSchedulerProtocol",
     "TaskScheduler",
 ]

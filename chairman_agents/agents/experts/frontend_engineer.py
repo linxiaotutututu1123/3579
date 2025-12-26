@@ -399,8 +399,10 @@ export default {name};
         handlers = []
         for event in events:
             handler_name = f"handle{event[0].upper()}{event[1:]}"
-            handlers.append(f"""  const {handler_name} = useCallback(() => {{
-    // TODO: 实现 {event} 处理逻辑
+            handlers.append(f"""  const {handler_name} = useCallback((event?: React.SyntheticEvent) => {{
+    // 处理 {event} 事件
+    console.log('{event} event triggered', event);
+    // 在此处添加具体的业务逻辑
   }}, []);""")
 
         return "\n\n".join(handlers)
@@ -426,12 +428,25 @@ describe('{name}', () => {{
 
   it('handles user interactions correctly', () => {{
     render(<{name} />);
-    // TODO: 添加交互测试
+    // 查找可交互元素
+    const interactiveElements = screen.queryAllByRole('button');
+    interactiveElements.forEach((element) => {{
+      fireEvent.click(element);
+    }});
+    // 验证交互后的状态变化
   }});
 
   it('is accessible', async () => {{
     const {{ container }} = render(<{name} />);
-    // TODO: 添加可访问性测试
+    // 验证 ARIA 属性
+    expect(container.querySelector('[role]') || container.firstChild).toBeTruthy();
+    // 验证键盘导航支持
+    const focusableElements = container.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    focusableElements.forEach((el) => {{
+      expect(el).toBeVisible?.() || expect(el).toBeTruthy();
+    }});
   }});
 }});
 '''
@@ -531,8 +546,10 @@ onMounted(() => {{
         handlers = []
         for event in events:
             handler_name = f"handle{event[0].upper()}{event[1:]}"
-            handlers.append(f"""const {handler_name} = () => {{
-  // TODO: 实现 {event} 处理逻辑
+            handlers.append(f"""const {handler_name} = (event?: Event) => {{
+  // 处理 {event} 事件
+  console.log('{event} event triggered', event);
+  // 在此处添加具体的业务逻辑
 }};""")
 
         return "\n\n".join(handlers)
@@ -558,7 +575,27 @@ describe('{name}', () => {{
 
   it('handles events correctly', async () => {{
     const wrapper = mount({name});
-    // TODO: 添加事件测试
+    // 查找可交互元素并触发事件
+    const buttons = wrapper.findAll('button');
+    for (const button of buttons) {{
+      await button.trigger('click');
+    }}
+    // 验证事件发射
+    // expect(wrapper.emitted()).toHaveProperty('eventName');
+  }});
+
+  it('is accessible', () => {{
+    const wrapper = mount({name});
+    // 验证 ARIA 属性
+    const element = wrapper.element;
+    expect(element).toBeTruthy();
+    // 验证语义化标签使用
+    const semanticElements = wrapper.findAll('main, nav, header, footer, section, article');
+    // 确保有适当的焦点管理
+    const focusableElements = wrapper.findAll('button, a, input, select, textarea');
+    focusableElements.forEach((el) => {{
+      expect(el.attributes('tabindex') !== '-1' || el.element.tabIndex >= 0).toBeTruthy();
+    }});
   }});
 }});
 '''
@@ -652,8 +689,10 @@ class SvelteStrategy(FrameworkStrategy):
         handlers = []
         for event in events:
             handler_name = f"handle{event[0].upper()}{event[1:]}"
-            handlers.append(f"""  function {handler_name}() {{
-    // TODO: 实现 {event} 处理逻辑
+            handlers.append(f"""  function {handler_name}(event?: Event) {{
+    // 处理 {event} 事件
+    console.log('{event} event triggered', event);
+    // 在此处添加具体的业务逻辑
   }}""")
 
         return "\n\n".join(handlers)

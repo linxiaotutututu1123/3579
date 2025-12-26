@@ -392,7 +392,7 @@ class StageManager:
         if self._current_stage is None:
             return 0.0
 
-        completed_count = sum(
+        completed_count: float = sum(
             1
             for status in self._stage_status.values()
             if status == StageStatus.COMPLETED
@@ -738,9 +738,10 @@ class StageManager:
 
         # 检查阶段状态
         current_status = self._stage_status.get(from_stage)
-        if current_status not in (StageStatus.ACTIVE, StageStatus.COMPLETED):
+        if current_status is None or current_status not in (StageStatus.ACTIVE, StageStatus.COMPLETED):
+            status_value = current_status.value if current_status is not None else "None"
             raise PhaseTransitionError(
-                f"当前阶段 {from_stage.value} 状态为 {current_status.value}，不允许转换",
+                f"当前阶段 {from_stage.value} 状态为 {status_value}，不允许转换",
                 workflow_id=self.workflow_id,
                 from_phase=from_stage.value,
                 to_phase=to_stage.value,

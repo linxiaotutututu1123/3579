@@ -21,6 +21,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from chairman_agents import __version__
+from chairman_agents.core.config import init_config, reset_config, get_config
+from chairman_agents.observability.logger import (
+    configure_logging,
+    reset_logger,
+    get_logger,
+    LogLevel,
+    LogFormat,
+)
 
 from .routes import router
 from .schemas import ErrorResponse
@@ -43,15 +51,54 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     Yields:
         None
     """
+    # =========================================================================
     # 启动时执行
-    # TODO: 初始化数据库连接、加载配置等
-    print(f"Chairman Agents API v{__version__} 启动中...")
+    # =========================================================================
+
+    # 1. 初始化配置 (从环境变量或配置文件加载, 并创建必要目录)
+    config = init_config(ensure_directories=True)
+
+    # 2. 配置结构化日志
+    # 根据配置决定日志级别和格式
+    log_level = LogLevel.DEBUG if app.debug else LogLevel(config.logging.level.lower())
+    log_format = LogFormat.JSON if config.logging.enable_json else LogFormat.TEXT
+
+    # 如果启用文件日志, 设置日志文件路径
+    log_file = None
+    if config.logging.enable_file:
+        log_file = config.paths.logs / "api.log"
+
+    logger = configure_logging(
+        name="chairman-agents-api",
+        level=log_level,
+        format=log_format,
+        log_file=log_file,
+    )
+
+    # 3. 记录启动信息
+    logger.info(
+        "API服务启动",
+        version=__version__,
+        environment=config.environment,
+        debug=app.debug,
+    )
+
+    # 将配置和日志器存储到app.state以便路由访问
+    app.state.config = config
+    app.state.logger = logger
 
     yield
 
+    # =========================================================================
     # 关闭时执行
-    # TODO: 清理资源、关闭连接等
-    print("Chairman Agents API 正在关闭...")
+    # =========================================================================
+
+    # 1. 记录关闭信息
+    logger.info("API服务正在关闭")
+
+    # 2. 清理资源
+    reset_logger()
+    reset_config()
 
 
 # =============================================================================
@@ -219,7 +266,7 @@ Chairman Agents API - 主席级智能体团队系统
     # 注册异常处理器
     app.add_exception_handler(
         RequestValidationError,
-        validation_exception_handler,
+        validation_exception_handler,  # type: ignore[arg-type]
     )
 
     if not debug:

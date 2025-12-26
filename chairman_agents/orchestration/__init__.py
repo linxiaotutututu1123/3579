@@ -50,11 +50,14 @@ from chairman_agents.orchestration.parallel_executor import (
     ExecutorStats,
     ParallelExecutor,
     ParallelExecutorProtocol,
+    ProgressCallback,
     TaskExecutorFn,
+    TaskProgressCallback,
     execute_tasks_parallel,
 )
 from chairman_agents.orchestration.task_scheduler import (
     ScheduledTask,
+    SchedulerConfig,
     SchedulerState,
     SchedulerStats,
     SchedulingStrategy,
@@ -75,6 +78,7 @@ __all__ = [
     "SchedulerState",
     "ScheduledTask",
     "SchedulerStats",
+    "SchedulerConfig",
     "TaskSchedulerProtocol",
     "TaskScheduler",
     # 并行执行器
@@ -85,6 +89,8 @@ __all__ = [
     "BatchResult",
     "ExecutorConfig",
     "ExecutorStats",
+    "ProgressCallback",
+    "TaskProgressCallback",
     "ParallelExecutorProtocol",
     "ParallelExecutor",
     "execute_tasks_parallel",

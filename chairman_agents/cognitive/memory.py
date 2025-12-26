@@ -14,7 +14,7 @@ import uuid
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 @dataclass
@@ -95,6 +95,7 @@ class MemorySystem:
         self,
         storage_path: Path | None = None,
         use_embeddings: bool = False,
+        embedding_model: str = "paraphrase-multilingual-MiniLM-L12-v2",
     ):
         """
         Initialize the memory system.
@@ -102,14 +103,22 @@ class MemorySystem:
         Args:
             storage_path: Path for persistent storage
             use_embeddings: Whether to use vector embeddings
+            embedding_model: Name of the sentence-transformers model to use
         """
         self.memories: dict[str, MemoryItem] = {}
         self.storage_path = storage_path
         self.use_embeddings = use_embeddings
+        self._embedding_model_name = embedding_model
 
         # Chinese tokenization support (optional)
         self._jieba_available = self._check_jieba()
         self._jieba = None
+
+        # Embedding model support (optional)
+        self._embedding_model = None
+        self._embeddings_available = False
+        if use_embeddings:
+            self._init_embedding_model()
 
         # Load existing memories if storage path exists
         if storage_path and storage_path.exists():
@@ -123,6 +132,83 @@ class MemorySystem:
             return True
         except ImportError:
             return False
+
+    def _init_embedding_model(self) -> None:
+        """
+        Initialize the sentence-transformers embedding model.
+
+        Checks if sentence-transformers is available and loads the model.
+        If not available, gracefully degrades to text matching.
+        """
+        try:
+            from sentence_transformers import SentenceTransformer
+
+            self._embedding_model = SentenceTransformer(self._embedding_model_name)
+            self._embeddings_available = True
+        except ImportError:
+            # sentence-transformers not installed, degrade gracefully
+            self._embedding_model = None
+            self._embeddings_available = False
+        except Exception:
+            # Model loading failed, degrade gracefully
+            self._embedding_model = None
+            self._embeddings_available = False
+
+    def _generate_embedding(self, text: str) -> list[float] | None:
+        """
+        Generate embedding vector for text.
+
+        Args:
+            text: Input text to embed
+
+        Returns:
+            List of floats representing the embedding vector, or None if unavailable
+        """
+        if not self._embeddings_available or self._embedding_model is None:
+            return None
+
+        if not text or not text.strip():
+            return None
+
+        try:
+            # Generate embedding using sentence-transformers
+            embedding = self._embedding_model.encode(text, convert_to_numpy=True)
+            # Convert numpy array to list for JSON serialization
+            return embedding.tolist()
+        except Exception:
+            # Embedding generation failed, return None
+            return None
+
+    def _cosine_similarity(
+        self,
+        a: list[float],
+        b: list[float],
+    ) -> float:
+        """
+        Calculate cosine similarity between two vectors.
+
+        Args:
+            a: First embedding vector
+            b: Second embedding vector
+
+        Returns:
+            Cosine similarity score between -1 and 1
+        """
+        if not a or not b or len(a) != len(b):
+            return 0.0
+
+        # Calculate dot product
+        dot_product = sum(x * y for x, y in zip(a, b))
+
+        # Calculate magnitudes
+        magnitude_a = math.sqrt(sum(x * x for x in a))
+        magnitude_b = math.sqrt(sum(x * x for x in b))
+
+        # Avoid division by zero
+        if magnitude_a == 0 or magnitude_b == 0:
+            return 0.0
+
+        return dot_product / (magnitude_a * magnitude_b)
 
     def _contains_chinese(self, text: str) -> bool:
         """Check if text contains Chinese characters."""
@@ -213,11 +299,13 @@ class MemorySystem:
         memory: MemoryItem,
         time_decay: bool = True,
         time_decay_factor: float = 0.1,
+        query_embedding: list[float] | None = None,
     ) -> float:
         """
         Calculate relevance score between query and memory.
 
-        Uses TF-IDF-like scoring with:
+        Uses vector similarity if embeddings are available, otherwise falls back
+        to TF-IDF-like scoring with:
         1. Token overlap (Jaccard similarity)
         2. Term frequency weighting
         3. Importance weighting
@@ -228,46 +316,71 @@ class MemorySystem:
             memory: Memory item to compare
             time_decay: Whether to apply time decay
             time_decay_factor: Decay rate (higher = faster decay)
+            query_embedding: Pre-computed query embedding (optional, for efficiency)
 
         Returns:
             Relevance score between 0 and 1
         """
-        # Tokenize query and memory content
-        query_tokens = self._tokenize(query)
-        memory_tokens = self._tokenize(memory.content)
+        base_score = 0.0
 
-        if not query_tokens or not memory_tokens:
-            return 0.0
+        # Try vector similarity first if embeddings are available
+        use_vector_similarity = (
+            self._embeddings_available
+            and memory.embedding is not None
+        )
 
-        # Calculate token overlap (Jaccard-like)
-        query_set = set(query_tokens)
-        memory_set = set(memory_tokens)
+        if use_vector_similarity:
+            # Generate query embedding if not provided
+            if query_embedding is None:
+                query_embedding = self._generate_embedding(query)
 
-        intersection = query_set & memory_set
-        union = query_set | memory_set
+            if query_embedding is not None and memory.embedding is not None:
+                # Calculate cosine similarity between query and memory embeddings
+                cosine_sim = self._cosine_similarity(query_embedding, memory.embedding)
+                # Normalize cosine similarity from [-1, 1] to [0, 1]
+                base_score = (cosine_sim + 1.0) / 2.0
+            else:
+                # Embedding generation failed, fall back to token-based
+                use_vector_similarity = False
 
-        if not union:
-            return 0.0
+        # Fall back to token-based similarity if vector similarity not available
+        if not use_vector_similarity:
+            # Tokenize query and memory content
+            query_tokens = self._tokenize(query)
+            memory_tokens = self._tokenize(memory.content)
 
-        # Base relevance: Jaccard similarity
-        jaccard = len(intersection) / len(union)
+            if not query_tokens or not memory_tokens:
+                return 0.0
 
-        # Term frequency bonus: reward more occurrences in memory
-        tf_bonus = 0.0
-        if intersection:
-            memory_token_freq: dict[str, int] = {}
-            for token in memory_tokens:
-                memory_token_freq[token] = memory_token_freq.get(token, 0) + 1
+            # Calculate token overlap (Jaccard-like)
+            query_set = set(query_tokens)
+            memory_set = set(memory_tokens)
 
-            total_freq = sum(memory_token_freq.get(t, 0) for t in intersection)
-            tf_bonus = min(0.2, total_freq / (len(memory_tokens) * 2))
+            intersection = query_set & memory_set
+            union = query_set | memory_set
 
-        # Coverage bonus: what fraction of query terms are found
-        coverage = len(intersection) / len(query_set) if query_set else 0
-        coverage_bonus = coverage * 0.2
+            if not union:
+                return 0.0
 
-        # Combine scores
-        base_score = jaccard + tf_bonus + coverage_bonus
+            # Base relevance: Jaccard similarity
+            jaccard = len(intersection) / len(union)
+
+            # Term frequency bonus: reward more occurrences in memory
+            tf_bonus = 0.0
+            if intersection:
+                memory_token_freq: dict[str, int] = {}
+                for token in memory_tokens:
+                    memory_token_freq[token] = memory_token_freq.get(token, 0) + 1
+
+                total_freq = sum(memory_token_freq.get(t, 0) for t in intersection)
+                tf_bonus = min(0.2, total_freq / (len(memory_tokens) * 2))
+
+            # Coverage bonus: what fraction of query terms are found
+            coverage = len(intersection) / len(query_set) if query_set else 0
+            coverage_bonus = coverage * 0.2
+
+            # Combine scores
+            base_score = jaccard + tf_bonus + coverage_bonus
 
         # Apply importance weighting
         importance_weight = 0.7 + (memory.importance * 0.3)
@@ -319,6 +432,11 @@ class MemorySystem:
         now = datetime.now()
         memory_id = str(uuid.uuid4())
 
+        # Generate embedding if enabled
+        embedding = None
+        if self.use_embeddings and self._embeddings_available:
+            embedding = self._generate_embedding(content)
+
         memory = MemoryItem(
             id=memory_id,
             content=content,
@@ -327,7 +445,7 @@ class MemorySystem:
             created_at=now,
             last_accessed=now,
             access_count=0,
-            embedding=None,  # TODO: Generate embedding if use_embeddings
+            embedding=embedding,
             metadata=metadata or {},
         )
 
@@ -349,17 +467,23 @@ class MemorySystem:
         """
         results: list[tuple[MemoryItem, float]] = []
 
+        # Pre-compute query embedding for efficiency (avoid regenerating for each memory)
+        query_embedding = None
+        if self._embeddings_available:
+            query_embedding = self._generate_embedding(query.query)
+
         for memory in self.memories.values():
             # Filter by memory type if specified
             if query.memory_types and memory.memory_type not in query.memory_types:
                 continue
 
-            # Calculate relevance
+            # Calculate relevance (pass pre-computed query embedding)
             relevance = self._calculate_relevance(
                 query.query,
                 memory,
                 time_decay=query.time_decay,
                 time_decay_factor=query.time_decay_factor,
+                query_embedding=query_embedding,
             )
 
             # Filter by minimum relevance
@@ -580,6 +704,11 @@ class MemorySystem:
 
         count = len(self.memories)
 
+        # Count memories with embeddings
+        memories_with_embeddings = sum(
+            1 for m in self.memories.values() if m.embedding is not None
+        )
+
         return {
             "total_memories": count,
             "by_type": by_type,
@@ -589,6 +718,9 @@ class MemorySystem:
             "oldest_memory": oldest.isoformat() if oldest else None,
             "newest_memory": newest.isoformat() if newest else None,
             "jieba_available": self._jieba_available,
+            "embeddings_available": self._embeddings_available,
+            "embedding_model": self._embedding_model_name if self._embeddings_available else None,
+            "memories_with_embeddings": memories_with_embeddings,
             "storage_path": str(self.storage_path) if self.storage_path else None,
         }
 

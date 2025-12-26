@@ -1,8 +1,0 @@
-C:\Users\1\2468\3579\src\risk\events.py
-C:\Users\1\2468\3579\src\risk\manager.py
-C:\Users\1\2468\3579\src\risk\state.py
-C:\Users\1\2468\3579\src\risk\stress_test_china.py
-C:\Users\1\2468\3579\src\risk\var_calculator.py
-C:\Users\1\2468\3579\src\risk\attribution.py
-C:\Users\1\2468\3579\src\risk\dynamic_var.py
-C:\Users\1\2468\3579\src\risk\__init__.py

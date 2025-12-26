@@ -1,0 +1,62 @@
+{
+  "customModes": [
+    {
+      "slug": "spec-pseudocode",
+      "name": "Specification & Pseudocode",
+      "description": "Requirements analysis and algorithm design",
+      "phases": ["specification", "pseudocode"],
+      "agents": ["researcher", "planner"]
+    },
+    {
+      "slug": "architect",
+      "name": "Architecture",
+      "description": "System design and component architecture",
+      "phases": ["architecture"],
+      "agents": ["system-architect", "code-analyzer"]
+    },
+    {
+      "slug": "tdd",
+      "name": "Test-Driven Development",
+      "description": "Write tests first, then implement",
+      "phases": ["test", "implement", "refactor"],
+      "agents": ["tester", "coder", "reviewer"]
+    },
+    {
+      "slug": "integration",
+      "name": "Integration",
+      "description": "Component integration and system testing",
+      "phases": ["integration", "validation"],
+      "agents": ["coder", "tester", "production-validator"]
+    },
+    {
+      "slug": "debug",
+      "name": "Debug",
+      "description": "Debugging and troubleshooting",
+      "phases": ["analyze", "fix", "verify"],
+      "agents": ["debugger", "tester"]
+    },
+    {
+      "slug": "review",
+      "name": "Code Review",
+      "description": "Code quality review and improvements",
+      "phases": ["review", "refactor"],
+      "agents": ["reviewer", "code-analyzer"]
+    },
+    {
+      "slug": "security",
+      "name": "Security Audit",
+      "description": "Security analysis and vulnerability assessment",
+      "phases": ["audit", "remediation"],
+      "agents": ["security-auditor", "reviewer"]
+    },
+    {
+      "slug": "performance",
+      "name": "Performance Optimization",
+      "description": "Performance analysis and optimization",
+      "phases": ["profile", "optimize", "benchmark"],
+      "agents": ["perf-analyzer", "coder"]
+    }
+  ],
+  "defaultMode": "tdd",
+  "version": "2.0.0"
+}

@@ -1,7 +1,0 @@
-C:\Users\1\2468\3579\src\audit\order_trail.py
-C:\Users\1\2468\3579\src\audit\__init__.py
-C:\Users\1\2468\3579\src\audit\decision_log.py
-C:\Users\1\2468\3579\src\audit\guardian_log.py
-C:\Users\1\2468\3579\src\audit\pnl_attribution.py
-C:\Users\1\2468\3579\src\audit\writer.py
-C:\Users\1\2468\3579\src\audit\replay_verifier.py

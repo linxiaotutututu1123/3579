@@ -5,20 +5,29 @@
 - AnthropicClient: Anthropic Claude API客户端
 - OpenAIClient: OpenAI API客户端
 - MockClient: 测试用模拟客户端
+
+支持响应缓存:
+- 基于prompt hash的缓存键
+- LRU淘汰策略
+- 可选TTL过期
 """
 
 from __future__ import annotations
 
 import asyncio
+import copy
 import time
 from abc import ABC, abstractmethod
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
 from chairman_agents.core.types import generate_id
+
+if TYPE_CHECKING:
+    from chairman_agents.integration.llm_cache import CacheConfig, LLMResponseCache
 
 
 # =============================================================================
@@ -171,6 +180,9 @@ class LLMConfig:
         timeout: 超时时间(秒)
         max_retries: 最大重试次数
         retry_delay: 重试延迟(秒)
+        cache_enabled: 是否启用响应缓存
+        cache_max_size: 缓存最大条目数
+        cache_ttl_seconds: 缓存过期时间(秒), None表示永不过期
     """
 
     api_key: str = ""
@@ -181,6 +193,9 @@ class LLMConfig:
     timeout: float = 60.0
     max_retries: int = 3
     retry_delay: float = 1.0
+    cache_enabled: bool = True
+    cache_max_size: int = 1000
+    cache_ttl_seconds: float | None = None
 
 
 # =============================================================================
@@ -314,6 +329,7 @@ class BaseLLMClient(ABC):
     - 配置管理
     - 重试逻辑
     - 错误处理
+    - 响应缓存
     """
 
     def __init__(self, config: LLMConfig) -> None:
@@ -325,6 +341,40 @@ class BaseLLMClient(ABC):
         self._config = config
         self._request_count = 0
         self._total_tokens = 0
+        self._cache: LLMResponseCache | None = None
+
+        # 初始化缓存
+        if config.cache_enabled:
+            self._init_cache()
+
+    def _init_cache(self) -> None:
+        """初始化响应缓存."""
+        from chairman_agents.integration.llm_cache import CacheConfig, LLMResponseCache
+
+        cache_config = CacheConfig(
+            enabled=self._config.cache_enabled,
+            max_size=self._config.cache_max_size,
+            ttl_seconds=self._config.cache_ttl_seconds,
+        )
+        self._cache = LLMResponseCache(cache_config)
+
+    @property
+    def cache(self) -> LLMResponseCache | None:
+        """返回缓存实例."""
+        return self._cache
+
+    @property
+    def cache_enabled(self) -> bool:
+        """返回缓存是否启用."""
+        return self._cache is not None and self._cache.enabled
+
+    @cache_enabled.setter
+    def cache_enabled(self, value: bool) -> None:
+        """设置缓存启用状态."""
+        if self._cache is None and value:
+            self._init_cache()
+        elif self._cache is not None:
+            self._cache.enabled = value
 
     @property
     @abstractmethod
@@ -402,6 +452,134 @@ class BaseLLMClient(ABC):
         """更新统计信息."""
         self._request_count += 1
         self._total_tokens += usage.total_tokens
+
+    def _get_cached_completion(
+        self,
+        prompt: str,
+        model: str | None,
+        temperature: float | None,
+        max_tokens: int | None,
+    ) -> CompletionResult | None:
+        """获取缓存的补全结果.
+
+        Args:
+            prompt: 提示词
+            model: 模型名称
+            temperature: 温度参数
+            max_tokens: 最大token数
+
+        Returns:
+            缓存的CompletionResult或None
+        """
+        if self._cache is None:
+            return None
+
+        cached = self._cache.get_completion(
+            prompt,
+            model=self._get_model(model),
+            temperature=self._get_temperature(temperature),
+            max_tokens=self._get_max_tokens(max_tokens),
+        )
+
+        if cached is not None:
+            # 返回深拷贝避免缓存污染
+            return copy.deepcopy(cached)
+        return None
+
+    def _cache_completion(
+        self,
+        prompt: str,
+        result: CompletionResult,
+        model: str | None,
+        temperature: float | None,
+        max_tokens: int | None,
+    ) -> None:
+        """缓存补全结果.
+
+        Args:
+            prompt: 提示词
+            result: CompletionResult
+            model: 模型名称
+            temperature: 温度参数
+            max_tokens: 最大token数
+        """
+        if self._cache is None:
+            return
+
+        self._cache.set_completion(
+            prompt,
+            result,
+            model=self._get_model(model),
+            temperature=self._get_temperature(temperature),
+            max_tokens=self._get_max_tokens(max_tokens),
+        )
+
+    def _get_cached_chat(
+        self,
+        messages: list[Message],
+        model: str | None,
+        temperature: float | None,
+        max_tokens: int | None,
+    ) -> ChatResult | None:
+        """获取缓存的聊天结果.
+
+        Args:
+            messages: 消息列表
+            model: 模型名称
+            temperature: 温度参数
+            max_tokens: 最大token数
+
+        Returns:
+            缓存的ChatResult或None
+        """
+        if self._cache is None:
+            return None
+
+        # 将消息列表转换为可序列化的格式
+        messages_dict = [msg.to_dict() for msg in messages]
+
+        cached = self._cache.get_chat(
+            messages_dict,
+            model=self._get_model(model),
+            temperature=self._get_temperature(temperature),
+            max_tokens=self._get_max_tokens(max_tokens),
+        )
+
+        if cached is not None:
+            # 返回深拷贝避免缓存污染
+            return copy.deepcopy(cached)
+        return None
+
+    def _cache_chat(
+        self,
+        messages: list[Message],
+        result: ChatResult,
+        model: str | None,
+        temperature: float | None,
+        max_tokens: int | None,
+    ) -> None:
+        """缓存聊天结果.
+
+        Args:
+            messages: 消息列表
+            result: ChatResult
+            model: 模型名称
+            temperature: 温度参数
+            max_tokens: 最大token数
+        """
+        if self._cache is None:
+            return
+
+        # 将消息列表转换为可序列化的格式
+        messages_dict = [msg.to_dict() for msg in messages]
+
+        self._cache.set_chat(
+            messages_dict,
+            result,
+            model=self._get_model(model),
+            temperature=self._get_temperature(temperature),
+            max_tokens=self._get_max_tokens(max_tokens),
+        )
 
 
 # =============================================================================
@@ -491,6 +669,14 @@ class AnthropicClient(BaseLLMClient):
         **kwargs: Any,
     ) -> ChatResult:
         """执行聊天补全."""
+        # 不带工具时检查缓存(工具调用结果不可缓存)
+        use_cache = tools is None and not kwargs.get("skip_cache", False)
+
+        if use_cache:
+            cached = self._get_cached_chat(messages, model, temperature, max_tokens)
+            if cached is not None:
+                return cached
+
         client = await self._ensure_client()
         start_time = time.perf_counter()
 
@@ -558,7 +744,7 @@ class AnthropicClient(BaseLLMClient):
             content=content,
         ))
 
-        return ChatResult(
+        result = ChatResult(
             id=response.id,
             content=content,
             finish_reason=response.stop_reason or "stop",
@@ -568,6 +754,12 @@ class AnthropicClient(BaseLLMClient):
             latency_ms=latency,
             messages=response_messages,
         )
+
+        # 缓存结果
+        if use_cache:
+            self._cache_chat(messages, result, model, temperature, max_tokens)
+
+        return result
 
     async def stream(
         self,
@@ -731,6 +923,14 @@ class OpenAIClient(BaseLLMClient):
         **kwargs: Any,
     ) -> ChatResult:
         """执行聊天补全."""
+        # 不带工具时检查缓存(工具调用结果不可缓存)
+        use_cache = tools is None and not kwargs.get("skip_cache", False)
+
+        if use_cache:
+            cached = self._get_cached_chat(messages, model, temperature, max_tokens)
+            if cached is not None:
+                return cached
+
         client = await self._ensure_client()
         start_time = time.perf_counter()
 
@@ -784,7 +984,7 @@ class OpenAIClient(BaseLLMClient):
             content=content,
         ))
 
-        return ChatResult(
+        result = ChatResult(
             id=response.id,
             content=content,
             finish_reason=choice.finish_reason or "stop",
@@ -794,6 +994,12 @@ class OpenAIClient(BaseLLMClient):
             latency_ms=latency,
             messages=response_messages,
         )
+
+        # 缓存结果
+        if use_cache:
+            self._cache_chat(messages, result, model, temperature, max_tokens)
+
+        return result
 
     async def stream(
         self,
