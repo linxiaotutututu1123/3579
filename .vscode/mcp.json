@@ -1,4 +1,5 @@
 {
+<<<<<<< Updated upstream
 	"inputs": [
 		{
 			"id": "project-ref",
@@ -399,3 +400,12 @@
 		}
 	}
 }
+=======
+    "servers": {
+        "3579-local-server": {
+            "type": "http",
+            "url": "http://localhost:7071/mcp"
+        }
+    }
+}
+>>>>>>> Stashed changes

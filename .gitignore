@@ -132,6 +132,7 @@ local.settings.json
 __blobstorage__
 __queuestorage__
 __azurite_db*__.json
+<<<<<<< Updated upstream
 .python_packages
 .aider*
 
@@ -177,3 +178,6 @@ coordination/orchestration/*
 claude-flow
 # Removed Windows wrapper files per user request
 hive-mind-prompt-*.txt
+=======
+.python_packages
+>>>>>>> Stashed changes
