@@ -29,6 +29,7 @@ from .schemas import (
     WorkflowListResponse,
     WorkflowRequest,
     WorkflowResponse,
+    WorkflowStageInfo,
     WorkflowStatusEnum,
 )
 
