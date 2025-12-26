@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "ms-azuretools.vscode-azurefunctions",
+<<<<<<< Updated upstream
     "eamodio.gitlens",
     "github.copilot",
     "ms-vscode-remote.remote-containers",
@@ -19,3 +20,8 @@
     "continue.continue"
   ]
 }
+=======
+    "ms-vscode.cmake-tools"
+  ]
+}
+>>>>>>> Stashed changes
