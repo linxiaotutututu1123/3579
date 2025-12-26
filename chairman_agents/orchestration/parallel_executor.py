@@ -28,8 +28,8 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from collections.abc import Awaitable, Callable, Sequence
-from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+from collections.abc import Awaitable, Callable, Coroutine, Sequence
+from typing import TYPE_CHECKING, Any, Protocol, cast, runtime_checkable
 
 from chairman_agents.core.exceptions import TaskExecutionError
 from chairman_agents.core.types import Task, TaskId, TaskPriority, TaskResult, TaskStatus
@@ -39,8 +39,8 @@ from chairman_agents.core.types import Task, TaskId, TaskPriority, TaskResult, T
 # 类型别名
 # =============================================================================
 
-TaskExecutorFn = Callable[[Task], Awaitable[TaskResult]]
-"""任务执行函数类型"""
+TaskExecutorFn = Callable[[Task], Coroutine[Any, Any, TaskResult]]
+"""任务执行函数类型 - 必须是协程函数"""
 
 
 # =============================================================================
@@ -427,7 +427,7 @@ class ParallelExecutor:
 
         # 内部状态
         self._semaphore: asyncio.Semaphore | None = None
-        self._running_tasks: dict[TaskId, asyncio.Task[ExecutionResult]] = {}
+        self._running_tasks: dict[TaskId, asyncio.Task[TaskResult]] = {}
         self._lock = asyncio.Lock()
         self._shutdown_event = asyncio.Event()
         self._pause_event = asyncio.Event()
@@ -1134,13 +1134,15 @@ class ParallelExecutor:
         # 处理异常结果
         processed_results: list[ExecutionResult] = []
         for i, result in enumerate(results):
-            if isinstance(result, Exception):
+            if isinstance(result, BaseException):
+                # BaseException 包括 Exception 及 KeyboardInterrupt 等
+                error = result if isinstance(result, Exception) else Exception(str(result))
                 processed_results.append(
                     ExecutionResult(
                         task_id=tasks[i].id,
                         task=tasks[i],
                         success=False,
-                        error=result,
+                        error=error,
                     )
                 )
             else:
