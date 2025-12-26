@@ -13,7 +13,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, HTTPException, Query, status
 
@@ -75,9 +75,9 @@ workflows_router = APIRouter(
 # 内存存储 (临时实现,后续替换为持久化存储)
 # =============================================================================
 
-_tasks_store: dict[str, dict] = {}
-_teams_store: dict[str, dict] = {}
-_workflows_store: dict[str, dict] = {}
+_tasks_store: dict[str, dict[str, Any]] = {}
+_teams_store: dict[str, dict[str, Any]] = {}
+_workflows_store: dict[str, dict[str, Any]] = {}
 _id_counter: dict[str, int] = {"task": 0, "team": 0, "workflow": 0}
 
 
@@ -92,6 +92,59 @@ def _generate_id(prefix: str) -> str:
     """
     _id_counter[prefix] += 1
     return f"{prefix}_{_id_counter[prefix]:06d}"
+
+
+def _to_task_response(task_data: dict[str, Any]) -> TaskResponse:
+    """将任务数据转换为TaskResponse.
+
+    只提取TaskResponse模型所需的字段。
+
+    Args:
+        task_data: 完整的任务数据字典
+
+    Returns:
+        TaskResponse实例
+    """
+    return TaskResponse(
+        id=task_data["id"],
+        title=task_data["title"],
+        description=task_data["description"],
+        status=task_data["status"],
+        priority=task_data["priority"],
+        assigned_to=task_data.get("assigned_to"),
+        created_at=task_data["created_at"],
+        updated_at=task_data.get("updated_at"),
+        completed_at=task_data.get("completed_at"),
+        result=task_data.get("result"),
+    )
+
+
+def _to_workflow_response(workflow_data: dict[str, Any]) -> WorkflowResponse:
+    """将工作流数据转换为WorkflowResponse.
+
+    只提取WorkflowResponse模型所需的字段。
+
+    Args:
+        workflow_data: 完整的工作流数据字典
+
+    Returns:
+        WorkflowResponse实例
+    """
+    stages_data: list[dict[str, Any]] = workflow_data.get("stages", [])
+    stages = [WorkflowStageInfo(**stage) for stage in stages_data]
+    return WorkflowResponse(
+        id=workflow_data["id"],
+        name=workflow_data["name"],
+        description=workflow_data.get("description", ""),
+        status=workflow_data["status"],
+        team_id=workflow_data.get("team_id"),
+        stages=stages,
+        current_stage=workflow_data.get("current_stage"),
+        progress=workflow_data.get("progress", 0.0),
+        created_at=workflow_data["created_at"],
+        started_at=workflow_data.get("started_at"),
+        completed_at=workflow_data.get("completed_at"),
+    )
 
 
 # =============================================================================
@@ -118,7 +171,7 @@ async def create_task(request: TaskRequest) -> TaskResponse:
     task_id = _generate_id("task")
     now = datetime.now()
 
-    task_data = {
+    task_data: dict[str, Any] = {
         "id": task_id,
         "title": request.title,
         "description": request.description,
@@ -138,7 +191,7 @@ async def create_task(request: TaskRequest) -> TaskResponse:
 
     _tasks_store[task_id] = task_data
 
-    return TaskResponse(**task_data)
+    return _to_task_response(task_data)
 
 
 @tasks_router.get(
@@ -182,7 +235,7 @@ async def list_tasks(
     paginated_tasks = tasks[start:end]
 
     return TaskListResponse(
-        tasks=[TaskResponse(**t) for t in paginated_tasks],
+        tasks=[_to_task_response(t) for t in paginated_tasks],
         total=total,
         page=page,
         page_size=page_size,
@@ -213,7 +266,7 @@ async def get_task(task_id: str) -> TaskResponse:
             detail=f"任务 {task_id} 不存在",
         )
 
-    return TaskResponse(**_tasks_store[task_id])
+    return _to_task_response(_tasks_store[task_id])
 
 
 # =============================================================================
@@ -306,7 +359,7 @@ async def create_workflow(request: WorkflowRequest) -> WorkflowResponse:
     ]
 
     stages = request.stages or default_stages
-    stage_info = [
+    stage_info: list[dict[str, Any]] = [
         {
             "name": stage,
             "status": "pending",
@@ -317,7 +370,7 @@ async def create_workflow(request: WorkflowRequest) -> WorkflowResponse:
         for stage in stages
     ]
 
-    workflow_data = {
+    workflow_data: dict[str, Any] = {
         "id": workflow_id,
         "name": request.name,
         "description": request.description,
@@ -335,7 +388,7 @@ async def create_workflow(request: WorkflowRequest) -> WorkflowResponse:
 
     _workflows_store[workflow_id] = workflow_data
 
-    return WorkflowResponse(**workflow_data)
+    return _to_workflow_response(workflow_data)
 
 
 @workflows_router.get(
@@ -368,7 +421,7 @@ async def list_workflows(
     workflows.sort(key=lambda x: x["created_at"], reverse=True)
 
     return WorkflowListResponse(
-        workflows=[WorkflowResponse(**w) for w in workflows],
+        workflows=[_to_workflow_response(w) for w in workflows],
         total=len(workflows),
     )
 
@@ -397,7 +450,7 @@ async def get_workflow(workflow_id: str) -> WorkflowResponse:
             detail=f"工作流 {workflow_id} 不存在",
         )
 
-    return WorkflowResponse(**_workflows_store[workflow_id])
+    return _to_workflow_response(_workflows_store[workflow_id])
 
 
 # =============================================================================
