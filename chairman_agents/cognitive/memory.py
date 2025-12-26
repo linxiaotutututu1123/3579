@@ -334,7 +334,7 @@ class MemorySystem:
             if query_embedding is None:
                 query_embedding = self._generate_embedding(query)
 
-            if query_embedding is not None:
+            if query_embedding is not None and memory.embedding is not None:
                 # Calculate cosine similarity between query and memory embeddings
                 cosine_sim = self._cosine_similarity(query_embedding, memory.embedding)
                 # Normalize cosine similarity from [-1, 1] to [0, 1]

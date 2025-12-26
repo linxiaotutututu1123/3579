@@ -266,7 +266,7 @@ Chairman Agents API - 主席级智能体团队系统
     # 注册异常处理器
     app.add_exception_handler(
         RequestValidationError,
-        validation_exception_handler,
+        validation_exception_handler,  # type: ignore[arg-type]
     )
 
     if not debug:
